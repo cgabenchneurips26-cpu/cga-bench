@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install agent-side dependencies only
+COPY requirements-agent.txt .
+RUN pip install --no-cache-dir -r requirements-agent.txt
+
+# Copy only agent-side modules
+# Explicitly excludes: cpg_engine/, assessor_core/
+COPY agent_runner/ agent_runner/
+COPY agent_rules/ agent_rules/
+COPY tool_api/ tool_api/
+COPY scenario_engine/ scenario_engine/
+COPY cpg_model/schemas/base.py cpg_model/schemas/base.py
+
+CMD ["python3", "-m", "agent_runner"]

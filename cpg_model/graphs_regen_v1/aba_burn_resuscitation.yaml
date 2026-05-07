@@ -1,0 +1,417 @@
+graph_id: aba_burn_resuscitation
+guideline_name: ABA 2024 Burn Resuscitation Guidelines
+version: '2024.1'
+metadata:
+  primary_source:
+    title: ABA 2024 Practice Guidelines for Burn Resuscitation
+    authors: American Burn Association
+    year: 2024
+  secondary_source:
+    title: ISBI 2024 Burn Care Guidelines
+    authors: International Society for Burn Injuries
+    year: 2024
+  source: ABA 2024 + ISBI 2024
+  description: Comprehensive burn resuscitation from initial assessment through transfer disposition
+  key_evidence: Parkland formula remains standard; fluid creep (>6ml/kg/%TBSA) increases abdominal compartment syndrome and
+    pulmonary edema (Saffle 2007)
+  recommendation_system: GRADE
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_aba_burn_resuscitation.json
+entry_node: burn_initial_assessment
+nodes:
+  burn_initial_assessment:
+    node_id: burn_initial_assessment
+    node_type: enquiry
+    name: Burn Initial Assessment
+    description: Primary survey + TBSA estimation + airway assessment
+    precondition: null
+    mandatory_actions:
+    - assess_airway
+    - assess_vital_signs
+    - estimate_tbsa
+    - assess_burn_depth
+    - obtain_patient_weight
+    - establish_iv_access
+    allowed_actions:
+    - assess_airway
+    - assess_vital_signs
+    - estimate_tbsa
+    - assess_burn_depth
+    - obtain_patient_weight
+    - establish_iv_access
+    - assess_inhalation_injury_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_coagulation
+    - pain_management
+    forbidden_actions:
+    - apply_ice_to_burn
+    - apply_butter_to_burn
+    - debride_in_field
+    deadlines:
+      assess_airway: 5
+      assess_vital_signs: 5
+      estimate_tbsa: 15
+      establish_iv_access: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ABA 2024
+    source_section: 'Section 1: Initial Assessment'
+    source_quote: Primary survey with TBSA estimation and airway assessment is the critical first step in burn management.
+    next_nodes:
+    - fluid_resuscitation
+    - inhalation_injury
+    - escharotomy
+    conditional_next: {}
+  fluid_resuscitation:
+    node_id: fluid_resuscitation
+    node_type: action
+    name: Fluid Resuscitation
+    description: 'Parkland formula: 4ml x kg x %TBSA, half in first 8h'
+    precondition: null
+    mandatory_actions:
+    - calculate_parkland_formula
+    - start_lactated_ringers
+    - monitor_urine_output_target_0_5_ml_kg_h
+    - titrate_fluids_to_urine_output
+    - place_foley_catheter
+    allowed_actions:
+    - calculate_parkland_formula
+    - start_lactated_ringers
+    - monitor_urine_output_target_0_5_ml_kg_h
+    - titrate_fluids_to_urine_output
+    - place_foley_catheter
+    - add_dextrose_to_iv
+    - monitor_glucose_q4h
+    - give_albumin_colloid_adjunct
+    forbidden_actions:
+    - give_colloid_in_first_24h
+    - use_normal_saline_only
+    deadlines:
+      calculate_parkland_formula: 30
+      start_lactated_ringers: 30
+      place_foley_catheter: 60
+    required_prior_actions:
+      calculate_parkland_formula:
+      - estimate_tbsa
+      - obtain_patient_weight
+      start_lactated_ringers:
+      - establish_iv_access
+    sequence_rules:
+    - - estimate_tbsa
+      - calculate_parkland_formula
+    - - obtain_patient_weight
+      - calculate_parkland_formula
+    - - establish_iv_access
+      - start_lactated_ringers
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ABA 2024
+    source_section: 'Section 2: Fluid Resuscitation'
+    source_quote: Parkland formula (4ml x kg x %TBSA) with LR in first 24h. Titrate to urine output 0.5ml/kg/h.
+    patient_activation_condition: patient.presentation.get('tbsa_percent', 0) >= 20
+    conditional_rules:
+    - rule_id: BURN-PEDIATRIC-DEXTROSE
+      condition: patient.age < 5
+      effect:
+        type: REQUIRED
+        actions:
+        - add_dextrose_to_iv
+        - monitor_glucose_q4h
+      evidence: ABA 2024; ISBI Pediatric Burns Chapter
+      severity: HIGH
+      description: 'Children <5 have limited glycogen stores. Large fluid resuscitation without dextrose causes hypoglycemia.
+        Add D5 to maintenance fluids.
+
+        '
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 1
+          max: 4
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 80
+          type: int
+    - rule_id: BURN-PEDIATRIC-DEXTROSE-FORBIDDEN
+      condition: patient.age < 5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - withhold_glucose_monitoring_pediatric_burn
+        - give_dextrose_free_fluid_only_pediatric_burn
+      evidence: ABA Burn Guidelines 2023; pediatric patients have limited glycogen reserves; hypoglycemia causes seizures
+        and brain injury
+      severity: HIGH
+      description: Pediatric burn patients deplete glycogen rapidly; dextrose-free resuscitation without glucose monitoring
+        causes hypoglycemic seizures.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 1
+          max: 4
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 80
+          type: int
+      skip_scenario_generation: true
+    - rule_id: BURN-OVERRESUS-LIMIT
+      condition: patient.presentation.get('tbsa_percent', 0) > 40
+      effect:
+        type: FORBIDDEN
+        actions:
+        - exceed_6ml_kg_tbsa_in_24h
+      evidence: ABA 2024; Saffle JR, J Burn Care Res 2007 - fluid creep
+      severity: HIGH
+      description: '>40% TBSA burns risk fluid creep (>6ml/kg/%TBSA). Excessive resuscitation causes abdominal compartment
+        syndrome, pulmonary edema. Cap at ~6ml/kg/%TBSA and consider colloid adjunct early.
+
+        '
+      condition_variables:
+      - patient.presentation.tbsa_percent
+      trigger_range:
+        patient.presentation.tbsa_percent:
+          min: 41
+          max: 90
+          type: int
+      normal_range:
+        patient.presentation.tbsa_percent:
+          min: 20
+          max: 40
+          type: int
+    next_nodes:
+    - burn_wound_care
+    conditional_next: {}
+  inhalation_injury:
+    node_id: inhalation_injury
+    node_type: action
+    name: Inhalation Injury Management
+    description: Airway management for inhalation injury
+    precondition: null
+    mandatory_actions:
+    - perform_early_intubation
+    - order_chest_xray
+    - order_carboxyhemoglobin
+    - give_100_percent_oxygen
+    allowed_actions:
+    - perform_early_intubation
+    - order_chest_xray
+    - order_carboxyhemoglobin
+    - give_100_percent_oxygen
+    - bronchoscopy_if_suspected
+    - give_hydroxocobalamin
+    - order_cyanide_level
+    - monitor_airway_patency
+    forbidden_actions:
+    - delay_intubation_for_imaging
+    deadlines:
+      perform_early_intubation: 15
+      give_100_percent_oxygen: 5
+      order_carboxyhemoglobin: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ABA 2024
+    source_section: 'Section 3: Inhalation Injury'
+    source_quote: Early intubation is critical as airway edema progresses rapidly. 100% O2 for CO poisoning.
+    patient_activation_condition: '''inhalation_injury'' in patient.comorbidities or ''singed_nasal_hairs'' in patient.get(''exam_findings'',
+      []) or ''soot_in_sputum'' in patient.get(''exam_findings'', [])
+
+      '
+    conditional_rules:
+    - rule_id: BURN-CYANIDE-HYDROXOCOBALAMIN
+      condition: '''enclosed_space_fire'' in patient.get(''history'', [])'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_hydroxocobalamin
+        - order_cyanide_level
+      evidence: ABA 2024; Baud FJ, NEJM 1991
+      severity: CRITICAL
+      description: 'Enclosed space fire -> cyanide poisoning from combustion of synthetic materials. Hydroxocobalamin (Cyanokit)
+        is first-line. Do NOT use sodium thiosulfate as sole treatment (too slow onset).
+
+        '
+      condition_variables:
+      - patient.history
+      trigger_range:
+        patient.history:
+          contains: enclosed_space_fire
+          type: list_contains
+      normal_range:
+        patient.history:
+          not_contains: enclosed_space_fire
+          type: list_not_contains
+    - rule_id: BURN-CYANIDE-HYDROXOCOBALAMIN-FORBIDDEN
+      condition: '''enclosed_space_fire'' in patient.get(''history'', [])'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_sodium_nitrite_in_cyanide_burn
+        - delay_cyanide_antidote_for_level
+      evidence: ABA Burn Guidelines 2023; sodium nitrite induces methemoglobinemia compounding carbon monoxide poisoning in
+        burn patients
+      severity: CRITICAL
+      description: Sodium nitrite creates methemoglobin which compounds CO poisoning in burns; cyanide level delays allow
+        fatal exposure.
+      condition_variables:
+      - patient.history
+      trigger_range:
+        patient.history:
+          contains: enclosed_space_fire
+          type: list_contains
+      normal_range:
+        patient.history:
+          not_contains: enclosed_space_fire
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - burn_wound_care
+    conditional_next: {}
+  escharotomy:
+    node_id: escharotomy
+    node_type: action
+    name: Escharotomy
+    description: Escharotomy for circumferential full-thickness burns
+    precondition: null
+    mandatory_actions:
+    - assess_compartment_pressures
+    - assess_distal_pulses
+    - perform_escharotomy
+    allowed_actions:
+    - assess_compartment_pressures
+    - assess_distal_pulses
+    - perform_escharotomy
+    - perform_chest_escharotomy
+    - monitor_ventilation_pressures
+    - consult_surgery
+    forbidden_actions: []
+    deadlines:
+      assess_distal_pulses: 30
+      perform_escharotomy: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: ABA 2024
+    source_section: 'Section 4: Escharotomy'
+    source_quote: Circumferential full-thickness burns require escharotomy to prevent vascular compromise and ventilatory
+      failure.
+    patient_activation_condition: '''circumferential_burn'' in patient.get(''exam_findings'', []) and ''full_thickness'' in
+      patient.presentation.get(''burn_depth'', '''')
+
+      '
+    conditional_rules:
+    - rule_id: BURN-CHEST-ESCHAR-VENTILATION
+      condition: '''circumferential_chest_burn'' in patient.get(''exam_findings'', [])'
+      effect:
+        type: REQUIRED
+        actions:
+        - perform_chest_escharotomy
+        - monitor_ventilation_pressures
+      evidence: ABA 2024; ISBI 2024 Escharotomy Chapter
+      severity: CRITICAL
+      description: 'Circumferential chest burns restrict chest wall compliance -> ventilatory failure. Chest escharotomy restores
+        compliance. Monitor peak airway pressures.
+
+        '
+      condition_variables:
+      - patient.exam_findings
+      trigger_range:
+        patient.exam_findings:
+          contains: circumferential_chest_burn
+          type: list_contains
+      normal_range:
+        patient.exam_findings:
+          not_contains: circumferential_chest_burn
+          type: list_not_contains
+    - rule_id: BURN-CHEST-ESCHAR-VENTILATION-FORBIDDEN
+      condition: '''circumferential_chest_burn'' in patient.get(''exam_findings'', [])'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_escharotomy_for_imaging
+        - increase_ventilator_pressure_without_escharotomy
+      evidence: ABA Burn Guidelines 2023; circumferential chest eschar causes restrictive ventilatory failure requiring emergent
+        release
+      severity: CRITICAL
+      description: Chest eschar restricts ventilation; delaying escharotomy for imaging or increasing ventilator pressure
+        without release is harmful.
+      condition_variables:
+      - patient.exam_findings
+      trigger_range:
+        patient.exam_findings:
+          contains: circumferential_chest_burn
+          type: list_contains
+      normal_range:
+        patient.exam_findings:
+          not_contains: circumferential_chest_burn
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - burn_wound_care
+    conditional_next: {}
+  burn_wound_care:
+    node_id: burn_wound_care
+    node_type: action
+    name: Burn Wound Care
+    description: Initial wound management
+    precondition: null
+    mandatory_actions:
+    - remove_clothing_jewelry
+    - cover_with_clean_dry_dressing
+    - update_tetanus_if_needed
+    - pain_management
+    allowed_actions:
+    - remove_clothing_jewelry
+    - cover_with_clean_dry_dressing
+    - update_tetanus_if_needed
+    - pain_management
+    - give_iv_morphine
+    - give_iv_ketamine
+    forbidden_actions:
+    - apply_topical_antibiotic_before_transfer
+    deadlines:
+      remove_clothing_jewelry: 30
+      pain_management: 30
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: ABA 2024
+    source_section: 'Section 5: Wound Management'
+    source_quote: Initial wound care focuses on clean dry dressings. Defer topical antibiotics to burn center preference.
+    next_nodes:
+    - transfer_disposition
+    conditional_next: {}
+  transfer_disposition:
+    node_id: transfer_disposition
+    node_type: plan
+    name: Transfer Disposition
+    description: Transfer criteria to burn center
+    precondition: null
+    mandatory_actions:
+    - assess_burn_center_referral_criteria
+    - arrange_transfer_if_indicated
+    allowed_actions:
+    - assess_burn_center_referral_criteria
+    - arrange_transfer_if_indicated
+    - consult_burn_center
+    - prepare_transfer_documentation
+    forbidden_actions:
+    - discharge_major_burn_home
+    deadlines:
+      assess_burn_center_referral_criteria: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ABA 2024
+    source_section: 'Section 6: Transfer Criteria'
+    source_quote: Burns >20% TBSA, full-thickness >5%, inhalation injury, and extremes of age require burn center referral.
+    next_nodes: []
+    conditional_next: {}

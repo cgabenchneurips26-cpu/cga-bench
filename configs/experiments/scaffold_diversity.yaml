@@ -1,0 +1,42 @@
+experiment_name: scaffold_diversity_pilot
+description: "Compare 3 agent scaffolds (RAG, Planner, Reflection) on 5 representative scenarios"
+
+model:
+  name: "oss120b"
+  backend: "vllm"
+
+scaffolds:
+  - name: "rag"
+    agent_config: "configs/agents/rag_vllm.yaml"
+    description: "RAG-BM25+Dense baseline (current)"
+  - name: "planner"
+    agent_config: "configs/agents/planner_react.yaml"
+    description: "Plan-then-execute with decision table constraints"
+  - name: "reflection"
+    agent_config: "configs/agents/reflection_reflexion.yaml"
+    description: "Generate-critique-revise with safety reflection"
+
+scenarios:
+  - dka_moderate_basic
+  - septic_shock_basic
+  - stemi_inferior_rv_trap
+  - aki_stage1_basic
+  - stroke_tpa_eligible
+
+runs_per_combination: 3
+total_episodes: 45  # 3 scaffolds × 5 scenarios × 3 runs
+
+budget:
+  enforce_budget_matching: true
+  budget_limit_tokens: 100000
+  budget_limit_tool_calls: 50
+
+output_dir: "results/scaffold_diversity"
+
+analysis:
+  metrics:
+    - cga_score
+    - hard_safe_rate
+    - up_strong
+    - violation_profile
+  comparison_method: "friedman_with_posthoc"

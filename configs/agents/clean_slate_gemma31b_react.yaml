@@ -1,0 +1,22 @@
+# Clean Slate: Gemma 3-27B-IT with explicit React scaffold (W8 cross-model)
+# Model swapped 2026-04-22: gemma-4-31b-it (unsupported by transformers 4.57
+# — "unknown model type 'gemma4'") -> gemma-3-27b-it (loadable in the same
+# vLLM environment). Keep the agent_id gemma31b so the results directory
+# structure / paper macros do not need renaming; the config and log layer
+# carry the accurate model ID.
+agent:
+  type: "rag"
+  agent_id: "rag_gemma31b_react"
+  llm_backend: "vllm"
+  llm_model: "google/gemma-3-27b-it"
+  temperature: 0.1
+  use_llm: true
+  base_url: "http://localhost:8013/v1"
+  api_key: "sk-no-key-required"
+  top_k: 5
+  use_bm25: true
+  cpg_sources_path: null
+  scaffold: "react"
+  max_actions_per_step: 3
+  budget_limit_tokens: 100000
+  budget_limit_tool_calls: 50

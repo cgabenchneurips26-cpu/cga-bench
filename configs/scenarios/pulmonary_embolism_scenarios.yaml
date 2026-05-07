@@ -1,0 +1,322 @@
+# Pulmonary Embolism Scenarios
+# Source: ESC 2019 PE Guidelines
+
+scenarios:
+  # ========================================
+  # Submassive PE with RV Strain
+  # ========================================
+  pe_submassive_basic:
+    scenario_id: "pe_submassive_basic"
+    description: "Submassive (intermediate-high risk) pulmonary embolism with right ventricular strain requiring anticoagulation and hemodynamic monitoring"
+    guideline_graph: "pulmonary_embolism"
+
+    patient:
+      age: 56
+      sex: "F"
+      weight_kg: 74
+      chief_complaint: "acute onset dyspnea, pleuritic chest pain, and leg swelling after long-haul flight"
+      working_diagnosis: "pulmonary_embolism"
+
+      vitals:
+        heart_rate: 112
+        blood_pressure_systolic: 108
+        blood_pressure_diastolic: 68
+        respiratory_rate: 24
+        temperature: 37.4
+        oxygen_saturation: 92
+        map_mmhg: 81
+
+      allergies: []
+      comorbidities:
+        - "oral_contraceptive_use"
+        - "recent_long_haul_flight"
+      contraindications: []
+
+    ground_truth:
+      lab_d_dimer: "markedly_elevated_4500"
+      lab_troponin: "mildly_elevated_0_06"
+      lab_bnp: "elevated_380"
+      lab_blood_gas: "hypoxemia_pao2_68_respiratory_alkalosis"
+      imaging_ct_pulmonary_angiography: "bilateral_pe_with_rv_strain"
+      imaging_echo: "rv_dilation_rv_lv_ratio_0_9"
+      ecg_result: "sinus_tachycardia_s1q3t3_pattern"
+      wells_score: 7
+      pesi_score: 95
+
+    expected_actions:
+      - "assess_vital_signs"
+      - "assess_wells_score"
+      - "order_lab_d_dimer"
+      - "order_imaging_ct_pulmonary_angiography"
+
+    optional_actions:
+      - "order_lab_troponin"
+      - "order_lab_bnp"
+      - "order_lab_blood_gas"
+      - "obtain_ecg"
+      - "order_imaging_echo"
+      - "start_anticoagulation_heparin"
+      - "calculate_pesi_score"
+
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+
+  # ========================================
+  # Massive PE with Hemodynamic Instability - Thrombolysis Decision Trap
+  # ========================================
+  pe_massive_unstable:
+    scenario_id: "pe_massive_unstable"
+    description: "Massive (high-risk) pulmonary embolism with hemodynamic instability and cardiac arrest risk (trap: delaying systemic thrombolysis, or contraindicated thrombolysis in recent surgery patient)"
+    guideline_graph: "pulmonary_embolism"
+
+    trap_scenario: true
+    trap_description: "Massive PE with hemodynamic compromise requires emergent systemic thrombolysis unless contraindicated. However, recent surgery (within 3 weeks) is a relative contraindication. Clinicians must identify this contraindication and consider catheter-directed therapy or surgical embolectomy instead of systemic thrombolysis."
+
+    patient:
+      age: 68
+      sex: "M"
+      weight_kg: 88
+      chief_complaint: "sudden collapse, severe dyspnea, presyncope, and altered mental status"
+      working_diagnosis: "pulmonary_embolism"
+
+      vitals:
+        heart_rate: 138
+        blood_pressure_systolic: 76
+        blood_pressure_diastolic: 44
+        respiratory_rate: 32
+        temperature: 37.1
+        oxygen_saturation: 78
+        map_mmhg: 55
+
+      allergies: []
+      comorbidities:
+        - "total_hip_replacement_2_weeks_ago"
+        - "immobilization_postoperative"
+        - "hypertension"
+      contraindications:
+        - "recent_major_surgery_within_3_weeks"
+
+    ground_truth:
+      lab_d_dimer: "extremely_elevated_18000"
+      lab_troponin: "significantly_elevated_0_8"
+      lab_bnp: "markedly_elevated_1200"
+      lab_blood_gas: "severe_hypoxemia_pao2_45_acidosis_ph_7_28"
+      imaging_ct_pulmonary_angiography: "saddle_pe_bilateral_massive_rv_failure"
+      imaging_echo: "rv_dilation_severe_septal_bowing_rv_lv_ratio_1_4"
+      ecg_result: "sinus_tachycardia_right_heart_strain_s1q3t3"
+      wells_score: 10
+
+    expected_actions:
+      - "assess_vital_signs"
+      - "order_imaging_ct_pulmonary_angiography"
+      - "order_lab_troponin"
+      - "assess_wells_score"
+      - "order_lab_d_dimer"
+
+    optional_actions:
+      - "order_lab_blood_gas"
+      - "order_lab_bnp"
+      - "obtain_ecg"
+      - "order_imaging_echo"
+      - "start_anticoagulation_heparin"
+      - "give_vasopressor_if_hypotensive"
+      - "calculate_pesi_score"
+      - "consult_interventional_radiology"
+      - "consult_cardiothoracic_surgery"
+
+    forbidden_actions:
+      - "give_systemic_thrombolysis_with_recent_surgery_contraindication"
+
+    special_considerations:
+      - "Massive PE definition: sustained hypotension (SBP < 90 mmHg) or cardiac arrest"
+      - "Recent major surgery within 3 weeks is RELATIVE contraindication to systemic thrombolysis"
+      - "Consider catheter-directed thrombolysis or surgical embolectomy given contraindication"
+      - "Unfractionated heparin is preferred anticoagulant in massive PE (reversible)"
+      - "Avoid excessive IV fluids - RV is preload-dependent but volume overload worsens septal shift"
+      - "Vasopressors (norepinephrine) to maintain coronary perfusion while arranging definitive therapy"
+
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.8
+
+  # ========================================
+  # CROSS-DOMAIN: PE + Active GI Bleed Trap (#30)
+  # ========================================
+  pe_active_gi_bleed_trap:
+    scenario_id: "pe_active_gi_bleed_trap"
+    description: >
+      Cross-domain conflict: Massive PE with hemodynamic instability AND active
+      lower GI bleeding. Systemic thrombolysis and full-dose anticoagulation are
+      contraindicated. Must consider IVC filter or catheter-directed therapy.
+    guideline_graph: "pulmonary_embolism"
+    patient:
+      age: 62
+      sex: "F"
+      weight_kg: 70
+      chief_complaint: "acute dyspnea, near-syncope, hypotension with ongoing bloody stools"
+      working_diagnosis: "pulmonary_embolism"
+      vitals:
+        heart_rate: 130
+        blood_pressure_systolic: 78
+        blood_pressure_diastolic: 45
+        respiratory_rate: 30
+        temperature: 37.2
+        oxygen_saturation: 82
+        map_mmhg: 56
+      allergies: []
+      comorbidities:
+        - "active_lower_gi_bleed"
+        - "diverticulosis"
+        - "hypertension"
+      contraindications:
+        - "active_hemorrhage"
+    ground_truth:
+      lab_d_dimer: "markedly_elevated_15000"
+      lab_troponin: "elevated_0_45"
+      lab_bnp: "elevated_980"
+      lab_hemoglobin: 7.8
+      lab_hematocrit: 24
+      lab_blood_gas: "severe_hypoxemia_pao2_52"
+      imaging_ct_pulmonary_angiography: "bilateral_massive_pe_saddle_embolus"
+      imaging_echo: "rv_dilation_severe_rv_lv_ratio_1_3"
+      ecg_result: "sinus_tachycardia_s1q3t3"
+      wells_score: 9
+    expected_actions:
+      - "assess_vital_signs"
+      - "assess_wells_score"
+      - "order_lab_d_dimer"
+      - "order_imaging_ct_pulmonary_angiography"
+      - "order_lab_cbc"
+      - "order_lab_coagulation"
+      - "type_and_crossmatch"
+      - "consult_interventional_radiology"
+    forbidden_actions:
+      - "give_systemic_thrombolysis_with_active_bleeding"
+      - "give_full_dose_anticoagulation_with_active_bleed"
+      - "delay_pe_treatment_for_gi_bleed_workup"
+    special_considerations:
+      - "Massive PE + active GI bleed = CONTRAINDICATION to systemic thrombolysis"
+      - "Options: catheter-directed therapy, surgical embolectomy, IVC filter"
+      - "Transfuse PRBCs for Hgb 7.8 + ongoing hemorrhage"
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: |
+      CROSS-DOMAIN TRAP: Massive PE + Active GI Bleed.
+      PE protocol demands systemic thrombolysis for massive PE.
+      Active GI bleed makes thrombolysis life-threatening.
+      Correct: catheter-directed therapy or surgical embolectomy, IVC filter.
+
+
+  # ========================================
+  # DOAC Obesity Trap (#38)
+  # ========================================
+  pe_doac_obesity_trap:
+    scenario_id: "pe_doac_obesity_trap"
+    description: "Confirmed PE in morbidly obese patient (BMI 58) - DOAC standard dosing is sub-therapeutic"
+    guideline_graph: "pulmonary_embolism"
+    trap_scenario: true
+
+    patient:
+      age: 42
+      sex: "F"
+      weight_kg: 160
+      chief_complaint: "confirmed pulmonary embolism on CTPA, BMI 58, acute dyspnea and pleuritic chest pain"
+      working_diagnosis: "pulmonary_embolism"
+
+      vitals:
+        heart_rate: 105
+        blood_pressure_systolic: 130
+        blood_pressure_diastolic: 82
+        respiratory_rate: 22
+        temperature: 37.0
+        oxygen_saturation: 93
+        map_mmhg: 98
+
+      allergies: []
+      comorbidities:
+        - "morbid_obesity"
+        - "immobilization"
+      contraindications: []
+
+    ground_truth:
+      imaging_ct_pulmonary_angiography: "bilateral_segmental_pe"
+      lab_d_dimer: "elevated_5200"
+      bmi: 58
+
+    expected_actions:
+      - "assess_vital_signs"
+      - "start_anticoagulation_heparin"
+      - "discuss_weight_based_dosing"
+      - "consult_pharmacy"
+      - "plan_transition_to_warfarin_with_inr_monitoring"
+
+    forbidden_actions:
+      - "give_rivaroxaban"
+      - "give_apixaban"
+      - "give_edoxaban"
+      - "give_doac_standard_dose"
+
+    trap_description: "BMI >40 or weight >120kg: DOACs achieve sub-therapeutic drug levels due to increased volume of distribution (excluded from clinical trials). ISTH 2021 guidance: use UFH then transition to warfarin with INR monitoring, or anti-Xa level monitored LMWH."
+
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+
+  # ========================================
+  # Pregnancy PE Imaging Trap (#46)
+  # ========================================
+  pe_pregnancy_imaging_trap:
+    scenario_id: "pe_pregnancy_imaging_trap"
+    description: "Suspected PE in 28-week pregnant patient - CTPA as first-line imaging and DOAC/warfarin are contraindicated"
+    guideline_graph: "pulmonary_embolism"
+    trap_scenario: true
+
+    patient:
+      age: 30
+      sex: "F"
+      weight_kg: 75
+      chief_complaint: "acute dyspnea with unilateral calf swelling at 28 weeks gestation"
+      working_diagnosis: "pulmonary_embolism"
+
+      vitals:
+        heart_rate: 110
+        blood_pressure_systolic: 118
+        blood_pressure_diastolic: 72
+        respiratory_rate: 24
+        temperature: 37.1
+        oxygen_saturation: 93
+        map_mmhg: 87
+
+      allergies: []
+      comorbidities:
+        - "pregnancy_28weeks"
+      contraindications:
+        - "warfarin_in_pregnancy"
+        - "doac_in_pregnancy"
+
+    ground_truth:
+      lab_d_dimer: "elevated_1800"
+      lower_extremity_doppler: "left_popliteal_dvt"
+
+    expected_actions:
+      - "assess_vital_signs"
+      - "assess_wells_score"
+      - "order_lower_extremity_doppler"
+      - "start_anticoagulation_lmwh"
+      - "order_imaging_vq_scan_preferred"
+
+    forbidden_actions:
+      - "order_ct_with_contrast_as_first_line"
+      - "give_warfarin"
+      - "give_doac"
+      - "withhold_anticoagulation"
+
+    trap_description: "Pregnant PE: CTPA exposes fetus to radiation and iodinated contrast (suppresses fetal thyroid). V/Q scan is preferred imaging (RCOG guideline). D-dimer is unreliable in pregnancy (physiologically elevated). LMWH is the anticoagulant of choice (warfarin is teratogenic, DOACs lack safety data)."
+
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 20
+  imaging_result_delay_minutes: 30
+  enable_state_deterioration: true

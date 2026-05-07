@@ -1,0 +1,132 @@
+graph_id: ncs_aha_sah_2023
+guideline_name: ncs_aha_sah_2023
+version: '2024.1'
+metadata:
+  source: AHA/ASA Guidelines for the Management of Aneurysmal Subarachnoid Hemorrhage
+  doi: ''
+  recommendation_system: GRADE
+  description: Clinical workflow for the initial assessment, transfer, and acute management of aneurysmal subarachnoid hemorrhage
+    (aSAH).
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial aSAH Assessment
+    description: Initial triage and determination of facility capability for aSAH management.
+    mandatory_actions:
+    - evaluate_aneurysmal_source
+    allowed_actions:
+    - evaluate_aneurysmal_source
+    - transfer_to_comprehensive_stroke_center
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ncs_aha_sah_2023
+    source_section: Initial Management
+    source_page: null
+    source_quote: Prompt evaluation, identification of aneurysmal source, and treatment of the ruptured aneurysm are recommended,
+      preferably within 24 hours.
+    next_nodes: []
+    conditional_next:
+      state.facility_incapable: transfer_node
+      state.facility_capable: acute_treatment_bundle
+  transfer_node:
+    node_id: transfer_node
+    node_type: action
+    name: Specialized Center Transfer
+    description: Transfer patient to a center with specialized expertise in aSAH.
+    mandatory_actions:
+    - transfer_to_comprehensive_stroke_center
+    allowed_actions:
+    - transfer_to_comprehensive_stroke_center
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ncs_aha_sah_2023
+    source_section: Initial Management
+    source_page: null
+    source_quote: Timely transfer to centers with expertise in aSAH is recommended.
+    next_nodes:
+    - acute_treatment_bundle
+    conditional_next: {}
+  acute_treatment_bundle:
+    node_id: acute_treatment_bundle
+    node_type: plan
+    name: Acute Aneurysm Treatment
+    description: Definitive treatment of the ruptured aneurysm.
+    mandatory_actions:
+    - treat_ruptured_aneurysm
+    allowed_actions:
+    - treat_ruptured_aneurysm
+    forbidden_actions: []
+    deadlines:
+      treat_ruptured_aneurysm: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ncs_aha_sah_2023
+    source_section: Initial Management
+    source_page: null
+    source_quote: Prompt evaluation, identification of aneurysmal source, and treatment of the ruptured aneurysm are recommended,
+      preferably within 24 hours.
+    next_nodes:
+    - icu_supportive_care
+    conditional_next: {}
+  icu_supportive_care:
+    node_id: icu_supportive_care
+    node_type: plan
+    name: ICU Supportive Care Bundle
+    description: Implementation of standard ICU bundles and VTE prophylaxis.
+    mandatory_actions:
+    - administer_vte_prophylaxis
+    allowed_actions:
+    - administer_vte_prophylaxis
+    - implement_icu_ventilation_bundle
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ncs_aha_sah_2023
+    source_section: ICU Management
+    source_page: null
+    source_quote: Standard intensive care unit bundles of care for mechanically ventilated patients and venous thromboembolism
+      prophylaxis are recommended.
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Patient Disposition
+    description: Final assessment for step-down or discharge.
+    mandatory_actions:
+    - evaluate_aneurysmal_source
+    allowed_actions:
+    - evaluate_aneurysmal_source
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ncs_aha_sah_2023
+    source_section: Disposition
+    source_page: null
+    source_quote: Prompt evaluation, identification of aneurysmal source, and treatment of the ruptured aneurysm are recommended,
+      preferably within 24 hours.
+    next_nodes: []
+    conditional_next: {}
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 3
+  actionable_count: 3
+  validation_errors: 0
+  generated_at: '2026-04-29T17:09:09.823042+00:00'

@@ -1,0 +1,343 @@
+{
+  "traces": [
+    {
+      "id": "T01",
+      "description": "Single action 10min late (antibiotics in sepsis)",
+      "violation_type": "WITHIN-only",
+      "expected_tcc": "fail",
+      "expected_reason": "antibiotics at t=70 > deadline 60min",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "WITHIN: administer_antibiotics at t=70 > deadline 60"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T02",
+      "description": "Two actions late (tPA + antibiotics both past deadline)",
+      "violation_type": "WITHIN-only",
+      "expected_tcc": "fail",
+      "expected_reason": "both tPA (t=65) and antibiotics (t=80) exceed 60min deadline",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 2,
+      "tcc_violations": [
+        "WITHIN: administer_tpa at t=65 > deadline 60",
+        "WITHIN: administer_antibiotics at t=80 > deadline 60"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T03",
+      "description": "Single action 60min late (extreme delay, set intact)",
+      "violation_type": "WITHIN-only",
+      "expected_tcc": "fail",
+      "expected_reason": "antibiotics at t=120, 60min past deadline",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "WITHIN: administer_antibiotics at t=120 > deadline 60"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T04",
+      "description": "Single pair swapped (blood culture after antibiotics)",
+      "violation_type": "BEFORE-only",
+      "expected_tcc": "fail",
+      "expected_reason": "blood_culture at t=10 but antibiotics at t=5 (wrong order)",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "BEFORE: order_blood_culture (t=10) not before administer_antibiotics (t=5)"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T05",
+      "description": "Two pairs swapped",
+      "violation_type": "BEFORE-only",
+      "expected_tcc": "fail",
+      "expected_reason": "both ordering constraints violated",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 2,
+      "tcc_violations": [
+        "BEFORE: order_blood_culture (t=5) not before administer_antibiotics (t=0)",
+        "BEFORE: correct_potassium (t=15) not before start_insulin (t=10)"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T06",
+      "description": "Critical pair: tPA before CT completion",
+      "violation_type": "BEFORE-only",
+      "expected_tcc": "fail",
+      "expected_reason": "tPA at t=10 before CT results at t=35",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "BEFORE: obtain_ct_results (t=35) not before administer_tpa (t=10)"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T07",
+      "description": "Single contraindicated action (NSAID with AKI)",
+      "violation_type": "FORBIDDEN-only",
+      "expected_tcc": "fail",
+      "expected_reason": "NSAID administered despite AKI context (forbidden)",
+      "mab_verdict": "pass",
+      "mab_score": 0.757,
+      "mab_f1": 0.857,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "FORBIDDEN: administer_nsaids present"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T08",
+      "description": "Conditional FORBIDDEN (amoxicillin with penicillin allergy)",
+      "violation_type": "FORBIDDEN-only",
+      "expected_tcc": "fail",
+      "expected_reason": "amoxicillin given to penicillin-allergic patient",
+      "mab_verdict": "pass",
+      "mab_score": 0.567,
+      "mab_f1": 0.667,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "FORBIDDEN: administer_amoxicillin present"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T09",
+      "description": "Two contraindicated actions",
+      "violation_type": "FORBIDDEN-only",
+      "expected_tcc": "fail",
+      "expected_reason": "two contraindicated medications administered",
+      "mab_verdict": "fail",
+      "mab_score": 0.3,
+      "mab_f1": 0.5,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 2,
+      "tcc_violations": [
+        "FORBIDDEN: administer_nsaids present",
+        "FORBIDDEN: administer_nitroglycerin present"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T10",
+      "description": "Single required action missing",
+      "violation_type": "MUST-omit",
+      "expected_tcc": "fail",
+      "expected_reason": "required aspirin not administered",
+      "mab_verdict": "pass",
+      "mab_score": 0.8,
+      "mab_f1": 0.8,
+      "ac_verdict": "pass",
+      "ac_coverage": 0.667,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "MUST: administer_aspirin missing"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T11",
+      "description": "Two required actions missing",
+      "violation_type": "MUST-omit",
+      "expected_tcc": "fail",
+      "expected_reason": "both blood culture and antibiotics omitted",
+      "mab_verdict": "pass",
+      "mab_score": 0.5,
+      "mab_f1": 0.5,
+      "ac_verdict": "fail",
+      "ac_coverage": 0.333,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 2,
+      "tcc_violations": [
+        "MUST: order_blood_culture missing",
+        "MUST: administer_antibiotics missing"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T12",
+      "description": "Critical omission (antibiotics in sepsis)",
+      "violation_type": "MUST-omit",
+      "expected_tcc": "fail",
+      "expected_reason": "antibiotics omitted in sepsis protocol",
+      "mab_verdict": "pass",
+      "mab_score": 0.889,
+      "mab_f1": 0.889,
+      "ac_verdict": "pass",
+      "ac_coverage": 0.8,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 1,
+      "tcc_violations": [
+        "MUST: administer_antibiotics missing"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T13",
+      "description": "WITHIN + FORBIDDEN (late antibiotics + contraindicated med)",
+      "violation_type": "MIXED",
+      "expected_tcc": "fail",
+      "expected_reason": "timing violation + contraindicated medication",
+      "mab_verdict": "pass",
+      "mab_score": 0.757,
+      "mab_f1": 0.857,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 2,
+      "tcc_violations": [
+        "WITHIN: administer_antibiotics at t=70 > deadline 60",
+        "FORBIDDEN: administer_nsaids present"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T14",
+      "description": "BEFORE + MUST-omit (wrong order + missing action)",
+      "violation_type": "MIXED",
+      "expected_tcc": "fail",
+      "expected_reason": "ordering violation + omission",
+      "mab_verdict": "pass",
+      "mab_score": 0.8,
+      "mab_f1": 0.8,
+      "ac_verdict": "pass",
+      "ac_coverage": 0.667,
+      "tcc_verdict": "fail",
+      "tcc_n_violations": 2,
+      "tcc_violations": [
+        "BEFORE: order_blood_culture (t=5) not before administer_antibiotics (t=0)",
+        "MUST: start_iv_fluids missing"
+      ],
+      "tcc_correct": true
+    },
+    {
+      "id": "T15",
+      "description": "All constraints satisfied (clean trace)",
+      "violation_type": "CLEAN",
+      "expected_tcc": "pass",
+      "expected_reason": "all actions present, on time, correct order, no forbidden",
+      "mab_verdict": "pass",
+      "mab_score": 1.0,
+      "mab_f1": 1.0,
+      "ac_verdict": "pass",
+      "ac_coverage": 1.0,
+      "tcc_verdict": "pass",
+      "tcc_n_violations": 0,
+      "tcc_violations": [],
+      "tcc_correct": true
+    }
+  ],
+  "type_summary": {
+    "WITHIN-only": {
+      "count": 3,
+      "mab_detect": 0,
+      "mab_detect_pct": 0.0,
+      "ac_detect": 0,
+      "ac_detect_pct": 0.0,
+      "tcc_detect": 3,
+      "tcc_detect_pct": 100.0
+    },
+    "BEFORE-only": {
+      "count": 3,
+      "mab_detect": 0,
+      "mab_detect_pct": 0.0,
+      "ac_detect": 0,
+      "ac_detect_pct": 0.0,
+      "tcc_detect": 3,
+      "tcc_detect_pct": 100.0
+    },
+    "FORBIDDEN-only": {
+      "count": 3,
+      "mab_detect": 1,
+      "mab_detect_pct": 33.3,
+      "ac_detect": 0,
+      "ac_detect_pct": 0.0,
+      "tcc_detect": 3,
+      "tcc_detect_pct": 100.0
+    },
+    "MUST-omit": {
+      "count": 3,
+      "mab_detect": 0,
+      "mab_detect_pct": 0.0,
+      "ac_detect": 1,
+      "ac_detect_pct": 33.3,
+      "tcc_detect": 3,
+      "tcc_detect_pct": 100.0
+    },
+    "MIXED": {
+      "count": 2,
+      "mab_detect": 0,
+      "mab_detect_pct": 0.0,
+      "ac_detect": 0,
+      "ac_detect_pct": 0.0,
+      "tcc_detect": 2,
+      "tcc_detect_pct": 100.0
+    },
+    "CLEAN": {
+      "count": 1,
+      "mab_detect": 0,
+      "mab_detect_pct": 0.0,
+      "ac_detect": 0,
+      "ac_detect_pct": 0.0,
+      "tcc_detect": 0,
+      "tcc_detect_pct": 0.0
+    }
+  },
+  "overall": {
+    "total_traces": 15,
+    "expected_fail": 14,
+    "expected_pass": 1,
+    "mab_correct_detect": 1,
+    "ac_correct_detect": 1,
+    "tcc_correct_detect": 14,
+    "tcc_all_correct": true
+  }
+}

@@ -1,0 +1,146 @@
+# Self-Reflection (Reflexion-style) Agent Configuration
+# =====================================================
+# Reflexion: 에피소드 피드백을 언어로 반성하고 episodic memory로 개선
+#
+# 설계 원칙:
+# 1. 에피소드 실패/위반 시 언어적 반성 생성
+# 2. Episodic memory에 반성 저장
+# 3. 다음 시도에서 memory 참조하여 개선
+# 4. 재시도할수록 예산 소모 (Budget-matched)
+#
+# Reference: Shinn et al. "Reflexion: Language Agents with Verbal Reinforcement Learning"
+
+agent:
+  type: "reflection"
+  agent_id: "reflection_reflexion"
+
+  # ============================================================
+  # LLM 설정
+  # ============================================================
+  llm_backend: "vllm"
+  llm_model: "Qwen/Qwen2.5-72B-Instruct"
+  base_url: "http://localhost:8000/v1"
+  temperature: 0.1
+  use_llm: true
+
+  # ============================================================
+  # Reflexion 설정
+  # ============================================================
+  use_reflection: true
+  reflection_strategy: "reflexion"
+
+  # 반성 라운드 설정
+  max_reflection_rounds: 3      # 최대 재시도 횟수
+  min_improvement_threshold: 0.05  # 개선 없으면 중단
+
+  # 반성 트리거 조건
+  reflect_on_failure: true      # 에피소드 실패 시
+  reflect_on_violation: true    # CPG 위반 시
+  reflect_on_timeout: true      # 타임아웃 시
+  reflect_on_low_score: true    # 낮은 점수 시
+  low_score_threshold: 0.6      # 이 점수 이하면 반성
+
+  # ============================================================
+  # Episodic Memory 설정
+  # ============================================================
+  use_episodic_memory: true
+  memory_capacity: 10           # 최근 N개 에피소드 기억
+  memory_retrieval_strategy: "similarity"  # "recency" | "similarity" | "hybrid"
+
+  # Memory에 저장할 정보
+  memory_contents:
+    - "episode_summary"         # 에피소드 요약
+    - "violations"              # 발생한 위반
+    - "reflection"              # 반성 내용
+    - "successful_actions"      # 성공한 액션
+    - "failed_actions"          # 실패한 액션
+
+  # Memory 사용 방식
+  memory_injection_point: "system_prompt"  # "system_prompt" | "context" | "both"
+
+  # ============================================================
+  # 반성 생성 설정
+  # ============================================================
+  reflection_prompt_template: |
+    Reflect on the following episode:
+
+    Episode Summary: {episode_summary}
+    Final Score: {compliance_score}
+    Violations: {violations}
+    Actions Taken: {actions_taken}
+
+    Generate a reflection that:
+    1. Identifies what went wrong
+    2. Explains why it went wrong
+    3. Proposes specific improvements for the next attempt
+
+    Reflection:
+
+  # 반성 품질 검증
+  validate_reflection: true
+  min_reflection_length: 50
+  max_reflection_length: 500
+
+  # ============================================================
+  # 제약 검증 설정 (비판 1 대응)
+  # ============================================================
+  use_constraint_verification: true
+  constraint_source: "agent_rules"  # NOT cpg_engine
+
+  # ============================================================
+  # Budget 설정 (비판 3: Budget-matched)
+  # ============================================================
+  # 중요: 재시도할수록 예산 소모
+  budget_limit_tokens: 50000
+  budget_limit_tool_calls: 100
+
+  # 예산 분배 전략
+  budget_distribution: "adaptive"  # "equal" | "adaptive" | "front_loaded"
+  # adaptive: 초기 시도에 더 많은 예산, 후기 시도는 반성 기반으로 효율적 사용
+
+  # 예산 소모 추적
+  track_budget_per_round: true
+
+  # Best-of-N 샘플링 허용 (공정 비교)
+  allow_sampling: true
+  max_samples_per_decision: 3
+  sampling_strategy: "self_consistency"
+
+  # ============================================================
+  # 행동 설정
+  # ============================================================
+  max_actions_per_step: 3
+  use_planning: true            # Reflection은 planning 허용
+  planning_strategy: "guided"   # memory-guided planning
+
+  # ============================================================
+  # 시스템 프롬프트
+  # ============================================================
+  system_prompt: |
+    You are a clinical decision support agent with self-reflection capabilities.
+
+    You have access to episodic memory from previous attempts:
+    {episodic_memory}
+
+    Based on past reflections, avoid previous mistakes and apply learned improvements.
+
+    For the current patient:
+    {patient_state}
+
+    Make clinical decisions following CPG guidelines.
+    If you make a mistake, you will have the opportunity to reflect and improve.
+
+    Output your decision as a JSON array of actions:
+    [{"action_type": "...", "action_id": "...", "args": {...}}]
+
+  # ============================================================
+  # 독립성 검증 메타데이터
+  # ============================================================
+  independence_verification:
+    uses_cpg_engine: false
+    uses_assessor_core: false
+    uses_planning_module: true
+    uses_constraint_verification: true
+    constraint_source: "agent_rules"
+    decision_method: "reflexion_iterative"
+    uses_episodic_memory: true

@@ -1,0 +1,273 @@
+graph_id: nrp_neonatal_resuscitation_2020
+guideline_name: 2020 AHA/AAP Guidelines for Neonatal Resuscitation (NRP)
+version: '2020.1'
+metadata:
+  source: AHA/AAP Neonatal Resuscitation Program 2020
+  doi: 10.1161/CIR.0000000000000901
+  journal: Circulation
+  recommendation_system: AHA Class/Level
+  description: Evidence-based guideline for neonatal resuscitation including delayed cord clamping, PPV, chest compressions,
+    and epinephrine
+  key_evidence: Delayed cord clamping improves hemoglobin (MD +2.17 g/dL). Room air (21% O2) equivalent to 100% for term.
+    Compressions if HR <60 after 30s of PPV.
+  target_population:
+    age_group: neonatal
+    max_age: 0.08
+    min_age: 0
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Birth Assessment - APGAR Evaluation
+    description: Rapid assessment of term gestation, good tone, breathing/crying
+    precondition: null
+    mandatory_actions:
+    - assess_term_gestation
+    - assess_muscle_tone
+    - assess_breathing
+    allowed_actions:
+    - assess_term_gestation
+    - place_pulse_oximetry
+    - assess_color
+    - assess_breathing
+    - assess_muscle_tone
+    - assess_heart_rate
+    forbidden_actions: []
+    deadlines:
+      assess_term_gestation: 10
+      assess_breathing: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/AAP NRP 2020
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: 'Assessment should occur within first 10 seconds: term? good tone? breathing or crying?'
+    next_nodes: []
+    conditional_next:
+      state.vigorous == True: routine_care
+      state.vigorous == False: initial_steps
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.2
+  routine_care:
+    node_id: routine_care
+    node_type: plan
+    name: Routine Care for Vigorous Newborn
+    description: Delayed cord clamping, skin-to-skin, drying/warming
+    precondition: state.vigorous == True
+    mandatory_actions:
+    - delayed_cord_clamping_30_60sec
+    - place_skin_to_skin
+    - dry_and_warm
+    allowed_actions:
+    - assess_breathing
+    - dry_and_warm
+    - suction_if_needed
+    - delayed_cord_clamping_30_60sec
+    - place_skin_to_skin
+    - assess_heart_rate
+    forbidden_actions:
+    - routine_suctioning_clear_fluid
+    deadlines:
+      delayed_cord_clamping_30_60sec: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA/AAP NRP 2020
+    source_section: 'Recommendation 1: Delayed Cord Clamping'
+    source_page: null
+    source_quote: Delayed cord clamping for at least 30 seconds is recommended for vigorous term and preterm newborns (Class
+      I, Level A). Routine suctioning NOT recommended
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.143
+  initial_steps:
+    node_id: initial_steps
+    node_type: plan
+    name: Initial Steps - Warm, Dry, Stimulate
+    description: Immediate cord clamping if non-vigorous, position airway, dry, stimulate
+    precondition: state.vigorous == False
+    mandatory_actions:
+    - immediate_cord_clamping
+    - place_on_radiant_warmer
+    - position_airway
+    - dry_and_stimulate
+    - place_pulse_oximetry
+    allowed_actions:
+    - suction_if_copious_secretions
+    - place_pulse_oximetry
+    - assess_heart_rate
+    - assess_breathing
+    - place_on_radiant_warmer
+    - immediate_cord_clamping
+    - position_airway
+    - dry_and_stimulate
+    forbidden_actions:
+    - routine_suctioning_clear_fluid
+    - oxygen_100_percent_initial_term
+    deadlines:
+      immediate_cord_clamping: 10
+      dry_and_stimulate: 30
+      place_pulse_oximetry: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/AAP NRP 2020
+    source_section: 'Recommendation 2: Initial Steps'
+    source_page: null
+    source_quote: Initial steps (warm, dry, stimulate) should be completed within 30 seconds ('golden minute'). 100% O2 NOT
+      recommended as initial gas for term infants
+    next_nodes:
+    - positive_pressure_ventilation
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.2
+  positive_pressure_ventilation:
+    node_id: positive_pressure_ventilation
+    node_type: plan
+    name: Positive Pressure Ventilation
+    description: PPV if HR <100 or apnea despite stimulation
+    precondition: null
+    mandatory_actions:
+    - initiate_ppv_21_percent_o2_term
+    - monitor_heart_rate_response
+    allowed_actions:
+    - assess_chest_rise
+    - monitor_heart_rate_response
+    - consider_intubation
+    - place_orogastric_tube
+    - initiate_ppv_21_percent_o2_term
+    - reposition_airway_if_poor_rise
+    - adjust_fio2_based_on_spo2
+    - increase_pip_if_needed
+    forbidden_actions: []
+    deadlines:
+      initiate_ppv_21_percent_o2_term: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/AAP NRP 2020
+    source_section: 'Recommendation 3: PPV'
+    source_page: null
+    source_quote: PPV should be initiated if HR <100 bpm or apnea/gasping after initial steps. Start with 21% O2 for term,
+      21-30% for preterm
+    next_nodes: []
+    conditional_next:
+      state.heart_rate < 60: advanced_interventions
+      state.heart_rate >= 100: monitoring
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.333
+  advanced_interventions:
+    node_id: advanced_interventions
+    node_type: plan
+    name: Advanced Resuscitation - Chest Compressions & Epinephrine
+    description: If HR <60 despite adequate PPV for 30 seconds
+    precondition: state.heart_rate < 60
+    mandatory_actions:
+    - initiate_chest_compressions_3_to_1
+    - ensure_effective_ppv
+    - increase_fio2_to_100_percent
+    allowed_actions:
+    - ensure_effective_ppv
+    - place_umbilical_venous_catheter
+    - initiate_chest_compressions_3_to_1
+    - order_lab_blood_gas
+    - intubate_if_not_done
+    - give_epinephrine_0.01_0.03_mg_kg_iv
+    - increase_fio2_to_100_percent
+    - order_lab_glucose
+    - give_normal_saline_bolus_10ml_kg
+    forbidden_actions: []
+    deadlines:
+      initiate_chest_compressions_3_to_1: 90
+      increase_fio2_to_100_percent: 90
+    required_prior_actions:
+      give_epinephrine_0.01_0.03_mg_kg_iv:
+      - place_umbilical_venous_catheter
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: AHA/AAP NRP 2020
+    source_section: 'Recommendation 4-5: Chest Compressions & Medications'
+    source_page: null
+    source_quote: "Chest compressions are provided if there is a poor heart rate response to \nventilation after appropriate\
+      \ ventilation corrective steps, which preferably \ninclude endotracheal intubation."
+    next_nodes:
+    - post_resuscitation
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.5
+  post_resuscitation:
+    node_id: post_resuscitation
+    node_type: enquiry
+    name: Post-Resuscitation Care
+    description: Monitor for hypoglycemia, respiratory distress, HIE, therapeutic hypothermia consideration
+    precondition: null
+    mandatory_actions:
+    - monitor_heart_rate_spo2
+    - assess_glucose
+    - assess_hie_criteria
+    allowed_actions:
+    - consider_therapeutic_hypothermia
+    - nicu_admission
+    - assess_hie_criteria
+    - order_lab_blood_gas
+    - order_lab_lactate
+    - assess_glucose
+    - monitor_heart_rate_spo2
+    forbidden_actions: []
+    deadlines:
+      assess_glucose: 60
+      assess_hie_criteria: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/AAP NRP 2020
+    source_section: Post-Resuscitation Care
+    source_page: null
+    source_quote: Monitor glucose, consider therapeutic hypothermia if HIE criteria met (moderate-severe encephalopathy within
+      6 hours)
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.077
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Ongoing Monitoring
+    description: Continue monitoring vitals, respiratory status, glucose, temperature
+    precondition: null
+    mandatory_actions:
+    - monitor_vital_signs
+    - monitor_respiratory_status
+    allowed_actions:
+    - maintain_normothermia
+    - monitor_vital_signs
+    - monitor_respiratory_status
+    - assess_glucose
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/AAP NRP 2020
+    source_section: Monitoring
+    source_page: null
+    source_quote: Continuous monitoring of HR, SpO2, respiratory effort, temperature
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.167

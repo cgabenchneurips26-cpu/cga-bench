@@ -1,0 +1,57 @@
+{
+  "blindness_table": [
+    {
+      "violation_type": "WITHIN (timing)",
+      "terminal_output": "Blind",
+      "terminal_evidence": "Prop.~1 (structural)",
+      "set_based": "Blind",
+      "set_evidence": "BSR = 10.6% (all baselines identical)",
+      "cga_bench": "Detects"
+    },
+    {
+      "violation_type": "BEFORE (sequence)",
+      "terminal_output": "Blind",
+      "terminal_evidence": "Prop.~1 (structural)",
+      "set_based": "Blind",
+      "set_evidence": "BSR = 16.7% (all baselines identical)",
+      "cga_bench": "Detects"
+    },
+    {
+      "violation_type": "FORBIDDEN",
+      "terminal_output": "Blind",
+      "terminal_evidence": "Prop.~1 (structural)",
+      "set_based": "Detects",
+      "set_evidence": "BSR = 0.0% (Jaccard detects via set)",
+      "cga_bench": "Detects"
+    },
+    {
+      "violation_type": "OMISSION",
+      "terminal_output": "Blind",
+      "terminal_evidence": "Prop.~1 (structural)",
+      "set_based": "Partially",
+      "set_evidence": "BSR = 18.2%\u201340.9% (varies by baseline)",
+      "cga_bench": "Detects"
+    },
+    {
+      "violation_type": "OVERUSE",
+      "terminal_output": "Blind",
+      "terminal_evidence": "Prop.~1 (structural)",
+      "set_based": "Partially",
+      "set_evidence": "BSR = 0.0%\u20135.0% (Jaccard vs C2)",
+      "cga_bench": "Detects"
+    }
+  ],
+  "footnote": "* Terminal-output baseline not directly tested (no diagnosis field in episode data). Proposition 1 provides a theoretical guarantee: perturbations P1\u2013P5 preserve the terminal state by construction, so any terminal-output metric is structurally blind to all five violation types. This is stronger than empirical verification.",
+  "insight": "The blindness structure has exactly two levels: (1) terminal-output metrics are blind to ALL five violation types (structural guarantee), and (2) set-based metrics additionally detect forbidden/omission/overuse but remain blind to timing and sequence. CGA-Bench's process-aware evaluation is the only approach that detects all five types.",
+  "paragraph": "Table~\\ref{tab:blindness} summarises the two-level blindness structure. Terminal-output metrics are blind to all five violation types by Proposition~1 (perturbations preserve the terminal state). Set-based metrics detect forbidden violations (BSR=0.0%) but remain blind to timing (BSR=10.6%) and sequence (BSR=16.7%) perturbations, since reordering or delaying actions does not alter the action \\emph{set}. Only process-aware evaluation (CGA-Bench) detects all five types.",
+  "latex_table": "\\begin{table}[t]\n\\centering\n\\caption{Two-level blindness. Terminal-output metrics are blind to all violation types (Proposition~1). Set-based metrics detect forbidden/omission but remain blind to timing and sequence. CGA-Bench detects all five types.}\n\\label{tab:blindness}\n\\small\n\\begin{tabular}{lccc}\n\\toprule\n\\textbf{Violation Type} & \\textbf{Terminal-Output$^\\ast$} & \\textbf{Set-Based} & \\textbf{CGA-Bench} \\\\\n\\midrule\n  WITHIN (timing) & \\xmark & \\xmark\\,(BSR=11%) & \\cmark \\\\\n  BEFORE (sequence) & \\xmark & \\xmark\\,(BSR=17%) & \\cmark \\\\\n  FORBIDDEN & \\xmark & \\cmark\\,(BSR=0%) & \\cmark \\\\\n  OMISSION & \\xmark & $\\sim$ & \\cmark \\\\\n  OVERUSE & \\xmark & $\\sim$ & \\cmark \\\\\n\\bottomrule\n\\multicolumn{4}{l}{\\scriptsize $^\\ast$ Not directly tested; Prop.~1 provides structural guarantee.} \\\\\n\\end{tabular}\n\\end{table}",
+  "bsr_values": {
+    "P1": 0.1056,
+    "P2": 0.1667,
+    "P3_jaccard": 0.1824,
+    "P3_c2": 0.4088,
+    "P4": 0.0,
+    "P5_jaccard": 0.0,
+    "P5_c2": 0.05
+  }
+}

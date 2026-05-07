@@ -1,0 +1,117 @@
+graph_id: eucast_antimicrobial_susceptibility_2024
+guideline_name: EUCAST Antimicrobial Susceptibility Testing Guidance 2024
+version: '2024.1'
+metadata:
+  source: EUCAST Antimicrobial Susceptibility Testing Guidance 2024
+  doi: 10.1016/j.cmi.2024.02.010
+  journal: Clinical Microbiology and Infection
+  recommendation_system: EUCAST
+  description: Antimicrobial susceptibility testing standards.
+  key_evidence: EUCAST breakpoints standardize AST interpretation across Europe.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Specimen Collection and Organism Identification
+    description: Obtain appropriate cultures, perform species identification before AST.
+    precondition: null
+    mandatory_actions:
+    - collect_culture_specimen_before_antibiotics
+    - perform_gram_stain
+    - perform_organism_identification
+    allowed_actions:
+    - order_lab_urine_culture_if_uti
+    - order_lab_respiratory_culture_if_pneumonia
+    - perform_gram_stain
+    - perform_maldi_tof_identification
+    - collect_culture_specimen_before_antibiotics
+    - perform_organism_identification
+    - order_lab_blood_culture
+    forbidden_actions: []
+    deadlines:
+      collect_culture_specimen_before_antibiotics: 60
+      perform_gram_stain: 120
+      perform_organism_identification: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EUCAST Antimicrobial Susceptibility Testing Guidance 2024
+    source_section: Specimen and Identification
+    source_page: null
+    source_quote: Accurate species identification is a prerequisite for interpretation of AST results.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: AST Method Selection and Reporting
+    description: Choose disk diffusion or MIC per EUCAST breakpoints; apply expert rules.
+    precondition: null
+    mandatory_actions:
+    - perform_ast_eucast_method
+    - apply_eucast_breakpoints
+    - report_susceptibility_categories
+    allowed_actions:
+    - perform_disk_diffusion
+    - perform_ast_eucast_method
+    - flag_resistance_mechanisms_esbl_cre
+    - report_susceptibility_categories
+    - apply_eucast_breakpoints
+    - apply_eucast_expert_rules
+    - perform_mic_broth_microdilution
+    - communicate_critical_resistance_to_clinician
+    forbidden_actions:
+    - report_ast_without_quality_control
+    - apply_obsolete_breakpoints
+    deadlines:
+      perform_ast_eucast_method: 2880
+      report_susceptibility_categories: 4320
+    required_prior_actions:
+      perform_ast_eucast_method:
+      - perform_organism_identification
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: EUCAST Antimicrobial Susceptibility Testing Guidance 2024
+    source_section: AST Methodology
+    source_page: null
+    source_quote: AST must be performed using methods validated against current EUCAST breakpoints.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Antibiotic Stewardship and Review
+    description: De-escalate based on AST, monitor resistance emergence, update hospital antibiogram.
+    precondition: null
+    mandatory_actions:
+    - review_empiric_antibiotics_against_ast
+    - de_escalate_antibiotics_if_susceptible
+    allowed_actions:
+    - consult_infectious_diseases_if_multi_resistant
+    - de_escalate_antibiotics_if_susceptible
+    - monitor_resistance_trends
+    - repeat_culture_if_treatment_failure
+    - review_empiric_antibiotics_against_ast
+    - update_hospital_antibiogram
+    forbidden_actions: []
+    deadlines:
+      review_empiric_antibiotics_against_ast: 4320
+      de_escalate_antibiotics_if_susceptible: 5760
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EUCAST Antimicrobial Susceptibility Testing Guidance 2024
+    source_section: Stewardship
+    source_page: null
+    source_quote: AST results should guide targeted therapy and de-escalation within 72 hours.
+    next_nodes: []
+    conditional_next: {}

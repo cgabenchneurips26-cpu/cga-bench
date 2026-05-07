@@ -1,0 +1,270 @@
+graph_id: ats_esicm_sccm_ards_2023
+guideline_name: ESICM Guidelines on Acute Respiratory Distress Syndrome (2023)
+version: '2023.1'
+metadata:
+  source: ATS/ESICM/SCCM ARDS Clinical Practice Guideline 2023
+  doi: 10.1007/s00134-023-07050-7
+  journal: Intensive Care Medicine
+  recommendation_system: GRADE
+  description: Evidence-based guideline for ARDS management including lung-protective ventilation, prone positioning, and
+    adjunctive therapies
+  key_evidence: Low tidal volume (6 mL/kg PBW) reduces mortality by 22% vs 12 mL/kg (ARDSNet ARMA trial). Prone positioning
+    >12h reduces 28-day mortality (PROSEVA trial, RR 0.51).
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: ARDS Recognition & Severity Classification
+    description: Identify ARDS per Berlin Definition, classify severity by PaO2/FiO2 ratio
+    precondition: null
+    mandatory_actions:
+    - assess_respiratory_status
+    - order_lab_abg
+    - order_imaging_chest_xray
+    allowed_actions:
+    - order_imaging_ct_chest
+    - order_lab_bnp
+    - order_lab_cbc
+    - assess_vital_signs
+    - assess_respiratory_status
+    - order_lab_bmp
+    - order_imaging_chest_xray
+    - order_lab_abg
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - order_lab_procalcitonin
+    forbidden_actions: []
+    deadlines:
+      assess_respiratory_status: 15
+      order_lab_abg: 30
+      order_imaging_chest_xray: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ATS/ESICM/SCCM ARDS 2023
+    source_section: Berlin Definition / Initial Evaluation
+    source_page: "743"
+    source_quote: We recommend starting prone position in patients with ARDS receiving invasive mechanical ventilation early
+      after intubation, after a period of stabilization during which low tidal volume is applied and PEEP adjusted and at
+      the end of which the ­PaO2/FiO2 remains < 150 mmHg; and proning should be app
+    next_nodes: []
+    conditional_next:
+      state.pf_ratio <= 100: severe_ards_bundle
+      state.pf_ratio <= 200: moderate_ards_bundle
+      state.pf_ratio <= 300: mild_ards_bundle
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.417
+  mild_ards_bundle:
+    node_id: mild_ards_bundle
+    node_type: plan
+    name: Mild ARDS Management (PaO2/FiO2 200-300)
+    description: Low tidal volume ventilation, conservative fluid strategy
+    precondition: state.pf_ratio > 200 and state.pf_ratio <= 300
+    mandatory_actions:
+    - initiate_low_tv_ventilation
+    - set_tidal_volume_6ml_kg_ibw
+    - set_peep_5_to_8
+    - target_plateau_pressure_below_30
+    allowed_actions:
+    - target_plateau_pressure_below_30
+    - initiate_low_tv_ventilation
+    - order_lab_cbc
+    - reassess_pf_ratio
+    - set_tidal_volume_6ml_kg_ibw
+    - order_lab_bmp
+    - order_lab_abg
+    - set_peep_5_to_8
+    - treat_underlying_cause
+    - conservative_fluid_strategy
+    forbidden_actions:
+    - set_tidal_volume_above_8ml_kg
+    deadlines:
+      initiate_low_tv_ventilation: 60
+      set_tidal_volume_6ml_kg_ibw: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ATS/ESICM/SCCM ARDS 2023
+    source_section: 'Recommendation 1: Mechanical Ventilation'
+    source_page: "737"
+    source_quote: We recommend the use of low tidal volume ventilation strategies (i.e., 4–8 ml/kg PBW), compared to larger
+      tidal volumes (traditionally used to normalize blood gases), to reduce mortality in patients with ARDS not due to COVID-19.
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.571
+  moderate_ards_bundle:
+    node_id: moderate_ards_bundle
+    node_type: plan
+    name: Moderate ARDS Management (PaO2/FiO2 100-200)
+    description: Low TV ventilation + higher PEEP + prone positioning consideration
+    precondition: state.pf_ratio > 100 and state.pf_ratio <= 200
+    mandatory_actions:
+    - initiate_low_tv_ventilation
+    - set_tidal_volume_6ml_kg_ibw
+    - set_peep_10_to_14
+    - target_plateau_pressure_below_30
+    - consider_prone_positioning
+    allowed_actions:
+    - set_peep_10_to_14
+    - order_lab_cbc
+    - order_lab_abg
+    - place_arterial_line
+    - conservative_fluid_strategy
+    - target_plateau_pressure_below_30
+    - initiate_low_tv_ventilation
+    - reassess_pf_ratio
+    - set_tidal_volume_6ml_kg_ibw
+    - initiate_prone_positioning_16hr
+    - order_lab_bmp
+    - consider_prone_positioning
+    - order_lab_lactate
+    - treat_underlying_cause
+    forbidden_actions:
+    - set_tidal_volume_above_8ml_kg
+    - liberal_fluid_strategy
+    deadlines:
+      initiate_low_tv_ventilation: 60
+      set_tidal_volume_6ml_kg_ibw: 60
+      consider_prone_positioning: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ATS/ESICM/SCCM ARDS 2023
+    source_section: 'Recommendation 2-4: Higher PEEP, Prone Positioning'
+    source_page: "728"
+    source_quote: Ventilation in the prone position improves outcomes in patients with moderate-to-severe ARDS [9, 10].
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.417
+  severe_ards_bundle:
+    node_id: severe_ards_bundle
+    node_type: plan
+    name: Severe ARDS Management (PaO2/FiO2 ≤100)
+    description: Low TV + high PEEP + mandatory prone positioning + consider ECMO/NMBA
+    precondition: state.pf_ratio <= 100
+    mandatory_actions:
+    - initiate_low_tv_ventilation
+    - set_tidal_volume_6ml_kg_ibw
+    - set_peep_14_or_higher
+    - target_plateau_pressure_below_30
+    - initiate_prone_positioning_16hr
+    allowed_actions:
+    - place_central_line
+    - order_lab_abg
+    - place_arterial_line
+    - conservative_fluid_strategy
+    - consider_ecmo_referral
+    - target_plateau_pressure_below_30
+    - initiate_low_tv_ventilation
+    - give_neuromuscular_blockade
+    - reassess_pf_ratio
+    - set_tidal_volume_6ml_kg_ibw
+    - initiate_prone_positioning_16hr
+    - order_lab_lactate
+    - set_peep_14_or_higher
+    - treat_underlying_cause
+    forbidden_actions:
+    - set_tidal_volume_above_8ml_kg
+    - liberal_fluid_strategy
+    deadlines:
+      initiate_low_tv_ventilation: 30
+      set_tidal_volume_6ml_kg_ibw: 30
+      initiate_prone_positioning_16hr: 60
+    required_prior_actions:
+      give_neuromuscular_blockade:
+      - initiate_low_tv_ventilation
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ATS/ESICM/SCCM ARDS 2023
+    source_section: 'Recommendation 2-6: Severe ARDS Bundle'
+    source_page: "743"
+    source_quote: We recommend starting prone position in patients with ARDS receiving invasive mechanical ventilation early
+      after intubation, after a period of stabilization during which low tidal volume is applied and PEEP adjusted and at
+      the end of which the ­PaO2/FiO2 remains < 150 mmHg; and proning should be app
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.412
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Monitoring & Reassessment
+    description: Serial ABG, plateau pressure monitoring, reassess severity classification
+    precondition: null
+    mandatory_actions:
+    - reassess_pf_ratio
+    - monitor_plateau_pressure
+    allowed_actions:
+    - monitor_plateau_pressure
+    - reassess_pf_ratio
+    - monitor_driving_pressure
+    - assess_respiratory_status
+    - order_lab_abg
+    - monitor_sedation_level
+    - assess_fluid_balance
+    forbidden_actions: []
+    deadlines:
+      reassess_pf_ratio: 360
+      monitor_plateau_pressure: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ATS/ESICM/SCCM ARDS 2023
+    source_section: Monitoring
+    source_page: null
+    source_quote: Serial assessment of oxygenation, ventilator parameters, and organ function
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.286
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Liberation
+    description: Assess readiness for ventilator weaning, SBT, and ICU transfer
+    precondition: null
+    mandatory_actions:
+    - assess_weaning_readiness
+    allowed_actions:
+    - extubate
+    - reduce_peep
+    - reduce_fio2
+    - assess_weaning_readiness
+    - continue_monitoring
+    - perform_sbt
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ATS/ESICM/SCCM ARDS 2023
+    source_section: Liberation from Mechanical Ventilation
+    source_page: null
+    source_quote: Daily screening for weaning readiness; SBT when clinically appropriate
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.125

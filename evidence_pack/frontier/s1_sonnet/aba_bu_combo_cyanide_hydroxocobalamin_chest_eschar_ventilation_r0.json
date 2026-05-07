@@ -1,0 +1,510 @@
+{
+  "scenario_id": "aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.33333333333333337,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.4099999999999999,
+  "total_violations": 16,
+  "sub_scores": {
+    "C1_path_selection": 0.7916666666666666,
+    "C2_mandatory_completion": 0.4375,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 0.875,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 2,
+    "deviation": 5,
+    "omission": 9
+  },
+  "actions_count": 24,
+  "actions": [
+    {
+      "action_id": "assess_airway",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory first step in burn assessment \u2014 airway compromise from inhalation injury or facial/neck burns can be life-threatening and must be identified immediately."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 5.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory baseline vital signs assessment to establish hemodynamic status and guide resuscitation decisions."
+    },
+    {
+      "action_id": "assess_burn_depth",
+      "timestamp_minutes": 10.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory assessment to classify burn severity (superficial, partial thickness, full thickness) which determines treatment plan and resuscitation needs."
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 15.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action: IV access is essential for fluid resuscitation in burn patients. Must be completed within the 60-minute deadline."
+    },
+    {
+      "action_id": "estimate_tbsa",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action: Estimating total body surface area (TBSA) burned is critical for calculating fluid resuscitation requirements using the Parkland formula."
+    },
+    {
+      "action_id": "obtain_patient_weight",
+      "timestamp_minutes": 25.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action: Patient weight is required for accurate Parkland formula fluid resuscitation calculation (4 mL/kg/% TBSA)."
+    },
+    {
+      "action_id": "calculate_parkland_formula",
+      "timestamp_minutes": 30.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory: Calculate 24-hour fluid resuscitation volume using Parkland formula (4 mL \u00d7 kg \u00d7 %TBSA) now that weight and TBSA are known. Half given in first 8 hours, half in next 16 hours."
+    },
+    {
+      "action_id": "place_foley_catheter",
+      "timestamp_minutes": 35.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory: Insert Foley catheter to allow accurate hourly urine output monitoring, which is the primary endpoint for guiding fluid resuscitation in burn patients."
+    },
+    {
+      "action_id": "start_lactated_ringers",
+      "timestamp_minutes": 40.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Mandatory: Initiate Lactated Ringer's solution per burn resuscitation protocol \u2014 LR is the preferred crystalloid for burn fluid resuscitation as it most closely resembles physiologic fluid."
+    },
+    {
+      "action_id": "monitor_urine_output_target_0_5_ml_kg_h",
+      "timestamp_minutes": 45.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY: With Foley catheter in place, urine output must be monitored continuously targeting 0.5 mL/kg/h to guide Parkland formula fluid resuscitation adequacy in burn patients."
+    },
+    {
+      "action_id": "titrate_fluids_to_urine_output",
+      "timestamp_minutes": 50.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "fluid",
+        "dose": "standard"
+      },
+      "justification": "MANDATORY: Fluid rate should be titrated based on urine output response - increase if output <0.5 mL/kg/h, decrease if >1 mL/kg/h, per standard burn resuscitation protocol."
+    },
+    {
+      "action_id": "assess_inhalation_injury_signs",
+      "timestamp_minutes": 55.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Inhalation injury must be assessed in burn patients as it significantly affects prognosis and may require early intubation; signs include singed nasal hairs, carbonaceous sputum, hoarseness, and facial burns."
+    },
+    {
+      "action_id": "give_100_percent_oxygen",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Burn patients with potential inhalation injury should receive high-flow 100% oxygen via non-rebreather mask to address possible carbon monoxide exposure and airway compromise, even if SpO2 appears normal (pulse oximetry cannot distinguish carboxyhemoglobin)."
+    },
+    {
+      "action_id": "assess_burn_center_referral_criteria",
+      "timestamp_minutes": 65.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Following initial stabilization and TBSA estimation, assess whether this patient meets American Burn Association criteria for transfer to a burn center (e.g., >10% TBSA, full-thickness burns, face/hands/genitalia involvement, inhalation injury)."
+    },
+    {
+      "action_id": "cover_with_clean_dry_dressing",
+      "timestamp_minutes": 70.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Burn wounds should be covered with clean dry dressings to prevent contamination, reduce fluid/heat loss, and minimize pain while awaiting definitive wound care."
+    },
+    {
+      "action_id": "consult_burn_center",
+      "timestamp_minutes": 75.0,
+      "type": "consult",
+      "args": {},
+      "justification": "Burn center consultation is indicated to guide ongoing management, determine transfer criteria, and ensure appropriate specialist involvement for this burn patient."
+    },
+    {
+      "action_id": "assess_compartment_pressures",
+      "timestamp_minutes": 80.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Following fluid resuscitation with Parkland formula, compartment syndrome is a risk in burn patients, especially with circumferential or deep burns. Assess compartment pressures to detect early signs."
+    },
+    {
+      "action_id": "assess_distal_pulses",
+      "timestamp_minutes": 85.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Assess distal pulses to evaluate for vascular compromise secondary to burn eschar or edema, which may indicate need for escharotomy."
+    },
+    {
+      "action_id": "monitor_airway_patency",
+      "timestamp_minutes": 90.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Ongoing airway monitoring is critical in burn patients, especially given that inhalation injury assessment has been completed \u2014 airway edema can progress and cause obstruction even if initially patent."
+    },
+    {
+      "action_id": "monitor_glucose_q4h",
+      "timestamp_minutes": 95.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Serial glucose monitoring is indicated in burn patients due to the metabolic stress response and risk of hyperglycemia or hypoglycemia, particularly if dextrose-containing fluids are used."
+    },
+    {
+      "action_id": "give_iv_morphine",
+      "timestamp_minutes": 100.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Pain management is a key component of burn care. IV morphine is appropriate for moderate-to-severe burn pain in a hemodynamically stable patient (BP 120/80, HR 80)."
+    },
+    {
+      "action_id": "order_carboxyhemoglobin",
+      "timestamp_minutes": 105.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Carboxyhemoglobin level is critical in burn patients to assess for carbon monoxide poisoning, especially since inhalation injury was assessed and 100% oxygen has already been administered. This guides further management."
+    },
+    {
+      "action_id": "order_chest_xray",
+      "timestamp_minutes": 110.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "xray"
+      },
+      "justification": "Baseline chest X-ray is indicated in burn patients with potential inhalation injury to assess for pulmonary infiltrates, airway compromise, or other thoracic injuries."
+    },
+    {
+      "action_id": "bronchoscopy_if_suspected",
+      "timestamp_minutes": 115.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "If inhalation injury is suspected based on clinical assessment, bronchoscopy can confirm airway injury and guide airway management decisions in burn patients."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "bfe466a5-7f8d-410e-bd33-cb115431a7b5",
+      "violation_type": "timing",
+      "timestamp_minutes": 20.0,
+      "action_involved": "estimate_tbsa",
+      "expected_action": null,
+      "expected_deadline": 15.0,
+      "actual_time": 20.0,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "burn_initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action estimate_tbsa performed 5 min after deadline",
+      "guideline_reference": "Burn Initial Assessment"
+    },
+    {
+      "violation_id": "feb02dad-0626-47bc-bad6-78fa4fccd900",
+      "violation_type": "timing",
+      "timestamp_minutes": 40.0,
+      "action_involved": "start_lactated_ringers",
+      "expected_action": null,
+      "expected_deadline": 30.0,
+      "actual_time": 40.0,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action start_lactated_ringers performed 10 min after deadline",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "42a52390-5333-4639-a414-e4556095affe",
+      "violation_type": "deviation",
+      "timestamp_minutes": 45.0,
+      "action_involved": "monitor_urine_output",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: monitor_urine_output",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "ae6fe1b1-0e1e-4207-929f-dd9091a03dbb",
+      "violation_type": "deviation",
+      "timestamp_minutes": 75.0,
+      "action_involved": "request_consultation",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: request_consultation",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "e946e128-7973-4ebd-b861-896edec991ed",
+      "violation_type": "deviation",
+      "timestamp_minutes": 105.0,
+      "action_involved": "order_lab_carboxyhemoglobin",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: order_lab_carboxyhemoglobin",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "fcca0caf-583d-48df-bf07-6ca84f904d21",
+      "violation_type": "deviation",
+      "timestamp_minutes": 110.0,
+      "action_involved": "order_imaging_chest_xray",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: order_imaging_chest_xray",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "f510703e-c484-4857-a57e-348055d6c3e6",
+      "violation_type": "deviation",
+      "timestamp_minutes": 115.0,
+      "action_involved": "order_imaging_ct",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: order_imaging_ct",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "98b9efe7-1f03-4ac0-9446-871693396536",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "arrange_transfer_if_indicated",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: arrange_transfer_if_indicated",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "fe0edc57-b8d7-44f4-a633-69def4435108",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "assess_vital_signs",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: assess_vital_signs",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "3fc18752-2ac4-44bc-8db2-a108087babad",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "give_hydroxocobalamin",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_hydroxocobalamin",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "6082d834-3c28-402a-8ce2-1e6f16cdb770",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "monitor_ventilation_pressures",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: monitor_ventilation_pressures",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "25a0ab1b-0dba-43dc-b45b-0467a7456a20",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "order_cyanide_level",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_cyanide_level",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "d4d81cd4-b24c-4410-8581-26c792ec4c71",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "pain_management",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: pain_management",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "24412b1b-ecee-4dda-892e-c45b6591630c",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "perform_chest_escharotomy",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: perform_chest_escharotomy",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "02278fd1-f0c1-471e-b5b3-c7259a954557",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "remove_clothing_jewelry",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: remove_clothing_jewelry",
+      "guideline_reference": "Fluid Resuscitation"
+    },
+    {
+      "violation_id": "96807fc0-536e-4282-bf64-a82307092d7f",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "update_tetanus_if_needed",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aba_bu_combo_cyanide_hydroxocobalamin_chest_eschar_ventilation",
+      "node_at_violation": "fluid_resuscitation",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: update_tetanus_if_needed",
+      "guideline_reference": "Fluid Resuscitation"
+    }
+  ],
+  "expected_actions": [
+    "arrange_transfer_if_indicated",
+    "assess_airway",
+    "assess_burn_center_referral_criteria",
+    "assess_burn_depth",
+    "assess_vital_signs",
+    "cover_with_clean_dry_dressing",
+    "establish_iv_access",
+    "estimate_tbsa",
+    "give_hydroxocobalamin",
+    "monitor_ventilation_pressures",
+    "obtain_patient_weight",
+    "order_cyanide_level",
+    "pain_management",
+    "perform_chest_escharotomy",
+    "remove_clothing_jewelry",
+    "update_tetanus_if_needed"
+  ],
+  "forbidden_actions": [
+    "apply_butter_to_burn",
+    "apply_ice_to_burn",
+    "apply_topical_antibiotic_before_transfer",
+    "debride_in_field",
+    "delay_cyanide_antidote_for_level",
+    "delay_escharotomy_for_imaging",
+    "delay_intubation_for_imaging",
+    "discharge_major_burn_home",
+    "give_colloid_in_first_24h",
+    "give_sodium_nitrite_in_cyanide_burn",
+    "increase_ventilator_pressure_without_escharotomy",
+    "use_normal_saline_only"
+  ],
+  "total_duration_minutes": 120.0,
+  "termination_reason": "timeout",
+  "total_llm_calls": 8,
+  "total_tokens": 18434,
+  "elapsed_seconds": 191.89
+}

@@ -1,0 +1,108 @@
+graph_id: acs_pancreatic_cancer_2021
+guideline_name: ACS Pancreatic Cancer 2021
+version: '2021.1'
+metadata:
+  source: ACS Pancreatic Cancer 2021
+  doi: 10.3322/caac.21693
+  journal: 'CA: A Cancer Journal for Clinicians'
+  recommendation_system: ACS evidence-based
+  description: Pancreatic adenocarcinoma staging, treatment, and surveillance.
+  key_evidence: PRODIGE and CONKO trials establish adjuvant FOLFIRINOX benefit.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Pancreatic Cancer Staging Workup
+    description: Cross-sectional imaging and biomarker workup to stage pancreatic adenocarcinoma.
+    precondition: null
+    mandatory_actions:
+    - order_staging_ct_pancreas_protocol
+    - order_lab_ca19_9
+    - order_lab_lft
+    allowed_actions:
+    - order_lab_cbc
+    - order_lab_lft
+    - order_staging_ct_pancreas_protocol
+    - consult_hepatobiliary_surgery
+    - order_staging_mri_abdomen
+    - order_staging_eus_fna
+    - order_lab_ca19_9
+    - consult_oncology
+    forbidden_actions: []
+    deadlines:
+      order_staging_ct_pancreas_protocol: 4320
+      order_lab_ca19_9: 2880
+      order_lab_lft: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACS Pancreatic Cancer 2021
+    source_section: Diagnosis and staging
+    source_page: null
+    source_quote: Pancreas-protocol CT is the preferred initial staging modality.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Resection vs Neoadjuvant Therapy
+    description: Decide between upfront resection (resectable), neoadjuvant (borderline), or palliative chemo (metastatic).
+    precondition: null
+    mandatory_actions:
+    - discuss_tumor_board
+    - plan_chemotherapy
+    allowed_actions:
+    - consult_palliative_care
+    - plan_chemotherapy
+    - plan_resection_if_operable
+    - plan_biliary_stent_if_obstructed
+    - plan_palliative_gemcitabine_nabpaclitaxel
+    - discuss_tumor_board
+    - consult_radiation_oncology
+    - plan_neoadjuvant_folfirinox
+    forbidden_actions:
+    - plan_resection_if_metastatic
+    deadlines:
+      discuss_tumor_board: 10080
+      plan_chemotherapy: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ACS Pancreatic Cancer 2021
+    source_section: Treatment selection
+    source_page: null
+    source_quote: Multidisciplinary tumor board review is recommended for all pancreatic cancer cases.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Surveillance and Supportive Care
+    description: Serial CA 19-9, imaging follow-up, symptom management, and nutritional support.
+    precondition: null
+    mandatory_actions:
+    - plan_surveillance_imaging
+    - monitor_ca19_9_trend
+    allowed_actions:
+    - refer_nutrition
+    - monitor_ca19_9_trend
+    - manage_cancer_pain
+    - assess_thromboembolism_risk
+    - manage_exocrine_insufficiency
+    - plan_surveillance_imaging
+    forbidden_actions: []
+    deadlines:
+      plan_surveillance_imaging: 10080
+      monitor_ca19_9_trend: 4320
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: ACS Pancreatic Cancer 2021
+    source_section: Follow-up
+    source_page: null
+    source_quote: Serial CA 19-9 and imaging inform recurrence detection.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,114 @@
+graph_id: acc_aha_valvular_heart_disease_2020
+guideline_name: ACC/AHA VHD 2020
+version: '2020.1'
+metadata:
+  source: ACC/AHA VHD 2020
+  doi: 10.1161/CIR.0000000000000923
+  journal: Circulation
+  recommendation_system: ACC/AHA Class/Level
+  description: Valvular heart disease diagnosis, staging, and intervention.
+  key_evidence: PARTNER and SURTAVI trials establish TAVR equivalence to SAVR.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: VHD Severity Assessment
+    description: Characterise lesion type (AS/AR/MS/MR), stage (A-D), and symptomatic status.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_imaging_echocardiogram_tte
+    - order_lab_bnp
+    allowed_actions:
+    - order_ecg
+    - order_lab_troponin
+    - assess_vital_signs
+    - order_imaging_echocardiogram_tte
+    - assess_nyha_class
+    - order_lab_bnp
+    - order_imaging_echocardiogram_tee
+    - order_imaging_cardiac_mri
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 15
+      order_imaging_echocardiogram_tte: 1440
+      order_lab_bnp: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ACC/AHA VHD 2020
+    source_section: Stage A-D framework
+    source_page: null
+    source_quote: All patients suspected of VHD should have transthoracic echocardiography.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Intervention Decision
+    description: Stage D severe VHD with symptoms warrants AVR/TAVR, MV repair, or MV replacement per Heart Team.
+    precondition: null
+    mandatory_actions:
+    - consult_cardiothoracic_surgery
+    - discuss_heart_team_evaluation
+    allowed_actions:
+    - plan_savr_if_low_risk
+    - plan_mv_repair_preferred_over_replacement
+    - consult_cardiothoracic_surgery
+    - discuss_heart_team_evaluation
+    - initiate_guideline_heart_failure_therapy
+    - order_coronary_angiography
+    - consult_interventional_cardiology
+    - plan_tavr_if_high_risk
+    forbidden_actions:
+    - defer_intervention_in_symptomatic_severe_as
+    deadlines:
+      consult_cardiothoracic_surgery: 2880
+      discuss_heart_team_evaluation: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACC/AHA VHD 2020
+    source_section: Intervention thresholds
+    source_page: null
+    source_quote: Symptomatic severe aortic stenosis should receive AVR without delay.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-intervention Follow-up
+    description: Serial echo, anticoagulation management, and symptom monitoring post intervention.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - plan_echo_followup_schedule
+    allowed_actions:
+    - refer_cardiac_rehab
+    - initiate_asa_if_bioprosthetic
+    - reassess_vital_signs
+    - monitor_for_endocarditis_signs
+    - initiate_anticoagulation_if_mechanical_valve
+    - plan_echo_followup_schedule
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      plan_echo_followup_schedule: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ACC/AHA VHD 2020
+    source_section: Post-op follow-up
+    source_page: null
+    source_quote: Lifelong monitoring is required after valve intervention.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,188 @@
+graph_id: idsa_cdi_2021
+guideline_name: IDSA 2021 C difficile
+version: '2024.1'
+metadata:
+  source: IDSA
+  doi: 10.1093/cid/ciab549
+  recommendation_system: GRADE
+  description: Clinical pathway for the management of initial and recurrent Clostridioides difficile infections (CDI).
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial CDI Assessment
+    description: Determine if the CDI episode is initial or recurrent and assess severity.
+    mandatory_actions:
+    - assess_episode_type
+    allowed_actions:
+    - assess_episode_type
+    - assess_severity
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2021 C difficile
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: For patients with an initial Clostridioides difficile infection (CDI) episode, we suggest using fidaxomicin
+      rather than a standard course of vancomycin
+    next_nodes: []
+    conditional_next:
+      state.initial_episode: initial_episode_treatment
+      state.recurrent_episode: recurrent_episode_treatment
+      state.critical_severity: fulminant_cdi_bundle
+  initial_episode_treatment:
+    node_id: initial_episode_treatment
+    node_type: plan
+    name: Initial Episode Treatment
+    description: Preferred antibiotic therapy for the first episode of CDI.
+    mandatory_actions:
+    - administer_fidaxomicin_200mg_bid_10days
+    allowed_actions:
+    - administer_fidaxomicin_200mg_bid_10days
+    - administer_vancomycin_125mg_qid_10days
+    - administer_metronidazole_500mg_tid_10_14days
+    forbidden_actions:
+    - administer_vancomycin
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: IDSA 2021 C difficile
+    source_section: Initial Episode
+    source_page: null
+    source_quote: For patients with an initial Clostridioides difficile infection (CDI) episode, we suggest using fidaxomicin
+      rather than a standard course of vancomycin
+    next_nodes:
+    - monitoring_and_followup
+    conditional_next: {}
+  recurrent_episode_treatment:
+    node_id: recurrent_episode_treatment
+    node_type: plan
+    name: Recurrent Episode Treatment
+    description: Management of recurrent CDI including antibiotic choice and co-interventions.
+    mandatory_actions:
+    - administer_fidaxomicin
+    allowed_actions:
+    - administer_fidaxomicin
+    - administer_bezlotoxumab
+    - administer_soc_antibiotics
+    - infuse_bezlotoxumab
+    forbidden_actions:
+    - administer_vancomycin
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: IDSA 2021 C difficile
+    source_section: Recurrent Episode
+    source_page: null
+    source_quote: In patients with recurrent CDI episodes, we suggest fidaxomicin (standard or extended-pulsed regimen) rather
+      than a standard course of vancomycin
+    next_nodes:
+    - bezlotoxumab_safety_check
+    conditional_next:
+      state.multiple_recurrences_failed_antibiotics: fmt_intervention
+  bezlotoxumab_safety_check:
+    node_id: bezlotoxumab_safety_check
+    node_type: decision
+    name: Bezlotoxumab Safety Screening
+    description: Evaluate risk for patients with CHF before administering bezlotoxumab.
+    mandatory_actions:
+    - assess_benefit_risk_ratio
+    allowed_actions:
+    - assess_benefit_risk_ratio
+    forbidden_actions:
+    - administer_bezlotoxumab
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: III
+    evidence_level: C
+    source_guideline: IDSA 2021 C difficile
+    source_section: Implementation Considerations
+    source_page: "1030"
+    source_quote: in patients with a history of congestive heart failure (CHF), bezlotoxumab should be reserved for use when
+      the benefit outweighs the risk.
+    next_nodes:
+    - monitoring_and_followup
+    conditional_next: {}
+  fulminant_cdi_bundle:
+    node_id: fulminant_cdi_bundle
+    node_type: action
+    name: Fulminant CDI Bundle
+    description: Aggressive treatment for critical CDI cases.
+    mandatory_actions:
+    - administer_vancomycin_500mg_qid
+    allowed_actions:
+    - administer_vancomycin_500mg_qid
+    - administer_rectal_vancomycin
+    - administer_iv_metronidazole
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2021 C difficile
+    source_section: Fulminant CDI
+    source_page: null
+    source_quote: Vancomycin 500 mg 4 times daily by mouth or by nasogastric tube. If ileus, consider adding rectal instillation
+      of vancomycin. Intravenously administered metronidazole (500 mg every 8 hours) should be administered together with
+      oral or rectal vancomycin, particularly if ileus is present
+    next_nodes:
+    - monitoring_and_followup
+    conditional_next: {}
+  fmt_intervention:
+    node_id: fmt_intervention
+    node_type: action
+    name: Fecal Microbiota Transplantation
+    description: FMT for multiple recurrences failing standard antibiotics.
+    mandatory_actions:
+    - perform_fecal_microbiota_transplantation
+    - screen_donor_fecal_specimens
+    allowed_actions:
+    - perform_fecal_microbiota_transplantation
+    - screen_donor_fecal_specimens
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2021 C difficile
+    source_section: Recurrent CDI
+    source_page: "1030"
+    source_quote: FMT is recommended only for patients with multiple recurrences of CDI who have failed appropriate antibiotic
+      treatments and where appropriate screening of donor and donor fecal specimens has been performed
+    next_nodes:
+    - monitoring_and_followup
+    conditional_next: {}
+  monitoring_and_followup:
+    node_id: monitoring_and_followup
+    node_type: enquiry
+    name: Monitoring and Disposition
+    description: Assess response to therapy and determine disposition.
+    mandatory_actions:
+    - evaluate_clinical_response
+    allowed_actions:
+    - evaluate_clinical_response
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2021 C difficile
+    source_section: Follow-up
+    source_page: null
+    source_quote: The infusion of bezlotoxumab should be performed while a patient is receiving SOC antibiotics
+    next_nodes: []
+    conditional_next: {}
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 10
+  actionable_count: 10
+  validation_errors: 0
+  generated_at: '2026-04-29T17:07:38.019067+00:00'

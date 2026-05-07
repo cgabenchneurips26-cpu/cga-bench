@@ -1,0 +1,229 @@
+graph_id: ispad_pediatric_dka_2022
+guideline_name: ISPAD 2022 Clinical Practice Consensus Guidelines for Pediatric DKA
+version: '2022.1'
+metadata:
+  source: ISPAD Pediatric DKA Guidelines 2022
+  doi: 10.1111/pedi.13406
+  journal: Pediatric Diabetes
+  recommendation_system: GRADE
+  description: Evidence-based guideline for pediatric DKA management emphasizing cerebral edema prevention through controlled
+    fluid and insulin administration
+  key_evidence: NO insulin bolus (increased cerebral edema risk, Glaser 2001). Fluid rate <1.5x maintenance. Cerebral edema
+    0.5-1% incidence, 21-24% mortality. Mannitol for cerebral edema.
+  target_population:
+    age_group: pediatric
+    max_age: 17
+    min_age: 0
+    sex: any
+    special_conditions: []
+entry_node: diagnosis
+nodes:
+  diagnosis:
+    node_id: diagnosis
+    node_type: decision
+    name: Pediatric DKA Diagnosis
+    description: 'Confirm DKA criteria: pH<7.3, bicarbonate<15 mmol/L, glucose>200 mg/dL, ketonemia'
+    precondition: null
+    mandatory_actions:
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - order_lab_glucose
+    allowed_actions:
+    - assess_mental_status
+    - order_lab_cbc
+    - assess_vital_signs
+    - weigh_patient
+    - order_lab_blood_gas
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_hba1c
+    - assess_dehydration_severity
+    - order_lab_glucose
+    - order_lab_phosphate
+    - order_lab_beta_hydroxybutyrate
+    forbidden_actions: []
+    deadlines:
+      order_lab_blood_gas: 15
+      order_lab_bmp: 15
+      order_lab_glucose: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISPAD Pediatric DKA Guidelines 2022
+    source_section: Diagnosis
+    source_page: null
+    source_quote: 'DKA criteria: blood glucose >200 mg/dL (11 mmol/L), venous pH <7.3 OR bicarbonate <15 mmol/L, ketonemia
+      or ketonuria. Classify severity: mild (pH 7.2-7.3), moderate (pH 7.1-7.2), severe (pH <7.1)'
+    next_nodes: []
+    conditional_next:
+      state.ph < 7.1: severe_dka_bundle
+      state.ph >= 7.1: moderate_mild_dka_bundle
+  moderate_mild_dka_bundle:
+    node_id: moderate_mild_dka_bundle
+    node_type: plan
+    name: Mild-Moderate Pediatric DKA (pH ≥7.1)
+    description: IV fluids 0.9% NaCl 10 mL/kg over 1h, then insulin infusion 0.05-0.1 U/kg/h
+    precondition: state.ph >= 7.1
+    mandatory_actions:
+    - give_iv_nacl_10ml_kg_over_1h
+    - start_insulin_infusion_0_05_0_1_u_kg_h
+    - order_lab_glucose_hourly
+    - order_lab_bmp_q2h
+    allowed_actions:
+    - give_iv_nacl_10ml_kg_over_1h
+    - monitor_vital_signs_q1h
+    - order_lab_blood_gas_q2h
+    - order_lab_bmp_q2h
+    - start_insulin_infusion_0_05_0_1_u_kg_h
+    - assess_mental_status_q1h
+    - order_lab_glucose_hourly
+    - add_potassium_to_iv_fluids
+    - order_lab_phosphate
+    forbidden_actions:
+    - give_insulin_bolus
+    - give_iv_bicarbonate_routine
+    - give_fluid_rate_exceeding_1_5x_maintenance
+    deadlines:
+      give_iv_nacl_10ml_kg_over_1h: 30
+      start_insulin_infusion_0_05_0_1_u_kg_h: 60
+    required_prior_actions:
+      start_insulin_infusion_0_05_0_1_u_kg_h:
+      - give_iv_nacl_10ml_kg_over_1h
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ISPAD Pediatric DKA Guidelines 2022
+    source_section: 'Recommendation 1-3: Fluid & Insulin'
+    source_page: null
+    source_quote: IV 0.9% NaCl 10-20 mL/kg over first hour. Insulin infusion 0.05-0.1 U/kg/h (NO bolus - cerebral edema risk).
+      Do NOT exceed 1.5x maintenance fluid rate
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: PDKA-POTASSIUM
+      condition: state.potassium_meq_l < 5.5
+      effect:
+        type: REQUIRED
+        actions:
+        - add_potassium_to_iv_fluids
+        deadline_minutes: 120
+      severity: HIGH
+      description: K+ replacement required if serum K+ <5.5 (insulin drives K+ intracellularly). 40 mEq/L KCl in maintenance
+        fluids
+      evidence: Class I, Level A
+  severe_dka_bundle:
+    node_id: severe_dka_bundle
+    node_type: plan
+    name: Severe Pediatric DKA (pH <7.1)
+    description: ICU-level care, IV fluids 20 mL/kg NaCl, insulin infusion, strict neuro monitoring for cerebral edema
+    precondition: state.ph < 7.1
+    mandatory_actions:
+    - give_iv_nacl_20ml_kg_over_1h
+    - start_insulin_infusion_0_05_0_1_u_kg_h
+    - order_lab_glucose_hourly
+    - order_lab_bmp_q2h
+    - assess_mental_status_q1h
+    allowed_actions:
+    - order_lab_blood_gas_q2h
+    - order_lab_glucose_hourly
+    - give_iv_nacl_20ml_kg_over_1h
+    - add_potassium_to_iv_fluids
+    - order_lab_phosphate
+    - monitor_vital_signs_q1h
+    - order_lab_bmp_q2h
+    - place_foley_catheter
+    - start_insulin_infusion_0_05_0_1_u_kg_h
+    - assess_mental_status_q1h
+    - icu_admission
+    forbidden_actions:
+    - give_insulin_bolus
+    - give_iv_bicarbonate_routine
+    - give_fluid_rate_exceeding_1_5x_maintenance
+    deadlines:
+      give_iv_nacl_20ml_kg_over_1h: 30
+      start_insulin_infusion_0_05_0_1_u_kg_h: 60
+      assess_mental_status_q1h: 60
+    required_prior_actions:
+      start_insulin_infusion_0_05_0_1_u_kg_h:
+      - give_iv_nacl_20ml_kg_over_1h
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ISPAD Pediatric DKA Guidelines 2022
+    source_section: 'Recommendation 4-5: Severe DKA'
+    source_page: null
+    source_quote: 'Severe DKA (pH<7.1): ICU admission, 20 mL/kg NaCl initial bolus. NO insulin bolus (increased cerebral edema
+      risk). Cerebral edema occurs in 0.5-1% of pediatric DKA'
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: PDKA-CEREBRAL-EDEMA
+      condition: state.gcs < 14 or state.mental_status_declining == True
+      effect:
+        type: REQUIRED
+        actions:
+        - give_mannitol_0_5_1_g_kg
+        deadline_minutes: 15
+      severity: CRITICAL
+      description: Signs of cerebral edema require immediate mannitol 0.5-1 g/kg or 3% NaCl 2.5-5 mL/kg. Reduce IV fluids
+        by one-third
+      evidence: Class I, Level A
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: DKA Monitoring
+    description: Hourly glucose, q2h BMP/blood gas, neurological checks, transition to SubQ insulin
+    precondition: null
+    mandatory_actions:
+    - order_lab_glucose_hourly
+    - order_lab_bmp_q2h
+    allowed_actions:
+    - monitor_fluid_balance
+    - adjust_insulin_rate
+    - order_lab_blood_gas_q2h
+    - assess_gap_closure
+    - order_lab_bmp_q2h
+    - add_dextrose_when_glucose_below_300
+    - assess_mental_status_q1h
+    - order_lab_glucose_hourly
+    forbidden_actions: []
+    deadlines:
+      order_lab_glucose_hourly: 60
+      order_lab_bmp_q2h: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISPAD Pediatric DKA Guidelines 2022
+    source_section: Monitoring
+    source_page: null
+    source_quote: Hourly blood glucose, q2h electrolytes and blood gas. Add dextrose to IV when glucose <300 mg/dL. Transition
+      to SubQ insulin when pH >7.3, bicarb >15, able to eat
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: DKA Resolution & Disposition
+    description: Transition to subcutaneous insulin when DKA resolved, diabetes education
+    precondition: null
+    mandatory_actions:
+    - assess_dka_resolution
+    allowed_actions:
+    - arrange_endocrine_follow_up
+    - provide_diabetes_education
+    - assess_discharge_readiness
+    - transition_to_subq_insulin
+    - assess_dka_resolution
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISPAD Pediatric DKA Guidelines 2022
+    source_section: Resolution & Discharge
+    source_page: null
+    source_quote: DKA resolved when pH >7.3, bicarbonate >15, beta-hydroxybutyrate <1 mmol/L. Overlap SubQ insulin 30-60min
+      before stopping IV
+    next_nodes: []
+    conditional_next: {}

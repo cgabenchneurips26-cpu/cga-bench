@@ -1,0 +1,40 @@
+scenarios:
+  gi_bleeding_section_c000:
+    scenario_id: gi_bleeding_section_c000
+    description: SGSC-generated scenario testing give_octreotide, give_prophylactic_antibiotics, transfuse_platelets, resuscitate_patient,
+      give_iv_crystalloid_bolus, request_gi_consult, request_surgery_consult with boundary values for heart_rate
+    guideline_graph: gi_bleeding
+    patient:
+      age: 55
+      sex: M
+      chief_complaint: Clinical scenario for gi_bleeding
+      vitals:
+        heart_rate: 90
+        blood_pressure_systolic: 120
+        blood_pressure_diastolic: 75
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 96
+      allergies: []
+      medical_history: []
+      comorbidities: []
+      contraindications: []
+      weight_kg: 70
+      working_diagnosis: null
+    ground_truth: {}
+    expected_actions:
+    - give_octreotide
+    - give_prophylactic_antibiotics
+    - transfuse_platelets
+    - resuscitate_patient
+    - give_crystalloid_fluid
+    - request_gi_consult
+    - request_surgery_consult
+    forbidden_actions:
+    - delay_platelet_transfusion
+    - stop_anticoagulation_indefinitely
+    - withhold_anticoagulation_without_bridge
+    - discontinue_nsaid
+    optional_actions: []
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.7

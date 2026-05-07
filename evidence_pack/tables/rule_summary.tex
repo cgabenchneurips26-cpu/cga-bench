@@ -1,0 +1,77 @@
+\begin{table}[h]
+\centering
+\caption{Conditional rule severity distribution.}
+\label{tab:rule_severity}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Severity} & \textbf{Count} & \textbf{\%} \\
+\midrule
+CRITICAL & 88 & 40.7\% \\
+HIGH & 120 & 55.6\% \\
+MODERATE & 8 & 3.7\% \\
+LOW & 0 & 0.0\% \\
+\midrule
+Total & 216 & 100.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Conditional rule type classification.}
+\label{tab:rule_types}
+\begin{tabular}{lc}
+\toprule
+\textbf{Type} & \textbf{Count} \\
+\midrule
+Comorbidity-conditional & 95 \\
+Other & 40 \\
+Lab-value gated & 34 \\
+Medication interaction & 19 \\
+Vitals-based & 13 \\
+Age-based & 8 \\
+Drug allergy / cross-reactivity & 7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Conditional rules per CPG graph (top 10).}
+\label{tab:graph_density}
+\begin{tabular}{lc}
+\toprule
+\textbf{Graph} & \textbf{Rules} \\
+\midrule
+gina\_asthma\_exacerbation & 17 \\
+toxicology\_management & 17 \\
+acls\_cardiac\_arrest & 16 \\
+idsa\_meningitis & 16 \\
+kdigo\_aki\_full & 15 \\
+ada\_dka\_management & 14 \\
+kdigo\_contrast\_aki & 14 \\
+aha\_chest\_pain\_evaluation & 10 \\
+ssc\_sepsis\_hour1\_bundle & 10 \\
+cap\_pneumonia & 9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering
+\caption{Representative conditional rules (one per type).}
+\label{tab:representative_rules}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllll}
+\toprule
+\textbf{Rule ID} & \textbf{Type} & \textbf{Severity} & \textbf{Condition} & \textbf{Effect} \\
+\midrule
+DKA-PEDIATRIC-NO-RAPID-FLUID & Age-based & CRITICAL & patient.age < 18 & FORBIDDEN: give\_rapid\_fluid\_bolus, give\_bolus\_over \\
+ACLS-TENSION-PNEUMO-DECOMPRESS & Comorbidity-conditional & CRITICAL & 'tension\_pneumothorax' in patient.comorbidities & REQUIRED: needle\_decompression \\
+ACS-ASPIRIN-ALLERGY-NO-ASPIRIN & Drug allergy / cross-reactivity & CRITICAL & 'aspirin' in patient.allergies & FORBIDDEN: give\_aspirin, give\_nsaid \\
+ACLS-HYPERKALEMIA-CALCIUM & Lab-value gated & CRITICAL & patient.labs.potassium > 6.5 & REQUIRED: give\_calcium\_chloride, give\_sodium\_bicar \\
+ANA-ACE-INHIBITOR-ANGIOEDEMA & Medication interaction & CRITICAL & 'ace\_inhibitor' in patient.medications & FORBIDDEN: give\_ace\_inhibitor\_again, resume\_ace\_in \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

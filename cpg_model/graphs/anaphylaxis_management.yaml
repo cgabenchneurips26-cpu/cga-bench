@@ -1,0 +1,501 @@
+graph_id: anaphylaxis_management
+guideline_name: WAO/EAACI Anaphylaxis Management
+version: '2024.1'
+metadata:
+  primary_source:
+    title: World Allergy Organization Anaphylaxis Guidance 2024
+    authors: Cardona V, Ansotegui IJ, Ebisawa M, et al.
+    journal: World Allergy Organization Journal
+    year: 2024
+    doi: 10.1016/j.jaci.2024.01.003
+  source: WAO 2024 + EAACI 2024
+  description: Comprehensive anaphylaxis management from recognition through disposition
+  key_evidence: Delayed epinephrine administration is associated with biphasic reactions and fatal outcomes (Pumphrey 2000;
+    Sampson 2006)
+  recommendation_system: GRADE
+  target_population:
+    age_group: all
+    max_age: 120
+    min_age: 0
+    sex: any
+    special_conditions: []
+entry_node: initial_recognition
+nodes:
+  initial_recognition:
+    node_id: initial_recognition
+    node_type: enquiry
+    name: Anaphylaxis Recognition
+    description: Rapid recognition of anaphylaxis using clinical criteria (skin/mucosal + respiratory/cardiovascular involvement)
+    precondition: null
+    mandatory_actions:
+    - assess_airway_breathing_circulation
+    - assess_anaphylaxis_criteria
+    - remove_trigger_if_identifiable
+    allowed_actions:
+    - assess_airway_breathing_circulation
+    - assess_anaphylaxis_criteria
+    - remove_trigger_if_identifiable
+    - assess_vital_signs
+    - establish_iv_access
+    - position_supine_legs_elevated
+    - apply_continuous_monitoring
+    - call_for_help
+    forbidden_actions:
+    - give_antihistamine_as_first_line
+    - withhold_epinephrine
+    - give_oral_medication_if_vomiting
+    deadlines:
+      assess_airway_breathing_circulation: 2
+      assess_anaphylaxis_criteria: 3
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WAO 2024
+    source_section: 'Section 3: Recognition'
+    source_page: Table 1
+    source_quote: Anaphylaxis is highly likely when any one of three clinical criteria is fulfilled, involving acute onset
+      of skin/mucosal involvement plus respiratory compromise or reduced blood pressure.
+    next_nodes:
+    - epinephrine_administration
+    conditional_next: {}
+  epinephrine_administration:
+    node_id: epinephrine_administration
+    node_type: action
+    name: Epinephrine IM Administration
+    description: Immediate IM epinephrine - the ONLY first-line treatment for anaphylaxis
+    precondition: null
+    mandatory_actions:
+    - give_epinephrine_im
+    - establish_iv_access
+    - position_supine_legs_elevated
+    allowed_actions:
+    - give_epinephrine_im
+    - establish_iv_access
+    - position_supine_legs_elevated
+    - apply_continuous_monitoring
+    - administer_oxygen_high_flow
+    - repeat_epinephrine_im_5min
+    - give_normal_saline_bolus
+    - give_h1_antihistamine
+    - give_h2_antihistamine
+    - give_corticosteroid
+    - give_salbutamol_nebulized
+    forbidden_actions:
+    - give_epinephrine_iv_bolus
+    - give_epinephrine_subcutaneous
+    - give_antihistamine_as_first_line
+    - withhold_epinephrine
+    - delay_epinephrine_for_antihistamine
+    - give_sedative
+    deadlines:
+      give_epinephrine_im: 5
+      establish_iv_access: 10
+    required_prior_actions: {}
+    sequence_rules:
+    - - give_epinephrine_im
+      - give_h1_antihistamine
+    - - give_epinephrine_im
+      - give_corticosteroid
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WAO 2024
+    source_section: 'Section 4: First-Line Treatment'
+    source_page: Table 2
+    source_quote: Epinephrine (adrenaline) administered intramuscularly into the mid-outer thigh is the first-line treatment
+      of anaphylaxis. There are no absolute contraindications to epinephrine in anaphylaxis.
+    conditional_rules:
+    - rule_id: ANA-BETA-BLOCKER-GLUCAGON
+      condition: '''beta_blocker'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_glucagon
+      evidence: WAO 2024 Section 4.3; EAACI 2024 Section 5.2
+      severity: HIGH
+      description: Beta-blocker patients may be resistant to epinephrine; glucagon bypasses beta-adrenergic blockade via direct
+        cAMP stimulation.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: beta_blocker
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: beta_blocker
+          type: list_not_contains
+    - rule_id: ANA-BETA-BLOCKER-GLUCAGON-FORBIDDEN
+      condition: '''beta_blocker'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_additional_beta_blocker_in_anaphylaxis
+        - withhold_glucagon_despite_epi_resistance
+      evidence: WAO 2024 Section 4.3; EAACI 2024 Section 5.2; beta-blocker patients are epinephrine-resistant
+      severity: HIGH
+      description: Beta-blocker patients may not respond to epinephrine; additional beta-blockade worsens anaphylactic shock.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: beta_blocker
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: beta_blocker
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ANA-PREGNANCY-LEFT-LATERAL
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - position_left_lateral_decubitus
+      evidence: WAO 2024 Section 6.1; EAACI 2024 Special Populations
+      severity: HIGH
+      description: Pregnant patients must be positioned in left lateral decubitus to prevent aortocaval compression by the
+        gravid uterus.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: ANA-PREGNANCY-LEFT-LATERAL-FORBIDDEN
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - position_supine_flat_in_pregnancy
+        - give_methylergonovine_in_anaphylaxis
+      evidence: WAO 2024 Section 6.1; supine positioning in pregnant patients causes aortocaval compression reducing cardiac
+        output by 30%
+      severity: HIGH
+      description: Supine position in pregnant anaphylaxis causes aortocaval compression; methylergonovine is a vasoconstrictive
+        contraindication.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ANA-ACE-INHIBITOR-ANGIOEDEMA
+      condition: '''ace_inhibitor'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor_again
+        - resume_ace_inhibitor
+      evidence: EAACI 2024 Section 5.4; Brown SGA, JACI 2004
+      severity: CRITICAL
+      description: ACE inhibitors potentiate bradykinin-mediated angioedema; must never be readministered during anaphylaxis.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: ace_inhibitor
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: ace_inhibitor
+          type: list_not_contains
+    - rule_id: ANA-ASTHMA-SALBUTAMOL
+      condition: '''asthma'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_salbutamol_nebulized
+      evidence: WAO 2024 Section 4.5; EAACI 2024 Section 5.3
+      severity: HIGH
+      description: Asthmatic patients have increased risk of severe bronchospasm during anaphylaxis; inhaled salbutamol is
+        adjunctive to epinephrine.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: asthma
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: asthma
+          type: list_not_contains
+    - rule_id: ANA-ASTHMA-SALBUTAMOL-FORBIDDEN
+      condition: '''asthma'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_beta_blocker_in_asthma_anaphylaxis
+        - give_nsaid_in_aspirin_sensitive_asthma
+      evidence: WAO 2024 Section 4.5; beta-blockers exacerbate bronchospasm; NSAIDs trigger aspirin-exacerbated respiratory
+        disease
+      severity: HIGH
+      description: Beta-blockers worsen bronchospasm in asthmatic anaphylaxis; NSAIDs trigger aspirin-exacerbated respiratory
+        disease.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: asthma
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: asthma
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ANA-PEDIATRIC-DOSE
+      condition: patient.age < 12
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_adult_dose_epinephrine
+        - give_epinephrine_0_5mg
+      evidence: WAO 2024 Table 3; EAACI 2024 Pediatric Dosing
+      severity: CRITICAL
+      description: Children under 12 must receive weight-based epinephrine dosing (0.01 mg/kg, max 0.3 mg); adult dose (0.5
+        mg) causes toxicity.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 0
+          max: 11
+          type: float
+      normal_range:
+        patient.age:
+          min: 12
+          max: 120
+          type: float
+    next_nodes:
+    - fluid_resuscitation
+    conditional_next: {}
+  fluid_resuscitation:
+    node_id: fluid_resuscitation
+    node_type: plan
+    name: Fluid Resuscitation
+    description: IV crystalloid bolus for distributive shock component of anaphylaxis
+    precondition: null
+    mandatory_actions:
+    - give_normal_saline_bolus
+    - reassess_hemodynamic_status
+    allowed_actions:
+    - give_normal_saline_bolus
+    - reassess_hemodynamic_status
+    - repeat_fluid_bolus
+    - repeat_epinephrine_im_5min
+    - give_h1_antihistamine
+    - give_h2_antihistamine
+    - give_corticosteroid
+    - start_epinephrine_infusion
+    - start_vasopressor_norepinephrine
+    - order_lab_tryptase
+    forbidden_actions:
+    - give_epinephrine_iv_bolus
+    - give_colloid_solution
+    - withhold_fluid_in_hypotension
+    deadlines:
+      give_normal_saline_bolus: 15
+      reassess_hemodynamic_status: 20
+    required_prior_actions:
+      give_normal_saline_bolus:
+      - establish_iv_access
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WAO 2024
+    source_section: 'Section 4.2: Fluid Resuscitation'
+    source_page: Table 2
+    source_quote: Normal saline 0.9% is recommended; 5-10 mL/kg in first 5-10 minutes for adults with hypotension. Up to 50
+      mL/kg may be required in first 30 minutes.
+    conditional_rules:
+    - rule_id: ANA-MASTOCYTOSIS-EXTENDED-OBS
+      condition: '''mastocytosis'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - observe_minimum_24_hours
+      evidence: WAO 2024 Section 6.3; Brockow K, JACI 2008
+      severity: HIGH
+      description: Mastocytosis patients have dramatically higher risk of protracted and biphasic anaphylaxis requiring extended
+        observation.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: mastocytosis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: mastocytosis
+          type: list_not_contains
+    - rule_id: ANA-MASTOCYTOSIS-EXTENDED-OBS-FORBIDDEN
+      condition: '''mastocytosis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - discharge_before_24h_in_mastocytosis
+        - give_nsaid_in_mastocytosis
+      evidence: WAO 2024 Section 6.3; Brockow K, JACI 2008; mastocytosis patients have 30% biphasic reaction rate
+      severity: HIGH
+      description: Mastocytosis patients have dramatically higher biphasic reaction risk; NSAIDs trigger mast cell degranulation.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: mastocytosis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: mastocytosis
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ANA-LATEX-ALLERGY-NO-LATEX
+      condition: '''latex'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - use_latex_gloves_or_equipment
+        - use_latex_containing_iv_tubing
+      evidence: WAO 2024 Section 3.1; EAACI 2024 Allergen Avoidance
+      severity: CRITICAL
+      description: Latex-allergic patients must be treated in a latex-free environment to prevent re-triggering anaphylaxis.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: latex
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: latex
+          type: list_not_contains
+    next_nodes:
+    - airway_management
+    conditional_next: {}
+  airway_management:
+    node_id: airway_management
+    node_type: decision
+    name: Airway Management
+    description: Airway assessment and management for angioedema or respiratory compromise
+    precondition: null
+    mandatory_actions:
+    - reassess_airway
+    allowed_actions:
+    - reassess_airway
+    - administer_oxygen_high_flow
+    - give_nebulized_epinephrine
+    - give_salbutamol_nebulized
+    - perform_endotracheal_intubation
+    - perform_cricothyrotomy
+    - call_anesthesia_consult
+    forbidden_actions:
+    - give_sedative
+    - give_benzodiazepine
+    - discharge_before_airway_stable
+    deadlines:
+      reassess_airway: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: WAO 2024
+    source_section: 'Section 4.4: Airway Management'
+    source_page: Table 2
+    source_quote: Upper airway angioedema may progress rapidly. Early intubation should be considered. Surgical airway may
+      be needed if intubation fails due to severe edema.
+    next_nodes:
+    - monitoring_and_disposition
+    conditional_next: {}
+  monitoring_and_disposition:
+    node_id: monitoring_and_disposition
+    node_type: plan
+    name: Monitoring and Disposition
+    description: Post-treatment monitoring for biphasic reactions and disposition planning
+    precondition: null
+    mandatory_actions:
+    - observe_minimum_4_hours
+    - prescribe_epinephrine_autoinjector
+    - provide_anaphylaxis_action_plan
+    - refer_to_allergist
+    allowed_actions:
+    - observe_minimum_4_hours
+    - observe_minimum_8_hours
+    - observe_minimum_24_hours
+    - prescribe_epinephrine_autoinjector
+    - provide_anaphylaxis_action_plan
+    - refer_to_allergist
+    - order_lab_tryptase
+    - prescribe_oral_corticosteroid_taper
+    - prescribe_oral_antihistamine
+    - admit_to_icu
+    - admit_to_observation
+    - educate_patient_trigger_avoidance
+    forbidden_actions:
+    - discharge_before_4_hours
+    - discharge_without_autoinjector_prescription
+    - discharge_without_action_plan
+    - discharge_without_allergist_referral
+    deadlines:
+      prescribe_epinephrine_autoinjector: 360
+      provide_anaphylaxis_action_plan: 360
+    required_prior_actions:
+      prescribe_epinephrine_autoinjector:
+      - observe_minimum_4_hours
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WAO 2024
+    source_section: 'Section 5: Monitoring and Discharge'
+    source_page: Table 4
+    source_quote: All patients should be observed for a minimum of 4 hours. Patients with severe anaphylaxis, prior biphasic
+      reactions, or mastocytosis require extended observation (8-24 hours).
+    conditional_rules:
+    - rule_id: ANA-BIPHASIC-HIGH-RISK
+      condition: '''severe_initial_reaction'' in patient.presentation'
+      effect:
+        type: REQUIRED
+        actions:
+        - observe_minimum_8_hours
+      evidence: WAO 2024 Section 5.2; Grunau BE, Ann Emerg Med 2015
+      severity: HIGH
+      description: Patients with severe initial reactions have 10-20% risk of biphasic anaphylaxis occurring 1-72 hours after
+        initial resolution.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: severe_initial_reaction
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: severe_initial_reaction
+          type: list_not_contains
+    - rule_id: ANA-BIPHASIC-HIGH-RISK-FORBIDDEN
+      condition: '''severe_initial_reaction'' in patient.presentation'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - discharge_before_8h_severe_anaphylaxis
+        - discontinue_monitoring_prematurely
+      evidence: WAO 2024 Section 5.2; Grunau BE, Ann Emerg Med 2015; 10-20% biphasic rate in severe initial reactions
+      severity: HIGH
+      description: Severe initial reactions have 10-20% biphasic risk; premature discharge or monitoring discontinuation is
+        dangerous.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: severe_initial_reaction
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: severe_initial_reaction
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes: []
+    conditional_next: {}

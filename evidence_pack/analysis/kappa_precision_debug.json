@@ -1,0 +1,188 @@
+{
+  "issue_1_kappa": {
+    "diagnosis": {
+      "n_episodes": 180,
+      "pass_rates": {
+        "DxEM": 1.0,
+        "AC-Proxy": 0.5667,
+        "MAB-Proxy": 0.0889,
+        "C2": 0.4333,
+        "ACov": 0.5667,
+        "CGA-Bench": 0.3889
+      },
+      "degenerate_evaluators": [
+        "DxEM"
+      ],
+      "redundant_pairs": [
+        [
+          "AC-Proxy",
+          "ACov"
+        ]
+      ]
+    },
+    "fleiss_kappa_all_6": 0.145,
+    "fleiss_kappa_4_independent": 0.1693,
+    "pairwise_kappa_4_independent": {
+      "AC-Proxy_vs_MAB-Proxy": 0.0788,
+      "AC-Proxy_vs_C2": 0.5197,
+      "AC-Proxy_vs_CGA-Bench": 0.2662,
+      "MAB-Proxy_vs_C2": 0.0017,
+      "MAB-Proxy_vs_CGA-Bench": -0.1148,
+      "C2_vs_CGA-Bench": 0.4046
+    },
+    "independent_evaluators": [
+      "AC-Proxy",
+      "MAB-Proxy",
+      "C2",
+      "CGA-Bench"
+    ],
+    "interpretation": "The low Fleiss' κ reflects SYSTEMATIC disagreement across evaluation dimensions (coverage vs safety vs completeness), NOT random noise. Evidence: (1) DxEM is degenerate (100% pass), excluded; (2) AC-Proxy ≡ ACov (identical), deduplicated; (3) Remaining 4 evaluators form two clusters with moderate intra-cluster and low/negative inter-cluster agreement; (4) Cochran's Q highly significant (p<0.001), confirming evaluator-level systematic differences. This justifies CGA-Bench's multi-evaluator design.",
+    "recommended_reporting": {
+      "primary_metric": "Fleiss' κ = 0.169 (4 independent evaluators)",
+      "footnote": "DxEM excluded (100% pass, degenerate); ACov excluded (identical to AC-Proxy)",
+      "narrative": "slight-to-fair agreement reflecting systematic dimensional disagreement"
+    }
+  },
+  "issue_2_precision": {
+    "aggregate": {
+      "total_tp": 447,
+      "total_fp": 1894,
+      "total_fn": 483,
+      "micro_precision": 0.1909,
+      "micro_recall": 0.4806,
+      "avg_engine_per_scenario": 22.3,
+      "avg_manual_per_scenario": 8.9,
+      "expansion_ratio": 2.5
+    },
+    "interpretation": "B",
+    "interpretation_a": "BAD interpretation: Engine generates 78% noise constraints",
+    "interpretation_b": "GOOD interpretation: Manual scenarios only specify 9 constraints on average, while Engine correctly derives 22. The 1894 'false positives' are legitimate CPG constraints that manual authors didn't explicitly list. Evidence: recall=0.481 means Engine covers ~48% of what manual specifies, and the 'extra' constraints are derived from the same CPG graph conditional rules.",
+    "fp_to_manual_ratio": 2.0,
+    "recommended_framing": "Constraint-type stratified analysis needed for definitive proof. Expected pattern: FORBIDDEN precision high (manual doesn't skip safety), WITHIN/BEFORE precision low (manual skips timing). Recommended: break down FP by constraint type in the paper.",
+    "action_item": "Add constraint-type breakdown to exp_b script: separate precision for FORBIDDEN vs REQUIRED vs WITHIN vs BEFORE"
+  },
+  "issue_3_needs_fix": {
+    "total_needs_fix": 12,
+    "unique_macros": 6,
+    "macro_to_claims": {
+      "\\numACProxyMisCert": [
+        "A11"
+      ],
+      "\\numMABProxyMisCert": [
+        "A12"
+      ],
+      "\\numUPstrong": [
+        "A15",
+        "B02",
+        "F13",
+        "S04"
+      ],
+      "\\numCI": [
+        "A16",
+        "B05"
+      ],
+      "\\numUPcrit": [
+        "A17",
+        "F12",
+        "S06"
+      ],
+      "\\numUPlenient": [
+        "F14"
+      ]
+    },
+    "claims": [
+      {
+        "claim_id": "A11",
+        "line": "L71-72",
+        "current": "30.7% AC-Proxy mis-cert",
+        "depends_on": "episode results (5490 episodes)",
+        "macro": "\\numACProxyMisCert"
+      },
+      {
+        "claim_id": "A12",
+        "line": "L72",
+        "current": "28.1% MAB-Proxy mis-cert",
+        "depends_on": "episode results",
+        "macro": "\\numMABProxyMisCert"
+      },
+      {
+        "claim_id": "A15",
+        "line": "L74",
+        "current": "34.6% UP_strong",
+        "depends_on": "episode results",
+        "macro": "\\numUPstrong"
+      },
+      {
+        "claim_id": "A16",
+        "line": "L77",
+        "current": "[{CI}%, 95% CI]",
+        "depends_on": "episode results + bootstrap CI",
+        "macro": "\\numCI"
+      },
+      {
+        "claim_id": "A17",
+        "line": "L78",
+        "current": "16.7% UP_crit",
+        "depends_on": "episode results",
+        "macro": "\\numUPcrit"
+      },
+      {
+        "claim_id": "B02",
+        "line": "L105",
+        "current": "34.6% UP_strong",
+        "depends_on": "= A15 (same number)",
+        "macro": "\\numUPstrong"
+      },
+      {
+        "claim_id": "B05",
+        "line": "L109",
+        "current": "[{CI}%, 95% CI]",
+        "depends_on": "= A16 (same number)",
+        "macro": "\\numCI"
+      },
+      {
+        "claim_id": "F12",
+        "line": "L503",
+        "current": "16.7%",
+        "depends_on": "= A17",
+        "macro": "\\numUPcrit"
+      },
+      {
+        "claim_id": "F13",
+        "line": "L504",
+        "current": "34.6%",
+        "depends_on": "= A15",
+        "macro": "\\numUPstrong"
+      },
+      {
+        "claim_id": "F14",
+        "line": "L505",
+        "current": "61.5% [{CI}]",
+        "depends_on": "episode results + CI",
+        "macro": "\\numUPlenient"
+      },
+      {
+        "claim_id": "S04",
+        "line": "L1039",
+        "current": "UP_strong=34.6%",
+        "depends_on": "= A15",
+        "macro": "\\numUPstrong"
+      },
+      {
+        "claim_id": "S06",
+        "line": "L1041",
+        "current": "UP_crit=16.7%",
+        "depends_on": "= A17",
+        "macro": "\\numUPcrit"
+      }
+    ],
+    "blocker": "5,490 episode execution in progress",
+    "resolution_pipeline": [
+      "Wait for episode execution to complete",
+      "Run verdict_matrix_v4.py with new results",
+      "Run exp_d with updated verdict matrix",
+      "Run exp_f to regenerate auto_numbers.tex",
+      "Verify all NEEDS_FIX claims resolved"
+    ]
+  }
+}

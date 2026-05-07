@@ -1,0 +1,70 @@
+% Per-coordinate Bayes-error table for Appendix (Theorem 3.4 v2).
+% Numbers come from bayes_error_macros.tex (per-type block at bottom).
+% Input from appendix.tex after \section{Proofs for Theorem~\ref{thm:coarsening}}.
+
+\subsection{Per-coordinate Bayes error}
+\label{app:per-type-bayes}
+
+Table~\ref{tab:per-type-bayes} decomposes the Bayes error of
+Theorem~\ref{thm:coarsening} along the five violation coordinates
+$k\in\{\textsc{omit},\textsc{commit},\textsc{time},\textsc{seq},\textsc{dev}\}$.
+Each cell is the plug-in estimator
+$\widehat{\varepsilon}^{\star,k}_{\pi}(G,D)$ of the Bayes error for the
+$k$-th coordinate under projection $\pi$, computed on the same
+$N=\bayesErrNEpisodes$ CGA-Bench episodes. Bootstrap 95\% CI uses
+$B=200$ resamples per cell.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Per-coordinate Bayes error under four projections. Bold entries
+mark the dominant blindness in each row: $\pi_{\mathrm{term}}$ kills
+\textsc{time}; $\pi_{\mathrm{aset}}$ kills \textsc{omit};
+$\pi_{\mathrm{nord}}$ and $\pi_{\mathrm{nctx}}$ both resolve
+\textsc{time} and \textsc{seq} completely ($\widehat{\varepsilon}=0$
+under the 5-minute timestamp binning used by $\pi_{\mathrm{nctx}}$).
+Zero entries are corpus-specific: coarser binning would yield
+non-zero numbers.}
+\label{tab:per-type-bayes}
+\begin{tabular}{lrrrrr}
+\toprule
+Projection & \textsc{omit} & \textsc{commit} & \textsc{time} & \textsc{seq} & \textsc{dev} \\
+\midrule
+$\pi_{\mathrm{term}}$ & $\bayesErrCoordTermOmit$ & $\bayesErrCoordTermCommit$ & $\mathbf{\bayesErrCoordTermTime}$ & $\bayesErrCoordTermSeq$ & $\bayesErrCoordTermDev$ \\
+$\pi_{\mathrm{aset}}$ & $\mathbf{\bayesErrCoordAsetOmit}$ & $\bayesErrCoordAsetCommit$ & $\bayesErrCoordAsetTime$ & $\bayesErrCoordAsetSeq$ & $\bayesErrCoordAsetDev$ \\
+$\pi_{\mathrm{nord}}$ & $\bayesErrCoordNordOmit$ & $\bayesErrCoordNordCommit$ & $\mathbf{\bayesErrCoordNordTime}$ & $\mathbf{\bayesErrCoordNordSeq}$ & $\bayesErrCoordNordDev$ \\
+$\pi_{\mathrm{nctx}}$ & $\bayesErrCoordNctxOmit$ & $\bayesErrCoordNctxCommit$ & $\mathbf{\bayesErrCoordNctxTime}$ & $\mathbf{\bayesErrCoordNctxSeq}$ & $\bayesErrCoordNctxDev$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Three observations tie the per-coordinate table back to the main
+theorem.
+
+\paragraph{Terminal-state blindness is driven by timing.}
+Under $\pi_{\mathrm{term}}$, the timing coordinate hits
+$\widehat{\varepsilon}^{\star,\textsc{time}}_{\mathrm{term}}=\bayesErrCoordTermTime$,
+which is the dominant contribution to the aggregated
+$\widehat{\varepsilon}^{\star}_{\mathrm{term}}=\bayesErrTerm$. Terminal-
+output-only evaluators (TOM, discharge-diagnosis match) must
+misclassify roughly $43\%$ of timing-violation verdicts on the CGA-
+Bench distribution.
+
+\paragraph{Action-set coarsening blinds against omissions.}
+$\widehat{\varepsilon}^{\star,\textsc{omit}}_{\mathrm{aset}}=\bayesErrCoordAsetOmit$
+is $4.5\times$ the aggregated $\pi_{\mathrm{aset}}$ Bayes error
+($\bayesErrAset$). ASC, PAF, and MAB-F1 share the $\pi_{\mathrm{aset}}$
+coarsening and must misclassify at least $\sim 11\%$ of omission
+verdicts. This matches E1's orthogonal-perturbation finding that
+action-set evaluators miss \textsc{must}-omit violations that leave
+the multiset unchanged.
+
+\paragraph{Ordered-action projections resolve timing and sequence.}
+$\widehat{\varepsilon}^{\star,\textsc{time}}_{\mathrm{nord}}=\widehat{\varepsilon}^{\star,\textsc{seq}}_{\mathrm{nord}}=0$
+on this corpus under 5-minute timestamp binning. The projections
+$\pi_{\mathrm{nord}}$ and $\pi_{\mathrm{nctx}}$ therefore preserve
+enough information to disambiguate every timing and sequence
+violation instance present in CGA-Bench. Theorem~\ref{thm:coarsening}'s
+strict-positivity for these projections is carried entirely by the
+omission and deviation coordinates ($\widehat{\varepsilon}>0$),
+reflecting the corpus finding in Corollary~\ref{cor:empirical-bayes}.

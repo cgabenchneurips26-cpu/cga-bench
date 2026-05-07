@@ -1,0 +1,288 @@
+{
+  "audit_version": "v1.1",
+  "graph_dir": "cpg_model/graphs",
+  "total_graphs_scanned": 25,
+  "graphs_with_conditional_rules": 25,
+  "total_conflicts": 11,
+  "tier_counts": {
+    "A": 0,
+    "B": 9,
+    "C": 2
+  },
+  "graphs_per_tier": {
+    "B": [
+      "aabb_transfusion",
+      "acls_cardiac_arrest",
+      "ada_dka_management",
+      "aha_chest_pain_evaluation",
+      "aha_heart_failure_2022",
+      "pals_pediatric_emergency",
+      "ssc_sepsis_hour1_bundle"
+    ],
+    "C": [
+      "idsa_meningitis",
+      "pulmonary_embolism"
+    ]
+  },
+  "graphs_with_any_conflict": [
+    "aabb_transfusion",
+    "acls_cardiac_arrest",
+    "ada_dka_management",
+    "aha_chest_pain_evaluation",
+    "aha_heart_failure_2022",
+    "idsa_meningitis",
+    "pals_pediatric_emergency",
+    "pulmonary_embolism",
+    "ssc_sepsis_hour1_bundle"
+  ],
+  "conflicts": [
+    {
+      "graph": "aabb_transfusion",
+      "node": "massive_transfusion",
+      "action": "give_tranexamic_acid",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "TRANS-TXA-WITHIN-3H",
+          "condition": "patient.presentation.get('time_since_injury_hours', 0) > 3",
+          "rule_id": "TRANS-TXA-WITHIN-3H"
+        }
+      ]
+    },
+    {
+      "graph": "acls_cardiac_arrest",
+      "node": "shockable_pathway",
+      "action": "give_amiodarone_300mg",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "ACLS-HYPOTHERMIA-NO-DRUGS",
+          "condition": "patient.vitals.temperature < 30",
+          "rule_id": "ACLS-HYPOTHERMIA-NO-DRUGS"
+        }
+      ]
+    },
+    {
+      "graph": "acls_cardiac_arrest",
+      "node": "shockable_pathway",
+      "action": "give_epinephrine_1mg_iv",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "ACLS-HYPOTHERMIA-NO-DRUGS",
+          "condition": "patient.vitals.temperature < 30",
+          "rule_id": "ACLS-HYPOTHERMIA-NO-DRUGS"
+        }
+      ]
+    },
+    {
+      "graph": "ada_dka_management",
+      "node": "potassium_replacement_first",
+      "action": "give_potassium_iv",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "DKA-HYPERK-NO-K-REPLACE",
+          "condition": "patient.labs.potassium > 5.5",
+          "rule_id": "DKA-HYPERK-NO-K-REPLACE"
+        }
+      ]
+    },
+    {
+      "graph": "aha_chest_pain_evaluation",
+      "node": "stemi_pathway",
+      "action": "give_anticoagulation",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "ACS-DISSECTION-NO-ANTICOAG",
+          "condition": "'aortic_dissection_suspected' in patient.comorbidities",
+          "rule_id": "ACS-DISSECTION-NO-ANTICOAG"
+        }
+      ]
+    },
+    {
+      "graph": "aha_heart_failure_2022",
+      "node": "hfref_gdmt",
+      "action": "initiate_ace_or_arb_or_arni",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "HF-HYPERK-NO-RAAS",
+          "condition": "patient.labs.potassium > 5.5",
+          "rule_id": "HF-HYPERK-NO-RAAS"
+        }
+      ]
+    },
+    {
+      "graph": "aha_heart_failure_2022",
+      "node": "hfref_gdmt",
+      "action": "initiate_mra",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "HF-HYPERK-NO-RAAS",
+          "condition": "patient.labs.potassium > 5.5",
+          "rule_id": "HF-HYPERK-NO-RAAS"
+        }
+      ]
+    },
+    {
+      "graph": "idsa_meningitis",
+      "node": "empiric_antibiotics",
+      "action": "give_ampicillin_iv",
+      "tier": "C",
+      "required": [
+        {
+          "kind": "conditional",
+          "source": "MENING-NEONATE-COVERAGE",
+          "condition": "patient.age < 1",
+          "rule_id": "MENING-NEONATE-COVERAGE"
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "MENING-PENICILLIN-ALLERGY",
+          "condition": "'penicillin_anaphylaxis' in patient.allergies or 'penicillin_severe_allergy' in patient.allergies",
+          "rule_id": "MENING-PENICILLIN-ALLERGY"
+        }
+      ]
+    },
+    {
+      "graph": "pals_pediatric_emergency",
+      "node": "pediatric_fluid_resuscitation",
+      "action": "give_ns_bolus_20ml_kg",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "PEDS-CARDIAC-LIMIT-FLUID",
+          "condition": "'congenital_heart_disease' in patient.comorbidities",
+          "rule_id": "PEDS-CARDIAC-LIMIT-FLUID"
+        }
+      ]
+    },
+    {
+      "graph": "pulmonary_embolism",
+      "node": "initial_assessment",
+      "action": "give_alteplase_pe",
+      "tier": "C",
+      "required": [
+        {
+          "kind": "conditional",
+          "source": "PE-MASSIVE-THROMBOLYSIS",
+          "condition": "patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation",
+          "rule_id": "PE-MASSIVE-THROMBOLYSIS"
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "PE-ACTIVE-BLEED-NO-THROMBOLYSIS",
+          "condition": "'active_bleeding' in patient.contraindications or 'active_hemorrhage' in patient.comorbidities",
+          "rule_id": "PE-ACTIVE-BLEED-NO-THROMBOLYSIS"
+        },
+        {
+          "kind": "conditional",
+          "source": "PE-RECENT-SURGERY-NO-THROMBOLYSIS",
+          "condition": "'recent_surgery_3_weeks' in patient.history or 'recent_major_surgery' in patient.history",
+          "rule_id": "PE-RECENT-SURGERY-NO-THROMBOLYSIS"
+        }
+      ]
+    },
+    {
+      "graph": "ssc_sepsis_hour1_bundle",
+      "node": "septic_shock_bundle",
+      "action": "give_crystalloid_30ml_kg",
+      "tier": "B",
+      "required": [
+        {
+          "kind": "static",
+          "source": "mandatory_actions",
+          "condition": "",
+          "rule_id": ""
+        }
+      ],
+      "forbidden": [
+        {
+          "kind": "conditional",
+          "source": "SEPSIS-ESRD-NO-FLUID-BOLUS",
+          "condition": "'esrd' in patient.comorbidities or 'hemodialysis' in patient.comorbidities",
+          "rule_id": "SEPSIS-ESRD-NO-FLUID-BOLUS"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+[
+  {
+    "case_id": "art_001",
+    "task_type": "threshold_evaluation",
+    "split": "test",
+    "input_text": "Patient: 67-year-old male admitted with acute chest pain. Troponin I at 0h: 0.04 ng/mL (normal <0.04), at 3h: 0.18 ng/mL. ECG shows ST elevation in leads II, III, aVF. BP 88/60 mmHg, HR 112 bpm.",
+    "structured_fields": {
+      "subject_id": "SYN001",
+      "hadm_id": "SYNH001",
+      "prediction_time": "2024-01-15 08:30:00",
+      "vitals": {"bp_systolic": 88, "bp_diastolic": 60, "hr": 112},
+      "labs": [
+        {"name": "Troponin I", "value": 0.18, "unit": "ng/mL", "reference_high": 0.04},
+        {"name": "BNP", "value": 450, "unit": "pg/mL", "reference_high": 100}
+      ]
+    },
+    "checklist": [
+      "Activate cardiac catheterization lab for primary PCI",
+      "Administer aspirin 325mg loading dose",
+      "Administer heparin anticoagulation",
+      "Do not administer nitrates given hypotension",
+      "Obtain right-sided ECG leads to assess RV involvement"
+    ],
+    "gold_answer": "STEMI_inferior_with_hypotension",
+    "reasoning_type": "threshold_evaluation",
+    "provenance": {"source": "synthetic", "paper": "arxiv:2601.08988", "note": "synthetic sample for pipeline compatibility - real data not yet released"}
+  },
+  {
+    "case_id": "art_002",
+    "task_type": "temporal_aggregation",
+    "split": "test",
+    "input_text": "Patient: 52-year-old female with Type 2 diabetes. HbA1c values over 12 months: Jan 8.2%, Apr 7.9%, Jul 8.5%, Oct 9.1%. Creatinine trend: Jan 1.1, Apr 1.3, Jul 1.6, Oct 1.9 mg/dL. Current medications: Metformin 1000mg BID.",
+    "structured_fields": {
+      "subject_id": "SYN002",
+      "hadm_id": "SYNH002",
+      "prediction_time": "2024-10-20 10:00:00",
+      "labs": [
+        {"name": "HbA1c", "value": 9.1, "unit": "%", "trend": "worsening", "timepoints": [8.2, 7.9, 8.5, 9.1]},
+        {"name": "Creatinine", "value": 1.9, "unit": "mg/dL", "trend": "rising", "timepoints": [1.1, 1.3, 1.6, 1.9]}
+      ]
+    },
+    "checklist": [
+      "Discontinue metformin given eGFR decline",
+      "Refer to nephrology for CKD management",
+      "Intensify glycemic control with non-nephrotoxic agent",
+      "Order urine albumin-to-creatinine ratio"
+    ],
+    "gold_answer": "diabetic_nephropathy_progression",
+    "reasoning_type": "temporal_aggregation",
+    "provenance": {"source": "synthetic", "paper": "arxiv:2601.08988", "note": "synthetic sample for pipeline compatibility - real data not yet released"}
+  },
+  {
+    "case_id": "art_003",
+    "task_type": "conditional_logic",
+    "split": "test",
+    "input_text": "Patient: 34-year-old female, 28 weeks pregnant, presenting with severe headache and visual disturbances. BP 158/102 mmHg on two readings 6 hours apart. Urine protein 2+ on dipstick. No prior hypertension history.",
+    "structured_fields": {
+      "subject_id": "SYN003",
+      "hadm_id": "SYNH003",
+      "prediction_time": "2024-03-08 14:00:00",
+      "vitals": {"bp_systolic": 158, "bp_diastolic": 102},
+      "patient_context": {"gestational_age_weeks": 28, "gravida": 1, "para": 0}
+    },
+    "checklist": [
+      "Administer magnesium sulfate for seizure prophylaxis",
+      "Initiate antihypertensive therapy with labetalol or hydralazine",
+      "Order 24-hour urine protein collection",
+      "Consult maternal-fetal medicine",
+      "Do not delay treatment pending additional workup"
+    ],
+    "gold_answer": "preeclampsia_with_severe_features",
+    "reasoning_type": "conditional_logic",
+    "provenance": {"source": "synthetic", "paper": "arxiv:2601.08988", "note": "synthetic sample for pipeline compatibility - real data not yet released"}
+  },
+  {
+    "case_id": "art_004",
+    "task_type": "threshold_evaluation",
+    "split": "test",
+    "input_text": "Patient: 78-year-old male on warfarin for atrial fibrillation. INR 6.8 (therapeutic 2-3). No active bleeding. Presenting for elective knee replacement scheduled tomorrow.",
+    "structured_fields": {
+      "subject_id": "SYN004",
+      "hadm_id": "SYNH004",
+      "prediction_time": "2024-06-10 09:00:00",
+      "labs": [
+        {"name": "INR", "value": 6.8, "unit": "ratio", "reference_range": "2.0-3.0"}
+      ],
+      "medications": ["warfarin 5mg daily"]
+    },
+    "checklist": [
+      "Hold warfarin and postpone elective surgery",
+      "Administer vitamin K to reverse anticoagulation",
+      "Monitor INR daily until therapeutic range restored",
+      "Do not administer fresh frozen plasma unless active bleeding"
+    ],
+    "gold_answer": "supratherapeutic_anticoagulation_elective_surgery",
+    "reasoning_type": "threshold_evaluation",
+    "provenance": {"source": "synthetic", "paper": "arxiv:2601.08988", "note": "synthetic sample for pipeline compatibility - real data not yet released"}
+  },
+  {
+    "case_id": "art_005",
+    "task_type": "temporal_aggregation",
+    "split": "test",
+    "input_text": "ICU patient: 61-year-old with septic shock. Hour 0: BP 72/40, lactate 4.8 mmol/L, urine output 15mL/hr. Given 2L NS bolus and started norepinephrine. Hour 3: BP 88/55, lactate 3.2 mmol/L, urine output 25mL/hr. Hour 6: BP 94/62, lactate 2.1 mmol/L, urine output 40mL/hr.",
+    "structured_fields": {
+      "subject_id": "SYN005",
+      "hadm_id": "SYNH005",
+      "prediction_time": "2024-09-22 06:00:00",
+      "timeline": [
+        {"time_hr": 0, "bp_sys": 72, "lactate": 4.8, "urine_ml_hr": 15},
+        {"time_hr": 3, "bp_sys": 88, "lactate": 3.2, "urine_ml_hr": 25},
+        {"time_hr": 6, "bp_sys": 94, "lactate": 2.1, "urine_ml_hr": 40}
+      ]
+    },
+    "checklist": [
+      "Continue vasopressor support with MAP target >=65 mmHg",
+      "Draw blood cultures before escalating antibiotics",
+      "Reassess fluid responsiveness before additional bolus",
+      "Target lactate clearance >10% per 2-hour interval"
+    ],
+    "gold_answer": "septic_shock_responding_to_resuscitation",
+    "reasoning_type": "temporal_aggregation",
+    "provenance": {"source": "synthetic", "paper": "arxiv:2601.08988", "note": "synthetic sample for pipeline compatibility - real data not yet released"}
+  }
+]

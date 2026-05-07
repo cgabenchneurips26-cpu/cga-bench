@@ -1,0 +1,705 @@
+graph_id: kdigo_contrast_aki
+guideline_name: KDIGO Contrast-Associated AKI Prevention
+version: '2024.1'
+metadata:
+  source: KDIGO 2024 CKD Guideline + KDIGO 2012 AKI Guideline
+  doi: 10.1016/j.kint.2023.10.018
+  source_url: https://kdigo.org/wp-content/uploads/2024/03/KDIGO-2024-CKD-Guideline.pdf
+  journal: Kidney International
+  citation: Kidney International, Volume 105, Issue 4S, 2024
+  key_tables:
+  - Table 33 - Risk factors for CA-AKI
+  recommendation_system: GRADE
+  description: Prevention of contrast-associated AKI in CKD patients
+  aki_definition: SCr increase ≥0.3 mg/dL within 48h OR ≥1.5x baseline
+  key_practice_points:
+  - '4.3.2.1: Minimize contrast dose in CKD G3a-G5'
+  - '4.3.2.2: Ensure adequate hydration before and after contrast'
+  - '4.3.2.3: Consider holding metformin 48h post-contrast in CKD G3b-G5'
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_kdigo_contrast_aki.json
+entry_node: risk_assessment
+nodes:
+  risk_assessment:
+    node_id: risk_assessment
+    node_type: enquiry
+    name: CA-AKI Risk Assessment
+    description: Assess risk factors for contrast-associated AKI before contrast exposure
+    precondition: null
+    mandatory_actions:
+    - check_baseline_egfr
+    - review_risk_factors
+    - assess_hydration_status
+    allowed_actions:
+    - check_baseline_egfr
+    - review_risk_factors
+    - assess_hydration_status
+    - check_current_medications
+    - review_recent_contrast_exposure
+    - calculate_contrast_volume_limit
+    - give_crystalloid_fluid
+    - start_iv_hydration
+    - order_lab_creatinine
+    - order_creatinine
+    - order_lab_bmp
+    - order_lab_cbc
+    - assess_vital_signs
+    - monitor_urine_output
+    - discontinue_nephrotoxic_agents
+    - use_low_osmolar_contrast
+    - request_consultation
+    - order_lab_coagulation
+    - order_lab_troponin
+    - order_lab_lactate
+    - order_lab_bnp
+    - order_lab_blood_gas
+    - order_lab_liver_function_tests
+    - order_lab_d_dimer
+    - obtain_12_lead_ecg
+    - order_echocardiogram
+    - order_imaging_chest_xray
+    - order_imaging_ultrasound
+    - give_supplemental_oxygen
+    - consult_nephrology
+    forbidden_actions:
+    - administer_contrast_without_egfr
+    - skip_risk_assessment
+    deadlines:
+      check_baseline_egfr: 60
+      review_risk_factors: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO 2024 CKD
+    source_section: Section 4.3.2
+    source_page: Table 33
+    source_quote: In people with CKD, assess risk factors for CA-AKI before contrast exposure
+    conditional_rules:
+    - rule_id: CAKI-METFORMIN-HOLD-48H
+      condition: '''metformin'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - hold_metformin_before_contrast
+        - hold_metformin_48h_post
+      evidence: KDIGO Contrast AKI; ACR Manual on Contrast Media 2024
+      severity: HIGH
+      description: Metformin must be held before and 48h after iodinated contrast.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: metformin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: metformin
+          type: list_not_contains
+    - rule_id: CAKI-METFORMIN-HOLD-48H-FORBIDDEN
+      condition: '''metformin'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_metformin_during_contrast_study
+        - restart_metformin_before_48h_post_contrast
+      evidence: KDIGO Contrast AKI 2012; ACR Contrast Manual 2023; metformin with contrast-induced AKI causes lactic acidosis
+      severity: HIGH
+      description: Metformin must be held before contrast and for 48h after; contrast-induced AKI impairs metformin clearance
+        causing lactic acidosis.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: metformin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: metformin
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: CAKI-HIGH-RISK-PREHYDRATE
+      condition: patient.labs.egfr < 30
+      effect:
+        type: REQUIRED
+        actions:
+        - prehydrate_iv_ns
+        - use_lowest_contrast_volume
+      evidence: KDIGO Contrast AKI; Mehran R, JACC 2004
+      severity: HIGH
+      description: eGFR <30 is high risk for contrast nephropathy. Pre-hydration mandatory.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: CAKI-HIGH-RISK-PREHYDRATE-FORBIDDEN
+      condition: patient.labs.egfr < 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_contrast_without_prehydration_high_risk
+        - use_high_osmolar_contrast_in_high_risk
+      evidence: KDIGO Contrast AKI 2012; high-osmolar contrast increases nephrotoxicity risk 2-3x; prehydration reduces risk
+        by 40%
+      severity: HIGH
+      description: High-risk patients require prehydration before contrast; high-osmolar contrast agents significantly increase
+        nephrotoxicity.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+      skip_scenario_generation: true
+    - rule_id: CAKI-GADOLINIUM-NO-IN-CKD
+      condition: patient.labs.egfr < 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_gadolinium_contrast
+        - order_mri_with_gadolinium
+      evidence: ACR Manual on Contrast Media 2024; FDA NSF Warning
+      severity: CRITICAL
+      description: Gadolinium in severe CKD causes nephrogenic systemic fibrosis.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 30
+          max: 120
+          type: float
+    - rule_id: CAKI-DIALYSIS-NO-DELAY
+      condition: '''hemodialysis'' in patient.comorbidities and ''contrast_given'' in patient.history'
+      effect:
+        type: REQUIRED
+        actions:
+        - schedule_dialysis_post_contrast
+      evidence: KDIGO Contrast AKI 2012
+      severity: MODERATE
+      description: Dialysis patients may need post-contrast dialysis scheduling.
+      condition_variables:
+      - patient.comorbidities
+      - patient.history
+      trigger_range:
+        patient.comorbidities:
+          contains: hemodialysis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hemodialysis
+          type: list_not_contains
+    - rule_id: CAKI-NSAID-AVOID
+      condition: '''nsaid'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_nsaid_with_contrast
+      evidence: KDIGO Contrast AKI 2012
+      severity: HIGH
+      description: NSAIDs with contrast multiply nephrotoxicity risk.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: nsaid
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid
+          type: list_not_contains
+    - rule_id: CAKI-CKD-PREP-REQUIRED
+      condition: '''ckd_stage_3'' in patient.comorbidities or ''ckd_stage_4'' in patient.comorbidities or ''ckd'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_contrast_without_preparation
+        - skip_prehydration
+        - give_high_osmolar_contrast
+      evidence: KDIGO Contrast AKI 2024; ACR Manual on Contrast Media
+      severity: HIGH
+      description: CKD patients require prehydration and low-osmolar contrast before any contrast exposure.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: ckd_stage_3
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: ckd_stage_3
+          type: list_not_contains
+    - rule_id: CAKI-AMINOGLYCOSIDE-AVOID
+      condition: '''aminoglycoside'' in patient.medications or ''gentamicin'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_aminoglycoside_with_contrast
+        - give_aminoglycoside
+      evidence: KDIGO Contrast AKI 2012; Lopez-Novoa JM, Kidney Int 2011
+      severity: HIGH
+      description: Aminoglycosides synergize nephrotoxicity with contrast agents.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: aminoglycoside
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: aminoglycoside
+          type: list_not_contains
+    - rule_id: CAKI-SPECIFIC-NEPHROTOXIN-HOLD
+      condition: '''vancomycin'' in patient.medications or ''amphotericin'' in patient.medications or ''cyclosporine'' in
+        patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - hold_nephrotoxin_before_contrast
+        - monitor_drug_levels
+      evidence: KDIGO Contrast AKI 2012; ACR Manual on Contrast Media 2024
+      severity: HIGH
+      description: Specific nephrotoxins should be held or monitored around contrast exposure.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: vancomycin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: vancomycin
+          type: list_not_contains
+    - rule_id: CAKI-SPECIFIC-NEPHROTOXIN-HOLD-FORBIDDEN
+      condition: '''vancomycin'' in patient.medications or ''amphotericin'' in patient.medications or ''cyclosporine'' in
+        patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_nephrotoxin_during_contrast_exposure
+        - give_nsaid_periprocedural_with_contrast
+      evidence: KDIGO Contrast AKI 2012; concurrent nephrotoxins with contrast create additive renal injury
+      severity: HIGH
+      description: Concurrent nephrotoxins with contrast create additive renal injury; NSAIDs must be held periprocedurally.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: vancomycin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: vancomycin
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: CAKI-GADOLINIUM-GFR30-SPECIFIC
+      condition: patient.labs.get('egfr', 90) < 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_gadolinium_in_severe_ckd_for_mri
+        - order_mri_gadolinium_without_nephrology_approval_in_ckd
+      evidence: KDIGO Contrast AKI 2012; ACR 2023; gadolinium in eGFR < 30 causes nephrogenic systemic fibrosis (NSF)
+      severity: CRITICAL
+      description: Gadolinium contrast in severe CKD (eGFR < 30) causes nephrogenic systemic fibrosis, a debilitating fibrotic
+        condition.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: CAKI-CKD-PREP-SPECIFIC
+      condition: patient.labs.get('egfr', 90) < 45 and ('ckd' in patient.comorbidities or 'diabetes' in patient.comorbidities)
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_contrast_without_isotonic_prehydration_in_ckd
+        - use_high_volume_contrast_in_ckd_diabetes
+      evidence: KDIGO Contrast AKI 2012; CKD + diabetes doubles contrast nephropathy risk; mandatory low-volume iso-osmolar
+        + prehydration
+      severity: HIGH
+      description: CKD with diabetes doubles contrast nephropathy risk; isotonic prehydration and low-volume contrast are
+        mandatory.
+      condition_variables:
+      - patient.labs.egfr
+      - patient.comorbidities
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 44
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    next_nodes: []
+    conditional_next:
+      state.egfr < 30: high_risk_pathway
+      state.egfr < 60: moderate_risk_pathway
+      'True': low_risk_pathway
+  high_risk_pathway:
+    node_id: high_risk_pathway
+    node_type: plan
+    name: High Risk CA-AKI Prevention
+    description: Prevention protocol for CKD G4-G5 patients - consider alternatives to contrast
+    precondition: state.egfr < 30
+    mandatory_actions:
+    - consider_alternative_imaging
+    - nephrology_consult
+    - hold_nephrotoxic_medications
+    - iv_hydration_pre_contrast
+    - use_minimum_contrast_volume
+    - iv_hydration_post_contrast
+    - hold_metformin_if_applicable
+    - monitor_scr_48_72h
+    allowed_actions:
+    - consider_alternative_imaging
+    - nephrology_consult
+    - hold_nephrotoxic_medications
+    - iv_hydration_pre_contrast
+    - use_minimum_contrast_volume
+    - use_iso_osmolar_contrast
+    - iv_hydration_post_contrast
+    - hold_metformin_if_applicable
+    - monitor_scr_48_72h
+    - consider_dialysis_timing
+    forbidden_actions:
+    - use_high_osmolar_contrast
+    deadlines:
+      iv_hydration_pre_contrast: 60
+      monitor_scr_48_72h: 4320
+    required_prior_actions:
+      use_minimum_contrast_volume:
+      - check_baseline_egfr
+      - iv_hydration_pre_contrast
+      iv_hydration_post_contrast:
+      - iv_hydration_pre_contrast
+    conditional_rules:
+    - rule_id: CAKI-HIGH-NO-CONTRAST-WITHOUT-HYDRATION
+      condition: patient.labs.get('egfr', 90) < 60
+      effect:
+        type: FORBIDDEN
+        actions:
+        - administer_contrast_without_hydration
+      evidence: KDIGO 2024 CKD Section 4.3.2; pre-hydration mandatory in eGFR <60
+      severity: HIGH
+      description: 'Converted from unconditional: contrast without hydration is harmful when eGFR <60; pre-hydration reduces
+        CA-AKI incidence by 50%'
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 59
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: CAKI-HIGH-NO-REPEAT-CONTRAST
+      condition: patient.labs.get('egfr', 90) < 60
+      effect:
+        type: FORBIDDEN
+        actions:
+        - repeat_contrast_within_48h
+      evidence: KDIGO 2024 CKD Section 4.3.2; repeated contrast within 48h multiplies AKI risk
+      severity: HIGH
+      description: 'Converted from unconditional: repeated contrast within 48h in CKD patients (eGFR <60) causes cumulative
+        nephrotoxicity'
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 59
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: CAKI-HIGH-NO-NSAIDS
+      condition: '''nsaid'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_nsaids
+      evidence: KDIGO 2024 CKD; NSAIDs synergize with contrast nephrotoxicity
+      severity: HIGH
+      description: 'Converted from unconditional: continuing NSAIDs during contrast exposure multiplies nephrotoxicity risk
+        via afferent arteriole vasoconstriction'
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: nsaid
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid
+          type: list_not_contains
+    - rule_id: CAKI-HIGH-NO-AMINOGLYCOSIDES
+      condition: '''aminoglycoside'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_aminoglycosides
+      evidence: KDIGO 2024 CKD; aminoglycosides synergize with contrast nephrotoxicity
+      severity: HIGH
+      description: 'Converted from unconditional: continuing aminoglycosides with contrast exposure causes synergistic tubular
+        toxicity'
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: aminoglycoside
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: aminoglycoside
+          type: list_not_contains
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO 2024 CKD
+    source_section: Section 4.3.2 - Practice Points
+    source_page: Practice Point 4.3.2.1-4.3.2.3
+    source_quote: In people with CKD G3a-G5, use the lowest possible dose of contrast media and ensure adequate hydration
+      before and after contrast media exposure
+    source_quotes:
+      minimize_dose: In people with CKD G3a-G5, use the lowest possible dose of contrast media
+      hydration: Ensure adequate hydration before and after contrast media exposure
+      metformin: Consider withholding metformin for 48 hours after contrast exposure in CKD G3b-G5
+    next_nodes:
+    - post_contrast_monitoring
+    conditional_next: {}
+  moderate_risk_pathway:
+    node_id: moderate_risk_pathway
+    node_type: plan
+    name: Moderate Risk CA-AKI Prevention
+    description: Prevention protocol for CKD G3 patients
+    precondition: state.egfr >= 30 and state.egfr < 60
+    mandatory_actions:
+    - iv_hydration_pre_contrast
+    - use_minimum_contrast_volume
+    - iv_hydration_post_contrast
+    - monitor_scr_48_72h
+    allowed_actions:
+    - hold_nephrotoxic_medications
+    - iv_hydration_pre_contrast
+    - use_minimum_contrast_volume
+    - use_iso_osmolar_contrast
+    - iv_hydration_post_contrast
+    - hold_metformin_if_g3b
+    - monitor_scr_48_72h
+    forbidden_actions:
+    - use_high_osmolar_contrast
+    conditional_rules:
+    - rule_id: CAKI-MOD-NO-CONTRAST-WITHOUT-HYDRATION
+      condition: patient.labs.get('egfr', 90) < 60
+      effect:
+        type: FORBIDDEN
+        actions:
+        - administer_contrast_without_hydration
+      evidence: KDIGO 2024 CKD Section 4.3.2; hydration required in CKD G3
+      severity: HIGH
+      description: 'Converted from unconditional: contrast without hydration in eGFR 30-59 increases CA-AKI risk; pre-hydration
+        is standard of care'
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 30
+          max: 59
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: CAKI-MOD-NO-REPEAT-CONTRAST
+      condition: patient.labs.get('egfr', 90) < 60
+      effect:
+        type: FORBIDDEN
+        actions:
+        - repeat_contrast_within_48h
+      evidence: KDIGO 2024 CKD Section 4.3.2; repeated contrast in CKD G3 multiplies AKI risk
+      severity: HIGH
+      description: 'Converted from unconditional: repeated contrast within 48h at eGFR 30-59 causes cumulative nephrotoxicity'
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 30
+          max: 59
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    deadlines:
+      iv_hydration_pre_contrast: 60
+      monitor_scr_48_72h: 4320
+    required_prior_actions:
+      use_minimum_contrast_volume:
+      - check_baseline_egfr
+      iv_hydration_post_contrast:
+      - iv_hydration_pre_contrast
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO 2024 CKD
+    source_section: Section 4.3.2
+    source_page: Practice Point 4.3.2.1-4.3.2.2
+    source_quote: Ensure adequate hydration before and after contrast media exposure and use the lowest possible dose of contrast
+      media in CKD G3 patients
+    next_nodes:
+    - post_contrast_monitoring
+    conditional_next: {}
+  low_risk_pathway:
+    node_id: low_risk_pathway
+    node_type: action
+    name: Low Risk - Standard Care
+    description: Standard care for patients with eGFR ≥ 60
+    precondition: state.egfr >= 60
+    mandatory_actions:
+    - document_egfr_check
+    - standard_contrast_administration
+    allowed_actions:
+    - document_egfr_check
+    - standard_contrast_administration
+    - oral_hydration_if_applicable
+    forbidden_actions:
+    - administer_contrast_without_egfr_check
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: KDIGO 2024 CKD
+    source_section: Section 4.3.2
+    source_page: Practice Point 4.3.2.1
+    source_quote: In people with eGFR ≥60 mL/min/1.73m², the risk of CA-AKI is low and routine prophylactic measures are not
+      required
+    next_nodes: []
+    conditional_next: {}
+  post_contrast_monitoring:
+    node_id: post_contrast_monitoring
+    node_type: enquiry
+    name: Post-Contrast Monitoring
+    description: Monitor for CA-AKI development after contrast exposure
+    precondition: null
+    mandatory_actions:
+    - check_scr_at_48h
+    - assess_urine_output
+    allowed_actions:
+    - check_scr_at_48h
+    - check_scr_at_72h
+    - assess_urine_output
+    - continue_iv_hydration_if_needed
+    - resume_metformin_if_egfr_stable
+    forbidden_actions:
+    - discharge_without_scr_check
+    deadlines:
+      check_scr_at_48h: 2880
+    required_prior_actions:
+      resume_metformin_if_egfr_stable:
+      - check_scr_at_48h
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO 2012 AKI
+    source_section: CA-AKI Definition
+    source_page: '37'
+    source_quote: CA-AKI defined as SCr increase ≥0.3 mg/dL within 48 hours OR ≥1.5x baseline
+    next_nodes: []
+    conditional_next:
+      state.scr_increase >= 0.3 or state.scr_ratio >= 1.5: aki_management
+      'True': safe_discharge
+  aki_management:
+    node_id: aki_management
+    node_type: plan
+    name: CA-AKI Management
+    description: Management when CA-AKI is detected
+    precondition: state.scr_increase >= 0.3 or state.scr_ratio >= 1.5
+    mandatory_actions:
+    - nephrology_consult
+    - optimize_fluid_status
+    - avoid_additional_nephrotoxins
+    - serial_scr_monitoring
+    allowed_actions:
+    - nephrology_consult
+    - optimize_fluid_status
+    - avoid_additional_nephrotoxins
+    - serial_scr_monitoring
+    - consider_rrt_if_indicated
+    - adjust_medication_doses
+    forbidden_actions:
+    - additional_contrast_exposure
+    - continue_nephrotoxic_drugs
+    - discharge_without_followup
+    deadlines:
+      nephrology_consult: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO 2012 AKI
+    source_section: AKI Management
+    source_page: '38'
+    source_quote: Evaluate and treat reversible causes of AKI; avoid nephrotoxic agents and ensure adequate volume status
+      in patients with CA-AKI
+    next_nodes: []
+    conditional_next: {}
+  safe_discharge:
+    node_id: safe_discharge
+    node_type: action
+    name: Safe Discharge
+    description: Safe discharge after confirmed no CA-AKI
+    precondition: null
+    mandatory_actions:
+    - document_stable_egfr
+    - provide_discharge_instructions
+    - schedule_followup
+    allowed_actions:
+    - document_stable_egfr
+    - provide_discharge_instructions
+    - schedule_followup
+    - resume_home_medications
+    forbidden_actions:
+    - discharge_without_egfr_confirmation
+    deadlines: {}
+    required_prior_actions:
+      provide_discharge_instructions:
+      - document_stable_egfr
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: KDIGO 2024 CKD
+    source_section: Section 4.3.2
+    source_page: '41'
+    source_quote: Confirm stable kidney function before discharge and provide instructions on signs of AKI and when to seek
+      medical attention
+    next_nodes: []
+    conditional_next: {}

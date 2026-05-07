@@ -1,0 +1,29 @@
+# RAG Agent with Dense Retrieval (BGE-M3) Configuration
+# NeurIPS 리뷰어 비판 대응: 로컬 임베딩 기반 강한 텍스트 베이스라인
+#
+# IMPORTANT: Set VLLM_URL environment variable before running
+# Example: export VLLM_URL="http://localhost:8000/v1"
+agent:
+  type: "rag"
+  agent_id: "rag_dense"
+
+  # LLM Settings - Requires vLLM server
+  llm_backend: "vllm"
+  llm_model: "Qwen/Qwen3-30B-A3B-Instruct-2507"
+  temperature: 0.1
+  use_llm: true
+  base_url: null  # Set via VLLM_URL env var
+
+  # Dense Retrieval Settings (BGE-M3)
+  top_k: 5
+  use_bm25: false       # BM25 비활성화
+  use_dense: true       # Dense Retrieval 활성화
+  use_hybrid: false     # Hybrid 비활성화 (Dense only)
+  embedding_model: "BAAI/bge-m3"
+  dense_weight: 0.5     # Hybrid 시 가중치 (현재 미사용)
+  cpg_sources_path: null  # Use default path
+
+  # Budget Settings
+  max_actions_per_step: 3
+  budget_limit_tokens: 100000
+  budget_limit_tool_calls: 50

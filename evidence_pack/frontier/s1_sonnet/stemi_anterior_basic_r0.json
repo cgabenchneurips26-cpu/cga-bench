@@ -1,0 +1,261 @@
+{
+  "scenario_id": "stemi_anterior_basic",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.7777777777777778,
+  "peak_risk": 0.5057499999999999,
+  "aggregate_risk": 0.8171499999999999,
+  "total_violations": 4,
+  "sub_scores": {
+    "C1_path_selection": 0.9444444444444444,
+    "C2_mandatory_completion": 1.0,
+    "C3_forbidden_avoidance": 0.0,
+    "C4_timing_compliance": 0.6,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 2,
+    "commission": 1,
+    "deviation": 1
+  },
+  "actions_count": 18,
+  "actions": [
+    {
+      "action_id": "obtain_12_lead_ecg",
+      "timestamp_minutes": 0.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Class I indication: 12-lead ECG must be obtained and interpreted within 10 minutes of first medical contact to evaluate for STEMI. This is the highest priority action for this patient with classic STEMI presentation."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 5.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory initial assessment to establish baseline hemodynamic status, identify instability, and guide further management. Continuous monitoring is required per guidelines."
+    },
+    {
+      "action_id": "obtain_chest_pain_history",
+      "timestamp_minutes": 10.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory immediate history to characterize pain onset, duration, quality, and risk factors for risk stratification and to confirm STEMI diagnosis and guide reperfusion decision-making."
+    },
+    {
+      "action_id": "activate_cath_lab",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY: Immediate cath lab activation is required for primary PCI. Door-to-balloon target is <90 minutes; patient is at 15 minutes. This must be initiated without delay to meet the guideline-mandated timeframe."
+    },
+    {
+      "action_id": "give_aspirin_loading",
+      "timestamp_minutes": 20.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "aspirin",
+        "dose": "standard"
+      },
+      "justification": "MANDATORY: Aspirin 325mg chewable is Class I indication for all STEMI patients. Antiplatelet therapy must be initiated immediately to reduce further thrombus propagation."
+    },
+    {
+      "action_id": "give_p2y12_inhibitor",
+      "timestamp_minutes": 25.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "MANDATORY: Dual antiplatelet therapy with a P2Y12 inhibitor (ticagrelor or prasugrel preferred per AHA guidelines) is required for anterior STEMI prior to PCI to reduce stent thrombosis and reinfarction risk."
+    },
+    {
+      "action_id": "give_anticoagulation",
+      "timestamp_minutes": 30.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "MANDATORY: Anticoagulation (heparin or enoxaparin) is required per AHA STEMI guidelines as adjunctive therapy prior to primary PCI. This is the only remaining mandatory action and must be completed immediately."
+    },
+    {
+      "action_id": "arrange_pci",
+      "timestamp_minutes": 35.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Primary PCI is the preferred reperfusion strategy for STEMI when performed within 90 minutes of door-to-balloon time. Cath lab has been activated; PCI must now be formally arranged to meet the <90-minute door-to-balloon target. Patient arrived 30 min ago, leaving ~60 minutes to achieve balloon inflation."
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 40.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "IV access is essential for administration of anticoagulation, antiplatelet agents, and any additional medications. Should be established promptly to facilitate ongoing treatment."
+    },
+    {
+      "action_id": "interpret_ecg",
+      "timestamp_minutes": 45.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Formal ECG interpretation is needed to confirm anterior STEMI pattern (ST elevations in V1-V4), document findings, and guide ongoing management including identifying any additional findings."
+    },
+    {
+      "action_id": "order_lab_troponin",
+      "timestamp_minutes": 50.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "troponin"
+      },
+      "justification": "High-sensitivity troponin at presentation is a Class I recommendation per AHA guidelines for acute chest pain workup and provides baseline for serial trending to confirm myocardial injury extent."
+    },
+    {
+      "action_id": "request_cardiology_consult",
+      "timestamp_minutes": 55.0,
+      "type": "consult",
+      "args": {},
+      "justification": "Cardiology consultation is essential to oversee primary PCI planning, review cath lab activation, and ensure door-to-balloon time remains within the 90-minute target (currently at 45 minutes since arrival)."
+    },
+    {
+      "action_id": "give_nitrates_if_indicated",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has anterior STEMI (not inferior), BP is adequate at 135/85, no RV infarction concern \u2014 nitrates may help with ischemic chest pain relief. Right-sided ECG not required for anterior STEMI."
+    },
+    {
+      "action_id": "give_beta_blocker_if_stable",
+      "timestamp_minutes": 65.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient is hemodynamically stable (HR 95, BP 135/85, SpO2 96%) without signs of cardiogenic shock or acute decompensated heart failure. Beta-blockers are Class I recommended in STEMI to reduce infarct size and arrhythmia risk when no contraindications are present."
+    },
+    {
+      "action_id": "administer_oxygen_if_hypoxic",
+      "timestamp_minutes": 70.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "SpO2 is 96%, which is borderline. Guidelines recommend supplemental oxygen if SpO2 <94%. Monitor and administer oxygen to maintain adequate saturation during this acute STEMI."
+    },
+    {
+      "action_id": "give_morphine_if_needed",
+      "timestamp_minutes": 75.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has crushing chest pain ongoing for >1 hour. Morphine can provide analgesia if pain persists despite aspirin and anticoagulation, while awaiting primary PCI. Appropriate for anterior STEMI without contraindications noted."
+    },
+    {
+      "action_id": "obtain_prior_ecg_comparison",
+      "timestamp_minutes": 80.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Comparing with prior ECG can help characterize extent and acuity of ST changes, which is useful clinical information for the cath lab team before primary PCI."
+    },
+    {
+      "action_id": "consider_fibrinolysis_if_pci_delayed",
+      "timestamp_minutes": 85.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient is at 85 minutes since arrival and door-to-balloon target is <90 minutes. If PCI cannot be completed within the recommended timeframe, fibrinolysis should be considered per AHA guidelines to ensure timely reperfusion therapy."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "718ef987-8478-445b-9960-e26d27ecd5a0",
+      "violation_type": "timing",
+      "timestamp_minutes": 45.0,
+      "action_involved": "obtain_12_lead_ecg",
+      "expected_action": null,
+      "expected_deadline": 10.0,
+      "actual_time": 45.0,
+      "state_at_violation": "patient_stemi_anterior_basic",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "major",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action obtain_12_lead_ecg performed 35 min after deadline",
+      "guideline_reference": "Initial Chest Pain Assessment"
+    },
+    {
+      "violation_id": "88a2e72d-0697-4c34-ae36-6b9b304a441b",
+      "violation_type": "commission",
+      "timestamp_minutes": 60.0,
+      "action_involved": "give_nitrates_if_indicated",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_stemi_anterior_basic",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Forbidden action performed: give_nitrates_if_indicated",
+      "guideline_reference": "Initial Chest Pain Assessment"
+    },
+    {
+      "violation_id": "efba4f14-4f45-40b7-b387-e8f30f2f8a26",
+      "violation_type": "deviation",
+      "timestamp_minutes": 70.0,
+      "action_involved": "give_oxygen_if_hypoxic",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_stemi_anterior_basic",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_oxygen_if_hypoxic",
+      "guideline_reference": "Initial Chest Pain Assessment"
+    },
+    {
+      "violation_id": "ec955693-707f-4493-b2c4-52cf13bf576a",
+      "violation_type": "timing",
+      "timestamp_minutes": 80.0,
+      "action_involved": "obtain_12_lead_ecg",
+      "expected_action": null,
+      "expected_deadline": 10.0,
+      "actual_time": 80.0,
+      "state_at_violation": "patient_stemi_anterior_basic",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "severe",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action obtain_12_lead_ecg performed 70 min after deadline",
+      "guideline_reference": "Initial Chest Pain Assessment"
+    }
+  ],
+  "expected_actions": [
+    "obtain_12_lead_ecg",
+    "order_lab_troponin",
+    "give_aspirin",
+    "give_heparin",
+    "activate_cath_lab"
+  ],
+  "forbidden_actions": [],
+  "total_duration_minutes": 90.0,
+  "termination_reason": "timeout",
+  "total_llm_calls": 7,
+  "total_tokens": 20593,
+  "elapsed_seconds": 172.26
+}

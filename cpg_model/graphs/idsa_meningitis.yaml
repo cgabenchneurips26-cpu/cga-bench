@@ -1,0 +1,660 @@
+graph_id: idsa_meningitis
+guideline_name: IDSA Bacterial Meningitis Management
+version: '2024.1'
+metadata:
+  primary_source:
+    title: Practice Guidelines for the Management of Bacterial Meningitis - 2024 Update
+    authors: Tunkel AR, Hasbun R, Bhimraj A, et al.
+    journal: Clinical Infectious Diseases
+    year: 2024
+    doi: 10.1093/cid/ciac840
+  source: IDSA 2024
+  description: Evidence-based management of community-acquired bacterial meningitis from empiric therapy through monitoring
+  key_evidence: Each hour of antibiotic delay increases mortality by 30% (Proulx N, QJM 2005); dexamethasone reduces mortality
+    in pneumococcal meningitis NNT=7 (de Gans J, NEJM 2002)
+  recommendation_system: IDSA-GRADE
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: enquiry
+    name: Initial Meningitis Assessment
+    description: 'Rapid assessment: classic triad (headache, fever, neck stiffness), GCS, focal neurological deficits, contraindications
+      to LP'
+    precondition: null
+    mandatory_actions:
+    - assess_clinical_presentation
+    - assess_vital_signs
+    - assess_neurological_status
+    - assess_contraindications_to_lp
+    allowed_actions:
+    - assess_clinical_presentation
+    - assess_vital_signs
+    - assess_neurological_status
+    - assess_contraindications_to_lp
+    - establish_iv_access
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_blood_culture
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_lactate
+    - apply_droplet_precautions
+    forbidden_actions:
+    - discharge_without_evaluation
+    deadlines:
+      assess_clinical_presentation: 10
+      assess_neurological_status: 10
+      assess_contraindications_to_lp: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2024
+    source_section: 'Section 2: Initial Evaluation'
+    source_page: Table 1
+    source_quote: Clinical suspicion of bacterial meningitis mandates emergent evaluation. Classic triad of headache, fever,
+      and neck stiffness is present in <50% of adults. Antibiotics must NEVER be delayed for diagnostic testing.
+    conditional_rules:
+    - rule_id: MENING-INITIAL-NO-DELAY-ABX-FOR-LP
+      condition: patient.presentation.get('delay_to_lp_minutes', 0) > 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_antibiotics_for_lp
+      evidence: IDSA 2024 Section 2; Proulx N, QJM 2005
+      severity: CRITICAL
+      description: 'Converted from unconditional: antibiotics must not be delayed for LP when LP will take >30 minutes; each
+        hour of antibiotic delay increases mortality by 30%'
+      condition_variables:
+      - patient.presentation.delay_to_lp_minutes
+      trigger_range:
+        patient.presentation.delay_to_lp_minutes:
+          min: 31
+          max: 360
+          type: float
+      normal_range:
+        patient.presentation.delay_to_lp_minutes:
+          min: 0
+          max: 30
+          type: float
+    - rule_id: MENING-INITIAL-NO-DELAY-ABX-FOR-CT
+      condition: '''focal_neuro_deficit'' in patient.comorbidities or ''papilledema'' in patient.exam_findings'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_antibiotics_for_ct
+      evidence: IDSA 2024 Section 2; Hasbun R, NEJM 2001
+      severity: CRITICAL
+      description: 'Converted from unconditional: when CT is indicated (focal deficits, papilledema), antibiotics must be
+        given before CT; do not delay antibiotics for imaging'
+      condition_variables:
+      - patient.comorbidities
+      - patient.exam_findings
+      trigger_range:
+        patient.comorbidities:
+          contains: focal_neuro_deficit
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: focal_neuro_deficit
+          type: list_not_contains
+    next_nodes:
+    - empiric_antibiotics
+    conditional_next: {}
+  empiric_antibiotics:
+    node_id: empiric_antibiotics
+    node_type: action
+    name: Empiric Antibiotic Administration
+    description: Immediate empiric antibiotics - do NOT delay for LP or CT. Vancomycin + 3rd-gen cephalosporin standard regimen.
+    precondition: null
+    mandatory_actions:
+    - order_lab_blood_culture
+    - give_empiric_antibiotics
+    - give_vancomycin_iv
+    - give_ceftriaxone_iv
+    allowed_actions:
+    - order_lab_blood_culture
+    - give_empiric_antibiotics
+    - give_vancomycin_iv
+    - give_ceftriaxone_iv
+    - give_cefotaxime_iv
+    - give_ampicillin_iv
+    - give_meropenem_iv
+    - give_chloramphenicol_iv
+    - give_acyclovir_iv
+    - apply_droplet_precautions
+    forbidden_actions:
+    - withhold_antibiotics
+    deadlines:
+      order_lab_blood_culture: 15
+      give_empiric_antibiotics: 15
+      give_vancomycin_iv: 30
+      give_ceftriaxone_iv: 30
+    required_prior_actions:
+      give_empiric_antibiotics:
+      - order_lab_blood_culture
+    sequence_rules:
+    - - order_lab_blood_culture
+      - give_empiric_antibiotics
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: IDSA 2024
+    source_section: 'Section 3: Empiric Antimicrobial Therapy'
+    source_page: Table 3
+    source_quote: 'Empiric antimicrobial therapy should be initiated immediately after blood cultures are obtained. Standard
+      regimen: vancomycin + third-generation cephalosporin (ceftriaxone or cefotaxime). DO NOT delay antibiotics for lumbar
+      puncture or neuroimaging.'
+    conditional_rules:
+    - rule_id: MENING-EMPIRIC-NO-DELAY-FOR-LP
+      condition: patient.presentation.get('delay_to_lp_minutes', 0) > 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_antibiotics_for_lp
+      evidence: IDSA 2024 Section 3; Proulx N, QJM 2005
+      severity: CRITICAL
+      description: 'Converted from unconditional: if LP will be delayed >30 min, antibiotics must be given first; each hour
+        of delay increases mortality'
+      condition_variables:
+      - patient.presentation.delay_to_lp_minutes
+      trigger_range:
+        patient.presentation.delay_to_lp_minutes:
+          min: 31
+          max: 360
+          type: float
+      normal_range:
+        patient.presentation.delay_to_lp_minutes:
+          min: 0
+          max: 30
+          type: float
+    - rule_id: MENING-EMPIRIC-NO-DELAY-FOR-CT
+      condition: '''focal_neuro_deficit'' in patient.comorbidities or ''papilledema'' in patient.exam_findings'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_antibiotics_for_ct
+        - delay_antibiotics_for_imaging
+      evidence: IDSA 2024 Section 3; Hasbun R, NEJM 2001
+      severity: CRITICAL
+      description: 'Converted from unconditional: when neuroimaging is needed (focal deficits, papilledema), antibiotics must
+        not wait for CT/imaging results'
+      condition_variables:
+      - patient.comorbidities
+      - patient.exam_findings
+      trigger_range:
+        patient.comorbidities:
+          contains: focal_neuro_deficit
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: focal_neuro_deficit
+          type: list_not_contains
+    - rule_id: MENING-EMPIRIC-NO-ORAL-ONLY
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_oral_antibiotics_only
+      evidence: IDSA 2024 Section 3; IV antibiotics required for CNS penetration
+      severity: HIGH
+      description: 'Converted from unconditional: oral antibiotics have insufficient CNS penetration for bacterial meningitis;
+        IV administration is mandatory'
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: bacterial_meningitis
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: bacterial_meningitis
+          type: list_not_contains
+    - rule_id: MENING-ABX-BEFORE-LP
+      condition: patient.presentation.delay_to_lp_minutes > 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_antibiotics_for_lp
+        - withhold_antibiotics_pending_lp
+      evidence: IDSA 2024 Section 3.1; Proulx N, QJM 2005
+      severity: CRITICAL
+      description: If LP will be delayed >30 minutes (CT needed, coagulopathy, etc.), antibiotics MUST be given immediately;
+        each hour of delay increases mortality by 30%.
+      condition_variables:
+      - patient.presentation.delay_to_lp_minutes
+      trigger_range:
+        patient.presentation.delay_to_lp_minutes:
+          min: 31
+          max: 360
+          type: float
+      normal_range:
+        patient.presentation.delay_to_lp_minutes:
+          min: 0
+          max: 30
+          type: float
+    - rule_id: MENING-IMMUNOCOMP-LISTERIA
+      condition: patient.age > 50 or 'immunocompromised' in patient.comorbidities or 'pregnancy' in patient.comorbidities
+        or 'alcoholism' in patient.comorbidities
+      effect:
+        type: REQUIRED
+        actions:
+        - add_ampicillin_for_listeria
+      evidence: IDSA 2024 Table 3; Brouwer MC, NEJM 2006
+      severity: HIGH
+      description: Adults >50, immunocompromised, pregnant, or alcoholic patients require ampicillin to cover Listeria monocytogenes,
+        which is resistant to cephalosporins.
+      condition_variables:
+      - patient.age
+      - patient.comorbidities
+      trigger_range:
+        patient.age:
+          min: 51
+          max: 120
+          type: float
+      normal_range:
+        patient.age:
+          min: 18
+          max: 50
+          type: float
+    - rule_id: MENING-IMMUNOCOMP-LISTERIA-FORBIDDEN
+      condition: patient.age > 50 or 'immunocompromised' in patient.comorbidities or 'pregnancy' in patient.comorbidities
+        or 'alcoholism' in patient.comorbidities
+      effect:
+        type: FORBIDDEN
+        actions:
+        - omit_ampicillin_in_immunocompromised_meningitis
+        - give_ceftriaxone_only_in_immunocompromised
+      evidence: IDSA Meningitis 2004; Listeria requires ampicillin; cephalosporins have no Listeria activity
+      severity: HIGH
+      description: Immunocompromised patients need ampicillin for Listeria coverage; ceftriaxone alone misses this pathogen
+        entirely.
+      condition_variables:
+      - patient.age
+      - patient.comorbidities
+      trigger_range:
+        patient.age:
+          min: 51
+          max: 120
+          type: float
+      normal_range:
+        patient.age:
+          min: 18
+          max: 50
+          type: float
+      skip_scenario_generation: true
+    - rule_id: MENING-PENICILLIN-ALLERGY
+      condition: '''penicillin_anaphylaxis'' in patient.allergies or ''penicillin_severe_allergy'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ampicillin_iv
+        - give_ampicillin
+        - give_penicillin
+        - give_amoxicillin
+      evidence: IDSA 2024 Table 4; Tunkel AR, CID 2004
+      severity: CRITICAL
+      description: Penicillin anaphylaxis prohibits ampicillin/penicillin; use trimethoprim-sulfamethoxazole or meropenem
+        for Listeria coverage instead.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: penicillin_anaphylaxis
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: penicillin_anaphylaxis
+          type: list_not_contains
+    - rule_id: MENING-NEONATE-COVERAGE
+      condition: patient.age < 1
+      effect:
+        type: REQUIRED
+        actions:
+        - add_ampicillin_and_aminoglycoside
+        - give_ampicillin_iv
+        - give_gentamicin_iv
+      evidence: IDSA 2024 Table 3; AAP Red Book 2024
+      severity: CRITICAL
+      description: Neonates require ampicillin (for Listeria and Group B Strep) plus aminoglycoside (for Gram-negative coverage);
+        cephalosporin alone is insufficient.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 0
+          max: 0.99
+          type: float
+      normal_range:
+        patient.age:
+          min: 1
+          max: 120
+          type: float
+    - rule_id: MENING-NEONATE-COVERAGE-FORBIDDEN
+      condition: patient.age < 1
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_adult_empiric_for_neonatal_meningitis
+        - omit_ampicillin_in_neonatal_meningitis
+      evidence: IDSA Meningitis 2004; neonatal meningitis requires ampicillin + gentamicin/cefotaxime for GBS and Listeria
+        coverage
+      severity: CRITICAL
+      description: Neonatal meningitis has different pathogens (GBS, E. coli, Listeria); adult empiric regimen misses these
+        organisms.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 0
+          max: 0.99
+          type: float
+      normal_range:
+        patient.age:
+          min: 1
+          max: 120
+          type: float
+      skip_scenario_generation: true
+    - rule_id: MENING-HSV-ENCEPHALITIS
+      condition: '''hsv_suspected'' in patient.comorbidities or ''encephalitis_features'' in patient.presentation'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_acyclovir_iv
+      evidence: IDSA 2024 Section 3.4; Whitley RJ, NEJM 1986
+      severity: CRITICAL
+      description: If HSV encephalitis is suspected (temporal lobe findings, altered consciousness, seizures), IV acyclovir
+        must be started empirically; untreated mortality is 70%.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: hsv_suspected
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hsv_suspected
+          type: list_not_contains
+    - rule_id: MENING-HSV-ENCEPHALITIS-FORBIDDEN
+      condition: '''hsv_suspected'' in patient.comorbidities or ''encephalitis_features'' in patient.presentation'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - omit_acyclovir_if_hsv_suspected
+        - give_antibiotics_only_without_acyclovir_in_encephalitis
+      evidence: IDSA Meningitis 2004; Whitley RJ, NEJM 1986; untreated HSV encephalitis has 70% mortality
+      severity: CRITICAL
+      description: HSV encephalitis requires empiric acyclovir; antibiotics alone don't treat viral encephalitis and mortality
+        reaches 70% untreated.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: hsv_suspected
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hsv_suspected
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - adjunctive_therapy
+    conditional_next: {}
+  adjunctive_therapy:
+    node_id: adjunctive_therapy
+    node_type: action
+    name: Adjunctive Dexamethasone
+    description: Dexamethasone 0.15 mg/kg IV q6h x4 days - MUST be given BEFORE or WITH first antibiotic dose for pneumococcal
+      meningitis
+    precondition: null
+    mandatory_actions:
+    - give_dexamethasone_iv
+    allowed_actions:
+    - give_dexamethasone_iv
+    - continue_dexamethasone_4_days
+    - discontinue_dexamethasone_if_not_pneumococcal
+    forbidden_actions: []
+    deadlines:
+      give_dexamethasone_iv: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: IDSA 2024
+    source_section: 'Section 4: Adjunctive Therapy'
+    source_page: Table 5
+    source_quote: Dexamethasone 0.15 mg/kg IV every 6 hours for 4 days should be given BEFORE or simultaneously with the first
+      dose of antibiotics. Reduces mortality in pneumococcal meningitis (NNT=7) and hearing loss.
+    conditional_rules:
+    - rule_id: MENING-DEXA-NO-AFTER-ABX
+      condition: '''suspected_pneumococcal'' in patient.presentation'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_dexamethasone_after_antibiotics
+      evidence: IDSA 2024 Section 4; de Gans J, NEJM 2002
+      severity: HIGH
+      description: 'Converted from unconditional: dexamethasone given after antibiotics provides no benefit in pneumococcal
+        meningitis; must be before or simultaneous with first antibiotic dose'
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: suspected_pneumococcal
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: suspected_pneumococcal
+          type: list_not_contains
+    - rule_id: MENING-DEXA-NO-ORAL
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_dexamethasone_oral
+      evidence: IDSA 2024 Section 4; IV route required for meningitis dosing
+      severity: HIGH
+      description: 'Converted from unconditional: oral dexamethasone has unpredictable absorption in acute meningitis; IV
+        route ensures reliable CNS anti-inflammatory effect'
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: bacterial_meningitis
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: bacterial_meningitis
+          type: list_not_contains
+    - rule_id: MENING-DEXA-BEFORE-ABX
+      condition: '''suspected_pneumococcal'' in patient.presentation or ''gram_positive_diplococci'' in patient.labs'
+      effect:
+        type: BEFORE
+        actions:
+        - give_dexamethasone_iv
+        - give_empiric_antibiotics
+      evidence: IDSA 2024 Section 4.1; de Gans J, NEJM 2002
+      severity: HIGH
+      description: Dexamethasone must be given BEFORE or simultaneously with the first antibiotic dose to be effective; giving
+        it after antibiotics provides no benefit.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: suspected_pneumococcal
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: suspected_pneumococcal
+          type: list_not_contains
+    - rule_id: MENING-DEXAMETHASONE-TIMING
+      condition: '''bacterial_meningitis'' in patient.presentation'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_dexamethasone_iv
+      evidence: IDSA 2024 Section 4.1; van de Beek D, Lancet Neurol 2012
+      severity: HIGH
+      description: In adults with suspected bacterial meningitis, dexamethasone should be given empirically and discontinued
+        if non-pneumococcal pathogen identified.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: bacterial_meningitis
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: bacterial_meningitis
+          type: list_not_contains
+    - rule_id: MENING-DEXAMETHASONE-TIMING-FORBIDDEN
+      condition: '''bacterial_meningitis'' in patient.presentation'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_dexamethasone_after_antibiotics_in_meningitis
+        - delay_dexamethasone_for_culture_in_meningitis
+      evidence: IDSA Meningitis 2004; de Gans J, NEJM 2002; dexamethasone must be given before or with first antibiotic dose
+      severity: HIGH
+      description: Dexamethasone given after antibiotics loses anti-inflammatory benefit; must precede or coincide with first
+        antibiotic dose.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: bacterial_meningitis
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: bacterial_meningitis
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - lp_and_diagnosis
+    conditional_next: {}
+  lp_and_diagnosis:
+    node_id: lp_and_diagnosis
+    node_type: plan
+    name: Lumbar Puncture and Diagnostics
+    description: CSF analysis for definitive diagnosis - perform LP as soon as safe, but NEVER delay antibiotics for LP
+    precondition: null
+    mandatory_actions:
+    - perform_lumbar_puncture
+    - order_csf_analysis
+    allowed_actions:
+    - perform_lumbar_puncture
+    - order_csf_analysis
+    - order_csf_gram_stain
+    - order_csf_culture
+    - order_csf_protein_glucose
+    - order_csf_cell_count
+    - order_csf_pcr_panel
+    - order_imaging_ct_head
+    - order_imaging_mri_brain
+    - narrow_antibiotics_based_on_culture
+    - order_lab_csf_latex_agglutination
+    forbidden_actions:
+    - perform_lp_in_coagulopathy_uncorrected
+    deadlines:
+      perform_lumbar_puncture: 120
+      order_csf_analysis: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2024
+    source_section: 'Section 5: Diagnostic Approach'
+    source_page: Figure 1
+    source_quote: 'LP should be performed as soon as possible. CT before LP is indicated ONLY if: immunocompromised, history
+      of CNS disease, new seizures, papilledema, focal neurological deficit, or altered consciousness.'
+    conditional_rules:
+    - rule_id: MENING-LP-NO-WITHOUT-CT-CONTRAINDICATED
+      condition: '''focal_neuro_deficit'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - perform_lp_without_ct_when_contraindicated
+      evidence: IDSA 2024 Section 5; Hasbun R, NEJM 2001
+      severity: CRITICAL
+      description: 'Converted from unconditional: LP without prior CT in patients with focal neurological deficits risks brainstem
+        herniation'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: focal_neuro_deficit
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: focal_neuro_deficit
+          type: list_not_contains
+    - rule_id: MENING-INCREASED-ICP-NO-LP
+      condition: '''papilledema'' in patient.presentation or ''focal_neuro_deficit'' in patient.presentation or ''gcs_less_than_12''
+        in patient.presentation'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - perform_lp_without_ct
+        - perform_lumbar_puncture_immediate
+      evidence: IDSA 2024 Section 5.2; Hasbun R, NEJM 2001
+      severity: CRITICAL
+      description: LP in patients with raised ICP signs (papilledema, focal deficit, GCS <12) risks brainstem herniation;
+        CT must precede LP. Antibiotics must NOT wait for CT or LP.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: papilledema
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: papilledema
+          type: list_not_contains
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: plan
+    name: Monitoring and Targeted Therapy
+    description: ICU monitoring, antibiotic de-escalation based on culture, complication surveillance
+    precondition: null
+    mandatory_actions:
+    - admit_to_icu
+    - monitor_neurological_status
+    - narrow_antibiotics_when_culture_available
+    allowed_actions:
+    - admit_to_icu
+    - monitor_neurological_status
+    - narrow_antibiotics_when_culture_available
+    - repeat_lumbar_puncture_if_no_improvement
+    - order_imaging_mri_brain
+    - assess_for_complications
+    - monitor_hearing
+    - manage_seizures
+    - manage_cerebral_edema
+    - give_anticonvulsant_if_seizures
+    - give_mannitol_or_hypertonic_saline_if_edema
+    - infectious_disease_consult
+    - report_to_public_health
+    - provide_chemoprophylaxis_to_close_contacts
+    forbidden_actions:
+    - discharge_prematurely
+    - discontinue_antibiotics_early
+    - ignore_neurological_deterioration
+    deadlines:
+      admit_to_icu: 60
+      monitor_neurological_status: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA 2024
+    source_section: 'Section 6: Monitoring and Complications'
+    source_page: Table 7
+    source_quote: All patients with bacterial meningitis should be monitored in an ICU setting. Repeat LP at 48 hours if no
+      clinical improvement. Complications include cerebral edema, hydrocephalus, seizures, and hearing loss.
+    next_nodes: []
+    conditional_next: {}

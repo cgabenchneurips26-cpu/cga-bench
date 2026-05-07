@@ -1,0 +1,106 @@
+graph_id: asco_lung_cancer_screening_2023
+guideline_name: ASCO Lung Cancer Screening 2023
+version: '2023.1'
+metadata:
+  source: ASCO Lung Cancer Screening 2023
+  doi: 10.1200/JCO.23.00146
+  journal: Journal of Clinical Oncology
+  recommendation_system: ASCO evidence-based
+  description: Low-dose CT lung cancer screening in high-risk adults.
+  key_evidence: NLST and NELSON trials demonstrate 20-24% mortality reduction.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Eligibility & Risk Assessment
+    description: Age 50-80, 20+ pack-year smoking history, smoking within 15y triggers LDCT screening.
+    precondition: null
+    mandatory_actions:
+    - assess_smoking_history
+    - assess_eligibility_usptsf_criteria
+    - consult_oncology
+    allowed_actions:
+    - assess_comorbidity_burden
+    - counsel_smoking_cessation
+    - assess_smoking_history
+    - order_pft_if_symptomatic
+    - assess_eligibility_usptsf_criteria
+    - discuss_shared_decision_making
+    - consult_oncology
+    forbidden_actions: []
+    deadlines:
+      assess_smoking_history: 2880
+      assess_eligibility_usptsf_criteria: 2880
+      consult_oncology: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ASCO Lung Cancer Screening 2023
+    source_section: Screening eligibility
+    source_page: null
+    source_quote: Annual LDCT is recommended for adults aged 50-80 with ≥20 pack-years.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: LDCT Screening & Nodule Management
+    description: Perform annual low-dose CT; manage nodules per Lung-RADS with follow-up or biopsy.
+    precondition: null
+    mandatory_actions:
+    - order_staging_ldct_chest
+    - plan_lung_rads_categorization
+    allowed_actions:
+    - order_staging_ldct_chest
+    - plan_followup_ldct_if_low_risk
+    - plan_biopsy_if_lungrads_4
+    - consult_thoracic_surgery
+    - discuss_tumor_board
+    - plan_pet_ct_if_suspicious
+    - counsel_smoking_cessation
+    - plan_lung_rads_categorization
+    forbidden_actions:
+    - defer_followup_on_lungrads_4_nodule
+    deadlines:
+      order_staging_ldct_chest: 10080
+      plan_lung_rads_categorization: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ASCO Lung Cancer Screening 2023
+    source_section: Screening protocol
+    source_page: null
+    source_quote: Lung-RADS stratifies nodule management and follow-up intervals.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Annual Surveillance & Smoking Cessation
+    description: Annual LDCT until ineligibility; integrate smoking cessation counseling.
+    precondition: null
+    mandatory_actions:
+    - plan_surveillance_imaging
+    - counsel_smoking_cessation
+    allowed_actions:
+    - refer_pulmonology_if_concerning
+    - document_shared_decision
+    - counsel_smoking_cessation
+    - reassess_screening_eligibility
+    - plan_surveillance_imaging
+    forbidden_actions: []
+    deadlines:
+      plan_surveillance_imaging: 10080
+      counsel_smoking_cessation: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Lung Cancer Screening 2023
+    source_section: Longitudinal screening
+    source_page: null
+    source_quote: Smoking cessation doubles the mortality benefit of lung cancer screening.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,31 @@
+block: ablation
+description: "Ablation study - systematically remove scoring components"
+ablations:
+  - id: no_timing
+    description: "Remove timing constraints"
+    disable_timing_violations: true
+  - id: no_sequence
+    description: "Remove sequence constraints"
+    disable_sequence_violations: true
+  - id: no_forbidden
+    description: "Remove forbidden action rules"
+    disable_commission_violations: true
+  - id: no_safety_gate
+    description: "Remove safety gate"
+    disable_safety_gate: true
+  - id: no_dual_track
+    description: "Remove DualTrack, use compliance only"
+    disable_dual_track: true
+  - id: no_fairness_guard
+    description: "Remove CPG_OVERSPECIFIC fairness guard"
+    disable_fairness_guard: true
+  - id: risk_relaxation
+    description: "Relax risk score weights"
+    relax_severity_weights: true
+agents: [oracle, rag_gpt4]
+scenarios:
+  - septic_shock_basic
+  - stemi_inferior_rv_trap
+num_runs: 3
+seed: 42
+track: public

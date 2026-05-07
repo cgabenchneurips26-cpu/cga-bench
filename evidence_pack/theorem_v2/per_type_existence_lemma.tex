@@ -1,0 +1,100 @@
+% Per-type existence lemma — refinement of Lemma~\ref{lem:separating-pairs}.
+% Included from paper/appendix.tex after per_type_bayes_table.tex.
+
+\subsection{Per-coordinate separating-pair existence (refinement of Lemma~\ref{lem:separating-pairs})}
+\label{app:per-type-existence}
+
+The separating-pair existence claim of
+Lemma~\ref{lem:separating-pairs} can be refined into a coordinate-
+specific existence map by appeal to the empirical estimator
+$\widehat{\varepsilon}^{\star,k}_{\pi}$ of
+Corollary~\ref{cor:empirical-bayes} applied to the per-coordinate
+verdict $V_{G,k}$. The estimator is strictly positive on a finite
+sample \emph{iff} at least one verdict-heterogeneous $\pi$-fibre
+exists in the sample, which in turn implies the population-level
+existence of a separating pair for coordinate $k$ under projection $\pi$.
+
+\begin{lemma}[Per-coordinate existence map]
+\label{lem:per-type-existence}
+Fix a guideline $G$ admissible in CGA-Bench and a finite sample
+$\widehat{D}\subseteq\mathcal{T}$. For each trace projection
+$\pi\in\{\pi_{\mathrm{term}},\pi_{\mathrm{aset}},\pi_{\mathrm{nord}},\pi_{\mathrm{nctx}}\}$
+and each violation coordinate
+$k\in\{\textsc{omit},\textsc{commit},\textsc{time},\textsc{seq},\textsc{dev}\}$,
+if $\widehat{\varepsilon}^{\star,k}_{\pi}(G,\widehat{D})>0$ then there
+exists a pair of traces $(\tau_1,\tau_2)\in\widehat{D}$ with
+$\pi(\tau_1)=\pi(\tau_2)$ and
+$V_{G,k}(\tau_1)\neq V_{G,k}(\tau_2)$.
+The converse also holds: if no such pair exists in $\widehat{D}$, then
+$\widehat{\varepsilon}^{\star,k}_{\pi}(G,\widehat{D})=0$.
+\end{lemma}
+
+\begin{proof}
+Forward direction: by definition of the plug-in estimator
+(App.~\ref{app:thm-empirical}),
+$\widehat{\varepsilon}^{\star,k}_{\pi}(G,\widehat{D})>0$ requires at
+least one fibre $y$ with $\min_{v}|\{i:V_{G,k}(\tau^{(i)})=v,\pi(\tau^{(i)})=y\}|\geq 1$,
+which means the fibre contains at least two traces
+$\tau_1,\tau_2$ with $V_{G,k}(\tau_1)\neq V_{G,k}(\tau_2)$.
+Converse: if every fibre is verdict-pure in coordinate $k$, every
+per-fibre count contribution to the estimator is zero. \hfill $\square$
+\end{proof}
+
+Applying Lemma~\ref{lem:per-type-existence} to the numbers in
+Table~\ref{tab:bayes_error} yields the existence map in
+Table~\ref{tab:per-type-existence}: a checked cell
+(\textit{\checkmark}) indicates an empirical separating pair exists in
+the CGA-Bench public release; an unchecked cell (\textit{---})
+indicates no separating pair exists in the corpus under that
+coordinate and projection.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Per-coordinate separating-pair existence on the
+$N=\bayesErrNEpisodes$ CGA-Bench episodes. \textit{\checkmark} denotes
+$\widehat{\varepsilon}^{\star,k}_{\pi}>0$ (at least one
+verdict-heterogeneous fibre); \textit{---} denotes
+$\widehat{\varepsilon}^{\star,k}_{\pi}=0$ (no separating pair in
+corpus under this projection and coordinate, under 5-minute
+timestamp binning).}
+\label{tab:per-type-existence}
+\begin{tabular}{lccccc}
+\toprule
+Projection & \textsc{omit} & \textsc{commit} & \textsc{time} & \textsc{seq} & \textsc{dev} \\
+\midrule
+$\pi_{\mathrm{term}}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+$\pi_{\mathrm{aset}}$ & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+$\pi_{\mathrm{nord}}$ & \checkmark & \checkmark & --- & --- & \checkmark \\
+$\pi_{\mathrm{nctx}}$ & \checkmark & \checkmark & --- & --- & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two structural observations follow immediately.
+
+\paragraph{Terminal and action-set projections are empirically blind to
+every coordinate.} Rows $\pi_{\mathrm{term}}$ and $\pi_{\mathrm{aset}}$
+are fully checked: there exists at least one trajectory pair in the
+CGA-Bench public release that an evaluator restricted to those
+projections cannot tell apart on \emph{any} of the five violation
+coordinates. This is the strongest form of the paper's
+``structurally incomplete'' claim for these two projections.
+
+\paragraph{Ordered projections resolve timing and sequence
+empirically.} Rows $\pi_{\mathrm{nord}}$ and $\pi_{\mathrm{nctx}}$
+show no separating pair for \textsc{time} or \textsc{seq} in the
+corpus. Theorem~\ref{thm:coarsening}'s strict positivity for these
+two projections (the aggregated $\widehat{\varepsilon}^{\star}_{\pi}>0$
+in Corollary~\ref{cor:empirical-bayes}) is therefore carried
+entirely by the \textsc{omit}, \textsc{commit}, and \textsc{dev}
+coordinates. A reviewer-skeptical reading would note that this is a
+\emph{corpus property}: CGA-Bench's simulator places actions at
+deterministic 5-minute intervals, so an agent's action-sequence fully
+determines timing under $\pi_{\mathrm{nctx}}$ with 5-minute binning.
+Coarser binning or a stochastic simulator would populate the
+\textsc{time} cells. The theorem's existence claim is preserved
+along the remaining three coordinates; no coordinate is empirically
+resolved under $\pi_{\mathrm{term}}$ or $\pi_{\mathrm{aset}}$, so
+the aggregated bound is tight where it matters for process-
+oblivious evaluators.

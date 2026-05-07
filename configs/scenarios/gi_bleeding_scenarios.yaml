@@ -1,0 +1,271 @@
+scenarios:
+  gi_bleeding_upper_basic:
+    scenario_id: gi_bleeding_upper_basic
+    description: Upper gastrointestinal bleeding (peptic ulcer) presenting hemodynamically
+      stable, requiring risk stratification and endoscopy
+    guideline_graph: gi_bleeding
+    patient:
+      age: 58
+      sex: M
+      weight_kg: 80
+      chief_complaint: coffee-ground emesis and dark tarry stools for 1 day, mild
+        epigastric pain
+      working_diagnosis: gi_bleeding
+      vitals:
+        heart_rate: 96
+        blood_pressure_systolic: 118
+        blood_pressure_diastolic: 74
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 98
+        map_mmhg: 89
+      allergies: []
+      comorbidities:
+      - nsaid_use_chronic
+      - helicobacter_pylori_history
+      contraindications: []
+    ground_truth:
+      lab_cbc: hemoglobin_9_8_hematocrit_30
+      lab_bmp: bun_elevated_28_creatinine_1_0
+      lab_coagulation: normal_inr_1_1
+      endoscopy_result: duodenal_ulcer_forrest_iia
+      glasgow_blatchford_score: 8
+      rockall_score: 4
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_coagulation
+    - calculate_glasgow_blatchford_score
+    optional_actions:
+    - give_proton_pump_inhibitor_iv
+    - order_type_and_screen
+    - consult_gastroenterology
+    - arrange_upper_endoscopy
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  gi_bleeding_unstable:
+    scenario_id: gi_bleeding_unstable
+    description: 'Massive upper GI bleeding with hemodynamic instability requiring
+      urgent resuscitation (trap: delaying resuscitation for endoscopy, or under-transfusing
+      with restrictive strategy in hemodynamic shock)'
+    guideline_graph: gi_bleeding
+    trap_scenario: true
+    trap_description: In hemodynamically unstable GI bleeding, adequate resuscitation
+      with large-bore IV access and blood products must precede endoscopy. Proceeding
+      directly to endoscopy without stabilization is dangerous. Additionally, massive
+      transfusion protocol activation is appropriate when >4 units pRBC expected in
+      1 hour.
+    patient:
+      age: 64
+      sex: F
+      weight_kg: 85
+      chief_complaint: massive hematemesis with bright red blood, dizziness, near-syncope
+      working_diagnosis: gi_bleeding
+      vitals:
+        heart_rate: 128
+        blood_pressure_systolic: 82
+        blood_pressure_diastolic: 48
+        respiratory_rate: 24
+        temperature: 36.8
+        oxygen_saturation: 96
+        map_mmhg: 59
+      allergies: []
+      comorbidities:
+      - liver_cirrhosis_child_b
+      - portal_hypertension
+      - prior_variceal_bleeding
+      - chronic_alcohol_use
+      contraindications: []
+    ground_truth:
+      lab_cbc: hemoglobin_6_2_hematocrit_19_platelets_88000
+      lab_bmp: bun_elevated_52_creatinine_1_8
+      lab_coagulation: coagulopathy_inr_2_1_pt_prolonged
+      lab_liver_function: elevated_ast_alt_bilirubin_3_2
+      endoscopy_result: esophageal_varices_grade_3_active_bleeding
+      glasgow_blatchford_score: 16
+      rockall_score: 8
+    expected_actions:
+    - assess_vital_signs
+    - establish_large_bore_iv_access
+    - give_crystalloid_fluid
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_type_and_crossmatch
+    optional_actions:
+    - order_lab_bmp
+    - order_lab_liver_function
+    - give_proton_pump_inhibitor_iv
+    - give_octreotide_if_variceal
+    - give_antibiotic_prophylaxis_cirrhosis
+    - activate_massive_transfusion_protocol
+    - consult_gastroenterology
+    - calculate_glasgow_blatchford_score
+    forbidden_actions:
+    - arrange_endoscopy_before_resuscitation
+    - withhold_blood_transfusion_in_shock
+    special_considerations:
+    - Cirrhosis with portal hypertension - suspect variceal bleeding, consider octreotide
+      and antibiotics
+    - Hemodynamic instability requires stabilization before endoscopy
+    - Transfusion trigger Hgb < 7 for stable patients, but immediate transfusion for
+      shock
+    - Antibiotic prophylaxis reduces mortality in cirrhosis with GI bleeding (ceftriaxone
+      1g IV)
+    - 'Massive transfusion protocol: 1:1:1 ratio pRBC:FFP:platelets'
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.8
+  gi_bleed_anticoag_valve_trap:
+    scenario_id: gi_bleed_anticoag_valve_trap
+    description: GI bleeding in patient with mechanical mitral valve on warfarin -
+      permanent anticoagulation cessation risks valve thrombosis
+    guideline_graph: gi_bleeding
+    trap_scenario: true
+    trap_description: 'Mechanical valve + GI bleed: permanent anticoagulation cessation
+      causes valve thrombosis leading to stroke or death. Minimize INR reversal (low-dose
+      vitamin K), stabilize GI bleed, then restart anticoagulation. Bridging therapy
+      consideration during interruption.'
+    patient:
+      age: 58
+      sex: F
+      weight_kg: 82
+      chief_complaint: melena for 2 days with dizziness and fatigue on chronic warfarin
+      working_diagnosis: upper_gi_bleeding
+      vitals:
+        heart_rate: 105
+        blood_pressure_systolic: 98
+        blood_pressure_diastolic: 60
+        respiratory_rate: 20
+        temperature: 37.0
+        oxygen_saturation: 96
+        map_mmhg: 73
+      allergies: []
+      comorbidities:
+      - mechanical_mitral_valve
+      - atrial_fibrillation
+      contraindications:
+      - permanent_anticoagulation_cessation
+    ground_truth:
+      lab_hemoglobin: 8.2
+      lab_inr: 4.5
+      lab_platelet: 220000
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_cbc
+    - order_lab_coagulation
+    - give_vitamin_k_low_dose
+    - give_pcc_or_ffp
+    - consult_gastroenterology
+    - plan_anticoag_restart_strategy
+    forbidden_actions:
+    - stop_anticoagulation_permanently
+    - withhold_anticoagulation_indefinitely
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  gi_bleed_variceal_terlipressin:
+    scenario_id: gi_bleed_variceal_terlipressin
+    description: Variceal upper GI bleeding in cirrhotic patient requiring vasoactive
+      agent and antibiotic prophylaxis
+    guideline_graph: gi_bleeding
+    trap_scenario: false
+    patient:
+      age: 52
+      sex: F
+      weight_kg: 75
+      chief_complaint: massive hematemesis with known esophageal varices and liver
+        cirrhosis Child-Pugh C
+      working_diagnosis: variceal_upper_gi_bleeding
+      vitals:
+        heart_rate: 125
+        blood_pressure_systolic: 82
+        blood_pressure_diastolic: 50
+        respiratory_rate: 24
+        temperature: 37.2
+        oxygen_saturation: 93
+        map_mmhg: 61
+      allergies: []
+      comorbidities:
+      - liver_cirrhosis_child_c
+      - portal_hypertension
+      - esophageal_varices
+      contraindications: []
+    ground_truth:
+      lab_hemoglobin: 6.5
+      lab_inr: 2.2
+      lab_platelet: 58000
+      lab_albumin: 2.1
+    expected_actions:
+    - assess_vital_signs
+    - establish_large_bore_iv_access
+    - give_crystalloid_fluid
+    - order_lab_cbc
+    - order_lab_coagulation
+    - give_octreotide_or_terlipressin
+    - give_antibiotic_prophylaxis
+    - consult_gastroenterology
+    - arrange_emergent_egd
+    forbidden_actions:
+    - delay_resuscitation_for_endoscopy
+    - withhold_antibiotic_prophylaxis
+    optional_actions:
+    - activate_massive_transfusion_protocol
+    - consider_balloon_tamponade_if_refractory
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.85
+  gi_bleed_nsaid_ppi_failure:
+    scenario_id: gi_bleed_nsaid_ppi_failure
+    description: Upper GI bleeding on chronic NSAID despite PPI prophylaxis - PPI
+      failure does not rule out ulcer disease
+    guideline_graph: gi_bleeding
+    trap_scenario: true
+    trap_description: PPI use does not eliminate NSAID ulcer risk, only reduces it.
+      'PPI failure = not an ulcer' is a dangerous assumption. Endoscopy is mandatory.
+      Immediate NSAID discontinuation and switch to alternative analgesia.
+    patient:
+      age: 60
+      sex: F
+      weight_kg: 80
+      chief_complaint: melena and fatigue despite being on PPI, chronic NSAID use
+        for arthritis
+      working_diagnosis: upper_gi_bleeding
+      vitals:
+        heart_rate: 95
+        blood_pressure_systolic: 110
+        blood_pressure_diastolic: 68
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 97
+        map_mmhg: 82
+      allergies: []
+      comorbidities:
+      - osteoarthritis
+      - chronic_nsaid_use
+      contraindications: []
+    ground_truth:
+      lab_hemoglobin: 7.5
+      lab_bun: 42
+      lab_creatinine: 1.2
+      current_ppi: omeprazole_20mg_bid
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_coagulation
+    - discontinue_nsaid
+    - give_iv_ppi_high_dose
+    - consult_gastroenterology
+    - arrange_upper_endoscopy
+    forbidden_actions:
+    - continue_nsaid
+    - assume_ppi_failure_means_non_ulcer
+    - discharge_without_endoscopy
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 30
+  enable_state_deterioration: true

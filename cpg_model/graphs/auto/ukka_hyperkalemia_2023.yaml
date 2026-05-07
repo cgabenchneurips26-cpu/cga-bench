@@ -1,0 +1,229 @@
+graph_id: ukka_hyperkalemia_2023
+guideline_name: UK Kidney Association 2023 Clinical Practice Guidelines for Acute Hyperkalemia in Adults
+version: '2023.1'
+metadata:
+  source: UK Kidney Association Hyperkalemia Guidelines 2023
+  doi: 10.1186/s12882-023-03340-2
+  journal: BMC Nephrology
+  recommendation_system: GRADE
+  description: Evidence-based guideline for acute hyperkalemia management including cardiac stabilization, potassium shifting,
+    removal, and monitoring
+  key_evidence: Calcium gluconate onset 1-3 min (membrane stabilization). Insulin+dextrose lowers K+ 0.6-1.0 mmol/L in 15-30
+    min. Hypoglycemia risk 10-75% post-insulin. SZC onset 1h.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Hyperkalemia Assessment & ECG
+    description: Confirm true hyperkalemia (exclude hemolysis), assess ECG for changes, classify severity
+    precondition: null
+    mandatory_actions:
+    - order_ecg_stat
+    - order_lab_bmp_stat
+    - assess_vital_signs
+    allowed_actions:
+    - order_ecg_stat
+    - order_lab_cbc
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - establish_iv_access
+    - assess_renal_function
+    - review_medications
+    - order_lab_bmp_stat
+    - order_lab_glucose
+    forbidden_actions: []
+    deadlines:
+      order_ecg_stat: 5
+      order_lab_bmp_stat: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: UKKA Hyperkalemia Guidelines 2023
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: '12-lead ECG should be performed immediately when hyperkalemia suspected. Classify: mild (5.5-5.9), moderate
+      (6.0-6.4), severe (≥6.5 mmol/L or ECG changes at any level)'
+    next_nodes: []
+    conditional_next:
+      state.ecg_changes_present == True: cardiac_stabilization
+      state.potassium_meq_l >= 6.5: cardiac_stabilization
+      state.potassium_meq_l >= 6.0 and state.ecg_changes_present == False: potassium_shifting
+  cardiac_stabilization:
+    node_id: cardiac_stabilization
+    node_type: plan
+    name: Cardiac Stabilization (Calcium Gluconate)
+    description: IV calcium gluconate within 5 min if ECG changes present; stabilizes cardiac membrane
+    precondition: null
+    mandatory_actions:
+    - give_calcium_gluconate_10ml_10pct_iv
+    - monitor_ecg_continuous
+    allowed_actions:
+    - monitor_ecg_continuous
+    - repeat_calcium_gluconate_if_ecg_persists
+    - give_calcium_gluconate_10ml_10pct_iv
+    - assess_vital_signs
+    - establish_iv_access
+    forbidden_actions:
+    - give_calcium_gluconate_via_peripheral_with_bicarbonate
+    deadlines:
+      give_calcium_gluconate_10ml_10pct_iv: 5
+      monitor_ecg_continuous: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: UKKA Hyperkalemia Guidelines 2023
+    source_section: 'Recommendation 1: Cardiac Stabilization'
+    source_page: null
+    source_quote: IV calcium gluconate 10 mL of 10% over 2-5 minutes if ECG changes present (Grade A). Effect within 1-3 min,
+      lasts 30-60 min. May repeat once if ECG changes persist
+    next_nodes:
+    - potassium_shifting
+    conditional_next: {}
+  potassium_shifting:
+    node_id: potassium_shifting
+    node_type: plan
+    name: Potassium Shifting (Insulin+Glucose, Salbutamol)
+    description: Drive potassium intracellularly with insulin+dextrose and nebulized salbutamol
+    precondition: null
+    mandatory_actions:
+    - give_insulin_10u_with_dextrose_25g
+    - give_salbutamol_nebulized_10_20mg
+    allowed_actions:
+    - monitor_ecg_continuous
+    - monitor_glucose_q15min_for_2h
+    - give_insulin_10u_with_dextrose_25g
+    - order_lab_bmp_repeat_1h
+    - give_salbutamol_nebulized_10_20mg
+    forbidden_actions: []
+    deadlines:
+      give_insulin_10u_with_dextrose_25g: 15
+      give_salbutamol_nebulized_10_20mg: 30
+    required_prior_actions:
+      give_insulin_10u_with_dextrose_25g:
+      - order_lab_bmp_stat
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: UKKA Hyperkalemia Guidelines 2023
+    source_section: 'Recommendation 2: Potassium Shifting'
+    source_page: null
+    source_quote: Insulin 10 units with 25g dextrose IV (lowers K+ by 0.6-1.0 mmol/L in 15-30 min). Nebulized salbutamol 10-20mg
+      (lowers K+ by 0.5-1.0 mmol/L). Monitor glucose for hypoglycemia
+    next_nodes:
+    - potassium_removal
+    conditional_next: {}
+  potassium_removal:
+    node_id: potassium_removal
+    node_type: plan
+    name: Potassium Removal
+    description: Remove total body potassium via sodium bicarbonate (if acidotic), sodium zirconium cyclosilicate, or dialysis
+    precondition: null
+    mandatory_actions:
+    - assess_need_for_dialysis
+    allowed_actions:
+    - monitor_ecg_continuous
+    - give_sodium_zirconium_cyclosilicate
+    - assess_fluid_status
+    - give_calcium_polystyrene_sulfonate
+    - give_sodium_bicarbonate_if_acidotic
+    - assess_need_for_dialysis
+    - initiate_hemodialysis
+    - order_lab_bmp_repeat
+    forbidden_actions: []
+    deadlines:
+      assess_need_for_dialysis: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: UKKA Hyperkalemia Guidelines 2023
+    source_section: 'Recommendation 3: Potassium Removal'
+    source_page: null
+    source_quote: Sodium bicarbonate 50 mmol IV if acidotic (pH<7.2). Sodium zirconium cyclosilicate (SZC) 10g PO for ongoing
+      removal. Hemodialysis for refractory or K+ ≥7.0 mmol/L
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: HYPER-K-DIALYSIS
+      condition: state.potassium_meq_l >= 7.0 or state.refractory_to_medical == True
+      effect:
+        type: REQUIRED
+        actions:
+        - initiate_hemodialysis
+        deadline_minutes: 120
+      severity: CRITICAL
+      description: K+ ≥7.0 or refractory hyperkalemia requires emergent hemodialysis
+      evidence: Class I, Level B
+    - rule_id: HYPER-K-BICARB
+      condition: state.ph < 7.2
+      effect:
+        type: REQUIRED
+        actions:
+        - give_sodium_bicarbonate_if_acidotic
+        deadline_minutes: 60
+      severity: HIGH
+      description: Sodium bicarbonate for metabolic acidosis (pH<7.2) helps shift K+ intracellularly
+      evidence: Class I, Level B
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Monitoring & Reassessment
+    description: Serial K+ at 1h, 2h, 4h, 6h; continuous ECG; glucose monitoring post-insulin
+    precondition: null
+    mandatory_actions:
+    - order_lab_bmp_repeat_1h
+    - monitor_glucose_q15min_for_2h
+    allowed_actions:
+    - monitor_ecg_continuous
+    - review_medications_causing_hyperkalemia
+    - order_lab_bmp_repeat_1h
+    - order_lab_blood_gas
+    - monitor_glucose_q15min_for_2h
+    - assess_renal_function
+    forbidden_actions: []
+    deadlines:
+      order_lab_bmp_repeat_1h: 60
+      monitor_glucose_q15min_for_2h: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: UKKA Hyperkalemia Guidelines 2023
+    source_section: Monitoring
+    source_page: null
+    source_quote: Repeat K+ at 1, 2, 4, 6 hours. Monitor blood glucose every 15 min for 2 hours after insulin (hypoglycemia
+      risk 10-75%). Continuous ECG until K+ normalized
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Prevention
+    description: Address underlying cause, medication review, dietary counseling, outpatient follow-up
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - review_medications_causing_hyperkalemia
+    - assess_discharge_readiness
+    - dietary_potassium_counseling
+    - continue_monitoring
+    - arrange_nephrology_follow_up
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: UKKA Hyperkalemia Guidelines 2023
+    source_section: Prevention & Long-term Management
+    source_page: null
+    source_quote: Review and adjust contributing medications (ACEi, ARB, MRA, NSAIDs, trimethoprim). Low-potassium diet counseling.
+      Consider chronic K+ binder if recurrent
+    next_nodes: []
+    conditional_next: {}

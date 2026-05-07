@@ -1,0 +1,288 @@
+{
+  "experiment": "D_actionability",
+  "description": "Evaluator Actionability Experiment",
+  "prompt_patches": {
+    "baseline": "",
+    "patch_T": "\n\nCRITICAL TIMING REQUIREMENT:\nAll mandatory actions must be completed within the guideline-specified time window. For sepsis, this means completing the Hour-1 Bundle (blood cultures, antibiotics, lactate, fluid resuscitation) within 60 minutes of presentation. For DKA, IV fluids must start within 15 minutes. For STEMI, cath lab activation within 10 minutes of ECG diagnosis. Delays in time-critical interventions are associated with increased mortality. Prioritize mandatory actions by deadline urgency.",
+    "patch_S": "\n\nCRITICAL SEQUENCE REQUIREMENT:\nActions must be performed in the correct clinical order. Always obtain blood cultures BEFORE administering antibiotics. In DKA, always check and correct potassium BEFORE starting insulin. In stroke, always obtain CT head BEFORE administering tPA. In chest pain, always obtain 12-lead ECG BEFORE giving aspirin. Violating these sequences can cause direct patient harm or mask important diagnostic information.",
+    "patch_O": "\n\nACTION SCOPE REQUIREMENT:\nOnly perform actions that are explicitly recommended in the clinical guideline for this specific condition. Do not order additional tests or treatments that are not part of the standard protocol, even if they seem clinically reasonable. Off-protocol actions waste resources, delay critical interventions, and may cause unnecessary harm. Stick strictly to the guideline-recommended action set."
+  },
+  "results": [
+    {
+      "scenario_id": "aki_stage1_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.19999999999999996,
+      "sub_scores": {
+        "C1_path_selection": 0.19999999999999996,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 4
+      },
+      "total_violations": 4
+    },
+    {
+      "scenario_id": "aki_stage1_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.0,
+      "sub_scores": {
+        "C1_path_selection": 0.0,
+        "C2_mandatory_completion": 0.8,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 35,
+        "omission": 1
+      },
+      "total_violations": 36
+    },
+    {
+      "scenario_id": "contrast_aki_prevention_basic",
+      "patch_type": "baseline",
+      "compliance_score": 1.0,
+      "sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {},
+      "total_violations": 0
+    },
+    {
+      "scenario_id": "contrast_aki_prevention_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.0,
+      "sub_scores": {
+        "C1_path_selection": 0.0,
+        "C2_mandatory_completion": 0.6,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 36,
+        "omission": 2
+      },
+      "total_violations": 38
+    },
+    {
+      "scenario_id": "dka_hypokalemia_trap",
+      "patch_type": "baseline",
+      "compliance_score": 0.5,
+      "sub_scores": {
+        "C1_path_selection": 0.8,
+        "C2_mandatory_completion": 0.7,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 2,
+        "omission": 3
+      },
+      "total_violations": 5
+    },
+    {
+      "scenario_id": "dka_hypokalemia_trap",
+      "patch_type": "baseline",
+      "compliance_score": 0.0,
+      "sub_scores": {
+        "C1_path_selection": 0.30000000000000004,
+        "C2_mandatory_completion": 0.5,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 0.9,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 7,
+        "timing": 1,
+        "omission": 5
+      },
+      "total_violations": 13
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.5,
+      "sub_scores": {
+        "C1_path_selection": 0.8,
+        "C2_mandatory_completion": 0.7,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 2,
+        "omission": 3
+      },
+      "total_violations": 5
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.5,
+      "sub_scores": {
+        "C1_path_selection": 0.8,
+        "C2_mandatory_completion": 0.7,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 2,
+        "omission": 3
+      },
+      "total_violations": 5
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.0,
+      "sub_scores": {
+        "C1_path_selection": 0.30000000000000004,
+        "C2_mandatory_completion": 0.5,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 0.9,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 7,
+        "timing": 1,
+        "omission": 5
+      },
+      "total_violations": 13
+    },
+    {
+      "scenario_id": "septic_shock_basic",
+      "patch_type": "baseline",
+      "compliance_score": 1.0,
+      "sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {},
+      "total_violations": 0
+    },
+    {
+      "scenario_id": "septic_shock_basic",
+      "patch_type": "baseline",
+      "compliance_score": 0.0,
+      "sub_scores": {
+        "C1_path_selection": 0.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 0.8,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 7,
+        "timing": 1
+      },
+      "total_violations": 8
+    },
+    {
+      "scenario_id": "septic_shock_penicillin_allergy",
+      "patch_type": "baseline",
+      "compliance_score": 1.0,
+      "sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {},
+      "total_violations": 0
+    },
+    {
+      "scenario_id": "septic_shock_penicillin_allergy",
+      "patch_type": "baseline",
+      "compliance_score": 0.0,
+      "sub_scores": {
+        "C1_path_selection": 0.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 0.6,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 6,
+        "timing": 2
+      },
+      "total_violations": 8
+    },
+    {
+      "scenario_id": "stemi_inferior_rv_trap",
+      "patch_type": "baseline",
+      "compliance_score": 1.0,
+      "sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {},
+      "total_violations": 0
+    },
+    {
+      "scenario_id": "stemi_inferior_rv_trap",
+      "patch_type": "baseline",
+      "compliance_score": 0.16666666666666663,
+      "sub_scores": {
+        "C1_path_selection": 0.33333333333333337,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 0.8333333333333334,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 4,
+        "timing": 1
+      },
+      "total_violations": 5
+    },
+    {
+      "scenario_id": "stroke_tpa_eligible",
+      "patch_type": "baseline",
+      "compliance_score": 1.0,
+      "sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {},
+      "total_violations": 0
+    },
+    {
+      "scenario_id": "stroke_tpa_eligible",
+      "patch_type": "baseline",
+      "compliance_score": 0.7777777777777778,
+      "sub_scores": {
+        "C1_path_selection": 0.8888888888888888,
+        "C2_mandatory_completion": 0.8888888888888888,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "violations_by_type": {
+        "deviation": 1,
+        "omission": 1
+      },
+      "total_violations": 2
+    }
+  ],
+  "analyses": []
+}

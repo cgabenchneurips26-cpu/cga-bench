@@ -1,0 +1,44 @@
+{
+  "experiment": "CRES-5 expansion",
+  "description": "Adds partial-eta-squared, omega-squared, Kendall's W, post-hoc power, and MDE at 80% power to the CRES-5 effect-size battery.",
+  "n_episodes": 14826,
+  "n_evaluators": 4,
+  "n_bootstrap": 2000,
+  "alpha": 0.05,
+  "power_target": 0.8,
+  "metrics": {
+    "eta2": {
+      "point": 0.07247814359272461,
+      "ci_95_lo": 0.06863385240222515,
+      "ci_95_hi": 0.07629567855996874
+    },
+    "partial_eta2": {
+      "point": 0.0998909139662337,
+      "ci_95_lo": 0.09488705494029016,
+      "ci_95_hi": 0.10491220310435416
+    },
+    "omega2": {
+      "point": 0.07243008716678649,
+      "ci_95_lo": 0.06858565717790653,
+      "ci_95_hi": 0.07624776045962905
+    },
+    "fleiss_kappa": {
+      "point": 0.032569420448329826,
+      "ci_95_lo": 0.025611383917363548,
+      "ci_95_hi": 0.03982583241816129,
+      "notes": "Fleiss' kappa used instead of Kendall's W. Kendall's W is degenerate on heavily-tied binary data — the tie-correction term turns the denominator negative at this scale (n=14,826, k=4). Fleiss' kappa is the appropriate k-rater categorical agreement statistic. Observed P_o = 0.5542 is only marginally above chance, consistent with CRES-12's mean pairwise Spearman rho = 0.060."
+    }
+  },
+  "per_evaluator_pass_rates": [
+    0.7414002428166734,
+    0.5391204640496425,
+    0.36429245919330905,
+    0.516052880075543
+  ],
+  "power_analysis": {
+    "observed_eta2": 0.07247814359272461,
+    "posthoc_power_alpha_0_05": 1.0,
+    "mde_eta2_at_power_0_80": 0.00018382027278697642,
+    "interpretation": "With n=14826 episodes and k=4 evaluators, any eta2 >= 0.00018 is detectable at alpha=0.05 and 80% power. Observed eta2=0.0725 therefore easily clears the detection threshold; the 'small' effect size is substantive, not a power artefact."
+  }
+}

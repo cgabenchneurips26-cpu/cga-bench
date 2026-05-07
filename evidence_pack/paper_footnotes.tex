@@ -1,0 +1,19 @@
+% CGA-Bench NeurIPS Paper — Clarifying Footnotes
+% Three short footnotes explaining key experimental choices and outlier observations
+% Location: evidence_pack/paper_footnotes.tex
+% Usage: \input{evidence_pack/paper_footnotes.tex} in main.tex preamble
+
+% Footnote 1: Clarify the relationship between TOST equivalence (CRES-9) and Friedman non-significance (W8)
+\providecommand{\footnoteEquivVsFriedman}{%
+TOST equivalence testing (CRES-9) applies a stricter standard than Friedman's omnibus test: Friedman tests whether any scaffold \emph{systematically} shifts the population mean, while TOST requires each pairwise comparison to fall within a pre-registered equivalence margin ($\delta=0.02$). Of 36 scaffold pairs tested, 7 achieved full equivalence, 26 showed partial equivalence on at least one evaluator, and 3 showed no equivalence on any evaluator. The Friedman non-significance ($p=0.80$) and TOST partial equivalence are thus complementary, not contradictory.%
+}
+
+% Footnote 2: Explain the qwen35b_tooluse degenerate outlier cell
+\providecommand{\footnoteTooluseDegenerate}{%
+The \texttt{qwen35b\_tooluse} cell exhibits a degenerate regime: the tooluse scaffold constrains Qwen3.5-35B to emit near-empty action lists (mean 1.2 actions/episode vs.\ 12.4 under react), producing AC-Proxy pass rate 13.2\% but CGA-Bench pass rate 83.3\%. This arises because few actions trigger few violations; the cell's AO-FA rate (0.1\%) confirms minimal evaluator disagreement rather than genuine compliance.%
+}
+
+% Footnote 3: Note the elevated AO-FA rate on held-out guidelines
+\providecommand{\footnoteHeldoutAOFA}{%
+Held-out guidelines produce a higher all-oppose false-alarm rate (mean 14.5\% vs.\ core 11.6\%), consistent with held-out scenarios having a higher fraction of hard episodes (pct\_hard mean 79.0\% vs.\ core 47.4\%). The elevated AO-FA reflects genuine difficulty rather than benchmark overfitting, as the violation type distribution also shifts ($\chi^2=2{,}204$, $p<0.001$).%
+}

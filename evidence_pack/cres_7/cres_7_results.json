@@ -1,0 +1,63 @@
+{
+  "experiment": "cres_7_theorem_partition",
+  "description": "Classifies CGA-Bench failing episodes by ASC structural visibility: Class-A (omission, ASC-visible) vs Class-B (commission/timing/sequence, ASC-invisible). Proves structural blind spots are not threshold artefacts.",
+  "n_episodes": 14826,
+  "class_definitions": {
+    "class_a": {
+      "name": "ASC-visible",
+      "violation_types": [
+        "omission"
+      ],
+      "rationale": "Omission = missing action reduces action coverage, so ASC can in principle detect this failure."
+    },
+    "class_b": {
+      "name": "ASC-invisible",
+      "violation_types": [
+        "commission",
+        "deviation",
+        "sequence",
+        "timing"
+      ],
+      "rationale": "Commission/timing/sequence = agent performed an action (coverage stays high) or acted at wrong time/order. Coverage metric cannot distinguish these from correct behaviour."
+    }
+  },
+  "partition_all_failing": {
+    "n_failing": 7175,
+    "n_class_a_only": 0,
+    "n_class_b_only": 2365,
+    "n_mixed": 4810,
+    "n_neither": 0,
+    "invisible_pct": 32.96,
+    "class_a_only_frac": 0.0,
+    "class_b_only_frac": 0.3296,
+    "mixed_frac": 0.6704
+  },
+  "asc_false_accept_analysis": {
+    "n_asc_false_accepts": 5999,
+    "n_class_a_only": 0,
+    "n_class_b_only": 1989,
+    "n_mixed": 4010,
+    "n_neither": 0,
+    "class_a_only_frac": 0.0,
+    "class_b_only_frac": 0.3316,
+    "mixed_frac": 0.6684,
+    "violation_type_counts": {
+      "deviation": 22930,
+      "commission": 1529,
+      "timing": 10094,
+      "omission": 24889,
+      "sequence": 273
+    }
+  },
+  "paf_false_accept_analysis": {
+    "n_paf_false_accepts": 4129,
+    "n_insufficient_penalty": 90,
+    "n_no_forbidden_actions": 4039,
+    "n_threshold_sensitive": 1930,
+    "insufficient_penalty_frac": 0.0218,
+    "mean_n_forbidden_in_paf_fa": 1.0,
+    "mean_penalty_applied_in_paf_fa": 0.1,
+    "paf_penalty_per_action": 0.1,
+    "paf_pass_threshold": 0.5
+  }
+}

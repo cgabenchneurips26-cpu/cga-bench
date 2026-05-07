@@ -1,0 +1,252 @@
+# Domain Registry for CGA-Bench external benchmark domain detection
+# Maps clinical text keywords (EN + CN) to CPG guideline domains
+# Used by: semantic_layer/external/domain_detector.py
+
+domains:
+  sepsis:
+    guideline_id: "cpg_model/graphs/ssc_sepsis_hour1_bundle.yaml"
+    en_keywords:
+      - "sepsis"
+      - "septic shock"
+      - "bacteremia"
+      - "qsofa"
+      - "sofa score"
+    cn_keywords:
+      - "脓毒症"
+      - "败血症"
+      - "感染性休克"
+      - "菌血症"
+      - "脓毒性休克"
+      - "全身炎症反应"
+    action_keywords_cn:
+      "血培养": "order_lab_blood_culture"
+      "乳酸": "order_lab_lactate"
+      "抗生素": "give_broad_spectrum_antibiotics"
+      "补液": "give_crystalloid_fluid"
+      "升压药": "start_vasopressor_norepinephrine"
+      "去甲肾上腺素": "start_vasopressor_norepinephrine"
+
+  chest_pain:
+    guideline_id: "cpg_model/graphs/aha_chest_pain_evaluation.yaml"
+    en_keywords:
+      - "chest pain"
+      - "myocardial infarction"
+      - "stemi"
+      - "nstemi"
+      - "acute coronary syndrome"
+      - "acs"
+      - "angina"
+    cn_keywords:
+      - "胸痛"
+      - "心肌梗"
+      - "冠心病"
+      - "急性冠脉"
+      - "心绞痛"
+      - "胸闷"
+      - "ST段抬高"
+      - "心肌梗死"
+    action_keywords_cn:
+      "心电图": "order_imaging_ecg"
+      "肌钙蛋白": "order_lab_troponin"
+      "阿司匹林": "give_aspirin_loading"
+      "介入": "activate_cath_lab"
+      "导管": "activate_cath_lab"
+      "肝素": "give_anticoagulant"
+
+  stroke:
+    guideline_id: "cpg_model/graphs/aha_stroke_2019.yaml"
+    en_keywords:
+      - "stroke"
+      - "cerebrovascular"
+      - "tpa"
+      - "alteplase"
+      - "thrombectomy"
+      - "nihss"
+    cn_keywords:
+      - "脑卒中"
+      - "中风"
+      - "脑梗"
+      - "脑出血"
+      - "脑血管"
+      - "溶栓"
+      - "偏瘫"
+      - "脑梗死"
+      - "缺血性卒中"
+    action_keywords_cn:
+      "CT": "order_imaging_ct_head"
+      "溶栓": "give_alteplase"
+      "NIHSS": "assess_nihss"
+
+  heart_failure:
+    guideline_id: "cpg_model/graphs/aha_heart_failure_2022.yaml"
+    en_keywords:
+      - "heart failure"
+      - "hfref"
+      - "hfpef"
+      - "cardiomyopathy"
+      - "pulmonary edema"
+      - "cardiogenic shock"
+    cn_keywords:
+      - "心衰"
+      - "心力衰竭"
+      - "心肌病"
+      - "肺水肿"
+      - "心源性休克"
+      - "心功能不全"
+      - "BNP升高"
+      - "射血分数"
+    action_keywords_cn:
+      "BNP": "order_lab_bnp"
+      "利尿": "give_furosemide"
+      "心脏超声": "order_imaging_echocardiogram"
+
+  aki:
+    guideline_id: "cpg_model/graphs/kdigo_aki_full.yaml"
+    en_keywords:
+      - "acute kidney injury"
+      - "aki"
+      - "renal failure"
+      - "creatinine rise"
+      - "oliguria"
+    cn_keywords:
+      - "急性肾损伤"
+      - "肾衰"
+      - "肾功能不全"
+      - "少尿"
+      - "无尿"
+      - "尿毒症"
+      - "血肌酐升高"
+      - "肾脏内科"
+    action_keywords_cn:
+      "肌酐": "order_lab_creatinine"
+      "透析": "consult_nephrology"
+
+  dka:
+    guideline_id: "cpg_model/graphs/ada_dka_management.yaml"
+    en_keywords:
+      - "diabetic ketoacidosis"
+      - "dka"
+      - "hhs"
+      - "hyperglycemic crisis"
+    cn_keywords:
+      - "酮症酸中毒"
+      - "糖尿病酮症"
+      - "高血糖危象"
+      - "酸中毒"
+      - "血糖升高"
+    action_keywords_cn:
+      "胰岛素": "start_insulin_drip"
+      "血糖": "order_lab_blood_glucose"
+      "血气": "order_lab_abg"
+      "补钾": "give_potassium"
+
+  pneumonia:
+    guideline_id: "cpg_model/graphs/cap_pneumonia.yaml"
+    en_keywords:
+      - "pneumonia"
+      - "cap"
+      - "community acquired pneumonia"
+      - "hospital acquired pneumonia"
+      - "lung infection"
+    cn_keywords:
+      - "肺炎"
+      - "社区获得性肺炎"
+      - "肺部感染"
+      - "支气管肺炎"
+      - "呼吸道感染"
+      - "肺部炎症"
+    action_keywords_cn:
+      "胸片": "order_imaging_chest_xray"
+      "痰培养": "order_lab_sputum_culture"
+      "降钙素原": "order_lab_procalcitonin"
+
+  hypertensive_emergency:
+    guideline_id: "cpg_model/graphs/hypertensive_emergency.yaml"
+    en_keywords:
+      - "hypertensive emergency"
+      - "hypertensive crisis"
+      - "malignant hypertension"
+      - "hypertensive urgency"
+    cn_keywords:
+      - "高血压急症"
+      - "高血压危象"
+      - "恶性高血压"
+      - "高血压脑病"
+      - "血压急剧升高"
+    action_keywords_cn:
+      "降压": "give_iv_antihypertensive"
+      "硝普钠": "give_iv_antihypertensive"
+      "尼卡地平": "give_iv_antihypertensive"
+
+  copd_exacerbation:
+    guideline_id: "cpg_model/graphs/copd_exacerbation.yaml"
+    en_keywords:
+      - "copd exacerbation"
+      - "copd flare"
+      - "chronic obstructive pulmonary"
+      - "emphysema exacerbation"
+    cn_keywords:
+      - "慢阻肺急性加重"
+      - "慢性阻塞性肺"
+      - "肺气肿"
+      - "慢阻肺"
+    action_keywords_cn:
+      "支气管扩张剂": "give_bronchodilator"
+      "激素": "give_systemic_corticosteroid"
+      "无创通气": "assess_niv_eligibility"
+
+  gi_bleeding:
+    guideline_id: "cpg_model/graphs/gi_bleeding.yaml"
+    en_keywords:
+      - "gi bleeding"
+      - "gastrointestinal bleeding"
+      - "upper gi bleed"
+      - "hematemesis"
+      - "melena"
+      - "hematochezia"
+    cn_keywords:
+      - "消化道出血"
+      - "上消化道出血"
+      - "下消化道出血"
+      - "呕血"
+      - "黑便"
+      - "便血"
+    action_keywords_cn:
+      "输血": "give_packed_rbc"
+      "胃镜": "consult_gi_for_endoscopy"
+      "PPI": "give_iv_ppi"
+
+  pulmonary_embolism:
+    guideline_id: "cpg_model/graphs/pulmonary_embolism.yaml"
+    en_keywords:
+      - "pulmonary embolism"
+      - "pe"
+      - "deep vein thrombosis"
+      - "dvt"
+      - "venous thromboembolism"
+    cn_keywords:
+      - "肺栓塞"
+      - "肺动脉栓塞"
+      - "深静脉血栓"
+      - "静脉血栓"
+    action_keywords_cn:
+      "D-二聚体": "order_lab_d_dimer"
+      "CTPA": "order_imaging_ct_pa"
+      "抗凝": "give_anticoagulation"
+
+  atrial_fibrillation:
+    guideline_id: "cpg_model/graphs/atrial_fibrillation.yaml"
+    en_keywords:
+      - "atrial fibrillation"
+      - "afib"
+      - "a-fib"
+      - "atrial flutter"
+    cn_keywords:
+      - "房颤"
+      - "心房颤动"
+      - "心房扑动"
+      - "房扑"
+    action_keywords_cn:
+      "电复律": "perform_cardioversion"
+      "控制心率": "give_rate_control"
+      "胺碘酮": "give_antiarrhythmic"

@@ -1,0 +1,735 @@
+graph_id: ada_dka_management
+guideline_name: ADA Diabetic Ketoacidosis Management
+version: '2024.1'
+metadata:
+  primary_source:
+    title: Hyperglycemic Crises in Adult Patients With Diabetes
+    authors: Kitabchi AE, Umpierrez GE, Miles JM, Fisher JN
+    journal: Diabetes Care
+    year: 2009
+    volume: 32
+    issue: 7
+    pages: 1335-1343
+    doi: 10.2337/dc09-9032
+    pmid: '19564476'
+    url: https://diabetesjournals.org/care/article/32/7/1335/29415
+  secondary_source:
+    title: ADA Standards of Care in Diabetes - 2024
+    section: 16. Diabetes Care in the Hospital
+    doi: 10.2337/dc24-S016
+    year: 2024
+  source: Kitabchi et al. Diabetes Care 2009 + ADA Standards 2024
+  doi: 10.2337/dc09-9032
+  key_recommendation: IV fluid resuscitation within 15 minutes, insulin ONLY after K+ confirmed >= 3.3 mEq/L
+  recommendation_system: ADA Evidence Grading (Class I-III, Level A-C)
+  description: Evidence-based management protocol for diabetic ketoacidosis in adults
+  key_evidence: Mortality reduced from >50% to <5% with standardized protocols
+  critical_thresholds:
+    hypokalemia_cutoff: 3.3
+    severe_dka_ph: 7.0
+    iv_fluid_deadline: 15
+    insulin_deadline: 60
+    resolution_glucose: 200
+    resolution_bicarbonate: 15
+    resolution_anion_gap: 12
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: enquiry
+    name: DKA Initial Assessment
+    description: Rapid assessment, IV access, and initial fluid resuscitation
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - assess_mental_status
+    - establish_iv_access
+    - order_lab_glucose
+    - order_lab_bmp
+    - order_lab_ketones
+    - order_lab_abg
+    - start_iv_fluid_ns
+    allowed_actions:
+    - assess_vital_signs
+    - assess_mental_status
+    - establish_iv_access
+    - order_lab_glucose
+    - order_lab_bmp
+    - order_lab_ketones
+    - order_lab_abg
+    - order_lab_cbc
+    - order_lab_lactate
+    - order_urinalysis
+    - start_iv_fluid_ns
+    - order_ecg
+    - order_imaging_chest_xray
+    - place_foley_catheter
+    - monitor_potassium
+    - order_lab_anion_gap
+    - assess_hydration_status
+    - reassess_perfusion
+    - consult_endocrinology
+    - monitor_glucose_hourly
+    - monitor_fluid_balance
+    - request_consultation
+    - order_lab_coagulation
+    - order_lab_urine_culture
+    forbidden_actions:
+    - discharge_home
+    - give_oral_fluids_if_altered
+    - delay_iv_access
+    deadlines:
+      assess_vital_signs: 5
+      establish_iv_access: 10
+      start_iv_fluid_ns: 15
+      order_lab_glucose: 15
+      order_lab_bmp: 15
+      order_lab_ketones: 30
+      order_lab_abg: 30
+    required_prior_actions:
+      start_iv_fluid_ns:
+      - establish_iv_access
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ADA 2024
+    source_section: Hyperglycemic Crises
+    source_page: Table 2
+    source_quote: Initial fluid therapy is directed toward expansion of the intravascular volume. Isotonic saline (0.9% NaCl)
+      at 15-20 mL/kg/h or greater during the first hour.
+    conditional_rules:
+    - rule_id: DKA-EUGLY-SGLT2-DEXTROSE
+      condition: '''sglt2_inhibitor'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - add_dextrose_to_iv
+        - stop_sglt2_inhibitor
+      evidence: ADA 2024, Section 16.2; FDA Safety Communication 2015
+      severity: HIGH
+      description: SGLT2 inhibitor patients may present with euglycemic DKA. Dextrose required.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: sglt2_inhibitor
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: sglt2_inhibitor
+          type: list_not_contains
+    - rule_id: DKA-EUGLY-SGLT2-DEXTROSE-FORBIDDEN
+      condition: '''sglt2_inhibitor'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_sglt2_inhibitor_in_dka
+        - withhold_dextrose_in_euglycemic_dka
+      evidence: ADA DKA Guidelines 2024; SGLT2i causes euglycemic DKA; withholding dextrose delays anion gap closure
+      severity: HIGH
+      description: SGLT2 inhibitors must be stopped in DKA; euglycemic DKA requires dextrose to allow continued insulin without
+        hypoglycemia.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: sglt2_inhibitor
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: sglt2_inhibitor
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: DKA-EUGLY-NO-DISCHARGE-NORMAL-GLU
+      condition: '''sglt2_inhibitor'' in patient.medications and patient.labs.glucose < 250'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - discharge_based_on_normal_glucose
+      evidence: ADA 2024; Peters AL et al, J Clin Endocrinol Metab 2015
+      severity: CRITICAL
+      description: Euglycemic DKA from SGLT2 inhibitors can persist despite normal glucose.
+      condition_variables:
+      - patient.medications
+      - patient.labs.glucose
+      trigger_range:
+        patient.medications:
+          contains: sglt2_inhibitor
+        patient.labs.glucose:
+          min: 80
+          max: 249
+          type: float
+      normal_range:
+        patient.labs.glucose:
+          min: 250
+          max: 800
+          type: float
+    - rule_id: DKA-METFORMIN-STOP
+      condition: '''metformin'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - stop_metformin
+      evidence: ADA 2024; DeFronzo RA et al, Metformin-associated lactic acidosis
+      severity: HIGH
+      description: Metformin must be stopped in DKA due to lactic acidosis risk.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: metformin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: metformin
+          type: list_not_contains
+    - rule_id: DKA-METFORMIN-STOP-FORBIDDEN
+      condition: '''metformin'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_metformin_in_dka
+        - restart_metformin_before_dka_resolved
+      evidence: ADA DKA Guidelines 2024; FDA Label; metformin in metabolic acidosis causes fatal lactic acidosis
+      severity: HIGH
+      description: Metformin in DKA compounds metabolic acidosis via lactic acid production; must not continue or restart
+        before resolution.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: metformin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: metformin
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: DKA-PREGNANCY-MONITORING
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - continuous_fetal_monitoring
+        - consult_obstetrics
+      evidence: ADA 2024; ACOG Practice Bulletin 2018
+      severity: HIGH
+      description: Pregnant DKA patients require fetal monitoring and OB consultation.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: DKA-PREGNANCY-NO-TERATOGEN
+      condition: '''pregnancy'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor
+        - give_oral_hypoglycemic
+        - give_statin
+        - discharge_without_fetal_assessment
+      evidence: ADA 2024; ACOG 2018
+      severity: CRITICAL
+      description: 'Pregnancy DKA: ACE/ARB, oral hypoglycemics, statins are teratogenic.'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: DKA-CKD-CAUTIOUS
+      condition: '''ckd'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - aggressive_fluid_bolus
+        - give_nsaid
+        - give_potassium_iv
+        - give_potassium_replacement
+      evidence: ADA 2024; KDIGO AKI 2012
+      severity: HIGH
+      description: 'CKD in DKA: cautious fluids, no NSAIDs, careful K+ management.'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: ckd_stage_4
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: ckd_stage_4
+          type: list_not_contains
+    - rule_id: DKA-ALCOHOLIC-KETOACIDOSIS
+      condition: '''chronic_alcohol_use'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_glucose_without_thiamine
+        - give_insulin_for_normal_glucose
+      evidence: ADA 2024; McGuire LC, Emerg Med Clin 2006
+      severity: HIGH
+      description: 'Alcoholic ketoacidosis: give thiamine before glucose, don''t give insulin if normoglycemic.'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: chronic_alcohol_use
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: chronic_alcohol_use
+          type: list_not_contains
+    - rule_id: DKA-STEMI-OVERLAP
+      condition: '''smoking_history'' in patient.comorbidities and ''hyperlipidemia'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_cath_lab_for_dka_resolution
+        - give_bicarbonate_without_indication
+      evidence: ADA 2024; AHA/ACC 2013
+      severity: HIGH
+      description: 'DKA+STEMI overlap: don''t delay reperfusion for DKA resolution.'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: hyperlipidemia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hyperlipidemia
+          type: list_not_contains
+    - rule_id: DKA-INSULIN-BEFORE-K-CHECK
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - start_insulin_before_k_check
+      evidence: ADA 2024, Section 16.2
+      severity: CRITICAL
+      description: Insulin must never be started before potassium is checked.
+      condition_variables: []
+      trigger_range: {}
+      normal_range: {}
+    next_nodes:
+    - severity_classification
+    conditional_next: {}
+  severity_classification:
+    node_id: severity_classification
+    node_type: decision
+    name: DKA Severity Classification
+    description: Classify DKA severity based on pH, bicarbonate, and mental status
+    precondition: null
+    mandatory_actions:
+    - classify_dka_severity
+    allowed_actions:
+    - classify_dka_severity
+    - calculate_anion_gap
+    - calculate_corrected_sodium
+    forbidden_actions: []
+    deadlines:
+      classify_dka_severity: 45
+    required_prior_actions:
+      classify_dka_severity:
+      - order_lab_abg
+      - order_lab_bmp
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ADA 2024
+    source_section: Table 1 - Diagnostic Criteria
+    source_page: S267
+    source_quote: 'Mild: pH 7.25-7.30, HCO3 15-18; Moderate: pH 7.00-7.24, HCO3 10-15; Severe: pH <7.00, HCO3 <10'
+    next_nodes: []
+    conditional_next:
+      state.ph < 7.0 or state.mental_status == 'obtunded': severe_dka_pathway
+      state.potassium < 3.3: potassium_replacement_first
+      'True': insulin_therapy
+  potassium_replacement_first:
+    node_id: potassium_replacement_first
+    node_type: action
+    name: Potassium Replacement Before Insulin
+    description: 'CRITICAL: Replace potassium before starting insulin if K+ < 3.3 mEq/L'
+    precondition: state.potassium < 3.3
+    mandatory_actions:
+    - give_potassium_iv
+    - hold_insulin_until_k_above_3.3
+    - recheck_potassium_in_1h
+    allowed_actions:
+    - give_potassium_iv
+    - hold_insulin_until_k_above_3.3
+    - recheck_potassium_in_1h
+    - order_ecg
+    - continuous_cardiac_monitoring
+    forbidden_actions:
+    - start_insulin_infusion
+    - give_insulin_bolus
+    - delay_potassium_replacement
+    deadlines:
+      give_potassium_iv: 30
+      recheck_potassium_in_1h: 90
+    required_prior_actions:
+      give_potassium_iv:
+      - order_lab_bmp
+      - establish_iv_access
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ADA 2024
+    source_section: Potassium Therapy
+    source_page: S268
+    source_quote: If serum K+ is <3.3 mEq/L, hold insulin and give 20-30 mEq/h K+ until K+ >3.3 mEq/L to prevent life-threatening
+      hypokalemia and cardiac arrhythmias.
+    conditional_rules:
+    - rule_id: DKA-HYPOK-INSULIN-GATE
+      condition: patient.labs.potassium < 3.3
+      effect:
+        type: FORBIDDEN
+        actions:
+        - start_insulin_infusion
+        - give_insulin_bolus
+      evidence: ADA 2024, Section 16.2
+      severity: CRITICAL
+      description: Insulin drives potassium intracellularly. Starting insulin with K+ < 3.3 can cause life-threatening hypokalemia.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 1.5
+          max: 3.2
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    - rule_id: DKA-HYPERK-NO-K-REPLACE
+      condition: patient.labs.potassium > 5.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_potassium_iv
+        - give_potassium_replacement
+      evidence: ADA 2024, Section 16.2
+      severity: CRITICAL
+      description: In DKA with K+ > 5.5, additional potassium can cause fatal cardiac arrhythmias.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.6
+          max: 8.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    - rule_id: DKA-HYPOK-INSULIN-GATE-UNIQUE-FORBIDDEN
+      condition: patient.labs.potassium < 3.3
+      effect:
+        type: FORBIDDEN
+        actions:
+        - start_insulin_drip_without_potassium_correction
+        - give_insulin_bolus_in_severe_hypokalemia
+      evidence: ADA DKA 2024 Section 16.2; insulin drives K+ intracellularly; K+ < 3.3 requires correction BEFORE insulin
+        initiation
+      severity: CRITICAL
+      description: Starting insulin without correcting severe hypokalemia causes fatal cardiac arrhythmia from further K+
+        shift intracellularly.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 1.5
+          max: 3.2
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+      skip_scenario_generation: true
+    next_nodes:
+    - insulin_therapy
+    conditional_next: {}
+  insulin_therapy:
+    node_id: insulin_therapy
+    node_type: plan
+    name: Insulin Infusion Therapy
+    description: Fixed-rate IV insulin infusion after potassium confirmed adequate
+    precondition: state.potassium >= 3.3
+    mandatory_actions:
+    - start_insulin_infusion
+    - monitor_glucose_hourly
+    - monitor_potassium_q2h
+    allowed_actions:
+    - start_insulin_infusion
+    - give_insulin_bolus
+    - monitor_glucose_hourly
+    - monitor_potassium_q2h
+    - add_dextrose_when_glucose_below_200
+    - adjust_insulin_rate
+    - continue_iv_fluids
+    - give_potassium_replacement
+    forbidden_actions:
+    - stop_insulin_before_gap_closed
+    - give_subcutaneous_insulin_initially
+    - discontinue_insulin_for_low_glucose
+    deadlines:
+      start_insulin_infusion: 60
+      monitor_glucose_hourly: 60
+      monitor_potassium_q2h: 120
+    required_prior_actions:
+      start_insulin_infusion:
+      - order_lab_bmp
+      - start_iv_fluid_ns
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ADA 2024
+    source_section: Insulin Therapy
+    source_page: Figure 1
+    source_quote: Regular insulin 0.1 U/kg/h IV continuous infusion. If glucose does not fall by 50-75 mg/dL in first hour,
+      double insulin infusion hourly until glucose falls at steady rate.
+    next_nodes:
+    - ongoing_monitoring
+    conditional_next: {}
+  severe_dka_pathway:
+    node_id: severe_dka_pathway
+    node_type: plan
+    name: Severe DKA Management
+    description: ICU-level care for severe DKA (pH <7.0 or obtunded)
+    precondition: state.ph < 7.0 or state.mental_status == 'obtunded'
+    mandatory_actions:
+    - admit_to_icu
+    - start_iv_fluid_ns
+    - continuous_cardiac_monitoring
+    - place_arterial_line
+    - consider_bicarbonate_if_ph_below_6.9
+    allowed_actions:
+    - admit_to_icu
+    - start_iv_fluid_ns
+    - continuous_cardiac_monitoring
+    - place_arterial_line
+    - place_central_line
+    - consider_bicarbonate_if_ph_below_6.9
+    - intubation_if_needed
+    - vasopressor_if_shock
+    forbidden_actions:
+    - admit_to_ward
+    - discharge_home
+    - give_bicarbonate_if_ph_above_7.0
+    deadlines:
+      admit_to_icu: 30
+      continuous_cardiac_monitoring: 30
+      place_arterial_line: 60
+    required_prior_actions:
+      consider_bicarbonate_if_ph_below_6.9:
+      - order_lab_abg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ADA 2024
+    source_section: Bicarbonate Therapy
+    source_page: S269
+    source_quote: If pH <6.9, consider 100 mmol sodium bicarbonate in 400 mL sterile water with 20 mEq KCl at 200 mL/h for
+      2 hours until pH >7.0
+    conditional_rules:
+    - rule_id: DKA-PEDIATRIC-NO-RAPID-FLUID
+      condition: patient.age < 18
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_rapid_fluid_bolus
+        - give_bolus_over_20ml_kg_h
+      evidence: ISPAD 2022, Chapter 11; Glaser 2001 NEJM
+      severity: CRITICAL
+      description: Rapid fluid correction in pediatric DKA risks cerebral edema.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 1
+          max: 17
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 100
+          type: int
+    - rule_id: DKA-PEDIATRIC-NO-BICARB
+      condition: patient.age < 18
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_bicarbonate
+      evidence: ISPAD 2022, Chapter 11
+      severity: HIGH
+      description: Bicarbonate contraindicated in pediatric DKA.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 1
+          max: 17
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 100
+          type: int
+    - rule_id: DKA-PEDIATRIC-HYPOTONIC-FLUID
+      condition: patient.age < 18
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_hypotonic_fluid_early
+      evidence: ISPAD 2022; Glaser NS, NEJM 2001
+      severity: CRITICAL
+      description: Hypotonic fluids in pediatric DKA increase cerebral edema risk.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 1
+          max: 17
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 100
+          type: int
+    next_nodes:
+    - insulin_therapy
+    conditional_next: {}
+    patient_activation_condition: patient.labs.get('ph', 7.35) < 7.0 or patient.labs.get('bicarbonate', 15) < 5
+  ongoing_monitoring:
+    node_id: ongoing_monitoring
+    node_type: plan
+    name: Ongoing Monitoring and Adjustment
+    description: Continuous monitoring until DKA resolution
+    precondition: null
+    mandatory_actions:
+    - monitor_glucose_hourly
+    - monitor_bmp_q2_4h
+    - assess_anion_gap_closure
+    - monitor_urine_output
+    allowed_actions:
+    - monitor_glucose_hourly
+    - monitor_bmp_q2_4h
+    - assess_anion_gap_closure
+    - monitor_urine_output
+    - adjust_fluid_rate
+    - adjust_insulin_rate
+    - add_dextrose_to_iv
+    - transition_to_subq_insulin
+    forbidden_actions:
+    - stop_monitoring_early
+    - discharge_before_gap_closed
+    deadlines:
+      monitor_glucose_hourly: 60
+      monitor_bmp_q2_4h: 240
+      assess_anion_gap_closure: 240
+    required_prior_actions:
+      transition_to_subq_insulin:
+      - assess_anion_gap_closure
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ADA 2024
+    source_section: Resolution Criteria
+    source_page: S270
+    source_quote: 'DKA resolution: glucose <200 mg/dL plus two of: serum bicarbonate >=15 mEq/L, venous pH >7.3, anion gap
+      <=12 mEq/L'
+    next_nodes:
+    - transition_to_maintenance
+    conditional_next: {}
+  transition_to_maintenance:
+    node_id: transition_to_maintenance
+    node_type: action
+    name: Transition to Subcutaneous Insulin
+    description: Transition from IV to subcutaneous insulin after DKA resolution
+    precondition: state.glucose < 200 and ((state.bicarbonate >= 15) + (state.ph > 7.3) + (state.anion_gap <= 12)) >= 2
+    resolution_criteria:
+      glucose_threshold: 200
+      bicarbonate_threshold: 15
+      ph_threshold: 7.3
+      anion_gap_threshold: 12
+      required_criteria_count: 2
+    mandatory_actions:
+    - verify_resolution_criteria
+    - start_subcutaneous_insulin
+    - overlap_iv_insulin_2h
+    - resume_oral_intake
+    - diabetes_education
+    allowed_actions:
+    - verify_resolution_criteria
+    - start_subcutaneous_insulin
+    - overlap_iv_insulin_2h
+    - resume_oral_intake
+    - diabetes_education
+    - endocrinology_consult
+    - social_work_consult
+    forbidden_actions:
+    - stop_iv_insulin_without_overlap
+    - discharge_without_insulin_plan
+    - transition_before_criteria_met
+    deadlines: {}
+    required_prior_actions:
+      start_subcutaneous_insulin:
+      - verify_resolution_criteria
+      - assess_anion_gap_closure
+      resume_oral_intake:
+      - assess_mental_status
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ADA 2024
+    source_section: Resolution Criteria and Transition
+    source_page: S270
+    source_quote: 'DKA resolution: glucose <200 mg/dL plus two of: serum bicarbonate >=15 mEq/L, venous pH >7.3, anion gap
+      <=12 mEq/L. Overlap subcutaneous insulin for 1-2 hours before discontinuing IV insulin.'
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    patient_activation_condition: 'False'
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition Decision
+    description: Determine appropriate disposition after DKA resolution
+    precondition: null
+    mandatory_actions:
+    - ensure_stable_glucose_control
+    - ensure_patient_education
+    - arrange_followup
+    allowed_actions:
+    - discharge_home
+    - admit_to_ward
+    - endocrinology_followup
+    - provide_sick_day_rules
+    forbidden_actions:
+    - discharge_without_followup
+    - discharge_without_insulin
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: ADA 2024
+    source_section: Prevention of Recurrence
+    source_page: S271
+    source_quote: Prior to discharge, assess precipitating cause, ensure patient understands sick-day rules, and arrange appropriate
+      follow-up.
+    next_nodes: []
+    conditional_next: {}
+    patient_activation_condition: 'False'

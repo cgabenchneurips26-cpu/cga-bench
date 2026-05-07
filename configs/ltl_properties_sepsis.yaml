@@ -1,0 +1,114 @@
+# LTL/MTL Safety Properties for SSC 2021 Hour-1 Bundle
+# Used by PostScoringPipeline for formal temporal verification
+# MTL bounded types enforce SSC Hour-1 Bundle time constraints
+
+properties:
+  # === Safety: Culture Before Antibiotics ===
+  - name: "culture_before_antibiotics"
+    type: "precedence"
+    prerequisite: "ORDER_BLOOD_CULTURE"
+    action: "GIVE_ANTIBIOTICS"
+    category: "safety"
+
+  # === Response: Lactate Triggers ===
+  - name: "lactate_triggers_resuscitation"
+    type: "response"
+    trigger: "ORDER_LACTATE"
+    response: "GIVE_CRYSTALLOID"
+    category: "liveness"
+
+  # === Liveness: Essential Actions ===
+  - name: "existence_lactate"
+    type: "existence"
+    required: "ORDER_LACTATE"
+    category: "liveness"
+
+  - name: "existence_blood_culture"
+    type: "existence"
+    required: "ORDER_BLOOD_CULTURE"
+    category: "liveness"
+
+  - name: "existence_antibiotics"
+    type: "existence"
+    required: "GIVE_ANTIBIOTICS"
+    category: "liveness"
+
+  - name: "existence_fluid_resuscitation"
+    type: "existence"
+    required: "GIVE_CRYSTALLOID"
+    category: "liveness"
+
+  # === Safety: Vasopressor Requirements ===
+  - name: "fluid_before_vasopressor"
+    type: "precedence"
+    prerequisite: "GIVE_CRYSTALLOID"
+    action: "START_VASOPRESSOR"
+    category: "safety"
+
+  - name: "map_assessment_before_vasopressor"
+    type: "precedence"
+    prerequisite: "ASSESS_MAP"
+    action: "START_VASOPRESSOR"
+    category: "safety"
+
+  # === Response: Hypotension ===
+  - name: "hypotension_triggers_vasopressor"
+    type: "response"
+    trigger: "DETECT_HYPOTENSION"
+    response: "START_VASOPRESSOR"
+    category: "timing"
+
+  # === Absence: Contraindicated ===
+  - name: "no_nephrotoxic_in_sepsis_aki"
+    type: "absence"
+    forbidden: "GIVE_NEPHROTOXIC_AGENT"
+    category: "safety"
+
+  # === MTL: SSC Hour-1 Bundle Time Constraints ===
+
+  # SSC 2021: Antibiotics within 60 minutes of sepsis recognition
+  - name: "antibiotics_within_1hr"
+    type: "response_within"
+    trigger: "ORDER_BLOOD_CULTURE"
+    response: "GIVE_ANTIBIOTICS"
+    max_minutes: 60
+    category: "timing"
+
+  # SSC 2021: Lactate measurement within 60 minutes
+  - name: "lactate_within_1hr"
+    type: "existence_within"
+    required: "ORDER_LACTATE"
+    max_minutes: 60
+    category: "timing"
+
+  # SSC 2021: Blood cultures within 45 minutes
+  - name: "cultures_within_45min"
+    type: "existence_within"
+    required: "ORDER_BLOOD_CULTURE"
+    max_minutes: 45
+    category: "timing"
+
+  # SSC 2021: 30ml/kg crystalloid within 3 hours if hypotensive
+  - name: "fluid_within_3hr"
+    type: "existence_within"
+    required: "GIVE_CRYSTALLOID"
+    max_minutes: 180
+    category: "timing"
+
+  # SSC 2021: Vasopressor if MAP<65 after fluid → within 60min
+  - name: "vasopressor_after_fluid_within_1hr"
+    type: "response_within"
+    trigger: "GIVE_CRYSTALLOID"
+    response: "START_VASOPRESSOR"
+    max_minutes: 60
+    category: "timing"
+
+  # SSC 2021: Culture → Antibiotics within 60min → Reassess within 360min
+  - name: "sepsis_hour1_chain"
+    type: "bounded_response_chain"
+    a: "ORDER_BLOOD_CULTURE"
+    b: "GIVE_ANTIBIOTICS"
+    c: "REASSESS_RESPONSE"
+    ab_max_minutes: 60
+    bc_max_minutes: 360
+    category: "timing"

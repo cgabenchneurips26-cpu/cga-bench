@@ -1,0 +1,116 @@
+graph_id: eanm_esc_cardiac_amyloidosis_2023
+guideline_name: EANM/ESC Cardiac Amyloidosis Position Paper 2023
+version: '2023.1'
+metadata:
+  source: EANM/ESC Cardiac Amyloidosis Position Paper 2023
+  doi: 10.1093/eurheartj/ehac543
+  journal: European Heart Journal
+  recommendation_system: EANM/ESC
+  description: Cardiac amyloidosis diagnosis and treatment.
+  key_evidence: 'ATTR-ACT: tafamidis reduces all-cause mortality and cardiovascular hospitalization.'
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Cardiac Amyloidosis Suspicion and Red Flags
+    description: Identify red flags (LVH disproportionate to load, low voltage, carpal tunnel).
+    precondition: null
+    mandatory_actions:
+    - perform_transthoracic_echocardiogram
+    - order_ecg_12_lead
+    - order_lab_nt_probnp
+    - order_lab_serum_free_light_chains
+    - order_lab_serum_immunofixation
+    allowed_actions:
+    - order_lab_urine_immunofixation
+    - order_lab_serum_free_light_chains
+    - assess_functional_status_nyha
+    - perform_transthoracic_echocardiogram
+    - order_lab_serum_immunofixation
+    - order_lab_nt_probnp
+    - order_ecg_12_lead
+    - order_cardiac_mri_if_available
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      order_lab_serum_free_light_chains: 4320
+      order_lab_serum_immunofixation: 4320
+      perform_transthoracic_echocardiogram: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EANM/ESC Cardiac Amyloidosis Position Paper 2023
+    source_section: Diagnostic Algorithm
+    source_page: null
+    source_quote: Monoclonal protein screening must precede bone scintigraphy to exclude AL amyloidosis.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Subtype Confirmation and Disease-Modifying Therapy
+    description: DPD/PYP scintigraphy for ATTR, endomyocardial biopsy if AL, initiate tafamidis for ATTR-CM.
+    precondition: null
+    mandatory_actions:
+    - perform_bone_scintigraphy_dpd_or_pyp
+    - consult_hematology_if_al_suspected
+    - plan_disease_modifying_therapy
+    allowed_actions:
+    - initiate_guideline_directed_hf_therapy
+    - consult_hematology_if_al_suspected
+    - initiate_daratumumab_based_therapy_if_al
+    - plan_disease_modifying_therapy
+    - initiate_tafamidis_if_attr_cm
+    - perform_endomyocardial_biopsy_if_al
+    - perform_bone_scintigraphy_dpd_or_pyp
+    - consult_cardiology_amyloid_specialist
+    forbidden_actions:
+    - initiate_tafamidis_without_subtype_confirmation
+    - initiate_verapamil_or_digoxin_in_amyloidosis
+    deadlines:
+      perform_bone_scintigraphy_dpd_or_pyp: 10080
+      plan_disease_modifying_therapy: 20160
+    required_prior_actions:
+      plan_disease_modifying_therapy:
+      - perform_bone_scintigraphy_dpd_or_pyp
+      - order_lab_serum_free_light_chains
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EANM/ESC Cardiac Amyloidosis Position Paper 2023
+    source_section: Treatment
+    source_page: null
+    source_quote: Tafamidis is recommended for ATTR cardiac amyloidosis to reduce mortality and hospitalizations.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Progression and Complication Monitoring
+    description: Serial biomarkers, echocardiography, arrhythmia surveillance.
+    precondition: null
+    mandatory_actions:
+    - reassess_symptoms
+    - order_lab_nt_probnp_repeat
+    allowed_actions:
+    - order_ambulatory_ecg_monitoring
+    - assess_for_orthostatic_hypotension
+    - order_lab_troponin_repeat
+    - reassess_symptoms
+    - order_lab_nt_probnp_repeat
+    - schedule_follow_up_echocardiogram
+    forbidden_actions: []
+    deadlines:
+      order_lab_nt_probnp_repeat: 43200
+      reassess_symptoms: 20160
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EANM/ESC Cardiac Amyloidosis Position Paper 2023
+    source_section: Follow-up
+    source_page: null
+    source_quote: Biomarker trajectories (NT-proBNP, troponin) guide prognosis and therapy response in cardiac amyloidosis.
+    next_nodes: []
+    conditional_next: {}

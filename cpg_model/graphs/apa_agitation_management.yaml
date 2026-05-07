@@ -1,0 +1,371 @@
+graph_id: apa_agitation_management
+guideline_name: APA 2024 Agitation Management Guidelines
+version: '2024.1'
+metadata:
+  primary_source:
+    title: APA 2024 Practice Guidelines for Agitation Management
+    authors: American Psychiatric Association
+    year: 2024
+  secondary_source:
+    title: 'BETA Project: Best Practices in Evaluation and Treatment of Agitation'
+    authors: Wilson MP, Pepper D, Currier GW, Holloman GH, Feifel D
+    journal: Western Journal of Emergency Medicine
+    year: 2012
+  source: APA 2024 + BETA Project 2012
+  description: Systematic approach to agitation from verbal de-escalation through chemical/physical restraint
+  key_evidence: IM olanzapine + IM benzodiazepine causes respiratory arrest (FDA warning); haloperidol prolongs QTc (FDA black
+    box)
+  recommendation_system: APA Grade
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: agitation_assessment
+nodes:
+  agitation_assessment:
+    node_id: agitation_assessment
+    node_type: enquiry
+    name: Agitation Assessment
+    description: Safety assessment, verbal de-escalation, and medical cause evaluation
+    precondition: null
+    mandatory_actions:
+    - assess_safety_of_environment
+    - attempt_verbal_deescalation
+    - assess_medical_causes
+    - obtain_vital_signs
+    - check_glucose
+    allowed_actions:
+    - assess_safety_of_environment
+    - attempt_verbal_deescalation
+    - assess_medical_causes
+    - obtain_vital_signs
+    - check_glucose
+    - assess_aggression_level
+    - obtain_psychiatric_history
+    - assess_substance_use
+    - order_lab_uds
+    - order_lab_bmp
+    forbidden_actions:
+    - restrain_without_attempting_deescalation
+    - leave_patient_unsupervised_while_agitated
+    deadlines:
+      assess_safety_of_environment: 2
+      attempt_verbal_deescalation: 10
+      check_glucose: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: APA 2024
+    source_section: 'Section 1: Assessment'
+    source_quote: Verbal de-escalation should always be attempted before pharmacological or physical interventions.
+    next_nodes:
+    - pharmacologic_intervention
+    - physical_restraint
+    conditional_next: {}
+  pharmacologic_intervention:
+    node_id: pharmacologic_intervention
+    node_type: action
+    name: Pharmacologic Intervention
+    description: Chemical restraint when verbal de-escalation fails
+    precondition: null
+    mandatory_actions:
+    - choose_appropriate_medication
+    - monitor_sedation_level
+    - monitor_respiratory_status
+    allowed_actions:
+    - choose_appropriate_medication
+    - monitor_sedation_level
+    - monitor_respiratory_status
+    - give_haloperidol
+    - give_droperidol
+    - give_olanzapine_im
+    - give_lorazepam
+    - give_midazolam
+    - give_quetiapine
+    - give_chlorpromazine
+    - order_lab_qtc
+    - obtain_ecg
+    forbidden_actions: []
+    deadlines:
+      choose_appropriate_medication: 15
+      monitor_respiratory_status: 20
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: APA 2024
+    source_section: 'Section 2: Pharmacological Management'
+    source_quote: Medication choice depends on suspected etiology, comorbidities, and contraindications.
+    patient_activation_condition: '''deescalation_failed'' in patient.get(''presentation'', {})'
+    conditional_rules:
+    - rule_id: PSYCH-ETOH-NO-BENZO-MONOTHERAPY
+      condition: '''alcohol_intoxication'' in patient.get(''presentation'', {})'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_benzodiazepine_high_dose
+        - give_lorazepam_4mg
+        - give_midazolam_10mg
+      evidence: BETA Project 2012; Nobay F, Ann Emerg Med 2004
+      severity: CRITICAL
+      description: 'Alcohol + high-dose benzodiazepine causes profound respiratory depression. Use antipsychotic (haloperidol,
+        olanzapine) instead or low-dose benzo with close monitoring.
+
+        '
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: alcohol_intoxication
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: alcohol_intoxication
+          type: list_not_contains
+    - rule_id: PSYCH-QTC-NO-HALOPERIDOL
+      condition: patient.labs.get('qtc_ms', 0) > 500 or 'prolonged_qtc' in patient.comorbidities
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_haloperidol
+        - give_droperidol
+      evidence: FDA Black Box Warning - haloperidol QT prolongation; APA 2024
+      severity: CRITICAL
+      description: 'QTc > 500ms + haloperidol causes Torsades de Pointes and sudden cardiac death. Use benzodiazepine (lorazepam)
+        or olanzapine instead.
+
+        '
+      condition_variables:
+      - patient.labs.qtc_ms
+      - patient.comorbidities
+      trigger_range:
+        patient.labs.qtc_ms:
+          min: 501
+          max: 700
+          type: int
+      normal_range:
+        patient.labs.qtc_ms:
+          min: 350
+          max: 470
+          type: int
+    - rule_id: PSYCH-PARKINSON-NO-TYPICAL-ANTIPSYCHOTIC
+      condition: '''parkinson_disease'' in patient.comorbidities or ''lewy_body_dementia'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_haloperidol
+        - give_droperidol
+        - give_chlorpromazine
+      evidence: APA 2024; McKeith IG, Neurology 2005 - neuroleptic sensitivity in LBD
+      severity: CRITICAL
+      description: 'Typical antipsychotics in Parkinson/LBD cause severe neuroleptic sensitivity reaction, irreversible parkinsonism,
+        NMS. Use low-dose quetiapine if needed.
+
+        '
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: parkinson_disease
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: parkinson_disease
+          type: list_not_contains
+    - rule_id: PSYCH-OLANZAPINE-NO-BENZO-COMBO
+      condition: '''olanzapine_im_given'' in patient.get(''treatment_received'', [])'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_lorazepam_im
+        - give_benzodiazepine_im
+      evidence: Olanzapine IM package insert; FDA warning - respiratory depression with IM benzo combo
+      severity: CRITICAL
+      description: 'IM olanzapine + IM benzodiazepine causes respiratory arrest (multiple case reports). FDA contraindication.
+        Wait adequate time between agents or use different combination.
+
+        '
+      condition_variables:
+      - patient.treatment_received
+      trigger_range:
+        patient.treatment_received:
+          contains: olanzapine_im_given
+          type: list_contains
+      normal_range:
+        patient.treatment_received:
+          not_contains: olanzapine_im_given
+          type: list_not_contains
+    next_nodes:
+    - nms_serotonin_syndrome
+    conditional_next: {}
+  physical_restraint:
+    node_id: physical_restraint
+    node_type: action
+    name: Physical Restraint
+    description: Least restrictive restraint when pharmacologic intervention insufficient
+    precondition: null
+    mandatory_actions:
+    - apply_least_restrictive_restraint
+    - monitor_neurovascular_status_q15min
+    - document_restraint_indication
+    - reassess_need_q1h
+    allowed_actions:
+    - apply_least_restrictive_restraint
+    - monitor_neurovascular_status_q15min
+    - document_restraint_indication
+    - reassess_need_q1h
+    - remove_restraints_when_safe
+    - continue_verbal_deescalation
+    forbidden_actions:
+    - prone_restraint
+    - hobble_restraint
+    - leave_restrained_patient_unmonitored
+    deadlines:
+      monitor_neurovascular_status_q15min: 15
+      document_restraint_indication: 15
+    required_prior_actions:
+      apply_least_restrictive_restraint:
+      - attempt_verbal_deescalation
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: APA 2024
+    source_section: 'Section 3: Physical Restraint'
+    source_quote: Physical restraint is last resort. Prone and hobble restraints are prohibited due to positional asphyxia
+      risk.
+    patient_activation_condition: '''imminent_danger_to_self_or_others'' in patient.get(''presentation'', {}) and ''medication_insufficient''
+      in patient.get(''presentation'', {})
+
+      '
+    next_nodes: []
+    conditional_next: {}
+  nms_serotonin_syndrome:
+    node_id: nms_serotonin_syndrome
+    node_type: action
+    name: NMS / Serotonin Syndrome Recognition
+    description: Neuroleptic malignant syndrome / serotonin syndrome recognition and management
+    precondition: null
+    mandatory_actions:
+    - stop_offending_agent
+    - aggressive_cooling
+    - give_iv_fluids
+    - monitor_ck_renal_function
+    allowed_actions:
+    - stop_offending_agent
+    - aggressive_cooling
+    - give_iv_fluids
+    - monitor_ck_renal_function
+    - give_dantrolene
+    - stop_all_antipsychotics
+    - give_cyproheptadine
+    - stop_serotonergic_agents
+    - admit_to_icu
+    - order_lab_ck
+    - order_lab_bmp
+    forbidden_actions: []
+    deadlines:
+      stop_offending_agent: 5
+      aggressive_cooling: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: APA 2024
+    source_section: 'Section 4: NMS/Serotonin Syndrome'
+    source_quote: Immediate cessation of offending agent, aggressive cooling, and IV hydration are critical first steps.
+    patient_activation_condition: '''hyperthermia'' in patient.get(''vitals_findings'', []) and ''rigidity'' in patient.get(''exam_findings'',
+      [])
+
+      '
+    conditional_rules:
+    - rule_id: PSYCH-NMS-DANTROLENE
+      condition: '''neuroleptic_malignant_syndrome'' in patient.get(''presentation'', {})'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_dantrolene
+        - stop_all_antipsychotics
+      evidence: APA 2024 NMS Guidelines; Strawn JR, CNS Drugs 2007
+      severity: CRITICAL
+      description: 'NMS requires immediate dantrolene (direct muscle relaxant) and cessation of all antipsychotics. Mortality
+        is 10-20% without treatment.
+
+        '
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: neuroleptic_malignant_syndrome
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: neuroleptic_malignant_syndrome
+          type: list_not_contains
+    - rule_id: PSYCH-NMS-DANTROLENE-FORBIDDEN
+      condition: '''neuroleptic_malignant_syndrome'' in patient.get(''presentation'', {})'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_antipsychotic_in_nms
+        - give_haloperidol_in_nms
+      evidence: APA Practice Guidelines; NMS is caused by antipsychotic dopamine blockade; readministering antipsychotics
+        is fatal
+      severity: CRITICAL
+      description: NMS is caused by dopamine blockade from antipsychotics; readministering any antipsychotic worsens the syndrome
+        fatally.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: neuroleptic_malignant_syndrome
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: neuroleptic_malignant_syndrome
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: PSYCH-SEROTONIN-CYPROHEPTADINE
+      condition: '''serotonin_syndrome'' in patient.get(''presentation'', {})'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_cyproheptadine
+        - stop_serotonergic_agents
+      evidence: Boyer EW, NEJM 2005; APA 2024
+      severity: CRITICAL
+      description: 'Serotonin syndrome requires cyproheptadine (5-HT2A antagonist) and cessation of all serotonergic agents.
+        Distinguish from NMS by clonus, hyperreflexia, and diarrhea (absent in NMS).
+
+        '
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: serotonin_syndrome
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: serotonin_syndrome
+          type: list_not_contains
+    - rule_id: PSYCH-SEROTONIN-CYPROHEPTADINE-FORBIDDEN
+      condition: '''serotonin_syndrome'' in patient.get(''presentation'', {})'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ssri_in_serotonin_syndrome
+        - give_tramadol_in_serotonin_syndrome
+      evidence: APA Practice Guidelines; Boyer EW, NEJM 2005; serotonergic agents compound serotonin syndrome
+      severity: CRITICAL
+      description: SSRIs and tramadol increase serotonin further in serotonin syndrome; all serotonergic agents must be discontinued.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: serotonin_syndrome
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: serotonin_syndrome
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes: []
+    conditional_next: {}

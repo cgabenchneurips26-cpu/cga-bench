@@ -1,0 +1,260 @@
+# End-to-End 테스트용 Septic Shock 시나리오
+# 모든 설정은 명시적으로 제공 (mock/하드코딩 없음)
+
+scenarios:
+  septic_shock_e2e_001:
+    description: "Septic Shock Hour-1 Bundle 완전 준수 테스트"
+    guideline: "SSC 2021 Sepsis Hour-1 Bundle"
+
+    # 환자 정보
+    patient:
+      age: 65
+      sex: "M"
+      weight_kg: 70.0
+      chief_complaint: "fever, altered mental status, hypotension"
+      working_diagnosis: "septic_shock"
+      vitals:
+        heart_rate: 120
+        blood_pressure_systolic: 85
+        blood_pressure_diastolic: 50
+        respiratory_rate: 24
+        temperature: 38.9
+        oxygen_saturation: 92
+        map_mmhg: 62
+      allergies: []
+      comorbidities: []
+      contraindications: []
+
+    # 환경 설정 (모든 값 명시적)
+    max_duration_minutes: 120
+    time_step_minutes: 5.0
+    lab_result_delay_minutes: 30.0
+    imaging_result_delay_minutes: 45.0
+    enable_state_deterioration: true
+
+    # 약물 효과 설정
+    medication_effects:
+      - medication_pattern: "norepinephrine"
+        target_vital: "map_mmhg"
+        effect_min: 5.0
+        effect_max: 15.0
+      - medication_pattern: "vasopressor"
+        target_vital: "map_mmhg"
+        effect_min: 5.0
+        effect_max: 15.0
+      - medication_pattern: "crystalloid"
+        target_vital: "map_mmhg"
+        effect_min: 3.0
+        effect_max: 8.0
+      - medication_pattern: "crystalloid"
+        target_vital: "blood_pressure_systolic"
+        effect_min: 5.0
+        effect_max: 10.0
+      - medication_pattern: "antibiotic"
+        target_vital: "temperature"
+        effect_min: -0.3
+        effect_max: -0.1
+
+    # 상태 악화 규칙
+    deterioration_rules:
+      - vital: "map_mmhg"
+        rate_min: 0.0
+        rate_max: 2.0
+        direction: "decrease"
+      - vital: "heart_rate"
+        rate_min: 0.0
+        rate_max: 3.0
+        direction: "increase"
+
+    # 종료 조건
+    termination_conditions:
+      - vital: "map_mmhg"
+        threshold: 40.0
+        condition: "less_than"
+        reason: "patient_death_severe_hypotension"
+      - vital: "map_mmhg"
+        threshold: 50.0
+        condition: "less_than"
+        reason: "critical_event_hypotension"
+
+    # 검사 결과 정상 범위
+    lab_thresholds:
+      - test_code: "lactate"
+        low: 0.0
+        high: 2.0
+      - test_code: "blood_culture"
+        low: 0.0
+        high: 0.0
+      - test_code: "wbc"
+        low: 4000.0
+        high: 11000.0
+      - test_code: "creatinine"
+        low: 0.6
+        high: 1.2
+      - test_code: "procalcitonin"
+        low: 0.0
+        high: 0.5
+
+    # Ground Truth (실제 검사 결과)
+    ground_truth:
+      lab_lactate: 4.5
+      lab_blood_culture: 1.0  # positive
+      lab_wbc: 18000
+      lab_creatinine: 1.8
+      lab_procalcitonin: 8.5
+      imaging_chest_xray:
+        finding: "bilateral infiltrates"
+        interpretation: "possible pneumonia"
+
+    # 필수 행동 수 (채점용)
+    total_mandatory_count: 5
+
+    # Violation Extractor 설정
+    violation_extractor_config:
+      harm_severity_mappings:
+        - action_pattern: "broad_spectrum_antibiotics"
+          severity: "severe"
+        - action_pattern: "crystalloid"
+          severity: "major"
+        - action_pattern: "vasopressor"
+          severity: "severe"
+        - action_pattern: "lactate"
+          severity: "major"
+        - action_pattern: "blood_culture"
+          severity: "major"
+      timing_severity_thresholds:
+        - max_delay_minutes: 15.0
+          severity: "minor"
+        - max_delay_minutes: 30.0
+          severity: "moderate"
+        - max_delay_minutes: 60.0
+          severity: "major"
+        - max_delay_minutes: 120.0
+          severity: "severe"
+      default_deviation_severity: "moderate"
+      default_deviation_preventability: 0.8
+
+    # Harm Scorer 설정
+    harm_scorer_config:
+      severity_weights:
+        minor: 0.1
+        moderate: 0.3
+        major: 0.6
+        severe: 0.85
+        catastrophic: 1.0
+      guideline_strength_weights:
+        "I": 1.0
+        "IIa": 0.75
+        "IIb": 0.5
+        "III": 0.25
+        "null": 0.5
+      violation_type_weights:
+        omission: 0.8
+        commission: 1.0
+        timing: 0.7
+        sequence: 0.6
+        deviation: 0.4
+
+  septic_shock_e2e_002:
+    description: "Septic Shock with Penicillin Allergy 테스트"
+    guideline: "SSC 2021 Sepsis Hour-1 Bundle"
+
+    patient:
+      age: 55
+      sex: "F"
+      weight_kg: 60.0
+      chief_complaint: "fever, confusion"
+      working_diagnosis: "septic_shock"
+      vitals:
+        heart_rate: 115
+        blood_pressure_systolic: 80
+        blood_pressure_diastolic: 45
+        respiratory_rate: 26
+        temperature: 39.2
+        oxygen_saturation: 90
+        map_mmhg: 57
+      allergies:
+        - "penicillin"
+      comorbidities:
+        - "diabetes_type2"
+      contraindications: []
+
+    max_duration_minutes: 120
+    time_step_minutes: 5.0
+    lab_result_delay_minutes: 30.0
+    imaging_result_delay_minutes: 45.0
+    enable_state_deterioration: true
+
+    medication_effects:
+      - medication_pattern: "norepinephrine"
+        target_vital: "map_mmhg"
+        effect_min: 5.0
+        effect_max: 15.0
+      - medication_pattern: "crystalloid"
+        target_vital: "map_mmhg"
+        effect_min: 3.0
+        effect_max: 8.0
+
+    deterioration_rules:
+      - vital: "map_mmhg"
+        rate_min: 0.0
+        rate_max: 2.5
+        direction: "decrease"
+
+    termination_conditions:
+      - vital: "map_mmhg"
+        threshold: 40.0
+        condition: "less_than"
+        reason: "patient_death"
+
+    lab_thresholds:
+      - test_code: "lactate"
+        low: 0.0
+        high: 2.0
+      - test_code: "blood_culture"
+        low: 0.0
+        high: 0.0
+
+    ground_truth:
+      lab_lactate: 5.2
+      lab_blood_culture: 1.0
+
+    total_mandatory_count: 5
+
+    violation_extractor_config:
+      harm_severity_mappings:
+        - action_pattern: "antibiotics"
+          severity: "severe"
+        - action_pattern: "crystalloid"
+          severity: "major"
+        - action_pattern: "lactate"
+          severity: "major"
+      timing_severity_thresholds:
+        - max_delay_minutes: 15.0
+          severity: "minor"
+        - max_delay_minutes: 30.0
+          severity: "moderate"
+        - max_delay_minutes: 60.0
+          severity: "major"
+      default_deviation_severity: "moderate"
+      default_deviation_preventability: 0.8
+
+    harm_scorer_config:
+      severity_weights:
+        minor: 0.1
+        moderate: 0.3
+        major: 0.6
+        severe: 0.85
+        catastrophic: 1.0
+      guideline_strength_weights:
+        "I": 1.0
+        "IIa": 0.75
+        "IIb": 0.5
+        "III": 0.25
+        "null": 0.5
+      violation_type_weights:
+        omission: 0.8
+        commission: 1.0
+        timing: 0.7
+        sequence: 0.6
+        deviation: 0.4

@@ -1,0 +1,786 @@
+graph_id: gina_asthma_exacerbation
+guideline_name: GINA Asthma Exacerbation Management
+version: '2024.1'
+metadata:
+  primary_source:
+    title: 'Global Strategy for Asthma Management and Prevention: GINA 2024 Update'
+    authors: Reddel HK, Bacharier LB, Bateman ED, et al.
+    journal: European Respiratory Journal
+    year: 2024
+    doi: 10.1183/13993003.02202-2023
+  source: GINA 2024
+  description: Emergency department management of acute asthma exacerbations from mild-moderate through near-fatal
+  key_evidence: Systemic corticosteroids within 1 hour of ED arrival reduce hospitalization by 50% (Rowe BH, Cochrane 2001);
+    IV MgSO4 in severe asthma reduces admission by 25% (Kew KM, Cochrane 2014)
+  recommendation_system: GINA Evidence Rating
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_gina_asthma_exacerbation.json
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: enquiry
+    name: Initial Severity Assessment
+    description: Rapid assessment of exacerbation severity using PEF, SpO2, respiratory rate, accessory muscle use, ability
+      to speak
+    precondition: null
+    mandatory_actions:
+    - assess_severity_classification
+    - measure_peak_expiratory_flow
+    - measure_oxygen_saturation
+    - assess_vital_signs
+    allowed_actions:
+    - assess_severity_classification
+    - measure_peak_expiratory_flow
+    - measure_oxygen_saturation
+    - assess_vital_signs
+    - obtain_brief_history
+    - establish_iv_access
+    - order_lab_blood_gas
+    - order_imaging_chest_xray
+    - apply_continuous_monitoring
+    forbidden_actions:
+    - give_sedative
+    - give_benzodiazepine
+    - give_morphine
+    - give_beta_blocker
+    - give_nonselective_beta_blocker
+    - delay_bronchodilator
+    deadlines:
+      assess_severity_classification: 5
+      measure_peak_expiratory_flow: 10
+      measure_oxygen_saturation: 3
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: GINA 2024
+    source_section: 'Section 4.3: Exacerbation Assessment'
+    source_page: Box 4-4
+    source_quote: 'Assess severity by ability to speak, respiratory rate, pulse rate, SpO2, PEF. Mild-moderate: talks in phrases,
+      PEF >50%. Severe: sits hunched, talks in words, PEF <50%. Life-threatening: drowsy/confused, silent chest.'
+    conditional_rules:
+    - rule_id: ASTHMA-INITIAL-NO-MUCOLYTICS
+      condition: patient.vitals.get('spo2', 100) < 92
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_mucolytics
+      evidence: GINA 2024 Section 4.3; mucolytics may worsen bronchospasm in acute exacerbations
+      severity: HIGH
+      description: 'Converted from unconditional: mucolytics are harmful in acute asthma with hypoxia (SpO2 <92%); may worsen
+        airway obstruction and trigger bronchospasm'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 91
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-INITIAL-NO-MUCOLYTICS-SPECIFIC
+      condition: patient.vitals.get('spo2', 100) < 92
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_mucolytics_in_hypoxic_asthma
+        - give_acetylcysteine_nebulized_in_acute_asthma
+      evidence: GINA 2024 Section 4.3; mucolytics worsen bronchospasm in acute exacerbation especially with hypoxia
+      severity: HIGH
+      description: Nebulized mucolytics like acetylcysteine trigger bronchospasm in acute asthma exacerbation, particularly
+        dangerous with hypoxia.
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 50
+          max: 91
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 92
+          max: 100
+          type: float
+    - rule_id: ASTHMA-MILD-NO-PHYSIO-SPECIFIC
+      condition: '''mild_exacerbation'' in patient.comorbidities or patient.vitals.get(''spo2'', 100) >= 92'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_chest_physiotherapy_in_acute_asthma
+        - perform_percussion_drainage_in_bronchospasm
+      evidence: GINA 2024 Section 4.3; chest physiotherapy increases oxygen demand and may worsen bronchospasm in acute asthma
+      severity: HIGH
+      description: Chest physiotherapy/percussion in acute asthma increases oxygen demand and may trigger further bronchospasm.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: mild_exacerbation
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: mild_exacerbation
+          type: list_not_contains
+    - rule_id: ASTHMA-SEVERE-NO-ROUTINE-ABX-SPECIFIC
+      condition: '''severe_exacerbation'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_routine_antibiotics_in_viral_asthma
+        - give_empiric_azithromycin_without_infection_evidence
+      evidence: GINA 2024 Section 4.3; antibiotics not indicated for asthma exacerbation without bacterial infection evidence
+      severity: MODERATE
+      description: Routine antibiotics in severe asthma without infection evidence promote resistance and delay appropriate
+        treatment.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: severe_exacerbation
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: severe_exacerbation
+          type: list_not_contains
+    - rule_id: ASTHMA-NO-THEOPHYLLINE-IN-ACUTE-SPECIFIC
+      condition: '''acute_exacerbation'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_iv_theophylline_in_acute_asthma
+        - give_aminophylline_in_acute_exacerbation
+      evidence: GINA 2024 Section 4.3; theophylline/aminophylline not recommended in acute asthma due to narrow therapeutic
+        index and toxicity
+      severity: HIGH
+      description: IV theophylline/aminophylline in acute asthma has narrow therapeutic index with seizure and arrhythmia
+        risk.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: acute_exacerbation
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: acute_exacerbation
+          type: list_not_contains
+    next_nodes: []
+    conditional_next:
+      state.severity_classification == 'mild_moderate': mild_moderate_treatment
+      state.severity_classification == 'severe': severe_treatment
+      state.severity_classification == 'near_fatal' or state.severity_classification == 'life_threatening': near_fatal_treatment
+  mild_moderate_treatment:
+    node_id: mild_moderate_treatment
+    node_type: plan
+    name: Mild-Moderate Exacerbation Treatment
+    description: SABA via pMDI/spacer or nebulizer + early systemic corticosteroids
+    precondition: state.severity_classification == 'mild_moderate'
+    mandatory_actions:
+    - give_salbutamol_nebulized
+    - give_ipratropium_nebulized
+    - give_systemic_corticosteroid
+    - administer_oxygen_to_target_94_98
+    allowed_actions:
+    - give_salbutamol_nebulized
+    - give_salbutamol_pmdi_spacer
+    - give_ipratropium_nebulized
+    - give_systemic_corticosteroid
+    - give_prednisolone_oral
+    - give_methylprednisolone_iv
+    - administer_oxygen_to_target_94_98
+    - repeat_salbutamol_q20min
+    - reassess_after_1_hour
+    - order_lab_blood_gas
+    forbidden_actions:
+    - give_sedative
+    - give_benzodiazepine
+    - give_morphine
+    - give_beta_blocker
+    deadlines:
+      give_salbutamol_nebulized: 10
+      give_systemic_corticosteroid: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: GINA 2024
+    source_section: 'Section 4.3: Mild-Moderate Treatment'
+    source_page: Box 4-4
+    source_quote: 'For mild-moderate exacerbations: salbutamol 4-10 puffs via pMDI/spacer, repeated every 20 minutes for first
+      hour. Add oral corticosteroids early (prednisolone 40-50 mg or equivalent).'
+    conditional_rules:
+    - rule_id: ASTHMA-MILD-NO-MUCOLYTICS
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_mucolytics
+      evidence: GINA 2024 Section 4.3; mucolytics not recommended in acute asthma exacerbations
+      severity: HIGH
+      description: 'Converted from unconditional: mucolytics may worsen cough and airway obstruction during acute exacerbation'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 100
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-MILD-NO-CHEST-PHYSIO
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_chest_physiotherapy
+      evidence: GINA 2024 Section 4.3; chest physiotherapy not recommended in acute asthma
+      severity: HIGH
+      description: 'Converted from unconditional: chest physiotherapy can worsen bronchospasm and increase oxygen demand during
+        acute exacerbation'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 100
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-ASPIRIN-SENSITIVE-NO-NSAID
+      condition: '''aspirin_sensitive_asthma'' in patient.comorbidities or ''nsaid_sensitivity'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid
+        - give_aspirin
+        - give_ibuprofen
+        - give_ketorolac
+      evidence: GINA 2024 Section 2.4; Stevenson DD, JACI 2003
+      severity: CRITICAL
+      description: NSAIDs and aspirin trigger severe bronchospasm in aspirin-exacerbated respiratory disease (AERD) via COX-1
+        inhibition and leukotriene overproduction.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: aspirin_sensitive_asthma
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: aspirin_sensitive_asthma
+          type: list_not_contains
+    - rule_id: ASTHMA-STEROID-DEPENDENT-STRESS-DOSE
+      condition: '''chronic_steroid_use'' in patient.medications or ''oral_corticosteroid_dependent'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_stress_dose_steroids
+      evidence: GINA 2024 Section 3.5; Chrousos GP, NEJM 1995
+      severity: HIGH
+      description: Patients on chronic oral corticosteroids have adrenal suppression and require stress-dose hydrocortisone
+        (100 mg IV) during acute illness.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: chronic_steroid_use
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: chronic_steroid_use
+          type: list_not_contains
+    - rule_id: ASTHMA-STEROID-DEPENDENT-STRESS-DOSE-FORBIDDEN
+      condition: '''chronic_steroid_use'' in patient.medications or ''oral_corticosteroid_dependent'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - withhold_stress_dose_steroid_in_dependent
+        - abruptly_stop_chronic_steroid_in_exacerbation
+      evidence: GINA 2024; steroid-dependent patients have adrenal suppression; abrupt withdrawal causes adrenal crisis
+      severity: HIGH
+      description: Steroid-dependent asthma patients have HPA axis suppression; stress-dose steroids are mandatory, abrupt
+        withdrawal causes crisis.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: chronic_steroid_use
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: chronic_steroid_use
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  severe_treatment:
+    node_id: severe_treatment
+    node_type: plan
+    name: Severe Exacerbation Treatment
+    description: Continuous nebulized SABA + ipratropium + IV MgSO4 + systemic steroids; prepare for ICU
+    precondition: state.severity_classification == 'severe'
+    mandatory_actions:
+    - give_continuous_salbutamol_nebulized
+    - give_ipratropium_nebulized
+    - give_systemic_corticosteroid_iv
+    - administer_oxygen_high_flow
+    - give_magnesium_sulfate_iv
+    allowed_actions:
+    - give_continuous_salbutamol_nebulized
+    - give_ipratropium_nebulized
+    - give_systemic_corticosteroid_iv
+    - give_methylprednisolone_iv
+    - give_hydrocortisone_iv
+    - administer_oxygen_high_flow
+    - give_magnesium_sulfate_iv
+    - establish_iv_access
+    - order_lab_blood_gas
+    - order_lab_electrolytes
+    - apply_continuous_monitoring
+    - prepare_for_intubation
+    - give_heliox
+    - request_icu_consult
+    forbidden_actions:
+    - give_sedative
+    - give_benzodiazepine
+    - give_morphine
+    - give_beta_blocker
+    - delay_bronchodilator
+    deadlines:
+      give_continuous_salbutamol_nebulized: 10
+      give_systemic_corticosteroid_iv: 30
+      give_magnesium_sulfate_iv: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: GINA 2024
+    source_section: 'Section 4.3: Severe Exacerbation Treatment'
+    source_page: Box 4-4
+    source_quote: 'For severe exacerbations: continuous nebulized salbutamol, ipratropium bromide, IV corticosteroid, IV magnesium
+      sulfate 2g over 20 minutes (single infusion). Consider ICU admission.'
+    conditional_rules:
+    - rule_id: ASTHMA-SEVERE-NO-MUCOLYTICS
+      condition: patient.vitals.get('spo2', 100) < 92
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_mucolytics
+      evidence: GINA 2024 Section 4.3; mucolytics contraindicated in severe asthma with hypoxia
+      severity: HIGH
+      description: 'Converted from unconditional: mucolytics are harmful in severe asthma with hypoxia (SpO2 <92%); worsen
+        airway obstruction'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 91
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-SEVERE-NO-CHEST-PHYSIO
+      condition: patient.vitals.get('spo2', 100) < 92
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_chest_physiotherapy
+      evidence: GINA 2024 Section 4.3; chest physiotherapy contraindicated in severe asthma
+      severity: HIGH
+      description: 'Converted from unconditional: chest physiotherapy worsens bronchospasm and increases oxygen demand in
+        severe exacerbation with hypoxia'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 91
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-SEVERE-NO-THEOPHYLLINE
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_theophylline_in_acute
+      evidence: GINA 2024 Section 4.3; theophylline not recommended in acute asthma due to toxicity risk
+      severity: HIGH
+      description: 'Converted from unconditional: theophylline/aminophylline has narrow therapeutic index and adds no benefit
+        over inhaled bronchodilators in acute exacerbation'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 100
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-SEVERE-NO-ANTIBIOTICS-ROUTINE
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_antibiotics_routine
+      evidence: GINA 2024 Section 4.3; antibiotics not routinely indicated for asthma exacerbations
+      severity: MODERATE
+      description: 'Converted from unconditional: routine antibiotics provide no benefit in asthma exacerbations unless concurrent
+        bacterial infection confirmed'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          not_contains: concurrent_pneumonia
+          type: list_not_contains
+      normal_range:
+        patient.comorbidities:
+          contains: concurrent_pneumonia
+          type: list_contains
+    - rule_id: ASTHMA-SEVERE-MGSO4
+      condition: patient.vitals.pef_percent < 25 or patient.vitals.spo2 < 92
+      effect:
+        type: REQUIRED
+        actions:
+        - give_magnesium_sulfate_iv
+      evidence: GINA 2024 Section 4.3; Kew KM, Cochrane 2014
+      severity: HIGH
+      description: IV magnesium sulfate (2g over 20 min) reduces admissions in severe asthma with PEF <25% or SpO2 <92%; smooth
+        muscle relaxation via calcium antagonism.
+      condition_variables:
+      - patient.vitals.pef_percent
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.pef_percent:
+          min: 5
+          max: 24
+          type: float
+        patient.vitals.spo2:
+          min: 60
+          max: 91
+          type: float
+      normal_range:
+        patient.vitals.pef_percent:
+          min: 80
+          max: 120
+          type: float
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-SEVERE-MGSO4-FORBIDDEN
+      condition: patient.vitals.pef_percent < 25 or patient.vitals.spo2 < 92
+      effect:
+        type: FORBIDDEN
+        actions:
+        - discharge_severe_exacerbation_without_mgso4
+        - give_only_bronchodilator_in_life_threatening
+      evidence: GINA 2024; severe/life-threatening exacerbation requires IV MgSO4 as adjunctive bronchodilator
+      severity: HIGH
+      description: Life-threatening asthma requires IV MgSO4 as adjunct; bronchodilators alone are insufficient for severe
+        exacerbation.
+      condition_variables:
+      - patient.vitals.pef_percent
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.pef_percent:
+          min: 5
+          max: 24
+          type: float
+        patient.vitals.spo2:
+          min: 60
+          max: 91
+          type: float
+      normal_range:
+        patient.vitals.pef_percent:
+          min: 80
+          max: 120
+          type: float
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+      skip_scenario_generation: true
+    - rule_id: ASTHMA-PNEUMOTHORAX-NO-POSITIVE-PRESSURE
+      condition: '''pneumothorax'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_niv
+        - give_bipap
+        - give_cpap
+        - give_positive_pressure_ventilation
+      evidence: GINA 2024 Section 4.3; BTS 2015 Spontaneous Pneumothorax Guidelines
+      severity: CRITICAL
+      description: Positive pressure ventilation in pneumothorax causes tension pneumothorax and hemodynamic collapse; tube
+        thoracostomy must precede positive pressure.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pneumothorax
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pneumothorax
+          type: list_not_contains
+    - rule_id: ASTHMA-CONCURRENT-INFECTION-ABX
+      condition: '''concurrent_pneumonia'' in patient.comorbidities or ''concurrent_bacterial_infection'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_antibiotics
+      evidence: GINA 2024 Section 4.3; NICE NG80 2017
+      severity: MODERATE
+      description: Antibiotics are only indicated for asthma exacerbations with confirmed bacterial coinfection (pneumonia,
+        sinusitis); routine antibiotics are NOT recommended.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: concurrent_pneumonia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: concurrent_pneumonia
+          type: list_not_contains
+    - rule_id: ASTHMA-CONCURRENT-INFECTION-ABX-FORBIDDEN
+      condition: '''concurrent_pneumonia'' in patient.comorbidities or ''concurrent_bacterial_infection'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_fluoroquinolone_without_clear_indication
+        - withhold_antibiotics_in_confirmed_pneumonia
+      evidence: GINA 2024; routine antibiotics for asthma exacerbation are not recommended unless clear bacterial infection
+        is present
+      severity: HIGH
+      description: Antibiotics are only indicated for confirmed bacterial infection in asthma exacerbation; fluoroquinolone
+        overuse promotes resistance.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: concurrent_pneumonia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: concurrent_pneumonia
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  near_fatal_treatment:
+    node_id: near_fatal_treatment
+    node_type: plan
+    name: Near-Fatal Asthma Treatment
+    description: Immediate ICU, IM epinephrine if unable to nebulize, RSI with ketamine, mechanical ventilation
+    precondition: state.severity_classification == 'near_fatal' or state.severity_classification == 'life_threatening'
+    mandatory_actions:
+    - give_epinephrine_im
+    - perform_endotracheal_intubation
+    - give_systemic_corticosteroid_iv
+    - give_magnesium_sulfate_iv
+    - admit_to_icu
+    allowed_actions:
+    - give_epinephrine_im
+    - give_epinephrine_nebulized
+    - perform_endotracheal_intubation
+    - give_systemic_corticosteroid_iv
+    - give_magnesium_sulfate_iv
+    - admit_to_icu
+    - give_continuous_salbutamol_nebulized
+    - give_ipratropium_nebulized
+    - give_ketamine_for_induction
+    - give_ketamine_infusion
+    - administer_oxygen_high_flow
+    - start_mechanical_ventilation_permissive_hypercapnia
+    - give_iv_salbutamol
+    - give_heliox
+    - initiate_inhaled_anesthetic
+    forbidden_actions:
+    - give_sedative
+    - give_benzodiazepine
+    - give_morphine
+    - give_beta_blocker
+    - discharge_home
+    - delay_intubation
+    deadlines:
+      give_epinephrine_im: 5
+      give_systemic_corticosteroid_iv: 15
+      perform_endotracheal_intubation: 15
+      admit_to_icu: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: GINA 2024
+    source_section: 'Section 4.3: Life-Threatening Exacerbation'
+    source_page: Box 4-4
+    source_quote: 'Life-threatening asthma (drowsy, confused, silent chest, cyanosis, feeble respiratory effort): immediate
+      intubation and ICU. IM epinephrine if IV access unavailable. Ketamine is preferred induction agent for RSI.'
+    conditional_rules:
+    - rule_id: ASTHMA-NEARFATAL-NO-MUCOLYTICS
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_mucolytics
+      evidence: GINA 2024 Section 4.3; mucolytics contraindicated in near-fatal asthma
+      severity: HIGH
+      description: 'Converted from unconditional: mucolytics are harmful in near-fatal asthma; worsen airway obstruction in
+        critically ill patients'
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 50
+          max: 100
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-NEARFATAL-NO-SUCCINYLCHOLINE-HYPERKALEMIC
+      condition: '''intubation_needed'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_succinylcholine_if_hyperkalemic
+        - use_rapid_sequence_with_histamine_releasers
+      evidence: GINA 2024 Section 4.3; succinylcholine may worsen hyperkalemia; histamine releasers worsen bronchospasm
+      severity: HIGH
+      description: 'Converted from unconditional: succinylcholine in hyperkalemic patients and histamine-releasing agents
+        during RSI are contraindicated in asthma; use rocuronium and ketamine instead'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: intubation_needed
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: intubation_needed
+          type: list_not_contains
+    - rule_id: ASTHMA-NEAR-FATAL-EPINEPHRINE
+      condition: state.severity_classification == 'near_fatal' or patient.vitals.spo2 < 85
+      effect:
+        type: REQUIRED
+        actions:
+        - give_epinephrine_im
+      evidence: GINA 2024 Section 4.3; BTS/SIGN 2019 Asthma Guidelines
+      severity: CRITICAL
+      description: Near-fatal asthma with SpO2 <85% or imminent respiratory arrest requires IM epinephrine as rescue; bronchospasm
+        prevents nebulized drug delivery.
+      condition_variables:
+      - patient.vitals.spo2
+      trigger_range:
+        patient.vitals.spo2:
+          min: 50
+          max: 84
+          type: float
+      normal_range:
+        patient.vitals.spo2:
+          min: 95
+          max: 100
+          type: float
+    - rule_id: ASTHMA-INTUBATED-KETAMINE-PREFERRED
+      condition: '''intubation_needed'' in patient.comorbidities or state.severity_classification == ''near_fatal'''
+      effect:
+        type: REQUIRED
+        actions:
+        - give_ketamine_for_induction
+      evidence: GINA 2024 Section 4.3; Goyal S, Indian J Crit Care Med 2014
+      severity: HIGH
+      description: Ketamine is the preferred induction agent for RSI in status asthmaticus due to bronchodilatory properties;
+        propofol and thiopental lack this advantage.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: intubation_needed
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: intubation_needed
+          type: list_not_contains
+    - rule_id: ASTHMA-PREGNANCY-NO-DEHYDRATION
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - withhold_treatment
+        - delay_treatment
+        - restrict_fluid
+      evidence: GINA 2024 Section 5.6; Murphy VE, Respirology 2015
+      severity: HIGH
+      description: Undertreated asthma in pregnancy causes fetal hypoxia; all standard acute treatments (SABA, steroids, oxygen)
+        are safer than uncontrolled asthma.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition Decision
+    description: Determine discharge, admission, or ICU based on response to treatment
+    precondition: null
+    mandatory_actions:
+    - reassess_after_treatment
+    - determine_disposition
+    allowed_actions:
+    - reassess_after_treatment
+    - determine_disposition
+    - discharge_with_action_plan
+    - admit_to_ward
+    - admit_to_icu
+    - prescribe_oral_corticosteroid_5_day
+    - prescribe_ics_laba
+    - provide_asthma_action_plan
+    - schedule_followup_2_7_days
+    - review_trigger_avoidance
+    - assess_inhaler_technique
+    forbidden_actions:
+    - discharge_without_corticosteroid_prescription
+    - discharge_without_followup
+    - discharge_without_action_plan
+    deadlines:
+      reassess_after_treatment: 60
+      determine_disposition: 240
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: GINA 2024
+    source_section: 'Section 4.3: Disposition'
+    source_page: Box 4-4
+    source_quote: 'Before discharge: prescribe oral corticosteroid course (5-7 days), ensure ICS is prescribed or continued,
+      check inhaler technique, provide written asthma action plan, arrange follow-up within 2-7 days.'
+    next_nodes: []
+    conditional_next: {}

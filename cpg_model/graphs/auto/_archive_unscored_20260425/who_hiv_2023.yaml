@@ -1,0 +1,110 @@
+graph_id: who_hiv_2023
+guideline_name: WHO HIV ART 2023
+version: '2023.1'
+metadata:
+  source: WHO HIV ART 2023
+  doi: 10.2471/BLT.23.00123
+  journal: WHO Consolidated Guidelines
+  recommendation_system: GRADE
+  description: Consolidated WHO recommendations for HIV testing, ART, and service delivery.
+  key_evidence: TEMPRANO and START trials validate universal immediate ART.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: HIV Diagnosis & Baseline Workup
+    description: Confirmatory HIV testing, CD4 count, viral load, and opportunistic infection screening.
+    precondition: null
+    mandatory_actions:
+    - order_lab_hiv_confirmatory
+    - order_lab_cd4_count
+    - order_lab_hiv_viral_load
+    allowed_actions:
+    - order_lab_cryptococcal_antigen_if_cd4_low
+    - order_lab_hiv_viral_load
+    - order_lab_creatinine
+    - order_lab_hiv_confirmatory
+    - order_lab_cbc
+    - order_lab_hepatitis_b_c_syphilis
+    - order_lab_cd4_count
+    - order_lab_lft
+    - order_lab_tb_screen
+    forbidden_actions: []
+    deadlines:
+      order_lab_hiv_confirmatory: 1440
+      order_lab_cd4_count: 2880
+      order_lab_hiv_viral_load: 2880
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WHO HIV ART 2023
+    source_section: Baseline assessment
+    source_page: null
+    source_quote: All people with confirmed HIV should initiate ART regardless of CD4.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Rapid ART Initiation & OI Prophylaxis
+    description: Initiate dolutegravir-based ART within 7 days; add TB or cryptococcal prophylaxis when indicated.
+    precondition: null
+    mandatory_actions:
+    - initiate_dolutegravir_based_art
+    - counsel_adherence_support
+    allowed_actions:
+    - provide_condom_counseling
+    - initiate_cotrimoxazole_prophylaxis
+    - initiate_treatment_of_hepatitis_coinfection
+    - initiate_cryptococcal_treatment_if_positive
+    - initiate_dolutegravir_based_art
+    - screen_contacts_for_hiv
+    - counsel_adherence_support
+    - initiate_tb_prophylaxis_if_indicated
+    forbidden_actions:
+    - delay_art_beyond_7_days_without_indication
+    deadlines:
+      initiate_dolutegravir_based_art: 10080
+      counsel_adherence_support: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WHO HIV ART 2023
+    source_section: ART initiation
+    source_page: null
+    source_quote: Rapid ART initiation improves retention and viral suppression.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Viral Load Monitoring & Retention
+    description: Viral load at 6 and 12 months, annual thereafter; monitor adherence and side effects.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - plan_viral_load_monitoring
+    allowed_actions:
+    - refer_mental_health_if_indicated
+    - plan_regimen_switch_if_virologic_failure
+    - assess_adherence_barriers
+    - reassess_vital_signs
+    - plan_viral_load_monitoring
+    - reassess_opportunistic_infection_risk
+    - manage_art_side_effects
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      plan_viral_load_monitoring: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WHO HIV ART 2023
+    source_section: Monitoring
+    source_page: null
+    source_quote: Viral load is the preferred indicator of treatment response.
+    next_nodes: []
+    conditional_next: {}

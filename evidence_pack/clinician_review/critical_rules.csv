@@ -1,0 +1,540 @@
+rule_id,graph,guideline,node,severity,effect_type,condition,actions,clinical_question,expected_answer,evidence_cited,clinician_agrees,clinician_notes
+TRANS-TXA-WITHIN-3H,aabb_transfusion,AABB 2024 RBC Transfusion Guidelines,massive_transfusion,CRITICAL,FORBIDDEN,"patient.presentation.get('time_since_injury_hours', 0) > 3",give_tranexamic_acid,"Clinical scenario: patient.presentation.get('time since injury hours', 0) > 3
+Context: TXA >3h after injury onset increases mortality (CRASH-2 subgroup analysis). Do NOT give TXA if >3h since injury.
+
+Question: Is it safe to give tranexamic acid?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","CRASH-2 Trial, Lancet 2010 - TXA >3h increases mortality",,
+TRANS-JEHOVAH-NO-BLOOD,aabb_transfusion,AABB 2024 RBC Transfusion Guidelines,massive_transfusion,CRITICAL,FORBIDDEN,"'jehovah_witness' in patient.get('preferences', []) or 'refuses_blood_products' in patient.get('preferences', [])","give_prbc, give_ffp, give_platelets, give_whole_blood","Clinical scenario: 'jehovah witness' in patient.get('preferences', []) OR 'refuses blood products' in patient.get('preferences', [])
+Context: Jehovah's Witness or patients refusing blood products: transfusion is forbidden regardless of clinical indication. Use alternative strategies (cell saver, erythropoietin, TXA).
+
+Question: Is it safe to give prbc, give ffp, give platelets, give whole blood?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",Patient autonomy; AABB ethical guidelines,,
+TRANS-ANAPHYLAXIS-EPI,aabb_transfusion,AABB 2024 RBC Transfusion Guidelines,transfusion_reaction,CRITICAL,REQUIRED,"'anaphylactic_transfusion_reaction' in patient.get('presentation', {})","give_epinephrine_im, stop_transfusion_immediately","Clinical scenario: 'anaphylactic transfusion reaction' in patient.get('presentation', {})
+Context: Anaphylactic transfusion reaction requires immediate epinephrine IM and cessation of transfusion. IgA deficiency is the most common cause.
+
+Question: Should the clinician give epinephrine im, stop transfusion immediately?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",AABB 2024 Transfusion Reaction Management,,
+TRANS-ANAPHYLAXIS-EPI-FORBIDDEN,aabb_transfusion,AABB 2024 RBC Transfusion Guidelines,transfusion_reaction,CRITICAL,FORBIDDEN,"'anaphylactic_transfusion_reaction' in patient.get('presentation', {})","continue_transfusion_during_anaphylaxis, give_only_antihistamine_for_transfusion_anaphylaxis","Clinical scenario: 'anaphylactic transfusion reaction' in patient.get('presentation', {})
+Context: Transfusion anaphylaxis requires immediate transfusion stop and epinephrine; antihistamine monotherapy is inadequate.
+Question: Is it safe to continue transfusion during anaphylaxis, give only antihistamine for transfusion anaphylaxis?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AABB 2024; transfusion anaphylaxis requires immediate stop and epinephrine; antihistamines alone are insufficient,,
+BURN-CYANIDE-HYDROXOCOBALAMIN,aba_burn_resuscitation,ABA 2024 Burn Resuscitation Guidelines,inhalation_injury,CRITICAL,REQUIRED,"'enclosed_space_fire' in patient.get('history', [])","give_hydroxocobalamin, order_cyanide_level","Clinical scenario: 'enclosed space fire' in patient.get('history', [])
+Context: Enclosed space fire -> cyanide poisoning from combustion of synthetic materials. Hydroxocobalamin (Cyanokit) is first-line. Do NOT use sodium thiosulfate as sole treatment (too slow onset).
+
+Question: Should the clinician give hydroxocobalamin, order cyanide level?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","ABA 2024; Baud FJ, NEJM 1991",,
+BURN-CYANIDE-HYDROXOCOBALAMIN-FORBIDDEN,aba_burn_resuscitation,ABA 2024 Burn Resuscitation Guidelines,inhalation_injury,CRITICAL,FORBIDDEN,"'enclosed_space_fire' in patient.get('history', [])","give_sodium_nitrite_in_cyanide_burn, delay_cyanide_antidote_for_level","Clinical scenario: 'enclosed space fire' in patient.get('history', [])
+Context: Sodium nitrite creates methemoglobin which compounds CO poisoning in burns; cyanide level delays allow fatal exposure.
+Question: Is it safe to give sodium nitrite in cyanide burn, delay cyanide antidote for level?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ABA Burn Guidelines 2023; sodium nitrite induces methemoglobinemia compounding carbon monoxide poisoning in burn patients,,
+BURN-CHEST-ESCHAR-VENTILATION,aba_burn_resuscitation,ABA 2024 Burn Resuscitation Guidelines,escharotomy,CRITICAL,REQUIRED,"'circumferential_chest_burn' in patient.get('exam_findings', [])","perform_chest_escharotomy, monitor_ventilation_pressures","Clinical scenario: 'circumferential chest burn' in patient.get('exam findings', [])
+Context: Circumferential chest burns restrict chest wall compliance -> ventilatory failure. Chest escharotomy restores compliance. Monitor peak airway pressures.
+
+Question: Should the clinician perform chest escharotomy, monitor ventilation pressures?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",ABA 2024; ISBI 2024 Escharotomy Chapter,,
+BURN-CHEST-ESCHAR-VENTILATION-FORBIDDEN,aba_burn_resuscitation,ABA 2024 Burn Resuscitation Guidelines,escharotomy,CRITICAL,FORBIDDEN,"'circumferential_chest_burn' in patient.get('exam_findings', [])","delay_escharotomy_for_imaging, increase_ventilator_pressure_without_escharotomy","Clinical scenario: 'circumferential chest burn' in patient.get('exam findings', [])
+Context: Chest eschar restricts ventilation; delaying escharotomy for imaging or increasing ventilator pressure without release is harmful.
+Question: Is it safe to delay escharotomy for imaging, increase ventilator pressure without escharotomy?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ABA Burn Guidelines 2023; circumferential chest eschar causes restrictive ventilatory failure requiring emergent release,,
+ACLS-SHOCKABLE-DEFIB-FIRST,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,shockable_pathway,CRITICAL,BEFORE,'vf' in patient.cardiac_rhythm or 'pvt' in patient.cardiac_rhythm,"deliver_defibrillation, give_epinephrine_1mg_iv","Clinical scenario: 'vf' in patient.cardiac rhythm OR 'pvt' in patient.cardiac rhythm
+Context: In shockable rhythms, defibrillation takes priority over drug administration; epinephrine given after 2nd shock.
+Question: Is the ordering/timing constraint (deliver defibrillation, give epinephrine 1mg iv) clinically appropriate?
+[ ] Yes, correct  [ ] No, incorrect  [ ] Depends (explain)","Yes, correct","AHA 2025 Section 5.1; Kudenchuk PJ, NEJM 2016",,
+ACLS-SHOCKABLE-DEFIB-FIRST-FORBIDDEN,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,shockable_pathway,CRITICAL,FORBIDDEN,'vf' in patient.cardiac_rhythm or 'pvt' in patient.cardiac_rhythm,"give_amiodarone_before_first_shock, delay_defibrillation_for_intubation","Clinical scenario: 'vf' in patient.cardiac rhythm OR 'pvt' in patient.cardiac rhythm
+Context: In shockable rhythm, defibrillation takes absolute priority; amiodarone before first shock and intubation delays worsen outcomes.
+Question: Is it safe to give amiodarone before first shock, delay defibrillation for intubation?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA ACLS 2020; defibrillation is the definitive treatment for VF/pVT; each minute delay reduces survival by 7-10%,,
+ACLS-HYPERKALEMIA-CALCIUM,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,shockable_pathway,CRITICAL,REQUIRED,patient.labs.potassium > 6.5,"give_calcium_chloride, give_sodium_bicarbonate, give_insulin_dextrose","Clinical scenario: serum potassium > 6.5
+Context: Hyperkalemia is a reversible cause of cardiac arrest; calcium chloride stabilizes myocardium, bicarbonate and insulin shift potassium intracellularly.
+Question: Should the clinician give calcium chloride, give sodium bicarbonate, give insulin dextrose?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AHA 2025 Section 6.2: Reversible Causes; Montague BT, Resuscitation 2008",,
+ACLS-HYPERKALEMIA-CALCIUM-FORBIDDEN,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,shockable_pathway,CRITICAL,FORBIDDEN,patient.labs.potassium > 6.5,"give_succinylcholine_in_hyperkalemic_arrest, delay_calcium_in_hyperkalemic_arrest","Clinical scenario: serum potassium > 6.5
+Context: Succinylcholine worsens hyperkalemia via K+ release from muscle; calcium gluconate delay prolongs fatal cardiac toxicity.
+Question: Is it safe to give succinylcholine in hyperkalemic arrest, delay calcium in hyperkalemic arrest?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA ACLS 2020; succinylcholine releases K+ from muscle; calcium delay prolongs cardiac toxicity window,,
+ACLS-TENSION-PNEUMO-DECOMPRESS,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,shockable_pathway,CRITICAL,REQUIRED,'tension_pneumothorax' in patient.comorbidities,needle_decompression,"Clinical scenario: patient has tension pneumothorax
+Context: Tension pneumothorax is a reversible cause of PEA arrest; needle decompression is immediately life-saving.
+Question: Should the clinician needle decompression?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AHA 2025 Section 6.2: Hs and Ts; Roberts DJ, Injury 2014",,
+ACLS-TENSION-PNEUMO-DECOMPRESS-FORBIDDEN,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,shockable_pathway,CRITICAL,FORBIDDEN,'tension_pneumothorax' in patient.comorbidities,"delay_needle_decompression_for_xray_in_arrest, give_only_epinephrine_in_tension_pneumo_arrest","Clinical scenario: patient has tension pneumothorax
+Context: Tension pneumothorax in arrest needs immediate needle decompression; waiting for imaging or medication-only approach is fatal.
+Question: Is it safe to delay needle decompression for xray in arrest, give only epinephrine in tension pneumo arrest?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA ACLS 2020; tension pneumothorax in arrest requires immediate needle decompression; medications alone cannot resolve obstruction,,
+ACLS-NONSHOCKABLE-EPI-IMMEDIATE,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,non_shockable_pathway,CRITICAL,REQUIRED,'asystole' in patient.cardiac_rhythm or 'pea' in patient.cardiac_rhythm,give_epinephrine_1mg_iv_immediately,"Clinical scenario: 'asystole' in patient.cardiac rhythm OR 'pea' in patient.cardiac rhythm
+Context: In non-shockable rhythms, epinephrine is given immediately (not delayed until after 2nd cycle as in shockable rhythms).
+Question: Should the clinician give epinephrine 1mg iv immediately?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AHA 2025 Section 5.2; Perkins GD, NEJM 2018 (PARAMEDIC2)",,
+ACLS-TAMPONADE-PERICARDIOCENTESIS,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,non_shockable_pathway,CRITICAL,REQUIRED,'cardiac_tamponade' in patient.comorbidities,pericardiocentesis,"Clinical scenario: patient has cardiac tamponade
+Context: Cardiac tamponade is a reversible cause of PEA arrest; pericardiocentesis is life-saving.
+Question: Should the clinician pericardiocentesis?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AHA 2025 Section 6.2: Hs and Ts; Budhram GR, Acad Emerg Med 2019",,
+ACLS-TAMPONADE-PERICARDIOCENTESIS-FORBIDDEN,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,non_shockable_pathway,CRITICAL,FORBIDDEN,'cardiac_tamponade' in patient.comorbidities,"delay_pericardiocentesis_for_imaging_in_arrest, give_vasopressors_only_in_tamponade_arrest","Clinical scenario: patient has cardiac tamponade
+Context: Cardiac tamponade in arrest needs immediate pericardiocentesis; vasopressors without drainage cannot restore circulation.
+Question: Is it safe to delay pericardiocentesis for imaging in arrest, give vasopressors only in tamponade arrest?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA ACLS 2020; cardiac tamponade in arrest requires immediate pericardiocentesis; vasopressors alone cannot overcome obstruction,,
+ACLS-OPIOID-NALOXONE-FORBIDDEN,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,non_shockable_pathway,CRITICAL,FORBIDDEN,'opioid_suspected' in patient.comorbidities or 'opioid_overdose' in patient.history,"give_additional_opioid_during_arrest, give_long_acting_sedative_during_arrest","Clinical scenario: patient has opioid suspected OR 'opioid overdose' in patient.history
+Context: Additional opioids or sedatives during opioid-associated cardiac arrest worsen respiratory and cardiac depression.
+Question: Is it safe to give additional opioid during arrest, give long acting sedative during arrest?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA ACLS 2020; additional CNS depressants worsen arrest prognosis,,
+ACLS-PREGNANCY-PERIMORTEM-CSECTION,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,non_shockable_pathway,CRITICAL,REQUIRED,'pregnancy' in patient.comorbidities,"prepare_perimortem_cesarean, perform_left_uterine_displacement","Clinical scenario: patient has pregnancy
+Context: In pregnant patients >20 weeks, perimortem cesarean delivery should begin within 4 minutes if no ROSC; left uterine displacement improves venous return.
+Question: Should the clinician prepare perimortem cesarean, perform left uterine displacement?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AHA 2025 Section 6.6: Cardiac Arrest in Pregnancy; Jeejeebhoy FM, Circulation 2015",,
+ACLS-PREGNANCY-PERIMORTEM-FORBIDDEN,acls_cardiac_arrest,AHA ACLS Cardiac Arrest Management,non_shockable_pathway,CRITICAL,FORBIDDEN,'pregnancy' in patient.comorbidities,"delay_perimortem_csection_beyond_4min, place_pregnant_arrest_patient_supine","Clinical scenario: patient has pregnancy
+Context: Perimortem C-section must begin within 4 minutes of maternal arrest; supine positioning compresses IVC reducing CPR blood flow.
+Question: Is it safe to delay perimortem csection beyond 4min, place pregnant arrest patient supine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA ACLS 2020; perimortem C-section within 4 min of arrest; aortocaval compression reduces CPR efficacy,,
+OB-ASTHMA-NO-CARBOPROST,acog_obstetric_hemorrhage,ACOG 2024 Postpartum Hemorrhage Guidelines,uterotonic_therapy,CRITICAL,FORBIDDEN,'asthma' in patient.comorbidities,"give_carboprost, give_hemabate","Clinical scenario: patient has asthma
+Context: Carboprost (15-methyl PGF2a) causes bronchospasm. Contraindicated in asthma. Use methylergonovine or misoprostol instead.
+
+Question: Is it safe to give carboprost, give hemabate?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACOG 2024; Carboprost package insert - bronchospasm contraindication,,
+OB-HYPERTENSION-NO-METHYLERGONOVINE,acog_obstetric_hemorrhage,ACOG 2024 Postpartum Hemorrhage Guidelines,uterotonic_therapy,CRITICAL,FORBIDDEN,'hypertension' in patient.comorbidities or 'preeclampsia' in patient.comorbidities,"give_methylergonovine, give_methergine","Clinical scenario: patient has hypertension OR patient has preeclampsia
+Context: Methylergonovine causes vasoconstriction -> hypertensive crisis in preeclampsia/HTN. Use carboprost (if no asthma) or misoprostol instead.
+
+Question: Is it safe to give methylergonovine, give methergine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACOG 2024; Methylergonovine package insert - hypertension contraindication,,
+OB-ASTHMA-AND-HTN-MISOPROSTOL-ONLY,acog_obstetric_hemorrhage,ACOG 2024 Postpartum Hemorrhage Guidelines,uterotonic_therapy,CRITICAL,REQUIRED,'asthma' in patient.comorbidities and 'hypertension' in patient.comorbidities,give_misoprostol,"Clinical scenario: patient has asthma AND patient has hypertension
+Context: Asthma + hypertension: carboprost contraindicated (bronchospasm), methylergonovine contraindicated (vasoconstriction). Misoprostol is the only safe second-line uterotonic. This is a classic clinical decision trap.
+
+Question: Should the clinician give misoprostol?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",ACOG 2024 - when carboprost AND methylergonovine both contraindicated,,
+DKA-EUGLY-NO-DISCHARGE-NORMAL-GLU,ada_dka_management,ADA Diabetic Ketoacidosis Management,initial_assessment,CRITICAL,FORBIDDEN,'sglt2_inhibitor' in patient.medications and patient.labs.glucose < 250,discharge_based_on_normal_glucose,"Clinical scenario: patient is on sglt2 inhibitor AND blood glucose < 250
+Context: Euglycemic DKA from SGLT2 inhibitors can persist despite normal glucose.
+Question: Is it safe to discharge based on normal glucose?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ADA 2024; Peters AL et al, J Clin Endocrinol Metab 2015",,
+DKA-PREGNANCY-NO-TERATOGEN,ada_dka_management,ADA Diabetic Ketoacidosis Management,initial_assessment,CRITICAL,FORBIDDEN,'pregnancy' in str(patient.comorbidities),"give_ace_inhibitor, give_oral_hypoglycemic, give_statin, discharge_without_fetal_assessment","Clinical scenario: 'pregnancy' in str(patient.comorbidities)
+Context: Pregnancy DKA: ACE/ARB, oral hypoglycemics, statins are teratogenic.
+Question: Is it safe to give ace inhibitor, give oral hypoglycemic, give statin, discharge without fetal assessment?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ADA 2024; ACOG 2018,,
+DKA-INSULIN-BEFORE-K-CHECK,ada_dka_management,ADA Diabetic Ketoacidosis Management,initial_assessment,CRITICAL,FORBIDDEN,True,start_insulin_before_k_check,"Clinical scenario: True
+Context: Insulin must never be started before potassium is checked.
+Question: Is it safe to start insulin before k check?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ADA 2024, Section 16.2",,
+DKA-HYPOK-INSULIN-GATE,ada_dka_management,ADA Diabetic Ketoacidosis Management,potassium_replacement_first,CRITICAL,FORBIDDEN,patient.labs.potassium < 3.3,"start_insulin_infusion, give_insulin_bolus","Clinical scenario: serum potassium < 3.3
+Context: Insulin drives potassium intracellularly. Starting insulin with K+ < 3.3 can cause life-threatening hypokalemia.
+Question: Is it safe to start an insulin infusion, give an insulin bolus?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ADA 2024, Section 16.2",,
+DKA-HYPERK-NO-K-REPLACE,ada_dka_management,ADA Diabetic Ketoacidosis Management,potassium_replacement_first,CRITICAL,FORBIDDEN,patient.labs.potassium > 5.5,"give_potassium_iv, give_potassium_replacement","Clinical scenario: serum potassium > 5.5
+Context: In DKA with K+ > 5.5, additional potassium can cause fatal cardiac arrhythmias.
+Question: Is it safe to give IV potassium, give potassium replacement?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ADA 2024, Section 16.2",,
+DKA-HYPOK-INSULIN-GATE-UNIQUE-FORBIDDEN,ada_dka_management,ADA Diabetic Ketoacidosis Management,potassium_replacement_first,CRITICAL,FORBIDDEN,patient.labs.potassium < 3.3,"start_insulin_drip_without_potassium_correction, give_insulin_bolus_in_severe_hypokalemia","Clinical scenario: serum potassium < 3.3
+Context: Starting insulin without correcting severe hypokalemia causes fatal cardiac arrhythmia from further K+ shift intracellularly.
+Question: Is it safe to start insulin drip without potassium correction, give insulin bolus in severe hypokalemia?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ADA DKA 2024 Section 16.2; insulin drives K+ intracellularly; K+ < 3.3 requires correction BEFORE insulin initiation,,
+DKA-PEDIATRIC-NO-RAPID-FLUID,ada_dka_management,ADA Diabetic Ketoacidosis Management,severe_dka_pathway,CRITICAL,FORBIDDEN,patient.age < 18,"give_rapid_fluid_bolus, give_bolus_over_20ml_kg_h","Clinical scenario: patient age < 18
+Context: Rapid fluid correction in pediatric DKA risks cerebral edema.
+Question: Is it safe to give a rapid fluid bolus, give bolus over 20ml kg h?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ISPAD 2022, Chapter 11; Glaser 2001 NEJM",,
+DKA-PEDIATRIC-HYPOTONIC-FLUID,ada_dka_management,ADA Diabetic Ketoacidosis Management,severe_dka_pathway,CRITICAL,FORBIDDEN,patient.age < 18,give_hypotonic_fluid_early,"Clinical scenario: patient age < 18
+Context: Hypotonic fluids in pediatric DKA increase cerebral edema risk.
+Question: Is it safe to give hypotonic fluid early?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ISPAD 2022; Glaser NS, NEJM 2001",,
+ACS-COCAINE-NO-BB,aha_chest_pain_evaluation,AHA Chest Pain Evaluation,stemi_pathway,CRITICAL,FORBIDDEN,'cocaine_use' in patient.comorbidities or 'cocaine' in patient.history,"give_beta_blocker, give_metoprolol, give_atenolol, give_propranolol","Clinical scenario: patient has cocaine use OR 'cocaine' in patient.history
+Context: Beta-blockers in cocaine-associated ACS cause unopposed alpha stimulation.
+Question: Is it safe to give beta blocker, give metoprolol, give atenolol, give propranolol?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2014 NSTEMI Guidelines, Section 5.3.1",,
+ACS-DISSECTION-NO-ANTICOAG,aha_chest_pain_evaluation,AHA Chest Pain Evaluation,stemi_pathway,CRITICAL,FORBIDDEN,'aortic_dissection_suspected' in patient.comorbidities,"give_heparin, give_antiplatelet, give_aspirin, give_thrombolytic, give_anticoagulation","Clinical scenario: patient has aortic dissection suspected
+Context: Anticoagulation in aortic dissection causes fatal hemorrhage.
+Question: Is it safe to give heparin, give antiplatelet, give aspirin, give thrombolytic, give anticoagulation?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2022 Aortic Disease Guidelines, Section 7.2",,
+ACS-RV-INFARCT-NO-NITRATE,aha_chest_pain_evaluation,AHA Chest Pain Evaluation,stemi_pathway,CRITICAL,FORBIDDEN,'rv_infarct' in patient.comorbidities or 'inferior_stemi' in patient.ecg_findings,"give_nitroglycerin, give_nitrates, give_morphine","Clinical scenario: patient has rv infarct OR 'inferior stemi' in patient.ecg findings
+Context: Nitrates/morphine in RV infarct cause preload-dependent cardiovascular collapse.
+Question: Is it safe to administer nitroglycerin, administer nitrates, give morphine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2013 STEMI Guidelines, Section 5.1",,
+ACS-ACTIVE-BLEED-NO-ANTICOAG,aha_chest_pain_evaluation,AHA Chest Pain Evaluation,stemi_pathway,CRITICAL,FORBIDDEN,'active_hemorrhage' in patient.contraindications or 'active_upper_gi_bleed' in patient.comorbidities or 'active_lower_gi_bleed' in patient.comorbidities,"give_thrombolysis, give_full_dose_heparin_with_active_bleed, give_dual_antiplatelet_without_gi_protection, delay_pci_for_endoscopy","Clinical scenario: 'active hemorrhage' in patient.contraindications OR patient has active upper gi bleed OR patient has active lower gi bleed
+Context: Active hemorrhage is absolute contraindication to thrombolysis and full anticoagulation.
+Question: Is it safe to give thrombolysis, give full dose heparin with active bleed, give dual antiplatelet without gi protection, delay pci for endoscopy?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2013 STEMI Guidelines, Section 4.4 Bleeding Risk",,
+ACS-ICH-NO-ANTICOAG,aha_chest_pain_evaluation,AHA Chest Pain Evaluation,stemi_pathway,CRITICAL,FORBIDDEN,'active_intracranial_hemorrhage' in patient.contraindications or 'hemorrhagic_stroke' in patient.comorbidities,"give_heparin_bolus, give_full_dose_anticoagulation, give_dual_antiplatelet, give_thrombolysis","Clinical scenario: 'active intracranial hemorrhage' in patient.contraindications OR patient has hemorrhagic stroke
+Context: Active intracranial hemorrhage is absolute contraindication.
+Question: Is it safe to give heparin bolus, give full dose anticoagulation, give dual antiplatelet, give thrombolysis?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2013 STEMI Guidelines, Section 4.3 Absolute Contraindications",,
+ACS-ASPIRIN-ALLERGY-NO-ASPIRIN,aha_chest_pain_evaluation,AHA Chest Pain Evaluation,nste_acs_pathway,CRITICAL,FORBIDDEN,'aspirin' in patient.allergies,"give_aspirin, give_nsaid","Clinical scenario: patient is allergic to aspirin
+Context: Aspirin allergy prohibits aspirin and NSAIDs.
+Question: Is it safe to give aspirin, give nsaid?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA/ACC 2014 NSTEMI Guidelines,,
+HF-HYPERK-NO-RAAS,aha_heart_failure_2022,AHA/ACC/HFSA Heart Failure Guideline,hfref_gdmt,CRITICAL,FORBIDDEN,patient.labs.potassium > 5.5,"initiate_arni, initiate_ace_or_arb_or_arni, initiate_mra, give_potassium_supplement","Clinical scenario: serum potassium > 5.5
+Context: RAAS inhibitors and K+ supplements in hyperkalemia cause fatal arrhythmias.
+Question: Is it safe to initiate arni, initiate ace or arb or arni, initiate mra, give potassium supplement?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2022 HF Guidelines, Section 7.3.2",,
+HF-HYPERKALEMIA-NO-RAAS-VARIANT,aha_heart_failure_2022,AHA/ACC/HFSA Heart Failure Guideline,hfref_gdmt,CRITICAL,FORBIDDEN,'ckd_stage_3' in patient.comorbidities and patient.labs.potassium > 5.0,"initiate_ace_with_hyperkalemia, initiate_arni_with_hyperkalemia, initiate_mra_with_hyperkalemia, give_potassium_supplement","Clinical scenario: patient has ckd stage 3 AND serum potassium > 5.0
+Context: CKD with borderline K+ - RAAS inhibitors worsen hyperkalemia.
+Question: Is it safe to initiate ace with hyperkalemia, initiate arni with hyperkalemia, initiate mra with hyperkalemia, give potassium supplement?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2022 HF Guidelines, Section 7.3.2",,
+HF-ACUTE-PULMONARY-EDEMA-NO-BB,aha_heart_failure_2022,AHA/ACC/HFSA Heart Failure Guideline,adhf_management,CRITICAL,FORBIDDEN,patient.vitals.spo2 < 90 and 'bilateral_crackles' in patient.exam_findings,"give_high_dose_beta_blocker, give_iv_metoprolol_in_acute_failure","Clinical scenario: SpO2 < 90 AND 'bilateral crackles' in patient.exam findings
+Context: IV beta-blockers in acute pulmonary edema cause cardiogenic shock.
+Question: Is it safe to give high dose beta blocker, give iv metoprolol in acute failure?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC 2022 HF Guidelines, Section 10.1",,
+STROKE-BP-UNCONTROLLED-NO-TPA,aha_stroke_2019,AHA/ASA Acute Ischemic Stroke Guideline,tpa_eligibility_assessment,CRITICAL,FORBIDDEN,patient.vitals.sbp > 185 or patient.vitals.dbp > 110,"give_alteplase, give_tpa","Clinical scenario: systolic BP > 185 OR patient.vitals.dbp > 110
+Context: tPA with BP >185/110 increases risk of intracranial hemorrhage.
+Question: Is it safe to give alteplase, give tpa?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ASA 2019 Acute Ischemic Stroke Guidelines, Section 3.5",,
+STROKE-TPA-HEPARIN-TIMING,aha_stroke_2019,AHA/ASA Acute Ischemic Stroke Guideline,tpa_eligibility_assessment,CRITICAL,FORBIDDEN,'tpa_given' in patient.history or 'alteplase_given' in patient.history,"give_heparin_within_24h_of_tpa, start_doac_immediately","Clinical scenario: 'tpa given' in patient.history OR 'alteplase given' in patient.history
+Context: Anticoagulation within 24h of tPA increases hemorrhagic transformation risk.
+Question: Is it safe to give heparin within 24h of tpa, start doac immediately?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ASA 2019, Section 3.5; NINDS tPA Protocol",,
+STROKE-EXTENDED-WINDOW-NO-TPA,aha_stroke_2019,AHA/ASA Acute Ischemic Stroke Guideline,tpa_eligibility_assessment,CRITICAL,FORBIDDEN,patient.presentation.symptom_onset_hours > 4.5,give_alteplase,"Clinical scenario: patient.presentation.symptom onset hours > 4.5
+Context: IV tPA contraindicated beyond 4.5h window.
+Question: Is it safe to give alteplase?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ASA 2019, Section 3.3",,
+STROKE-PREGNANCY-NO-ACEI,aha_stroke_2019,AHA/ASA Acute Ischemic Stroke Guideline,stroke_secondary_prevention,CRITICAL,FORBIDDEN,'pregnancy' in patient.comorbidities,"give_ace_inhibitor, give_arb, give_nitroprusside","Clinical scenario: patient has pregnancy
+Context: ACE inhibitors, ARBs, and nitroprusside are teratogenic.
+Question: Is it safe to give ace inhibitor, give arb, give nitroprusside?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACOG 2020; AHA/ASA 2019 Secondary Prevention,,
+ANA-ACE-INHIBITOR-ANGIOEDEMA,anaphylaxis_management,WAO/EAACI Anaphylaxis Management,epinephrine_administration,CRITICAL,FORBIDDEN,'ace_inhibitor' in patient.medications,"give_ace_inhibitor_again, resume_ace_inhibitor","Clinical scenario: patient is on ace inhibitor
+Context: ACE inhibitors potentiate bradykinin-mediated angioedema; must never be readministered during anaphylaxis.
+Question: Is it safe to give ace inhibitor again, resume ace inhibitor?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","EAACI 2024 Section 5.4; Brown SGA, JACI 2004",,
+ANA-PEDIATRIC-DOSE,anaphylaxis_management,WAO/EAACI Anaphylaxis Management,epinephrine_administration,CRITICAL,FORBIDDEN,patient.age < 12,"give_adult_dose_epinephrine, give_epinephrine_0_5mg","Clinical scenario: patient age < 12
+Context: Children under 12 must receive weight-based epinephrine dosing (0.01 mg/kg, max 0.3 mg); adult dose (0.5 mg) causes toxicity.
+Question: Is it safe to give adult dose epinephrine, give epinephrine 0 5mg?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",WAO 2024 Table 3; EAACI 2024 Pediatric Dosing,,
+ANA-LATEX-ALLERGY-NO-LATEX,anaphylaxis_management,WAO/EAACI Anaphylaxis Management,fluid_resuscitation,CRITICAL,FORBIDDEN,'latex' in patient.allergies,"use_latex_gloves_or_equipment, use_latex_containing_iv_tubing","Clinical scenario: patient is allergic to latex
+Context: Latex-allergic patients must be treated in a latex-free environment to prevent re-triggering anaphylaxis.
+Question: Is it safe to use latex gloves or equipment, use latex containing iv tubing?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",WAO 2024 Section 3.1; EAACI 2024 Allergen Avoidance,,
+PSYCH-ETOH-NO-BENZO-MONOTHERAPY,apa_agitation_management,APA 2024 Agitation Management Guidelines,pharmacologic_intervention,CRITICAL,FORBIDDEN,"'alcohol_intoxication' in patient.get('presentation', {})","give_benzodiazepine_high_dose, give_lorazepam_4mg, give_midazolam_10mg","Clinical scenario: 'alcohol intoxication' in patient.get('presentation', {})
+Context: Alcohol + high-dose benzodiazepine causes profound respiratory depression. Use antipsychotic (haloperidol, olanzapine) instead or low-dose benzo with close monitoring.
+
+Question: Is it safe to give benzodiazepine high dose, give lorazepam 4mg, give midazolam 10mg?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","BETA Project 2012; Nobay F, Ann Emerg Med 2004",,
+PSYCH-QTC-NO-HALOPERIDOL,apa_agitation_management,APA 2024 Agitation Management Guidelines,pharmacologic_intervention,CRITICAL,FORBIDDEN,"patient.labs.get('qtc_ms', 0) > 500 or 'prolonged_qtc' in patient.comorbidities","give_haloperidol, give_droperidol","Clinical scenario: patient.labs.get('qtc ms', 0) > 500 OR patient has prolonged qtc
+Context: QTc > 500ms + haloperidol causes Torsades de Pointes and sudden cardiac death. Use benzodiazepine (lorazepam) or olanzapine instead.
+
+Question: Is it safe to give haloperidol, give droperidol?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",FDA Black Box Warning - haloperidol QT prolongation; APA 2024,,
+PSYCH-PARKINSON-NO-TYPICAL-ANTIPSYCHOTIC,apa_agitation_management,APA 2024 Agitation Management Guidelines,pharmacologic_intervention,CRITICAL,FORBIDDEN,'parkinson_disease' in patient.comorbidities or 'lewy_body_dementia' in patient.comorbidities,"give_haloperidol, give_droperidol, give_chlorpromazine","Clinical scenario: patient has parkinson disease OR patient has lewy body dementia
+Context: Typical antipsychotics in Parkinson/LBD cause severe neuroleptic sensitivity reaction, irreversible parkinsonism, NMS. Use low-dose quetiapine if needed.
+
+Question: Is it safe to give haloperidol, give droperidol, give chlorpromazine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","APA 2024; McKeith IG, Neurology 2005 - neuroleptic sensitivity in LBD",,
+PSYCH-OLANZAPINE-NO-BENZO-COMBO,apa_agitation_management,APA 2024 Agitation Management Guidelines,pharmacologic_intervention,CRITICAL,FORBIDDEN,"'olanzapine_im_given' in patient.get('treatment_received', [])","give_lorazepam_im, give_benzodiazepine_im","Clinical scenario: 'olanzapine im given' in patient.get('treatment received', [])
+Context: IM olanzapine + IM benzodiazepine causes respiratory arrest (multiple case reports). FDA contraindication. Wait adequate time between agents or use different combination.
+
+Question: Is it safe to give lorazepam im, give benzodiazepine im?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",Olanzapine IM package insert; FDA warning - respiratory depression with IM benzo combo,,
+PSYCH-NMS-DANTROLENE,apa_agitation_management,APA 2024 Agitation Management Guidelines,nms_serotonin_syndrome,CRITICAL,REQUIRED,"'neuroleptic_malignant_syndrome' in patient.get('presentation', {})","give_dantrolene, stop_all_antipsychotics","Clinical scenario: 'neuroleptic malignant syndrome' in patient.get('presentation', {})
+Context: NMS requires immediate dantrolene (direct muscle relaxant) and cessation of all antipsychotics. Mortality is 10-20% without treatment.
+
+Question: Should the clinician give dantrolene, stop all antipsychotics?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","APA 2024 NMS Guidelines; Strawn JR, CNS Drugs 2007",,
+PSYCH-NMS-DANTROLENE-FORBIDDEN,apa_agitation_management,APA 2024 Agitation Management Guidelines,nms_serotonin_syndrome,CRITICAL,FORBIDDEN,"'neuroleptic_malignant_syndrome' in patient.get('presentation', {})","give_antipsychotic_in_nms, give_haloperidol_in_nms","Clinical scenario: 'neuroleptic malignant syndrome' in patient.get('presentation', {})
+Context: NMS is caused by dopamine blockade from antipsychotics; readministering any antipsychotic worsens the syndrome fatally.
+Question: Is it safe to give antipsychotic in nms, give haloperidol in nms?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",APA Practice Guidelines; NMS is caused by antipsychotic dopamine blockade; readministering antipsychotics is fatal,,
+PSYCH-SEROTONIN-CYPROHEPTADINE,apa_agitation_management,APA 2024 Agitation Management Guidelines,nms_serotonin_syndrome,CRITICAL,REQUIRED,"'serotonin_syndrome' in patient.get('presentation', {})","give_cyproheptadine, stop_serotonergic_agents","Clinical scenario: 'serotonin syndrome' in patient.get('presentation', {})
+Context: Serotonin syndrome requires cyproheptadine (5-HT2A antagonist) and cessation of all serotonergic agents. Distinguish from NMS by clonus, hyperreflexia, and diarrhea (absent in NMS).
+
+Question: Should the clinician give cyproheptadine, stop serotonergic agents?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","Boyer EW, NEJM 2005; APA 2024",,
+PSYCH-SEROTONIN-CYPROHEPTADINE-FORBIDDEN,apa_agitation_management,APA 2024 Agitation Management Guidelines,nms_serotonin_syndrome,CRITICAL,FORBIDDEN,"'serotonin_syndrome' in patient.get('presentation', {})","give_ssri_in_serotonin_syndrome, give_tramadol_in_serotonin_syndrome","Clinical scenario: 'serotonin syndrome' in patient.get('presentation', {})
+Context: SSRIs and tramadol increase serotonin further in serotonin syndrome; all serotonergic agents must be discontinued.
+Question: Is it safe to give ssri in serotonin syndrome, give tramadol in serotonin syndrome?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","APA Practice Guidelines; Boyer EW, NEJM 2005; serotonergic agents compound serotonin syndrome",,
+AF-WPW-NO-AV-BLOCKER,atrial_fibrillation,AHA/ACC/HRS 2023 Atrial Fibrillation,initial_assessment,CRITICAL,FORBIDDEN,'wpw_syndrome' in patient.comorbidities,"give_diltiazem, give_verapamil, give_digoxin, give_adenosine, give_beta_blocker_iv","Clinical scenario: patient has wpw syndrome
+Context: AV nodal blockers in WPW bypass the AV node, accelerating conduction through accessory pathway causing VF.
+Question: Is it safe to give diltiazem, give verapamil, give digoxin, give adenosine, give beta blocker iv?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC/HRS 2023 AF Guidelines, Section 7.3.4.1",,
+AF-MECHANICAL-VALVE-NO-DOAC,atrial_fibrillation,AHA/ACC/HRS 2023 Atrial Fibrillation,initial_assessment,CRITICAL,FORBIDDEN,'mechanical_heart_valve' in patient.comorbidities,"give_dabigatran, give_rivaroxaban, give_apixaban, give_edoxaban","Clinical scenario: patient has mechanical heart valve
+Context: DOACs in mechanical valves increase thrombotic events. Warfarin required.
+Question: Is it safe to give dabigatran, give rivaroxaban, give apixaban, give edoxaban?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA/ACC/HRS 2023 AF Guidelines; RE-ALIGN Trial,,
+AF-CARDIOVERSION-ANTICOAG-GATE,atrial_fibrillation,AHA/ACC/HRS 2023 Atrial Fibrillation,unstable_af,CRITICAL,FORBIDDEN,patient.presentation.af_duration_hours > 48,"perform_cardioversion_without_anticoag, perform_cardioversion_without_tee","Clinical scenario: patient.presentation.af duration hours > 48
+Context: Cardioversion after 48h AF without anticoagulation/TEE risks stroke.
+Question: Is it safe to perform cardioversion without anticoag, perform cardioversion without tee?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AHA/ACC/HRS 2023 AF Guidelines, Section 6.2",,
+CAP-PENICILLIN-ALLERGY-ALT,cap_pneumonia,IDSA/ATS Community-Acquired Pneumonia 2019,initial_assessment,CRITICAL,FORBIDDEN,'penicillin_anaphylaxis' in patient.allergies,"give_amoxicillin, give_ampicillin, give_piperacillin","Clinical scenario: patient is allergic to penicillin anaphylaxis
+Context: Penicillin anaphylaxis precludes all penicillin-class antibiotics.
+Question: Is it safe to give amoxicillin, give ampicillin, give piperacillin?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ATS/IDSA CAP 2019, Section 4.2",,
+CAP-SEVERE-ICU-ADMISSION,cap_pneumonia,IDSA/ATS Community-Acquired Pneumonia 2019,initial_assessment,CRITICAL,REQUIRED,patient.vitals.sbp < 90 or patient.vitals.respiratory_rate > 30,"admit_to_icu, give_iv_antibiotics_immediately","Clinical scenario: systolic BP < 90 OR patient.vitals.respiratory rate > 30
+Context: Severe CAP with hemodynamic instability or respiratory failure requires ICU.
+Question: Should the clinician admit to icu, give iv antibiotics immediately?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","ATS/IDSA CAP 2019, Section 5.1",,
+COPD-PNEUMOTHORAX-NO-NIV,copd_exacerbation,GOLD 2024 COPD Exacerbation Management,initial_assessment,CRITICAL,FORBIDDEN,'pneumothorax' in patient.comorbidities or 'pneumothorax' in patient.imaging,"initiate_niv, initiate_bipap, initiate_cpap","Clinical scenario: patient has pneumothorax OR 'pneumothorax' in patient.imaging
+Context: NIV in pneumothorax causes tension pneumothorax.
+Question: Is it safe to initiate niv, initiate bipap, initiate cpap?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","GOLD COPD 2024, Section 5.3",,
+GIB-VARICEAL-NO-NSAID,gi_bleeding,ACG 2021 GI Bleeding Management,initial_assessment,CRITICAL,FORBIDDEN,'variceal_bleed' in patient.presentation or 'cirrhosis' in patient.comorbidities,"give_nsaid, give_aspirin, give_anticoagulation","Clinical scenario: 'variceal bleed' in patient.presentation OR patient has cirrhosis
+Context: NSAIDs and anticoagulants worsen variceal bleeding in cirrhosis.
+Question: Is it safe to give nsaid, give aspirin, give anticoagulation?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACG GI Bleeding 2023; Baveno VII 2022,,
+GIB-HEMODYNAMIC-INSTABILITY-RESUSCITATE,gi_bleeding,ACG 2021 GI Bleeding Management,initial_assessment,CRITICAL,REQUIRED,patient.vitals.sbp < 90 or patient.vitals.heart_rate > 120,"establish_large_bore_iv, give_crystalloid_bolus, type_and_crossmatch","Clinical scenario: systolic BP < 90 OR patient.vitals.heart rate > 120
+Context: Hemodynamic instability requires immediate resuscitation before endoscopy.
+Question: Should the clinician establish large bore iv, give crystalloid bolus, type and crossmatch?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","ACG GI Bleeding 2023, Section 3.1",,
+GIB-MECHANICAL-VALVE-ANTICOAG,gi_bleeding,ACG 2021 GI Bleeding Management,initial_assessment,CRITICAL,FORBIDDEN,'mechanical_heart_valve' in patient.comorbidities and 'warfarin' in patient.medications,"stop_anticoagulation_indefinitely, withhold_anticoagulation_without_bridge","Clinical scenario: patient has mechanical heart valve AND patient is on warfarin
+Context: Mechanical valve patients need bridging; cannot hold anticoagulation indefinitely.
+Question: Is it safe to stop anticoagulation indefinitely, withhold anticoagulation without bridge?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACG GI Bleeding 2023; AHA/ACC Valve 2020,,
+GIB-UNSTABLE-RESUSCITATE-FIRST,gi_bleeding,ACG 2021 GI Bleeding Management,initial_assessment,CRITICAL,FORBIDDEN,patient.vitals.sbp < 90 and patient.vitals.heart_rate > 120,"proceed_to_endoscopy_without_resuscitation, delay_transfusion_for_endoscopy","Clinical scenario: systolic BP < 90 AND patient.vitals.heart rate > 120
+Context: Hemodynamically unstable patients must be resuscitated before endoscopy.
+Question: Is it safe to proceed to endoscopy without resuscitation, delay transfusion for endoscopy?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ACG GI Bleeding 2023, Section 3.1",,
+ASTHMA-ASPIRIN-SENSITIVE-NO-NSAID,gina_asthma_exacerbation,GINA Asthma Exacerbation Management,mild_moderate_treatment,CRITICAL,FORBIDDEN,'aspirin_sensitive_asthma' in patient.comorbidities or 'nsaid_sensitivity' in patient.comorbidities,"give_nsaid, give_aspirin, give_ibuprofen, give_ketorolac","Clinical scenario: patient has aspirin sensitive asthma OR patient has nsaid sensitivity
+Context: NSAIDs and aspirin trigger severe bronchospasm in aspirin-exacerbated respiratory disease (AERD) via COX-1 inhibition and leukotriene overproduction.
+Question: Is it safe to give nsaid, give aspirin, give ibuprofen, give ketorolac?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","GINA 2024 Section 2.4; Stevenson DD, JACI 2003",,
+ASTHMA-PNEUMOTHORAX-NO-POSITIVE-PRESSURE,gina_asthma_exacerbation,GINA Asthma Exacerbation Management,severe_treatment,CRITICAL,FORBIDDEN,'pneumothorax' in patient.comorbidities,"give_niv, give_bipap, give_cpap, give_positive_pressure_ventilation","Clinical scenario: patient has pneumothorax
+Context: Positive pressure ventilation in pneumothorax causes tension pneumothorax and hemodynamic collapse; tube thoracostomy must precede positive pressure.
+Question: Is it safe to give niv, give bipap, give cpap, give positive pressure ventilation?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",GINA 2024 Section 4.3; BTS 2015 Spontaneous Pneumothorax Guidelines,,
+ASTHMA-NEAR-FATAL-EPINEPHRINE,gina_asthma_exacerbation,GINA Asthma Exacerbation Management,near_fatal_treatment,CRITICAL,REQUIRED,state.severity_classification == 'near_fatal' or patient.vitals.spo2 < 85,give_epinephrine_im,"Clinical scenario: state.severity classification == 'near fatal' OR SpO2 < 85
+Context: Near-fatal asthma with SpO2 <85% or imminent respiratory arrest requires IM epinephrine as rescue; bronchospasm prevents nebulized drug delivery.
+Question: Should the clinician give epinephrine im?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",GINA 2024 Section 4.3; BTS/SIGN 2019 Asthma Guidelines,,
+HTN-AORTIC-DISSECTION-BB-FIRST,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,BEFORE,'aortic_dissection' in patient.comorbidities,"give_iv_beta_blocker, give_vasodilator","Clinical scenario: patient has aortic dissection
+Context: In aortic dissection, BB must precede vasodilators to prevent reflex tachycardia.
+Question: Is the ordering/timing constraint (give iv beta blocker, give vasodilator) clinically appropriate?
+[ ] Yes, correct  [ ] No, incorrect  [ ] Depends (explain)","Yes, correct",AHA 2017 Hypertensive Crisis; ESC Aortic Disease 2014,,
+HTN-ECLAMPSIA-MAGNESIUM,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,REQUIRED,'eclampsia' in patient.comorbidities or 'preeclampsia_severe' in patient.comorbidities,"give_magnesium_sulfate, give_iv_labetalol_or_hydralazine","Clinical scenario: patient has eclampsia OR patient has preeclampsia severe
+Context: Eclampsia/severe preeclampsia requires magnesium for seizure prophylaxis.
+Question: Should the clinician give magnesium sulfate, give iv labetalol or hydralazine?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",ACOG 2020; AHA 2017 Hypertensive Crisis,,
+HTN-ECLAMPSIA-MAGNESIUM-FORBIDDEN,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,FORBIDDEN,'eclampsia' in patient.comorbidities or 'preeclampsia_severe' in patient.comorbidities,"give_ace_inhibitor_in_eclampsia, give_nitroprusside_in_eclampsia","Clinical scenario: patient has eclampsia OR patient has preeclampsia severe
+Context: ACE inhibitors are teratogenic contraindications in eclampsia; nitroprusside produces cyanide metabolites toxic to the fetus.
+Question: Is it safe to give ace inhibitor in eclampsia, give nitroprusside in eclampsia?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACOG 2020; ACE inhibitors are teratogenic; nitroprusside causes fetal cyanide toxicity,,
+HTN-ECLAMPSIA-NO-ACEI,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,FORBIDDEN,'pregnancy' in patient.comorbidities,"give_ace_inhibitor, give_arb, give_nitroprusside, give_enalaprilat","Clinical scenario: patient has pregnancy
+Context: ACE inhibitors, ARBs, and nitroprusside are teratogenic.
+Question: Is it safe to give ace inhibitor, give arb, give nitroprusside, give enalaprilat?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACOG 2020; FDA Pregnancy Category X,,
+HTN-PHEOCHROMOCYTOMA-NO-BB-ALONE,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,FORBIDDEN,'pheochromocytoma' in patient.comorbidities,"give_beta_blocker_alone, give_iv_metoprolol_without_alpha_block","Clinical scenario: patient has pheochromocytoma
+Context: Beta-blockers alone in pheochromocytoma cause hypertensive crisis via unopposed alpha.
+Question: Is it safe to give beta blocker alone, give iv metoprolol without alpha block?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",Endocrine Society 2014; AHA 2017,,
+HTN-ECLAMPSIA-NO-ACEI-EXPANDED,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,FORBIDDEN,'pregnancy' in str(patient.comorbidities) or 'preeclampsia' in str(patient.comorbidities),"give_ace_inhibitor, give_arb, give_nitroprusside, give_enalaprilat, give_enalapril, give_losartan","Clinical scenario: 'pregnancy' in str(patient.comorbidities) OR 'preeclampsia' in str(patient.comorbidities)
+Context: ACE inhibitors, ARBs, and nitroprusside contraindicated in any pregnancy.
+Question: Is it safe to give ace inhibitor, give arb, give nitroprusside, give enalaprilat, give enalapril, give losartan?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACOG 2020; FDA Pregnancy Category X,,
+HTN-PHEOCHROMOCYTOMA-NO-BB-EXPANDED,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,FORBIDDEN,'pheochromocytoma' in str(patient.comorbidities),"give_beta_blocker_first, give_beta_blocker_alone, give_labetalol, give_metoprolol, give_propranolol, give_iv_metoprolol_without_alpha_block","Clinical scenario: 'pheochromocytoma' in str(patient.comorbidities)
+Context: Any beta-blocker before alpha-blockade causes hypertensive crisis.
+Question: Is it safe to give beta blocker first, give beta blocker alone, give labetalol, give metoprolol, give propranolol, give iv metoprolol without alpha block?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",Endocrine Society 2014; AHA 2017,,
+HTN-AORTIC-DISSECTION-NO-THROMBOLYSIS,hypertensive_emergency,AHA/ACC 2017 Hypertension - Emergency Management,initial_assessment,CRITICAL,FORBIDDEN,'aortic_dissection' in str(patient.comorbidities) or 'marfan' in str(patient.comorbidities),"give_thrombolysis, give_anticoagulation_without_ruling_out_dissection, give_vasodilator_without_beta_blocker","Clinical scenario: 'aortic dissection' in str(patient.comorbidities) OR 'marfan' in str(patient.comorbidities)
+Context: Aortic dissection is absolute contraindication to thrombolysis.
+Question: Is it safe to give thrombolysis, give anticoagulation without ruling out dissection, give vasodilator without beta blocker?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA 2017; ESC Aortic Disease 2014,,
+MENING-INITIAL-NO-DELAY-ABX-FOR-LP,idsa_meningitis,IDSA Bacterial Meningitis Management,initial_assessment,CRITICAL,FORBIDDEN,"patient.presentation.get('delay_to_lp_minutes', 0) > 30",delay_antibiotics_for_lp,"Clinical scenario: patient.presentation.get('delay to lp minutes', 0) > 30
+Context: Converted from unconditional: antibiotics must not be delayed for LP when LP will take >30 minutes; each hour of antibiotic delay increases mortality by 30%
+Question: Is it safe to delay antibiotics for lp?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 2; Proulx N, QJM 2005",,
+MENING-INITIAL-NO-DELAY-ABX-FOR-CT,idsa_meningitis,IDSA Bacterial Meningitis Management,initial_assessment,CRITICAL,FORBIDDEN,'focal_neuro_deficit' in patient.comorbidities or 'papilledema' in patient.exam_findings,delay_antibiotics_for_ct,"Clinical scenario: patient has focal neuro deficit OR 'papilledema' in patient.exam findings
+Context: Converted from unconditional: when CT is indicated (focal deficits, papilledema), antibiotics must be given before CT; do not delay antibiotics for imaging
+Question: Is it safe to delay antibiotics for ct?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 2; Hasbun R, NEJM 2001",,
+MENING-EMPIRIC-NO-DELAY-FOR-LP,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,FORBIDDEN,"patient.presentation.get('delay_to_lp_minutes', 0) > 30",delay_antibiotics_for_lp,"Clinical scenario: patient.presentation.get('delay to lp minutes', 0) > 30
+Context: Converted from unconditional: if LP will be delayed >30 min, antibiotics must be given first; each hour of delay increases mortality
+Question: Is it safe to delay antibiotics for lp?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 3; Proulx N, QJM 2005",,
+MENING-EMPIRIC-NO-DELAY-FOR-CT,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,FORBIDDEN,'focal_neuro_deficit' in patient.comorbidities or 'papilledema' in patient.exam_findings,"delay_antibiotics_for_ct, delay_antibiotics_for_imaging","Clinical scenario: patient has focal neuro deficit OR 'papilledema' in patient.exam findings
+Context: Converted from unconditional: when neuroimaging is needed (focal deficits, papilledema), antibiotics must not wait for CT/imaging results
+Question: Is it safe to delay antibiotics for ct, delay antibiotics for imaging?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 3; Hasbun R, NEJM 2001",,
+MENING-ABX-BEFORE-LP,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,FORBIDDEN,patient.presentation.delay_to_lp_minutes > 30,"delay_antibiotics_for_lp, withhold_antibiotics_pending_lp","Clinical scenario: patient.presentation.delay to lp minutes > 30
+Context: If LP will be delayed >30 minutes (CT needed, coagulopathy, etc.), antibiotics MUST be given immediately; each hour of delay increases mortality by 30%.
+Question: Is it safe to delay antibiotics for lp, withhold antibiotics pending lp?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 3.1; Proulx N, QJM 2005",,
+MENING-PENICILLIN-ALLERGY,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,FORBIDDEN,'penicillin_anaphylaxis' in patient.allergies or 'penicillin_severe_allergy' in patient.allergies,"give_ampicillin_iv, give_ampicillin, give_penicillin, give_amoxicillin","Clinical scenario: patient is allergic to penicillin anaphylaxis OR patient is allergic to penicillin severe allergy
+Context: Penicillin anaphylaxis prohibits ampicillin/penicillin; use trimethoprim-sulfamethoxazole or meropenem for Listeria coverage instead.
+Question: Is it safe to give ampicillin iv, give ampicillin, give penicillin, give amoxicillin?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Table 4; Tunkel AR, CID 2004",,
+MENING-NEONATE-COVERAGE,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,REQUIRED,patient.age < 1,"add_ampicillin_and_aminoglycoside, give_ampicillin_iv, give_gentamicin_iv","Clinical scenario: patient age < 1
+Context: Neonates require ampicillin (for Listeria and Group B Strep) plus aminoglycoside (for Gram-negative coverage); cephalosporin alone is insufficient.
+Question: Should the clinician add ampicillin and aminoglycoside, give ampicillin iv, give gentamicin iv?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",IDSA 2024 Table 3; AAP Red Book 2024,,
+MENING-NEONATE-COVERAGE-FORBIDDEN,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,FORBIDDEN,patient.age < 1,"give_adult_empiric_for_neonatal_meningitis, omit_ampicillin_in_neonatal_meningitis","Clinical scenario: patient age < 1
+Context: Neonatal meningitis has different pathogens (GBS, E. coli, Listeria); adult empiric regimen misses these organisms.
+Question: Is it safe to give adult empiric for neonatal meningitis, omit ampicillin in neonatal meningitis?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",IDSA Meningitis 2004; neonatal meningitis requires ampicillin + gentamicin/cefotaxime for GBS and Listeria coverage,,
+MENING-HSV-ENCEPHALITIS,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,REQUIRED,'hsv_suspected' in patient.comorbidities or 'encephalitis_features' in patient.presentation,give_acyclovir_iv,"Clinical scenario: patient has hsv suspected OR 'encephalitis features' in patient.presentation
+Context: If HSV encephalitis is suspected (temporal lobe findings, altered consciousness, seizures), IV acyclovir must be started empirically; untreated mortality is 70%.
+Question: Should the clinician give acyclovir iv?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","IDSA 2024 Section 3.4; Whitley RJ, NEJM 1986",,
+MENING-HSV-ENCEPHALITIS-FORBIDDEN,idsa_meningitis,IDSA Bacterial Meningitis Management,empiric_antibiotics,CRITICAL,FORBIDDEN,'hsv_suspected' in patient.comorbidities or 'encephalitis_features' in patient.presentation,"omit_acyclovir_if_hsv_suspected, give_antibiotics_only_without_acyclovir_in_encephalitis","Clinical scenario: patient has hsv suspected OR 'encephalitis features' in patient.presentation
+Context: HSV encephalitis requires empiric acyclovir; antibiotics alone don't treat viral encephalitis and mortality reaches 70% untreated.
+Question: Is it safe to omit acyclovir if hsv suspected, give antibiotics only without acyclovir in encephalitis?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA Meningitis 2004; Whitley RJ, NEJM 1986; untreated HSV encephalitis has 70% mortality",,
+MENING-LP-NO-WITHOUT-CT-CONTRAINDICATED,idsa_meningitis,IDSA Bacterial Meningitis Management,lp_and_diagnosis,CRITICAL,FORBIDDEN,'focal_neuro_deficit' in patient.comorbidities,perform_lp_without_ct_when_contraindicated,"Clinical scenario: patient has focal neuro deficit
+Context: Converted from unconditional: LP without prior CT in patients with focal neurological deficits risks brainstem herniation
+Question: Is it safe to perform lp without ct when contraindicated?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 5; Hasbun R, NEJM 2001",,
+MENING-INCREASED-ICP-NO-LP,idsa_meningitis,IDSA Bacterial Meningitis Management,lp_and_diagnosis,CRITICAL,FORBIDDEN,'papilledema' in patient.presentation or 'focal_neuro_deficit' in patient.presentation or 'gcs_less_than_12' in patient.presentation,"perform_lp_without_ct, perform_lumbar_puncture_immediate","Clinical scenario: 'papilledema' in patient.presentation OR 'focal neuro deficit' in patient.presentation OR 'gcs less than 12' in patient.presentation
+Context: LP in patients with raised ICP signs (papilledema, focal deficit, GCS <12) risks brainstem herniation; CT must precede LP. Antibiotics must NOT wait for CT or LP.
+Question: Is it safe to perform lp without ct, perform lumbar puncture immediate?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","IDSA 2024 Section 5.2; Hasbun R, NEJM 2001",,
+AKI-HYPERKALEMIA-URGENT,kdigo_aki_full,KDIGO AKI 2012 Full,initial_assessment,CRITICAL,REQUIRED,patient.labs.potassium > 6.0,"give_calcium_gluconate, give_insulin_dextrose, order_ecg_stat","Clinical scenario: serum potassium > 6.0
+Context: Severe hyperkalemia in AKI requires immediate cardiac membrane stabilization.
+Question: Should the clinician give calcium gluconate, give insulin dextrose, order ecg stat?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",KDIGO AKI 2012; AHA Hyperkalemia Guidelines,,
+AKI-HYPERKALEMIA-URGENT-FORBIDDEN,kdigo_aki_full,KDIGO AKI 2012 Full,initial_assessment,CRITICAL,FORBIDDEN,patient.labs.potassium > 6.0,"give_potassium_in_hyperkalemic_aki, give_succinylcholine_in_hyperkalemic_aki, give_spironolactone_in_hyperkalemic_aki","Clinical scenario: serum potassium > 6.0
+Context: Potassium supplementation, succinylcholine (releases K+ from muscle), and spironolactone worsen fatal hyperkalemia in AKI.
+Question: Is it safe to give potassium in hyperkalemic aki, give succinylcholine in hyperkalemic aki, give spironolactone in hyperkalemic aki?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012; AHA Hyperkalemia Guidelines; potassium-sparing agents and exogenous K+ are contraindicated in K+ > 6.0,,
+AKI-HYPERKALEMIA-NO-ACE-MRA,kdigo_aki_full,KDIGO AKI 2012 Full,initial_assessment,CRITICAL,FORBIDDEN,patient.labs.potassium > 5.5 and ('ace_inhibitor' in patient.medications or 'mra' in patient.medications),"continue_ace_inhibitor, continue_mra, give_potassium_supplement","Clinical scenario: serum potassium > 5.5 AND (patient is on ace inhibitor OR patient is on mra)
+Context: ACE/MRA must be held in AKI with hyperkalemia to prevent fatal arrhythmia.
+Question: Is it safe to continue ace inhibitor, continue mra, give potassium supplement?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012; AHA Hyperkalemia Guidelines,,
+AKI-HYPERKALEMIA-NO-SUCCINYLCHOLINE,kdigo_aki_full,KDIGO AKI 2012 Full,initial_assessment,CRITICAL,FORBIDDEN,patient.labs.potassium > 5.5,give_succinylcholine,"Clinical scenario: serum potassium > 5.5
+Context: Succinylcholine releases potassium from muscle; contraindicated in hyperkalemia.
+Question: Is it safe to give succinylcholine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012; ASA Anesthesia Guidelines,,
+AKI-STAGE2-K-SUPPLEMENT-SPECIFIC,kdigo_aki_full,KDIGO AKI 2012 Full,initial_assessment,CRITICAL,FORBIDDEN,"patient.labs.get('potassium', 4.0) > 5.0","give_potassium_supplement_in_hyperkalemic_aki_stage2, give_oral_potassium_in_aki_with_elevated_k","Clinical scenario: patient.labs.get('potassium', 4.0) > 5.0
+Context: Potassium supplementation when K+ > 5.0 in AKI Stage 2 risks fatal cardiac arrhythmia.
+Question: Is it safe to give potassium supplement in hyperkalemic aki stage2, give oral potassium in aki with elevated k?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012 Section 3.2; potassium supplementation with K+ > 5.0 in AKI is dangerous,,
+AKI-HYPERKALEMIA-NO-SUCCINYLCHOLINE-SPECIFIC,kdigo_aki_full,KDIGO AKI 2012 Full,initial_assessment,CRITICAL,FORBIDDEN,"patient.labs.get('potassium', 4.0) > 5.5","give_succinylcholine_for_rsi_in_hyperkalemic_aki, use_depolarizing_agent_in_aki_hyperkalemia","Clinical scenario: patient.labs.get('potassium', 4.0) > 5.5
+Context: Succinylcholine releases potassium from muscle; in hyperkalemic AKI this causes fatal arrhythmia. Use rocuronium instead.
+Question: Is it safe to give succinylcholine for rsi in hyperkalemic aki, use depolarizing agent in aki hyperkalemia?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012; ASA Guidelines; succinylcholine releases 0.5-1.0 mEq/L K+ from muscle in hyperkalemia,,
+AKI-STAGE2-NO-POTASSIUM-IF-HYPERKALEMIA,kdigo_aki_full,KDIGO AKI 2012 Full,aki_stage_2_management,CRITICAL,FORBIDDEN,"patient.labs.get('potassium', 4.0) > 5.0",give_potassium_supplements_if_hyperkalemia,"Clinical scenario: patient.labs.get('potassium', 4.0) > 5.0
+Context: Converted from unconditional: potassium supplementation is only forbidden when serum potassium >5.0; in hypokalemic AKI patients, potassium may be needed
+Question: Is it safe to give potassium supplements if hyperkalemia?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012 Section 3.2; potassium supplementation in hyperkalemia causes fatal arrhythmia,,
+AKI-STAGE3-NO-CONTRAST,kdigo_aki_full,KDIGO AKI 2012 Full,aki_stage_3_management,CRITICAL,FORBIDDEN,"patient.labs.get('creatinine', 1.0) > 4.0",give_contrast,"Clinical scenario: patient.labs.get('creatinine', 1.0) > 4.0
+Context: Converted from unconditional: contrast administration in severe AKI (creatinine >4.0) causes further renal injury and may precipitate dialysis need
+Question: Is it safe to give contrast?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012 Section 3.3; contrast is nephrotoxic in severe AKI,,
+AKI-STAGE3-NO-POTASSIUM,kdigo_aki_full,KDIGO AKI 2012 Full,aki_stage_3_management,CRITICAL,FORBIDDEN,"patient.labs.get('potassium', 4.0) > 5.5",give_potassium,"Clinical scenario: patient.labs.get('potassium', 4.0) > 5.5
+Context: Converted from unconditional: potassium supplementation in severe AKI with hyperkalemia (K>5.5) causes fatal cardiac arrhythmia
+Question: Is it safe to give potassium?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO AKI 2012 Section 3.3; potassium supplementation in hyperkalemic severe AKI is lethal,,
+CAKI-GADOLINIUM-NO-IN-CKD,kdigo_contrast_aki,KDIGO Contrast-Associated AKI Prevention,risk_assessment,CRITICAL,FORBIDDEN,patient.labs.egfr < 30,"give_gadolinium_contrast, order_mri_with_gadolinium","Clinical scenario: eGFR < 30
+Context: Gadolinium in severe CKD causes nephrogenic systemic fibrosis.
+Question: Is it safe to give gadolinium contrast, order mri with gadolinium?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ACR Manual on Contrast Media 2024; FDA NSF Warning,,
+CAKI-GADOLINIUM-GFR30-SPECIFIC,kdigo_contrast_aki,KDIGO Contrast-Associated AKI Prevention,risk_assessment,CRITICAL,FORBIDDEN,"patient.labs.get('egfr', 90) < 30","give_gadolinium_in_severe_ckd_for_mri, order_mri_gadolinium_without_nephrology_approval_in_ckd","Clinical scenario: patient.labs.get('egfr', 90) < 30
+Context: Gadolinium contrast in severe CKD (eGFR < 30) causes nephrogenic systemic fibrosis, a debilitating fibrotic condition.
+Question: Is it safe to give gadolinium in severe ckd for mri, order mri gadolinium without nephrology approval in ckd?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",KDIGO Contrast AKI 2012; ACR 2023; gadolinium in eGFR < 30 causes nephrogenic systemic fibrosis (NSF),,
+PEDS-DKA-SLOW-FLUID,pals_pediatric_emergency,AHA PALS 2025 Pediatric Emergency Guidelines,pediatric_fluid_resuscitation,CRITICAL,FORBIDDEN,"'dka' in patient.get('presentation', {})","give_rapid_fluid_bolus, give_bolus_greater_than_10ml_kg","Clinical scenario: 'dka' in patient.get('presentation', {})
+Context: Pediatric DKA: rapid fluid (>10ml/kg/h) causes cerebral edema and herniation. Use 10ml/kg over 1h, then slow correction over 48h.
+
+Question: Is it safe to give a rapid fluid bolus, give bolus greater than 10ml kg?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ISPAD 2022; AHA PALS 2025 - cerebral edema risk in pediatric DKA,,
+PEDS-NEONATE-SEIZURE-PHENOBARB-FORBIDDEN,pals_pediatric_emergency,AHA PALS 2025 Pediatric Emergency Guidelines,pediatric_seizure,CRITICAL,FORBIDDEN,patient.age < 1,"give_adult_dose_anticonvulsant_in_neonate, give_diazepam_iv_in_neonate","Clinical scenario: patient age < 1
+Context: Neonatal seizures require phenobarbital; IV diazepam contains benzyl alcohol causing gasping syndrome in neonates.
+Question: Is it safe to give adult dose anticonvulsant in neonate, give diazepam iv in neonate?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AHA PALS 2020; neonates require phenobarbital as first-line; IV diazepam contains benzyl alcohol toxic to neonates,,
+PE-MASSIVE-THROMBOLYSIS,pulmonary_embolism,ESC 2019 Pulmonary Embolism,initial_assessment,CRITICAL,REQUIRED,patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation,"give_thrombolytic, give_alteplase_pe","Clinical scenario: systolic BP < 90 OR 'hemodynamic instability' in patient.presentation
+Context: Massive PE with hemodynamic instability requires systemic thrombolysis.
+Question: Should the clinician give thrombolytic, give alteplase pe?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","ESC PE 2019, Section 6.2",,
+PE-MASSIVE-THROMBOLYSIS-FORBIDDEN,pulmonary_embolism,ESC 2019 Pulmonary Embolism,initial_assessment,CRITICAL,FORBIDDEN,patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation,"give_anticoagulation_only_in_massive_pe, delay_thrombolysis_in_massive_pe","Clinical scenario: systolic BP < 90 OR 'hemodynamic instability' in patient.presentation
+Context: Massive PE with shock requires thrombolysis; anticoagulation alone has unacceptably high mortality (25-65%).
+Question: Is it safe to give anticoagulation only in massive pe, delay thrombolysis in massive pe?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ESC PE 2019; massive PE with hemodynamic collapse requires thrombolysis; anticoagulation alone has 25-65% mortality,,
+PE-HIT-NO-HEPARIN,pulmonary_embolism,ESC 2019 Pulmonary Embolism,initial_assessment,CRITICAL,FORBIDDEN,'heparin_induced_thrombocytopenia' in patient.comorbidities or 'hit' in patient.comorbidities,"give_heparin, give_enoxaparin, give_ufh","Clinical scenario: patient has heparin induced thrombocytopenia OR patient has hit
+Context: Heparin in HIT causes catastrophic thrombosis.
+Question: Is it safe to give heparin, give enoxaparin, give ufh?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ESC PE 2019; ASH HIT Guidelines 2018,,
+PE-PREGNANCY-NO-WARFARIN,pulmonary_embolism,ESC 2019 Pulmonary Embolism,initial_assessment,CRITICAL,FORBIDDEN,'pregnancy' in patient.comorbidities,"give_warfarin, give_doac","Clinical scenario: patient has pregnancy
+Context: Warfarin and DOACs are teratogenic. LMWH is safe in pregnancy.
+Question: Is it safe to give warfarin, give doac?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",ESC PE 2019; ACOG Practice Bulletin,,
+PE-ACTIVE-BLEED-NO-THROMBOLYSIS,pulmonary_embolism,ESC 2019 Pulmonary Embolism,initial_assessment,CRITICAL,FORBIDDEN,'active_bleeding' in patient.contraindications or 'active_hemorrhage' in patient.comorbidities,"give_thrombolysis, give_alteplase_pe, give_full_dose_anticoagulation","Clinical scenario: 'active bleeding' in patient.contraindications OR patient has active hemorrhage
+Context: Active bleeding is absolute contraindication to thrombolysis.
+Question: Is it safe to give thrombolysis, give alteplase pe, give full dose anticoagulation?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","ESC PE 2019, Section 6.2 Absolute Contraindications",,
+SEPSIS-PENICILLIN-ANAPHYLAXIS-NO-CEPH,ssc_sepsis_hour1_bundle,Surviving Sepsis Campaign Hour-1 Bundle,septic_shock_bundle,CRITICAL,FORBIDDEN,'penicillin_anaphylaxis' in patient.allergies,"give_cephalosporin, give_ceftriaxone, give_cefepime, give_piperacillin_tazobactam","Clinical scenario: patient is allergic to penicillin anaphylaxis
+Context: Penicillin anaphylaxis patients have cross-reactivity risk with cephalosporins.
+Question: Is it safe to give cephalosporin, give ceftriaxone, give cefepime, give piperacillin tazobactam?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",SSC 2021; IDSA Cross-Reactivity Guidance,,
+SEPSIS-NEUTROPENIC-BROAD-SPECTRUM,ssc_sepsis_hour1_bundle,Surviving Sepsis Campaign Hour-1 Bundle,septic_shock_bundle,CRITICAL,FORBIDDEN,'acute_myeloid_leukemia' in patient.comorbidities or 'chemotherapy_recent' in patient.comorbidities or 'neutropenia' in patient.comorbidities,"give_standard_cap_antibiotics_only, delay_antibiotics_for_source, delay_antibiotics_until_culture","Clinical scenario: patient has acute myeloid leukemia OR patient has chemotherapy recent OR patient has neutropenia
+Context: Neutropenic sepsis needs immediate broad-spectrum, not standard CAP coverage.
+Question: Is it safe to give standard cap antibiotics only, delay antibiotics for source, delay antibiotics until culture?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",IDSA Febrile Neutropenia 2010; SSC 2021,,
+SE-HYPOGLYCEMIA-GLUCOSE-FIRST,status_epilepticus,AES Status Epilepticus Management,initial_stabilization,CRITICAL,BEFORE,patient.labs.glucose < 60,"give_dextrose_50_percent, give_benzodiazepine","Clinical scenario: blood glucose < 60
+Context: Hypoglycemia can cause seizures and must be corrected before or simultaneously with antiepileptic therapy; dextrose 50% IV push.
+Question: Is the ordering/timing constraint (give dextrose 50 percent, give benzodiazepine) clinically appropriate?
+[ ] Yes, correct  [ ] No, incorrect  [ ] Depends (explain)","Yes, correct","AES 2024 Section 2.2; Alldredge BK, NEJM 2001",,
+SE-HYPOGLYCEMIA-GLUCOSE-FIRST-FORBIDDEN,status_epilepticus,AES Status Epilepticus Management,initial_stabilization,CRITICAL,FORBIDDEN,patient.labs.glucose < 60,"give_antiepileptic_before_glucose_correction, delay_glucose_correction_for_eeg","Clinical scenario: blood glucose < 60
+Context: Hypoglycemic seizures resolve with glucose correction; antiepileptics are ineffective and delay definitive treatment.
+Question: Is it safe to give antiepileptic before glucose correction, delay glucose correction for eeg?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","NCS Status Epilepticus 2012; hypoglycemic seizures resolve with glucose correction, not antiepileptics",,
+SE-PREGNANCY-NO-VALPROATE,status_epilepticus,AES Status Epilepticus Management,second_line_therapy,CRITICAL,FORBIDDEN,'pregnancy' in patient.comorbidities,"give_valproate, give_valproate_40mg_kg, give_valproic_acid","Clinical scenario: patient has pregnancy
+Context: Valproate is teratogenic (Category X) causing neural tube defects in 6-9% of exposed pregnancies; absolutely contraindicated.
+Question: Is it safe to give valproate, give valproate 40mg kg, give valproic acid?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AES 2024 Section 4.3; FDA Black Box Warning; Meador KJ, NEJM 2009",,
+SE-HEPATIC-NO-VALPROATE,status_epilepticus,AES Status Epilepticus Management,second_line_therapy,CRITICAL,FORBIDDEN,'liver_disease' in patient.comorbidities or 'hepatic_failure' in patient.comorbidities,"give_valproate, give_valproate_40mg_kg, give_valproic_acid","Clinical scenario: patient has liver disease OR patient has hepatic failure
+Context: Valproate is hepatotoxic and contraindicated in significant liver disease; can cause fatal hepatic failure.
+Question: Is it safe to give valproate, give valproate 40mg kg, give valproic acid?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AES 2024 Section 4.3; FDA Black Box Warning,,
+SE-CARDIAC-HISTORY-NO-PHENYTOIN,status_epilepticus,AES Status Epilepticus Management,second_line_therapy,CRITICAL,FORBIDDEN,'cardiac_arrhythmia' in patient.comorbidities or 'heart_block' in patient.comorbidities or 'long_qt' in patient.comorbidities,"give_phenytoin, give_fosphenytoin_20mg_pe_kg","Clinical scenario: patient has cardiac arrhythmia OR patient has heart block OR patient has long qt
+Context: Phenytoin/fosphenytoin causes cardiac arrhythmias and hypotension via sodium channel blockade; contraindicated in pre-existing cardiac conduction disease.
+Question: Is it safe to give phenytoin, give fosphenytoin 20mg pe kg?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AES 2024 Section 4.5; Cranford RE, Neurology 1979",,
+SE-PORPHYRIA-NO-PHENYTOIN,status_epilepticus,AES Status Epilepticus Management,second_line_therapy,CRITICAL,FORBIDDEN,'porphyria' in patient.comorbidities,"give_phenytoin, give_fosphenytoin_20mg_pe_kg, give_valproate, give_valproate_40mg_kg, give_phenobarbital_15mg_kg","Clinical scenario: patient has porphyria
+Context: Phenytoin, valproate, and phenobarbital are porphyrinogenic; they induce hepatic ALA synthase and can trigger fatal acute porphyria attacks.
+Question: Is it safe to give phenytoin, give fosphenytoin 20mg pe kg, give valproate, give valproate 40mg kg, give phenobarbital 15mg kg?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AES 2024 Section 4.6; Anderson KE, Ann Intern Med 2005",,
+TOX-ACETAMINOPHEN-NAC,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,REQUIRED,'acetaminophen_overdose' in patient.comorbidities or patient.labs.acetaminophen_level > 150,give_n_acetylcysteine,"Clinical scenario: patient has acetaminophen overdose OR patient.labs.acetaminophen level > 150
+Context: NAC is nearly 100% effective if given within 8 hours of acetaminophen ingestion; prevents hepatotoxicity by replenishing glutathione. Always indicated above Rumack-Matthew treatment line.
+Question: Should the clinician give n acetylcysteine?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AACT/ACMT 2024 Section 3.1; Smilkstein MJ, NEJM 1988",,
+TOX-ACETAMINOPHEN-NAC-FORBIDDEN,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'acetaminophen_overdose' in patient.comorbidities or patient.labs.acetaminophen_level > 150,"give_hepatotoxic_drug_in_apap_overdose, delay_nac_for_level_confirmation","Clinical scenario: patient has acetaminophen overdose OR patient.labs.acetaminophen level > 150
+Context: In acetaminophen overdose, hepatotoxic agents worsen liver injury and NAC delay beyond 8h drops efficacy dramatically.
+Question: Is it safe to give hepatotoxic drug in apap overdose, delay nac for level confirmation?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AACT/ACMT 2024 Section 3.1; NAC must not be delayed waiting for acetaminophen level; additional hepatotoxins compound liver injury,,
+TOX-BENZO-NO-FLUMAZENIL-CHRONIC,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'chronic_benzo_use' in patient.medications and 'benzodiazepine_overdose' in patient.comorbidities,give_flumazenil,"Clinical scenario: patient is on chronic benzo use AND patient has benzodiazepine overdose
+Context: Flumazenil in chronic benzodiazepine users precipitates refractory seizures and death by acute GABA withdrawal; supportive care with airway management is preferred.
+Question: Is it safe to give flumazenil?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT/ACMT 2024 Section 3.2; Haverkos GP, Clin Pharm 1994",,
+TOX-OPIOID-NALOXONE,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,REQUIRED,'opioid_overdose' in patient.comorbidities,give_naloxone,"Clinical scenario: patient has opioid overdose
+Context: Naloxone reverses opioid-induced respiratory depression; start low (0.04-0.4 mg) and titrate to respiratory effort to avoid precipitating withdrawal.
+Question: Should the clinician give naloxone?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AACT/ACMT 2024 Section 3.3; Boyer EW, NEJM 2012",,
+TOX-OPIOID-NALOXONE-FORBIDDEN,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'opioid_overdose' in patient.comorbidities,"give_additional_opioid_in_overdose, give_long_acting_sedative_in_opioid_od","Clinical scenario: patient has opioid overdose
+Context: In opioid overdose, additional opioids or long-acting sedatives worsen respiratory depression and may cause fatal apnea.
+Question: Is it safe to give additional opioid in overdose, give long acting sedative in opioid od?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT/ACMT 2024 Section 3.3; Boyer EW, NEJM 2012; additional CNS depressants worsen respiratory depression",,
+TOX-TCA-NO-PHYSOSTIGMINE,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'tca_overdose' in patient.comorbidities or 'tricyclic_overdose' in patient.comorbidities,give_physostigmine,"Clinical scenario: patient has tca overdose OR patient has tricyclic overdose
+Context: Physostigmine in TCA overdose causes refractory seizures, bradycardia, and asystole; it reverses anticholinergic effects but worsens cardiac sodium channel blockade.
+Question: Is it safe to give physostigmine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT/ACMT 2024 Section 3.4; Pentel P, Ann Emerg Med 1980",,
+TOX-TCA-BICARB,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,REQUIRED,'tca_overdose' in patient.comorbidities and patient.labs.qrs_duration > 100,give_sodium_bicarbonate,"Clinical scenario: patient has tca overdose AND patient.labs.qrs duration > 100
+Context: QRS >100ms in TCA overdose indicates significant sodium channel blockade with seizure and arrhythmia risk; sodium bicarbonate overcomes blockade and alkalinizes to reduce free drug.
+Question: Should the clinician give sodium bicarbonate?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AACT/ACMT 2024 Section 3.4; Liebelt EL, J Toxicol Clin Toxicol 1995",,
+TOX-METHANOL-FOMEPIZOLE,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,REQUIRED,'methanol_ingestion' in patient.comorbidities or 'ethylene_glycol_ingestion' in patient.comorbidities,give_fomepizole,"Clinical scenario: patient has methanol ingestion OR patient has ethylene glycol ingestion
+Context: Fomepizole inhibits alcohol dehydrogenase, preventing conversion of methanol/ethylene glycol to toxic metabolites (formic acid/oxalic acid). Must be given before metabolic acidosis develops.
+Question: Should the clinician give fomepizole?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AACT/ACMT 2024 Section 3.5; Brent J, NEJM 2001",,
+TOX-METHANOL-FOMEPIZOLE-FORBIDDEN,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'methanol_ingestion' in patient.comorbidities or 'ethylene_glycol_ingestion' in patient.comorbidities,"delay_fomepizole_for_osmolar_gap, give_ethanol_concurrently_with_fomepizole","Clinical scenario: patient has methanol ingestion OR patient has ethylene glycol ingestion
+Context: Delaying fomepizole for osmolar gap results permits conversion to formic acid/oxalic acid; concurrent ethanol adds toxicity.
+Question: Is it safe to delay fomepizole for osmolar gap, give ethanol concurrently with fomepizole?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT/ACMT 2024 Section 3.5; Brent J, NEJM 2001; fomepizole delay allows toxic metabolite accumulation",,
+TOX-DIGOXIN-FAB,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,REQUIRED,'digoxin_toxicity' in patient.comorbidities or patient.labs.digoxin_level > 2.0,give_digoxin_fab_fragments,"Clinical scenario: patient has digoxin toxicity OR patient.labs.digoxin level > 2.0
+Context: Digoxin-specific Fab fragments bind free digoxin; indicated for life-threatening arrhythmias, hyperkalemia >5.5, or digoxin level >6 ng/mL.
+Question: Should the clinician give digoxin fab fragments?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AACT/ACMT 2024 Section 3.6; Antman EM, Circulation 1990",,
+TOX-DIGOXIN-FAB-FORBIDDEN,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'digoxin_toxicity' in patient.comorbidities or patient.labs.digoxin_level > 2.0,"give_calcium_in_digoxin_toxicity, cardiovert_without_digoxin_fab","Clinical scenario: patient has digoxin toxicity OR patient.labs.digoxin level > 2.0
+Context: IV calcium in digoxin toxicity causes fatal myocardial contracture; cardioversion without Fab triggers lethal arrhythmia.
+Question: Is it safe to give calcium in digoxin toxicity, cardiovert without digoxin fab?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT/ACMT 2024 Section 3.6; Antman EM, Circulation 1990; calcium + digoxin causes 'stone heart' (irreversible contracture)",,
+TOX-ORGANOPHOSPHATE-ATROPINE,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,REQUIRED,'organophosphate_poisoning' in patient.comorbidities,"give_atropine, give_pralidoxime","Clinical scenario: patient has organophosphate poisoning
+Context: Organophosphate poisoning requires atropine (titrated to drying of secretions) plus pralidoxime (reactivates acetylcholinesterase before aging occurs, ideally within 24-48h).
+Question: Should the clinician give atropine, give pralidoxime?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AACT/ACMT 2024 Section 3.7; Eddleston M, Lancet 2008",,
+TOX-ORGANOPHOSPHATE-ATROPINE-FORBIDDEN,toxicology_management,AACT/ACMT Toxicology Management,antidote_administration,CRITICAL,FORBIDDEN,'organophosphate_poisoning' in patient.comorbidities,"give_succinylcholine_in_op_poisoning, give_morphine_in_cholinergic_crisis","Clinical scenario: patient has organophosphate poisoning
+Context: Succinylcholine relies on pseudocholinesterase for metabolism; OP poisoning inhibits this enzyme causing prolonged paralysis.
+Question: Is it safe to give succinylcholine in op poisoning, give morphine in cholinergic crisis?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT/ACMT 2024 Section 3.7; Eddleston M, Lancet 2008; OP inhibits pseudocholinesterase causing prolonged paralysis from succinylcholine",,
+TOX-CAUSTIC-NO-CHARCOAL,toxicology_management,AACT/ACMT Toxicology Management,decontamination,CRITICAL,FORBIDDEN,'caustic_ingestion' in patient.presentation,"give_activated_charcoal_with_caustic, give_activated_charcoal","Clinical scenario: 'caustic ingestion' in patient.presentation
+Context: Activated charcoal contraindicated in caustic ingestion - risk of perforation.
+Question: Is it safe to give activated charcoal with caustic, give activated charcoal?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","AACT Position Statement; Hojer J, Clin Toxicol 2013",,
+SAFETY-ALLERGY-CHECK-FORBIDDEN,universal_clinical_safety,Universal Clinical Safety Principles,initial_encounter,CRITICAL,FORBIDDEN,len(patient.allergies) > 0,"give_known_allergen_drug, skip_allergy_verification_before_drug","Clinical scenario: len(patient.allergies) > 0
+Context: Administering a known allergen can cause fatal anaphylaxis; allergy verification is mandatory before any drug administration.
+Question: Is it safe to give known allergen drug, skip allergy verification before drug?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",Joint Commission NPSG 2024; administering a known allergen is a sentinel event with anaphylaxis risk,,
+SAFETY-PREGNANCY-TERATOGEN-SCREEN,universal_clinical_safety,Universal Clinical Safety Principles,initial_encounter,CRITICAL,FORBIDDEN,'pregnancy' in patient.comorbidities,"give_category_x_drug, give_warfarin, give_methotrexate, give_isotretinoin","Clinical scenario: patient has pregnancy
+Context: Category X drugs are absolutely contraindicated in pregnancy.
+Question: Is it safe to give category x drug, give warfarin, give methotrexate, give isotretinoin?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",FDA Pregnancy Category X; ACOG 2020,,
+SAFETY-WARFARIN-NSAID-INTERACTION,universal_clinical_safety,Universal Clinical Safety Principles,initial_encounter,CRITICAL,FORBIDDEN,'warfarin' in patient.medications,"give_nsaid, give_ibuprofen, give_naproxen, give_ketorolac, give_aspirin_high_dose","Clinical scenario: patient is on warfarin
+Context: NSAIDs with warfarin dramatically increase GI bleeding risk (3-6x).
+Question: Is it safe to give nsaid, give ibuprofen, give naproxen, give ketorolac, give aspirin high dose?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007",,

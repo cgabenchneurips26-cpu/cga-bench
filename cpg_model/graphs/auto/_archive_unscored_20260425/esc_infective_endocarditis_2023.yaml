@@ -1,0 +1,115 @@
+graph_id: esc_infective_endocarditis_2023
+guideline_name: ESC Infective Endocarditis Guidelines 2023
+version: '2023.1'
+metadata:
+  source: ESC Infective Endocarditis Guidelines 2023
+  doi: 10.1093/eurheartj/ehad193
+  journal: European Heart Journal
+  recommendation_system: ESC
+  description: Infective endocarditis diagnosis and treatment.
+  key_evidence: Early surgery in complicated IE reduces embolic events and mortality.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: IE Suspicion and Blood Cultures
+    description: Obtain 3 sets of blood cultures, echocardiography, apply Duke criteria.
+    precondition: null
+    mandatory_actions:
+    - order_lab_blood_culture_three_sets
+    - perform_transthoracic_echocardiogram
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_crp
+    allowed_actions:
+    - order_lab_creatinine
+    - apply_duke_criteria
+    - order_lab_cbc
+    - order_lab_blood_culture_three_sets
+    - order_lab_procalcitonin
+    - perform_transesophageal_echocardiogram_if_tte_inconclusive
+    - perform_transthoracic_echocardiogram
+    - order_lab_crp
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      order_lab_blood_culture_three_sets: 60
+      perform_transthoracic_echocardiogram: 1440
+      assess_vital_signs: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESC Infective Endocarditis Guidelines 2023
+    source_section: Diagnosis
+    source_page: null
+    source_quote: Three sets of blood cultures from different venipunctures should be obtained before antibiotics.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: Empiric Antibiotics and Endocarditis Team
+    description: Empiric antibiotics after cultures; activate Endocarditis Team.
+    precondition: null
+    mandatory_actions:
+    - give_iv_antibiotics_empiric
+    - consult_endocarditis_team
+    allowed_actions:
+    - give_iv_antibiotics_empiric
+    - perform_transesophageal_echocardiogram_if_tte_inconclusive
+    - give_vancomycin_if_prosthetic_or_mrsa_risk
+    - order_imaging_pet_ct_if_prosthetic_valve
+    - consult_cardiac_surgery_if_complicated_ie
+    - consult_infectious_diseases
+    - consult_endocarditis_team
+    - give_ampicillin_plus_gentamicin_if_native_valve
+    forbidden_actions:
+    - give_antibiotics_before_blood_cultures
+    - delay_surgery_in_heart_failure_from_valvular_destruction
+    deadlines:
+      give_iv_antibiotics_empiric: 60
+      consult_endocarditis_team: 1440
+    required_prior_actions:
+      give_iv_antibiotics_empiric:
+      - order_lab_blood_culture_three_sets
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESC Infective Endocarditis Guidelines 2023
+    source_section: Empiric Therapy
+    source_page: null
+    source_quote: Empiric antibiotic therapy should be initiated promptly after blood cultures are obtained.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Response Monitoring and Surgical Decision
+    description: Repeat cultures, assess complications, re-evaluate surgical indications.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - order_lab_blood_culture_repeat
+    allowed_actions:
+    - tailor_antibiotics_by_culture_results
+    - assess_embolic_complications
+    - reassess_vital_signs
+    - reassess_surgical_indication
+    - repeat_echocardiogram_if_deterioration
+    - order_lab_blood_culture_repeat
+    - order_lab_crp_repeat
+    forbidden_actions: []
+    deadlines:
+      order_lab_blood_culture_repeat: 2880
+      reassess_vital_signs: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESC Infective Endocarditis Guidelines 2023
+    source_section: Monitoring and Surgery
+    source_page: null
+    source_quote: Surgery is recommended for IE with heart failure, uncontrolled infection, or prevention of embolism.
+    next_nodes: []
+    conditional_next: {}

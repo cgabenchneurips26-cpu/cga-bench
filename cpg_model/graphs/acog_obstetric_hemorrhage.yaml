@@ -1,0 +1,290 @@
+# ACOG 2024 Practice Bulletin #555 - Postpartum Hemorrhage
+# Held-out validation graph (NOT used during development)
+# Key: Quantitative blood loss, uterotonic selection with asthma/HTN contraindications, TXA within 3h delivery
+
+graph_id: "acog_obstetric_hemorrhage"
+guideline_name: "ACOG 2024 Postpartum Hemorrhage Guidelines"
+version: "2024.1"
+
+metadata:
+  primary_source:
+    title: "ACOG Practice Bulletin #555 - Postpartum Hemorrhage"
+    authors: "American College of Obstetricians and Gynecologists"
+    journal: "Obstetrics & Gynecology"
+    year: 2024
+  secondary_source:
+    title: "California CMQCC OB Hemorrhage Toolkit"
+    authors: "California Maternal Quality Care Collaborative"
+    year: 2024
+  source: "ACOG 2024 + CMQCC Toolkit"
+  description: "Comprehensive PPH management from recognition through surgical intervention"
+  key_evidence: "WOMAN Trial: TXA reduces death from bleeding in PPH if given within 3h of delivery (Lancet 2017)"
+  recommendation_system: "ACOG Grade"
+
+  target_population:
+    age_group: adult
+    max_age: 50
+    min_age: 15
+    sex: female_only
+    special_conditions:
+    - pregnant
+entry_node: "pph_recognition"
+
+nodes:
+  # ========================================
+  # 1. PPH Recognition
+  # ========================================
+  pph_recognition:
+    node_id: "pph_recognition"
+    node_type: "enquiry"
+    name: "PPH Recognition"
+    description: "Quantitative blood loss measurement and initial assessment"
+    precondition: null
+
+    mandatory_actions:
+      - "quantify_blood_loss"
+      - "assess_vital_signs"
+      - "assess_uterine_tone"
+      - "establish_large_bore_iv"
+      - "order_type_and_crossmatch"
+      - "order_cbc_coagulation"
+
+    allowed_actions:
+      - "quantify_blood_loss"
+      - "assess_vital_signs"
+      - "assess_uterine_tone"
+      - "establish_large_bore_iv"
+      - "order_type_and_crossmatch"
+      - "order_cbc_coagulation"
+      - "order_fibrinogen"
+      - "assess_for_retained_products"
+      - "assess_for_genital_tract_laceration"
+
+    forbidden_actions:
+      - "delay_treatment_for_estimated_blood_loss"
+
+    deadlines:
+      quantify_blood_loss: 5
+      assess_vital_signs: 5
+      assess_uterine_tone: 10
+      establish_large_bore_iv: 10
+
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "ACOG 2024"
+    source_section: "Section 1: Recognition"
+    source_quote: "Quantitative measurement of blood loss should be used rather than visual estimation."
+
+    next_nodes:
+      - "uterotonic_therapy"
+      - "massive_transfusion_ob"
+    conditional_next: {}
+
+  # ========================================
+  # 2. Uterotonic Therapy
+  # ========================================
+  uterotonic_therapy:
+    node_id: "uterotonic_therapy"
+    node_type: "action"
+    name: "Uterotonic Therapy"
+    description: "First-line uterotonics for atonic PPH"
+    precondition: null
+
+    mandatory_actions:
+      - "give_oxytocin_iv"
+      - "perform_uterine_massage"
+
+    allowed_actions:
+      - "give_oxytocin_iv"
+      - "perform_uterine_massage"
+      - "give_methylergonovine"
+      - "give_methergine"
+      - "give_carboprost"
+      - "give_hemabate"
+      - "give_misoprostol"
+      - "reassess_uterine_tone"
+
+    forbidden_actions: []
+
+    deadlines:
+      give_oxytocin_iv: 15
+      perform_uterine_massage: 10
+
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "A"
+
+    source_guideline: "ACOG 2024"
+    source_section: "Section 2: Uterotonic Therapy"
+    source_quote: "Oxytocin is the first-line uterotonic. If atony persists, second-line agents include methylergonovine, carboprost, and misoprostol."
+
+    patient_activation_condition: "'uterine_atony' in patient.get('presentation', {})"
+
+    conditional_rules:
+      - rule_id: "OB-ASTHMA-NO-CARBOPROST"
+        condition: "'asthma' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_carboprost, give_hemabate]
+        evidence: "ACOG 2024; Carboprost package insert - bronchospasm contraindication"
+        severity: CRITICAL
+        description: >
+          Carboprost (15-methyl PGF2a) causes bronchospasm. Contraindicated in asthma.
+          Use methylergonovine or misoprostol instead.
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "asthma", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "asthma", type: list_not_contains}
+
+      - rule_id: "OB-HYPERTENSION-NO-METHYLERGONOVINE"
+        condition: "'hypertension' in patient.comorbidities or 'preeclampsia' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_methylergonovine, give_methergine]
+        evidence: "ACOG 2024; Methylergonovine package insert - hypertension contraindication"
+        severity: CRITICAL
+        description: >
+          Methylergonovine causes vasoconstriction -> hypertensive crisis in preeclampsia/HTN.
+          Use carboprost (if no asthma) or misoprostol instead.
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "hypertension", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "hypertension", type: list_not_contains}
+
+      - rule_id: "OB-ASTHMA-AND-HTN-MISOPROSTOL-ONLY"
+        condition: "'asthma' in patient.comorbidities and 'hypertension' in patient.comorbidities"
+        effect:
+          type: REQUIRED
+          actions: [give_misoprostol]
+        evidence: "ACOG 2024 - when carboprost AND methylergonovine both contraindicated"
+        severity: CRITICAL
+        description: >
+          Asthma + hypertension: carboprost contraindicated (bronchospasm),
+          methylergonovine contraindicated (vasoconstriction). Misoprostol is the only
+          safe second-line uterotonic. This is a classic clinical decision trap.
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "asthma", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "asthma", type: list_not_contains}
+
+    next_nodes:
+      - "surgical_intervention"
+    conditional_next: {}
+
+  # ========================================
+  # 3. Surgical Intervention
+  # ========================================
+  surgical_intervention:
+    node_id: "surgical_intervention"
+    node_type: "action"
+    name: "Surgical Intervention"
+    description: "Surgical management when uterotonics fail"
+    precondition: null
+
+    mandatory_actions:
+      - "perform_balloon_tamponade"
+      - "consult_surgery"
+
+    allowed_actions:
+      - "perform_balloon_tamponade"
+      - "consult_surgery"
+      - "consider_b_lynch_suture"
+      - "consider_hysterectomy_if_refractory"
+      - "perform_uterine_artery_embolization"
+
+    forbidden_actions: []
+
+    deadlines:
+      perform_balloon_tamponade: 60
+      consult_surgery: 30
+
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "ACOG 2024"
+    source_section: "Section 3: Surgical Management"
+    source_quote: "Balloon tamponade is first-line surgical intervention. B-Lynch suture and hysterectomy for refractory cases."
+
+    patient_activation_condition: >
+      'refractory_pph' in patient.get('presentation', {})
+      or patient.labs.get('estimated_blood_loss', 0) > 1500
+
+    next_nodes: []
+    conditional_next: {}
+
+  # ========================================
+  # 4. Massive Transfusion (OB)
+  # ========================================
+  massive_transfusion_ob:
+    node_id: "massive_transfusion_ob"
+    node_type: "action"
+    name: "Massive Transfusion in OB Hemorrhage"
+    description: "Massive transfusion in obstetric hemorrhage"
+    precondition: null
+
+    mandatory_actions:
+      - "activate_massive_transfusion_protocol"
+      - "give_prbc_ffp_platelets"
+      - "give_tranexamic_acid_1g"
+      - "monitor_fibrinogen"
+      - "give_cryoprecipitate_if_fibrinogen_low"
+
+    allowed_actions:
+      - "activate_massive_transfusion_protocol"
+      - "give_prbc_ffp_platelets"
+      - "give_tranexamic_acid_1g"
+      - "monitor_fibrinogen"
+      - "give_cryoprecipitate_if_fibrinogen_low"
+      - "give_calcium_gluconate"
+      - "maintain_temperature"
+      - "reassess_hemodynamic_status"
+
+    forbidden_actions:
+      - "withhold_txa_in_pph"
+
+    deadlines:
+      activate_massive_transfusion_protocol: 15
+      give_tranexamic_acid_1g: 20
+
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "A"
+
+    source_guideline: "ACOG 2024"
+    source_section: "Section 4: Massive Transfusion"
+    source_quote: "TXA 1g IV reduces death from bleeding in PPH (WOMAN trial). Fibrinogen <200 mg/dL requires cryoprecipitate."
+
+    patient_activation_condition: >
+      patient.labs.get('estimated_blood_loss', 0) > 1000
+      or 'hemorrhagic_shock' in patient.get('presentation', {})
+
+    conditional_rules:
+      - rule_id: "OB-TXA-WITHIN-3H-DELIVERY"
+        condition: "patient.presentation.get('hours_since_delivery', 0) > 3"
+        effect:
+          type: FORBIDDEN
+          actions: [give_tranexamic_acid]
+        evidence: "WOMAN Trial, Lancet 2017 - TXA benefit only within 3h of delivery"
+        severity: HIGH
+        description: >
+          TXA benefit in PPH is limited to within 3 hours of delivery (WOMAN trial).
+          After 3h, the risk-benefit ratio is unfavorable.
+        condition_variables: [patient.presentation.hours_since_delivery]
+        trigger_range:
+          patient.presentation.hours_since_delivery: {min: 3.1, max: 24.0, type: float}
+        normal_range:
+          patient.presentation.hours_since_delivery: {min: 0.0, max: 3.0, type: float}
+
+    next_nodes:
+      - "surgical_intervention"
+    conditional_next: {}

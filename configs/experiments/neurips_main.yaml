@@ -1,0 +1,306 @@
+# NeurIPS Main Experiment Configuration
+# ======================================
+# 4종 베이스라인 + 공정성(비판 1~3) 내장 실험 설계
+
+experiment:
+  experiment_id: "neurips_cga_bench_2025"
+  description: "CGA-Bench: Clinical Guideline Adherence Benchmark - Main Experiment"
+  version: "1.0.0"
+
+# ============================================================
+# 비판 1: 평가 누수/치팅 방지 (Protocol Enforcement)
+# ============================================================
+# 원칙: 어떤 에이전트도 채점용 CPG-Engine에 접근 불가
+# 구현: assessor 서버사이드 분리, 에이전트는 tool API만 접근
+
+isolation:
+  # 에이전트 런타임에서 접근 금지 모듈
+  forbidden_imports:
+    - "cga_bench.cpg_engine"
+    - "cga_bench.assessor_core"
+    - "cga_bench.cpg_model.graphs"
+
+  # 허용된 모듈 (agent_rules/는 독립 구현이므로 허용)
+  allowed_imports:
+    - "cga_bench.agent_rules"
+    - "cga_bench.tool_api"
+    - "cga_bench.scenario_engine"
+
+  # 런타임 검증 활성화
+  enforce_at_runtime: true
+  log_violations: true
+
+# ============================================================
+# 비판 3: Budget-Matched 평가 (공정한 추론 예산)
+# ============================================================
+# 모든 베이스라인에 동일 예산 부여
+
+budget:
+  enforce_budget_matching: true
+
+  # 에피소드당 총 생성 토큰 상한
+  budget_limit_tokens: 50000
+
+  # LLM 호출 수 + tool call 수 상한
+  budget_limit_calls: 100
+
+  # 예산 초과 시 동작
+  on_budget_exceeded: "terminate"  # "terminate" | "warn" | "log_only"
+
+  # Best-of-N 샘플링 허용 (self-consistency)
+  allow_sampling: true
+  max_samples_per_decision: 3
+
+# ============================================================
+# 시나리오 설정
+# ============================================================
+scenarios:
+  sepsis:
+    - septic_shock_basic
+    - septic_shock_penicillin_allergy
+    - sepsis_without_shock
+    - septic_shock_ckd
+
+  chest_pain:
+    - stemi_anterior_basic
+    - stemi_inferior_rv_trap  # TRAP scenario
+    - nstemi_high_risk
+    - chest_pain_low_risk
+
+  aki:
+    - contrast_aki_prevention_basic
+    - aki_stage1_early_detection
+    - aki_stage3_dialysis_consideration
+    - ckd_contrast_trap  # TRAP scenario
+
+  stroke:
+    - stroke_tpa_eligible
+    - stroke_thrombectomy
+    - hemorrhagic_stroke
+
+# ============================================================
+# 4종 베이스라인 정의
+# ============================================================
+baselines:
+  # --------------------------------------------------------
+  # 1. Rule-based (독립 구현 룰셋)
+  # --------------------------------------------------------
+  # - 텍스트 CPG에서 사람이 만든 decision table로 정책 구성
+  # - 채점 엔진 접근 금지 (agent_rules/ 사용)
+  # - Upper-bound 참고치 역할
+  rule_based:
+    enabled: true
+    agent_type: "oracle"
+    description: "Rule-based agent using independent decision tables from CPG text"
+
+    config:
+      agent_id: "rule_based_oracle"
+      guideline_domain: "auto"  # 시나리오에서 자동 결정
+
+      # 채점 엔진 접근 금지 (명시적)
+      uses_cpg_engine: false
+      uses_assessor_core: false
+
+      # Budget 설정 (Oracle은 LLM 미사용이므로 토큰 예산 해당 없음)
+      budget_limit_tokens: 0
+      budget_limit_calls: 100
+
+  # --------------------------------------------------------
+  # 2. RAG-only (강한 텍스트 기준선)
+  # --------------------------------------------------------
+  # - 동일 CPG 코퍼스로 retrieval
+  # - 단발 1-step 행동 결정
+  # - 구조화 action 출력 강제 (JSON)
+  # - Planning/제약검증 금지
+  rag_only:
+    enabled: true
+    agent_type: "rag"
+    description: "RAG-only baseline with structured action output, no planning"
+
+    config:
+      agent_id: "rag_only_baseline"
+
+      # LLM 설정
+      llm_backend: "vllm"
+      llm_model: "Qwen/Qwen2.5-72B-Instruct"
+      base_url: "http://localhost:8000/v1"
+      temperature: 0.1
+
+      # Retrieval 설정 (Hybrid: BM25 + Dense)
+      use_bm25: true
+      use_dense: true
+      use_hybrid: true
+      embedding_model: "BAAI/bge-m3"
+      dense_weight: 0.5
+      top_k: 5
+
+      # 비판 2 대응: RAG-only 제약
+      # 계획 모듈 금지
+      use_planning: false
+      # 제약 검증/가드레일 금지
+      use_constraint_verification: false
+      # 단발 결정 (1-step)
+      single_step_decision: true
+      # 구조화 출력 강제
+      force_structured_output: true
+      output_format: "json"
+
+      # Budget 설정
+      budget_limit_tokens: 50000
+      budget_limit_calls: 100
+      max_actions_per_step: 3
+
+  # --------------------------------------------------------
+  # 3. Planner+Tool (ReAct-style)
+  # --------------------------------------------------------
+  # - Reasoning-Acting-Observation 교차
+  # - 도구 사용 허용
+  # - Multi-step planning
+  planner_tool:
+    enabled: true
+    agent_type: "planner"
+    description: "ReAct-style planner with tool use"
+
+    config:
+      agent_id: "planner_tool_react"
+
+      # LLM 설정
+      llm_backend: "vllm"
+      llm_model: "Qwen/Qwen2.5-72B-Instruct"
+      base_url: "http://localhost:8000/v1"
+      temperature: 0.1
+
+      # Planning 설정
+      use_planning: true
+      planning_strategy: "react"  # ReAct-style
+      max_planning_steps: 10
+      replan_on_failure: true
+
+      # Tool 사용 설정
+      use_tools: true
+      available_tools:
+        - "order_lab"
+        - "order_imaging"
+        - "give_medication"
+        - "consult"
+        - "reassess"
+        - "disposition"
+
+      # 제약 검증 (agent_rules/ 기반, 채점 엔진 아님)
+      use_constraint_verification: true
+      constraint_source: "agent_rules"  # NOT cpg_engine
+
+      # Budget 설정
+      budget_limit_tokens: 50000
+      budget_limit_calls: 100
+      max_actions_per_step: 3
+
+  # --------------------------------------------------------
+  # 4. Self-Reflection (Reflexion-style)
+  # --------------------------------------------------------
+  # - 에피소드 피드백을 언어로 반성
+  # - Episodic memory로 다음 시도 개선
+  # - 재시도할수록 예산 소모
+  self_reflection:
+    enabled: true
+    agent_type: "reflection"
+    description: "Reflexion-style agent with episodic memory"
+
+    config:
+      agent_id: "self_reflection_reflexion"
+
+      # LLM 설정
+      llm_backend: "vllm"
+      llm_model: "Qwen/Qwen2.5-72B-Instruct"
+      base_url: "http://localhost:8000/v1"
+      temperature: 0.1
+
+      # Reflection 설정
+      use_reflection: true
+      reflection_strategy: "reflexion"
+      max_reflection_rounds: 3
+      use_episodic_memory: true
+      memory_capacity: 10  # 최근 N개 에피소드 기억
+
+      # 반성 트리거
+      reflect_on_failure: true
+      reflect_on_violation: true
+      reflect_on_timeout: true
+
+      # 제약 검증 (agent_rules/ 기반)
+      use_constraint_verification: true
+      constraint_source: "agent_rules"
+
+      # Budget 설정 (재시도 시 예산 소모)
+      budget_limit_tokens: 50000
+      budget_limit_calls: 100
+      max_actions_per_step: 3
+
+      # Best-of-N 샘플링 (공정 비교)
+      allow_sampling: true
+      max_samples: 3
+
+# ============================================================
+# 실험 설정
+# ============================================================
+settings:
+  # 반복 실행 횟수
+  num_runs_per_scenario: 5
+
+  # 결과 저장
+  save_logs: true
+  save_scores: true
+  save_trajectories: true
+  output_dir: "results/neurips_main"
+
+  # 재현성
+  random_seed: 42
+  deterministic_mode: false  # LLM은 완전 결정론적이지 않음
+
+  # 병렬 실행
+  parallel_scenarios: false  # GPU 메모리 제약
+  parallel_baselines: false
+
+# ============================================================
+# 평가 메트릭
+# ============================================================
+metrics:
+  primary:
+    - compliance_score      # CPG 준수율
+    - peak_risk            # 최대 위험도
+    - aggregate_risk       # 누적 위험도
+
+  secondary:
+    - total_violations     # 총 위반 수
+    - timing_violations    # 시간 위반
+    - sequence_violations  # 순서 위반
+    - omission_violations  # 누락 위반
+    - commission_violations # 불필요 행동
+
+  efficiency:
+    - total_tokens         # 총 토큰 사용량
+    - total_llm_calls      # LLM 호출 수
+    - total_tool_calls     # Tool 호출 수
+    - episode_duration     # 에피소드 소요 시간
+
+  fairness:
+    - budget_utilization   # 예산 사용률
+    - budget_exceeded      # 예산 초과 여부
+
+# ============================================================
+# 통계 분석
+# ============================================================
+analysis:
+  # 통계 검정
+  statistical_tests:
+    - paired_t_test
+    - wilcoxon_signed_rank
+    - bootstrap_ci
+
+  # 신뢰 구간
+  confidence_level: 0.95
+
+  # 효과 크기
+  effect_size_measures:
+    - cohens_d
+    - cliff_delta

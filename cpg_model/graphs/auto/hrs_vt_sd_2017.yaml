@@ -1,0 +1,220 @@
+graph_id: hrs_vt_sd_2017
+guideline_name: HRS/EHRA/APHRS/LAHRS 2017 Expert Consensus Statement on Ventricular Arrhythmias
+version: '2017.1'
+metadata:
+  source: 2017 AHA/ACC/HRS Guideline for Management of Patients with Ventricular Arrhythmias and the Prevention of Sudden
+    Cardiac Death
+  doi: 10.1016/j.hrthm.2017.10.036
+  journal: Heart Rhythm
+  recommendation_system: ACC/AHA Classification
+  description: Expert consensus for acute and long-term management of ventricular arrhythmias including synchronized cardioversion,
+    antiarrhythmic therapy, electrolyte correction, and ICD evaluation
+  key_evidence: 'Amiodarone terminates stable VT in ~30% of cases (Levine meta-analysis). SCD-HeFT trial: ICD reduces mortality
+    by 23% in LVEF <=35% (HR 0.77). Calcium channel blockers in wide-complex tachycardia cause hemodynamic collapse in up
+    to 44% (Stewart et al.).'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: hemodynamic_assessment
+nodes:
+  hemodynamic_assessment:
+    node_id: hemodynamic_assessment
+    node_type: decision
+    name: Hemodynamic Assessment & 12-Lead ECG
+    description: Determine hemodynamic stability. Obtain 12-lead ECG during tachycardia to classify VT morphology (monomorphic
+      vs polymorphic).
+    precondition: null
+    mandatory_actions:
+    - assess_hemodynamic_status
+    - obtain_12_lead_ecg
+    - assess_vital_signs
+    allowed_actions:
+    - order_lab_electrolytes
+    - assess_vital_signs
+    - order_lab_magnesium
+    - establish_iv_access
+    - order_lab_troponin
+    - continuous_cardiac_monitoring
+    - assess_hemodynamic_status
+    - order_lab_bmp
+    - obtain_12_lead_ecg
+    forbidden_actions: []
+    deadlines:
+      assess_hemodynamic_status: 2
+      obtain_12_lead_ecg: 5
+      assess_vital_signs: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: HRS/EHRA/APHRS/LAHRS Expert Consensus on Ventricular Arrhythmias 2017
+    source_section: 'Section 5: Acute Management of VA'
+    source_page: null
+    source_quote: 12-lead ECG during tachycardia is essential for diagnosis. Hemodynamic instability (hypotension, syncope,
+      chest pain, heart failure) mandates immediate electrical cardioversion.
+    next_nodes: []
+    conditional_next:
+      state.hemodynamically_unstable == True: cardioversion_unstable_vt
+      state.hemodynamically_stable == True: stable_vt_pharmacotherapy
+  cardioversion_unstable_vt:
+    node_id: cardioversion_unstable_vt
+    node_type: action
+    name: Synchronized Cardioversion (Unstable VT)
+    description: Immediate synchronized cardioversion for hemodynamically unstable VT. Start at 100J biphasic, escalate if
+      unsuccessful.
+    precondition: state.hemodynamically_unstable == True
+    mandatory_actions:
+    - perform_synchronized_cardioversion
+    - continuous_cardiac_monitoring
+    allowed_actions:
+    - establish_iv_access
+    - give_sedation_for_cardioversion
+    - continuous_cardiac_monitoring
+    - give_iv_amiodarone_post_cardioversion
+    - perform_synchronized_cardioversion
+    - prepare_defibrillator
+    forbidden_actions:
+    - delay_cardioversion_for_drug_trial
+    deadlines:
+      perform_synchronized_cardioversion: 5
+      continuous_cardiac_monitoring: 2
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: HRS/EHRA/APHRS/LAHRS Expert Consensus on Ventricular Arrhythmias 2017
+    source_section: 'Section 5.1: Unstable VT Management'
+    source_page: null
+    source_quote: Synchronized cardioversion is the treatment of choice for unstable monomorphic VT. Do not delay cardioversion
+      to attempt pharmacological conversion in hemodynamically compromised patients.
+    next_nodes:
+    - electrolyte_correction
+    conditional_next: {}
+  stable_vt_pharmacotherapy:
+    node_id: stable_vt_pharmacotherapy
+    node_type: action
+    name: Pharmacotherapy for Stable Monomorphic VT
+    description: IV amiodarone (150 mg over 10 min) is first-line for stable monomorphic VT. IV procainamide is an alternative.
+      IV lidocaine for ischemic VT.
+    precondition: state.hemodynamically_stable == True
+    mandatory_actions:
+    - give_iv_amiodarone_150mg
+    allowed_actions:
+    - give_iv_lidocaine_if_ischemic
+    - give_iv_amiodarone_150mg
+    - order_lab_electrolytes
+    - continuous_cardiac_monitoring
+    - give_iv_procainamide
+    - obtain_12_lead_ecg_post_treatment
+    forbidden_actions:
+    - give_iv_verapamil_for_wide_complex
+    - give_iv_diltiazem_for_wide_complex
+    deadlines:
+      give_iv_amiodarone_150mg: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: HRS/EHRA/APHRS/LAHRS Expert Consensus on Ventricular Arrhythmias 2017
+    source_section: 'Section 5.2: Stable VT Pharmacotherapy'
+    source_page: null
+    source_quote: IV amiodarone is recommended for acute termination of hemodynamically stable monomorphic VT (Class I). IV
+      calcium channel blockers (verapamil, diltiazem) are contraindicated in wide-complex tachycardia of uncertain origin
+      — risk of hemodynamic collapse.
+    next_nodes:
+    - electrolyte_correction
+    conditional_next: {}
+  electrolyte_correction:
+    node_id: electrolyte_correction
+    node_type: action
+    name: Electrolyte Correction
+    description: Correct hypokalemia (target K+ >4.0 mEq/L) and hypomagnesemia (target Mg2+ >2.0 mg/dL) — both lower VT/VF
+      threshold.
+    precondition: null
+    mandatory_actions:
+    - correct_potassium_if_low
+    - correct_magnesium_if_low
+    allowed_actions:
+    - order_lab_electrolytes_repeat
+    - order_lab_magnesium_repeat
+    - correct_magnesium_if_low
+    - correct_potassium_if_low
+    - reassess_cardiac_rhythm
+    - continuous_cardiac_monitoring
+    forbidden_actions: []
+    deadlines:
+      correct_potassium_if_low: 60
+      correct_magnesium_if_low: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: HRS/EHRA/APHRS/LAHRS Expert Consensus on Ventricular Arrhythmias 2017
+    source_section: 'Section 5.3: Electrolyte Management'
+    source_page: null
+    source_quote: Electrolyte abnormalities (hypokalemia, hypomagnesemia) lower the fibrillation threshold. Maintain K+ >4.0
+      mEq/L and Mg2+ >2.0 mg/dL in patients with ventricular arrhythmias.
+    next_nodes:
+    - cardiac_evaluation
+    conditional_next: {}
+  cardiac_evaluation:
+    node_id: cardiac_evaluation
+    node_type: enquiry
+    name: Cardiac Structural Evaluation
+    description: Echocardiography to assess LVEF, wall motion, structural heart disease. Coronary angiography if ischemic
+      etiology suspected.
+    precondition: null
+    mandatory_actions:
+    - perform_echocardiography
+    - assess_lvef
+    allowed_actions:
+    - order_cardiac_mri
+    - consider_coronary_angiography
+    - obtain_12_lead_ecg_sinus
+    - consult_electrophysiology
+    - perform_echocardiography
+    - order_lab_troponin_serial
+    - assess_lvef
+    forbidden_actions: []
+    deadlines:
+      perform_echocardiography: 1440
+      assess_lvef: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: HRS/EHRA/APHRS/LAHRS Expert Consensus on Ventricular Arrhythmias 2017
+    source_section: 'Section 6: Evaluation of VT'
+    source_page: null
+    source_quote: Echocardiography is recommended in all patients presenting with VT to evaluate for structural heart disease
+      (Class I). Coronary angiography indicated if ischemia is suspected.
+    next_nodes:
+    - icd_evaluation
+    conditional_next: {}
+  icd_evaluation:
+    node_id: icd_evaluation
+    node_type: decision
+    name: ICD Evaluation & Long-Term Management
+    description: Assess ICD indication (secondary prevention for survived VT/VF arrest, primary prevention for LVEF <=35%).
+      Plan antiarrhythmic therapy.
+    precondition: null
+    mandatory_actions:
+    - evaluate_icd_indication
+    allowed_actions:
+    - refer_for_icd_implantation
+    - arrange_electrophysiology_followup
+    - evaluate_icd_indication
+    - refer_catheter_ablation
+    - initiate_oral_sotalol
+    - initiate_oral_amiodarone
+    - initiate_beta_blocker_therapy
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: HRS/EHRA/APHRS/LAHRS Expert Consensus on Ventricular Arrhythmias 2017
+    source_section: 'Section 7: ICD Therapy'
+    source_page: null
+    source_quote: ICD is recommended for secondary prevention in survivors of VT/VF cardiac arrest not due to reversible causes
+      (Class I, Level A). Primary prevention ICD for LVEF <=35% with NYHA II-III (SCD-HeFT trial).
+    next_nodes: []
+    conditional_next: {}

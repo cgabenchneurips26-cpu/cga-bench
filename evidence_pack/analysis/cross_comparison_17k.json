@@ -1,0 +1,114 @@
+{
+  "analysis_id": "cross_comparison_17k_v3_classifier_domain",
+  "timestamp": "2026-03-31T07:10:00",
+  "method": "v2 corrections + HealthBench word-boundary classifier + MedChain CN domain detection",
+  "benchmarks": {
+    "AgentClinic": {
+      "total_episodes": 321,
+      "native_pass": 272,
+      "original_discordant": {
+        "count": 140,
+        "rate": 51.47
+      },
+      "corrected_discordant": {
+        "count": 34,
+        "rate": 12.5
+      },
+      "corrections_applied": [
+        "AKI domain misdetection: 31 episodes fixed (keyword substring → multi-feature scoring)",
+        "chest_pain misdetection: 7 episodes fixed (stemi⊂systemic word boundary)",
+        "CPG graph overspecific: reassess_perfusion + 6 actions added to universal_clinical_safety.yaml",
+        "give_unknown: 14 CPG pipeline artifacts resolved"
+      ]
+    },
+    "HealthBench": {
+      "total_episodes": 5000,
+      "native_pass": 3997,
+      "original_discordant": {
+        "count": 3586,
+        "rate": 89.72
+      },
+      "corrected_discordant": {
+        "count": 777,
+        "rate": 19.4
+      },
+      "keyword_mandatory_strict": {
+        "rate": 21.29
+      },
+      "previous_corrected_discordant": {
+        "count": 1203,
+        "rate": 30.1,
+        "method": "50-sample extrapolation with substring classifier"
+      },
+      "corrections_applied": [
+        "v2: 50-sample 84% over-classification, 16% true omission, 0% matching failure",
+        "v3: word-boundary regex \\b eliminates substring FP (85.7% FP reduction)",
+        "v3: axis-first logic removes 220/411 rubrics (axis:accuracy, axis:context_awareness → ASSESSMENT)",
+        "v3: mandatory retention 6.2% (7/113 old ACTION classifications remain valid)",
+        "Corrected = commission(749) + 6.2%×omission_only(2837) ≈ 777"
+      ],
+      "commission_breakdown": {
+        "severe_commission_fa_lt_0.5": 225,
+        "moderate_commission_fa_lt_0.8": 340,
+        "mild_commission_fa_gte_0.8": 184,
+        "total_commission": 749
+      }
+    },
+    "MedChain": {
+      "total_episodes": 12163,
+      "native_pass": 1754,
+      "original_discordant": {
+        "count": 558,
+        "rate": 31.81
+      },
+      "corrected_discordant": {
+        "count": 558,
+        "rate": 31.81
+      },
+      "domain_detection_improvement": {
+        "old_domain_specific": 254,
+        "old_domain_specific_pct": 2.09,
+        "new_domain_specific": 4448,
+        "new_domain_specific_pct": 36.57,
+        "method": "EN+CN keywords via domain_detector with min_confidence=0.15",
+        "top_gains": "stroke +1106, chest_pain +842, pneumonia +704, aki +377"
+      },
+      "corrections_applied": [
+        "v3: CN keyword domain detection added (254→4448 domain-specific, +34.5pp)",
+        "Discordant rate unchanged pending full re-evaluation with new domain assignments"
+      ]
+    },
+    "MedAgentBench": {
+      "total_episodes": 300,
+      "native_pass": 240,
+      "original_discordant": {
+        "count": 14,
+        "rate": 5.83
+      },
+      "corrected_discordant": {
+        "count": 14,
+        "rate": 5.83
+      },
+      "corrections_applied": [
+        "No correction applied"
+      ]
+    }
+  },
+  "aggregate": {
+    "total_episodes": 17784,
+    "total_native_pass": 6263,
+    "original_discordant": {
+      "count": 4298,
+      "rate": 68.63
+    },
+    "corrected_discordant": {
+      "count": 1383,
+      "rate": 22.08
+    },
+    "previous_corrected": {
+      "count": 1809,
+      "rate": 28.89
+    },
+    "note": "Corrected = 34(AC) + 777(HB) + 558(MC) + 14(MAB) = 1383/6263"
+  }
+}

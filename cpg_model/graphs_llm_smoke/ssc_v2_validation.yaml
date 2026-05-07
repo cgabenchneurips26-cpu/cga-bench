@@ -1,0 +1,624 @@
+graph_id: ssc_sepsis_hour1_bundle
+guideline_name: Surviving Sepsis Campaign Hour-1 Bundle
+version: '2021.1'
+metadata:
+  source: SSC 2021
+  domain: sepsis
+  description: Surviving Sepsis Campaign Hour-1 Bundle
+  parse_confidence: 0.0
+  generated_by: cpg_yaml_generator.CPGYAMLGenerator v2
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: enquiry
+    name: Initial Assessment
+    description: Identify sepsis/septic shock
+    precondition: null
+    mandatory_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    allowed_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      assess_infection_source: 10
+      assess_organ_dysfunction: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Initial Resuscitation
+    source_page: null
+    source_quote: null
+    next_nodes:
+    - diagnostic_workup
+    conditional_next: {}
+  diagnostic_workup:
+    node_id: diagnostic_workup
+    node_type: enquiry
+    name: Diagnostic Workup
+    description: Measure serum lactate level
+    precondition: null
+    mandatory_actions:
+    - order_lab_lactate
+    - order_lab_blood_culture
+    allowed_actions:
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - assess_infection_source
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      order_lab_lactate: 60
+      order_lab_blood_culture: 60
+    required_prior_actions:
+      order_lab_blood_culture:
+      - assess_infection_source
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Diagnosis
+    source_page: null
+    source_quote: null
+    next_nodes:
+    - treatment_plan
+    conditional_next: {}
+  treatment_plan:
+    node_id: treatment_plan
+    node_type: decision
+    name: Treatment Plan — Routing
+    description: Do NOT give NSAIDs in sepsis (renal/GI risk)
+    precondition: null
+    mandatory_actions: []
+    allowed_actions:
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions:
+    - give_nsaid
+    - give_aggressive_fluid_without_reassessment
+    - give_hydroxyethyl_starch
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIb
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Antimicrobial Therapy
+    source_page: null
+    source_quote: null
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'sepsis': sepsis_bundle
+      state.working_diagnosis == 'septic_shock': septic_shock_bundle
+  sepsis_bundle:
+    node_id: sepsis_bundle
+    node_type: plan
+    name: Sepsis Hour-1 Bundle
+    description: Bundle for sepsis without shock
+    precondition: state.working_diagnosis == 'sepsis'
+    mandatory_actions:
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - start_vasopressor_norepinephrine
+    allowed_actions:
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - start_vasopressor_norepinephrine
+    - start_vasopressor_vasopressin
+    - give_crystalloid_fluid
+    - order_lab_blood_culture
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions:
+    - give_nsaid
+    - give_aggressive_fluid_without_reassessment
+    - give_hydroxyethyl_starch
+    deadlines:
+      give_broad_spectrum_antibiotics: 60
+      give_crystalloid_30ml_kg: 60
+      start_vasopressor_norepinephrine: 60
+    required_prior_actions:
+      give_broad_spectrum_antibiotics:
+      - order_lab_blood_culture
+      start_vasopressor_norepinephrine:
+      - give_crystalloid_30ml_kg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Antimicrobial Therapy
+    source_page: null
+    source_quote: null
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: SSC-CR-01
+      condition: '''penicillin_anaphylaxis'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ampicillin
+        - give_amoxicillin
+        - give_piperacillin
+      evidence: Cross-reactivity risk 1-2%
+      severity: HIGH
+      description: Penicillin allergy cross-reactivity
+      condition_variables:
+      - patient.allergies
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-02
+      condition: '''ckd_stage_4_5'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid
+        - give_gentamicin_high_dose
+      evidence: Nephrotoxicity risk
+      severity: HIGH
+      description: Renal-toxic agents in CKD patients
+      condition_variables:
+      - patient.comorbidities
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-03
+      condition: patient.vitals.map_mmhg < 65
+      effect:
+        type: REQUIRED
+        actions:
+        - start_vasopressor_norepinephrine
+      evidence: MAP target 65 mmHg per SSC 2021
+      severity: HIGH
+      description: Vasopressor required for persistent hypotension
+      condition_variables:
+      - patient.vitals.map_mmhg
+      trigger_range:
+        max: 65
+      normal_range:
+        min: 65
+        max: 90
+    - rule_id: SSC-CR-04
+      condition: patient.lactate > 4.0
+      effect:
+        type: REQUIRED
+        actions:
+        - give_crystalloid_30ml_kg
+        - remeasure_lactate_if_elevated
+      evidence: Lactate > 4 = tissue hypoperfusion
+      severity: HIGH
+      description: Aggressive resuscitation for high lactate
+      condition_variables:
+      - patient.lactate
+      trigger_range:
+        min: 4.0
+      normal_range:
+        min: 0
+        max: 2.0
+    - rule_id: SSC-CR-05
+      condition: patient.age < 18
+      effect:
+        type: FORBIDDEN
+        actions:
+        - start_vasopressor_vasopressin
+      evidence: Pediatric dosing not covered by SSC adult guidelines
+      severity: MODERATE
+      description: Vasopressin contraindicated in pediatric patients
+      condition_variables:
+      - patient.age
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-06
+      condition: '''heart_failure_ef_lt_30'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_crystalloid_30ml_kg
+      evidence: Fluid overload risk in severe HF
+      severity: HIGH
+      description: Aggressive fluids contraindicated in severe HF
+      condition_variables:
+      - patient.comorbidities
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-07
+      condition: '''liver_cirrhosis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_acetaminophen_high_dose
+      evidence: Hepatotoxicity risk
+      severity: MODERATE
+      description: High-dose acetaminophen in cirrhosis
+      condition_variables:
+      - patient.comorbidities
+      trigger_range: {}
+      normal_range: {}
+  septic_shock_bundle:
+    node_id: septic_shock_bundle
+    node_type: plan
+    name: Septic Shock Hour-1 Bundle
+    description: Bundle for septic shock with vasopressors + aggressive fluid resuscitation
+    precondition: state.working_diagnosis == 'septic_shock'
+    mandatory_actions:
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - start_vasopressor_norepinephrine
+    allowed_actions:
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - start_vasopressor_norepinephrine
+    - start_vasopressor_vasopressin
+    - give_crystalloid_fluid
+    - order_lab_blood_culture
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions:
+    - give_nsaid
+    - give_aggressive_fluid_without_reassessment
+    - give_hydroxyethyl_starch
+    deadlines:
+      give_broad_spectrum_antibiotics: 60
+      give_crystalloid_30ml_kg: 60
+      start_vasopressor_norepinephrine: 60
+    required_prior_actions:
+      give_broad_spectrum_antibiotics:
+      - order_lab_blood_culture
+      start_vasopressor_norepinephrine:
+      - give_crystalloid_30ml_kg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Antimicrobial Therapy
+    source_page: null
+    source_quote: null
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: SSC-CR-01
+      condition: '''penicillin_anaphylaxis'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ampicillin
+        - give_amoxicillin
+        - give_piperacillin
+      evidence: Cross-reactivity risk 1-2%
+      severity: HIGH
+      description: Penicillin allergy cross-reactivity
+      condition_variables:
+      - patient.allergies
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-02
+      condition: '''ckd_stage_4_5'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid
+        - give_gentamicin_high_dose
+      evidence: Nephrotoxicity risk
+      severity: HIGH
+      description: Renal-toxic agents in CKD patients
+      condition_variables:
+      - patient.comorbidities
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-03
+      condition: patient.vitals.map_mmhg < 65
+      effect:
+        type: REQUIRED
+        actions:
+        - start_vasopressor_norepinephrine
+      evidence: MAP target 65 mmHg per SSC 2021
+      severity: HIGH
+      description: Vasopressor required for persistent hypotension
+      condition_variables:
+      - patient.vitals.map_mmhg
+      trigger_range:
+        max: 65
+      normal_range:
+        min: 65
+        max: 90
+    - rule_id: SSC-CR-04
+      condition: patient.lactate > 4.0
+      effect:
+        type: REQUIRED
+        actions:
+        - give_crystalloid_30ml_kg
+        - remeasure_lactate_if_elevated
+      evidence: Lactate > 4 = tissue hypoperfusion
+      severity: HIGH
+      description: Aggressive resuscitation for high lactate
+      condition_variables:
+      - patient.lactate
+      trigger_range:
+        min: 4.0
+      normal_range:
+        min: 0
+        max: 2.0
+    - rule_id: SSC-CR-05
+      condition: patient.age < 18
+      effect:
+        type: FORBIDDEN
+        actions:
+        - start_vasopressor_vasopressin
+      evidence: Pediatric dosing not covered by SSC adult guidelines
+      severity: MODERATE
+      description: Vasopressin contraindicated in pediatric patients
+      condition_variables:
+      - patient.age
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-06
+      condition: '''heart_failure_ef_lt_30'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_crystalloid_30ml_kg
+      evidence: Fluid overload risk in severe HF
+      severity: HIGH
+      description: Aggressive fluids contraindicated in severe HF
+      condition_variables:
+      - patient.comorbidities
+      trigger_range: {}
+      normal_range: {}
+    - rule_id: SSC-CR-07
+      condition: '''liver_cirrhosis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_acetaminophen_high_dose
+      evidence: Hepatotoxicity risk
+      severity: MODERATE
+      description: High-dose acetaminophen in cirrhosis
+      condition_variables:
+      - patient.comorbidities
+      trigger_range: {}
+      normal_range: {}
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Monitoring & Reassessment
+    description: Remeasure lactate if initially elevated
+    precondition: null
+    mandatory_actions:
+    - remeasure_lactate_if_elevated
+    - reassess_perfusion
+    allowed_actions:
+    - remeasure_lactate_if_elevated
+    - reassess_perfusion
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      remeasure_lactate_if_elevated: 360
+      reassess_perfusion: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Resuscitation Targets
+    source_page: null
+    source_quote: null
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition — Routing
+    description: Determine appropriate level of care
+    precondition: null
+    mandatory_actions:
+    - determine_disposition
+    allowed_actions:
+    - determine_disposition
+    - admit_to_icu
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      determine_disposition: 480
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Disposition
+    source_page: null
+    source_quote: null
+    next_nodes: []
+    conditional_next:
+      state.vitals.map_mmhg < 65 or 'vasopressor' in str(state.medications_given): admit_to_icu
+      'True': admit_to_ward
+  admit_to_icu:
+    node_id: admit_to_icu
+    node_type: decision
+    name: Admit to ICU
+    description: ICU admission for hemodynamic instability
+    precondition: state.vitals.map_mmhg < 65
+    mandatory_actions:
+    - determine_disposition
+    allowed_actions:
+    - determine_disposition
+    - admit_to_icu
+    - admit_to_ward
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      determine_disposition: 480
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Disposition
+    source_page: null
+    source_quote: null
+    next_nodes: []
+    conditional_next: {}
+  admit_to_ward:
+    node_id: admit_to_ward
+    node_type: decision
+    name: Admit to Ward
+    description: Ward admission for stable sepsis patients
+    precondition: null
+    mandatory_actions:
+    - determine_disposition
+    allowed_actions:
+    - determine_disposition
+    - admit_to_icu
+    - admit_to_ward
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      determine_disposition: 480
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Disposition
+    source_page: null
+    source_quote: null
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,39 @@
+# Calibration metadata for metric-threshold evaluators.
+# Each entry documents the verdict_matrix field, threshold, and
+# hypothesised pi-class (to be verified by the audit harness).
+#
+# These thresholds are chosen to produce meaningful pass/fail splits
+# on the 14,826-episode W8-filtered corpus. They are NOT clinically
+# tuned — they exist to demonstrate audit harness extensibility.
+
+action_coverage:
+  field: action_coverage
+  threshold: 0.8
+  pi_family_hypothesis: "aset"
+  rationale: >
+    Action coverage tracks which actions were performed but not their
+    ordering or timing. Expected to collapse at pi_aset level.
+
+c2_score:
+  field: c2_score
+  threshold: 0.5
+  pi_family_hypothesis: "nord"
+  rationale: >
+    C2 score includes mandatory completion + ordering information.
+    Expected to be finer-grained than action coverage.
+
+mab_f1:
+  field: mab_f1
+  threshold: 0.5
+  pi_family_hypothesis: "aset"
+  rationale: >
+    MAB F1 captures precision/recall of mandatory actions. Similar
+    granularity to action coverage (action-set level).
+
+always_true:
+  field: null
+  threshold: null
+  pi_family_hypothesis: "term"
+  rationale: >
+    Negative control. Returns True for all episodes regardless of
+    content. Should collapse to the coarsest projection (terminal only).

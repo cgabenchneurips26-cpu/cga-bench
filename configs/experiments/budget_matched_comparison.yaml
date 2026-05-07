@@ -1,0 +1,58 @@
+# Budget-Matched Agent Comparison Experiment
+# All agents run with identical budget constraints for fair comparison
+
+experiment:
+  experiment_id: "budget_matched_comparison_v1"
+  description: |
+    Compares RAG, Planner, Reflection agents under identical budget constraints.
+    This ensures fair comparison by limiting LLM calls and tokens equally.
+
+# Budget constraints applied to all agents
+budget:
+  enforce_budget_matching: true
+  budget_limit_tokens: 100000
+  budget_limit_tool_calls: 50
+
+# Scenarios to evaluate
+scenarios:
+  sepsis:
+    - "septic_shock_basic"
+    - "septic_shock_penicillin_allergy"
+    - "sepsis_without_shock"
+    - "septic_shock_ckd"
+
+  chest_pain:
+    - "stemi_anterior_basic"
+    - "stemi_inferior_rv_trap"
+    - "nstemi_high_risk"
+
+# Agents to compare
+agents:
+  - "rag_gpt4"
+  - "planner_gpt4"
+  - "reflection_gpt4"
+  - "oracle"  # Upper bound reference
+
+# Experiment settings
+settings:
+  num_runs_per_scenario: 3
+  save_logs: true
+  save_scores: true
+  output_dir: "results/budget_matched"
+
+# Evaluation metrics
+metrics:
+  primary:
+    - "compliance_score"
+    - "peak_risk"
+    - "aggregate_risk"
+  secondary:
+    - "C1_path_selection"
+    - "C2_mandatory_completion"
+    - "C3_forbidden_avoidance"
+    - "C4_timing_compliance"
+    - "C5_sequence_integrity"
+  resource:
+    - "llm_calls"
+    - "total_tokens"
+    - "tool_calls"

@@ -1,0 +1,131 @@
+# Planner+Tool (ReAct-style) Agent Configuration
+# ===============================================
+# ReAct: Reasoning-Acting-Observation 교차 실행
+#
+# 설계 원칙:
+# 1. Thought → Action → Observation 사이클
+# 2. Multi-step planning 허용
+# 3. Tool 사용 허용
+# 4. 제약 검증은 agent_rules/ 기반 (채점 엔진 아님)
+#
+# Reference: Yao et al. "ReAct: Synergizing Reasoning and Acting in Language Models"
+
+agent:
+  type: "planner"
+  agent_id: "planner_react"
+
+  # ============================================================
+  # LLM 설정
+  # ============================================================
+  llm_backend: "vllm"
+  llm_model: "Qwen/Qwen2.5-72B-Instruct"
+  base_url: "http://localhost:8000/v1"
+  temperature: 0.1
+  use_llm: true
+
+  # ============================================================
+  # ReAct Planning 설정
+  # ============================================================
+  use_planning: true
+  planning_strategy: "react"
+
+  # ReAct 사이클 설정
+  max_planning_steps: 10        # 최대 Thought-Action-Obs 사이클
+  max_actions_per_step: 3       # 스텝당 최대 액션
+  replan_on_failure: true       # 실패 시 재계획
+  replan_on_new_info: true      # 새 정보 시 재계획
+
+  # Thought 생성 설정
+  thought_format: "structured"  # "free" | "structured" | "chain_of_thought"
+  include_observation_summary: true
+
+  # ============================================================
+  # Tool 사용 설정
+  # ============================================================
+  use_tools: true
+  tool_use_strategy: "selective"  # "all" | "selective" | "minimal"
+
+  available_tools:
+    - name: "order_lab"
+      description: "Order laboratory tests"
+      requires_args: ["test_code"]
+
+    - name: "order_imaging"
+      description: "Order imaging studies"
+      requires_args: ["imaging_type"]
+
+    - name: "give_medication"
+      description: "Administer medication"
+      requires_args: ["medication_code", "dose"]
+
+    - name: "consult"
+      description: "Request specialist consultation"
+      requires_args: ["specialty"]
+
+    - name: "reassess"
+      description: "Reassess patient status"
+      requires_args: []
+
+    - name: "disposition"
+      description: "Final patient disposition"
+      requires_args: ["disposition_type"]
+
+  # Tool chaining 허용 (RAG-only와 차별점)
+  allow_tool_chaining: true
+  max_tool_chain_length: 5
+
+  # ============================================================
+  # 제약 검증 설정 (비판 1 대응: 채점 엔진 미사용)
+  # ============================================================
+  use_constraint_verification: true
+
+  # 중요: agent_rules/ 기반 검증 (cpg_engine 아님)
+  constraint_source: "agent_rules"
+  constraint_verification_timing: "before_action"  # "before_action" | "after_action"
+
+  # 위반 시 동작
+  on_constraint_violation: "warn_and_continue"  # "block" | "warn_and_continue" | "log_only"
+
+  # ============================================================
+  # Budget 설정 (비판 3: Budget-matched)
+  # ============================================================
+  budget_limit_tokens: 50000
+  budget_limit_tool_calls: 100
+
+  # Best-of-N 샘플링 허용 (공정 비교)
+  allow_sampling: true
+  max_samples_per_decision: 3
+  sampling_strategy: "self_consistency"  # "greedy" | "self_consistency" | "best_of_n"
+
+  # ============================================================
+  # 시스템 프롬프트 (ReAct 형식)
+  # ============================================================
+  system_prompt: |
+    You are a clinical decision support agent using the ReAct framework.
+
+    For each step, you must:
+    1. **Thought**: Analyze the current situation and plan your next action
+    2. **Action**: Execute a clinical action using available tools
+    3. **Observation**: Process the result and update your understanding
+
+    Format your response as:
+    Thought: [Your reasoning about the current state and what to do next]
+    Action: {"action_type": "...", "action_id": "...", "args": {...}}
+
+    Available tools: order_lab, order_imaging, give_medication, consult, reassess, disposition
+
+    Continue the Thought-Action-Observation cycle until:
+    - Patient is stable and ready for disposition
+    - All mandatory clinical actions are completed
+    - You reach a terminal state
+
+  # ============================================================
+  # 독립성 검증 메타데이터
+  # ============================================================
+  independence_verification:
+    uses_cpg_engine: false
+    uses_assessor_core: false
+    uses_planning_module: true
+    uses_constraint_verification: true
+    constraint_source: "agent_rules"  # NOT cpg_engine
+    decision_method: "react_multi_step"

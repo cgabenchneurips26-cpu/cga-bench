@@ -1,0 +1,240 @@
+graph_id: aha_ttm_post_arrest_2023
+guideline_name: AHA/ILCOR 2023 Guidelines for Post-Cardiac Arrest Targeted Temperature Management
+version: '2023.1'
+metadata:
+  source: AHA/ILCOR Post-Arrest TTM Guidelines 2023
+  doi: 10.1161/CIR.0000000000001095
+  journal: Circulation
+  recommendation_system: AHA Class/Level
+  description: Evidence-based guideline for post-cardiac arrest TTM including initiation, maintenance, rewarming, and neuroprognostication
+  key_evidence: TTM at 32-36°C improves neurological outcomes (HACA trial, Bernard 2002). Rewarming at 0.25°C/h prevents rebound
+    hyperthermia. Neuroprognostication requires multimodal approach at ≥72h (Sandroni 2022).
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: rosc_recognition
+nodes:
+  rosc_recognition:
+    node_id: rosc_recognition
+    node_type: decision
+    name: ROSC Recognition & Initial Stabilization
+    description: Confirm sustained ROSC, secure airway, establish monitoring
+    precondition: null
+    mandatory_actions:
+    - confirm_sustained_rosc
+    - secure_airway_if_needed
+    - order_ecg
+    allowed_actions:
+    - order_lab_troponin
+    - order_ecg
+    - assess_vital_signs
+    - secure_airway_if_needed
+    - confirm_sustained_rosc
+    - establish_iv_access
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - order_lab_lactate
+    - place_arterial_line
+    forbidden_actions: []
+    deadlines:
+      confirm_sustained_rosc: 5
+      secure_airway_if_needed: 15
+      order_ecg: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ILCOR Post-Arrest TTM 2023
+    source_section: Post-ROSC Initial Stabilization
+    source_page: null
+    source_quote: Immediate post-ROSC care includes airway management, hemodynamic optimization, and 12-lead ECG to identify
+      STEMI
+    next_nodes:
+    - ttm_initiation
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.231
+  ttm_initiation:
+    node_id: ttm_initiation
+    node_type: plan
+    name: TTM Initiation (Target 32-36°C)
+    description: Initiate targeted temperature management within 6h of ROSC, target 32-36°C
+    precondition: null
+    mandatory_actions:
+    - initiate_ttm_target_32_36
+    - place_core_temperature_probe
+    - order_lab_blood_gas
+    allowed_actions:
+    - monitor_ecg_continuous
+    - give_neuromuscular_blockade_for_shivering
+    - order_lab_cbc
+    - initiate_ttm_target_32_36
+    - order_lab_blood_gas
+    - give_sedation_for_ttm
+    - order_lab_bmp
+    - order_lab_coagulation
+    - apply_intravascular_cooling_device
+    - apply_surface_cooling_device
+    - place_core_temperature_probe
+    forbidden_actions:
+    - give_antipyretic_alone_as_ttm
+    - delay_ttm_beyond_6h_rosc
+    deadlines:
+      initiate_ttm_target_32_36: 360
+      place_core_temperature_probe: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ILCOR Post-Arrest TTM 2023
+    source_section: 'Recommendation 1-2: TTM Initiation'
+    source_page: null
+    source_quote: TTM is recommended for comatose adult patients after cardiac arrest (Class I, Level B). Target temperature
+      32-36°C. Initiate as soon as feasible, ideally within 6h of ROSC
+    next_nodes:
+    - ttm_maintenance
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.389
+  ttm_maintenance:
+    node_id: ttm_maintenance
+    node_type: plan
+    name: TTM Maintenance (24h at Target)
+    description: Maintain target temperature for at least 24 hours, manage shivering and complications
+    precondition: null
+    mandatory_actions:
+    - maintain_target_temperature_24h
+    - monitor_core_temperature_q1h
+    allowed_actions:
+    - monitor_ecg_continuous
+    - monitor_core_temperature_q1h
+    - give_neuromuscular_blockade_for_shivering
+    - maintain_target_temperature_24h
+    - give_sedation_for_ttm
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - manage_shivering
+    - assess_hemodynamic_status
+    - order_lab_glucose
+    forbidden_actions:
+    - premature_rewarming_before_24h
+    deadlines:
+      monitor_core_temperature_q1h: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ILCOR Post-Arrest TTM 2023
+    source_section: 'Recommendation 3: TTM Maintenance'
+    source_page: "985"
+    source_quote: Intensive Care Medicine guidelines recommend monitoring of core temperature continuously and targeting <37.7°
+      C for at least 72 hours after cardiac arrest.
+    next_nodes:
+    - controlled_rewarming
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.417
+  controlled_rewarming:
+    node_id: controlled_rewarming
+    node_type: plan
+    name: Controlled Rewarming (0.25°C/h)
+    description: Slow controlled rewarming at 0.25°C/h, avoid fever for 72h after ROSC
+    precondition: null
+    mandatory_actions:
+    - initiate_controlled_rewarming_0_25_per_h
+    - prevent_fever_post_rewarming
+    allowed_actions:
+    - monitor_core_temperature_q1h
+    - initiate_controlled_rewarming_0_25_per_h
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - prevent_fever_post_rewarming
+    - titrate_sedation
+    - assess_hemodynamic_status
+    - order_lab_glucose
+    forbidden_actions:
+    - rapid_rewarming_above_0_5_per_h
+    - allow_fever_above_37_7
+    deadlines:
+      initiate_controlled_rewarming_0_25_per_h: 1500
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: AHA/ILCOR Post-Arrest TTM 2023
+    source_section: 'Recommendation 4: Rewarming'
+    source_page: null
+    source_quote: Controlled rewarming at 0.25°C/h is recommended. Fever prevention for at least 72h after ROSC. Rapid rewarming
+      may worsen neurological outcomes
+    next_nodes:
+    - neuroprognostication
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.154
+  neuroprognostication:
+    node_id: neuroprognostication
+    node_type: enquiry
+    name: Neuroprognostication (≥72h Post-ROSC)
+    description: Multimodal neuroprognostication no earlier than 72h after ROSC and normothermia
+    precondition: null
+    mandatory_actions:
+    - perform_neurological_exam_72h
+    - order_eeg
+    allowed_actions:
+    - assess_corneal_reflex
+    - order_imaging_mri_brain
+    - assess_ssep
+    - order_lab_nse
+    - perform_neurological_exam_72h
+    - order_eeg
+    - assess_pupillary_light_reflex
+    - assess_gcs_motor
+    forbidden_actions:
+    - withdraw_care_before_72h_normothermia
+    deadlines:
+      perform_neurological_exam_72h: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ILCOR Post-Arrest TTM 2023
+    source_section: 'Recommendation 5: Neuroprognostication'
+    source_page: null
+    source_quote: Neuroprognostication should be performed no earlier than 72h after ROSC and return to normothermia using
+      multimodal approach (Class I, Level B). No single test should be used in isolation
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.235
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition
+    description: ICU step-down, rehabilitation, or goals-of-care discussion based on neuroprognostication
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - assess_discharge_readiness
+    - goals_of_care_discussion
+    - continue_icu_care
+    - arrange_rehabilitation
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ILCOR Post-Arrest TTM 2023
+    source_section: Disposition
+    source_page: null
+    source_quote: Disposition guided by neurological recovery trajectory and multimodal prognostication findings
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.125

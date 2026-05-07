@@ -1,0 +1,447 @@
+{
+  "scenario_id": "cap_trap_mrsa_risk_coverage",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.5,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.216,
+  "total_violations": 12,
+  "sub_scores": {
+    "C1_path_selection": 0.5833333333333333,
+    "C2_mandatory_completion": 0.8,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 1.0,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "deviation": 10,
+    "omission": 2
+  },
+  "actions_count": 24,
+  "actions": [
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory first step \u2014 establish baseline vital signs to assess severity and guide further management in this patient with cough, fever, and dyspnea."
+    },
+    {
+      "action_id": "assess_respiratory_status",
+      "timestamp_minutes": 5.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory assessment of respiratory function \u2014 evaluate work of breathing, oxygen requirement, and auscultation findings to characterize the pneumonia presentation."
+    },
+    {
+      "action_id": "order_imaging_chest_xray",
+      "timestamp_minutes": 10.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "xray"
+      },
+      "justification": "Mandatory chest X-ray to confirm pneumonia infiltrate, assess extent of disease, and rule out alternative diagnoses (effusion, pneumothorax)."
+    },
+    {
+      "action_id": "order_lab_cbc",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "cbc"
+      },
+      "justification": "MANDATORY action per current phase \u2014 CBC to assess WBC count, identify leukocytosis consistent with bacterial pneumonia, and evaluate for anemia or other hematologic abnormalities."
+    },
+    {
+      "action_id": "assess_curb65",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "CURB-65 score is essential to stratify pneumonia severity (outpatient vs inpatient vs ICU), guiding appropriate level of care and treatment intensity for this CAP patient."
+    },
+    {
+      "action_id": "order_lab_blood_culture",
+      "timestamp_minutes": 25.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "blood_culture"
+      },
+      "justification": "Blood cultures must be obtained BEFORE antibiotic administration. Patient has MRSA risk factor, making pathogen identification critical for targeted therapy. IDSA CAP guidelines recommend cultures in moderate-severe CAP."
+    },
+    {
+      "action_id": "assess_icu_criteria",
+      "timestamp_minutes": 30.0,
+      "type": "consult",
+      "args": {},
+      "justification": "Patient has cough, fever, and dyspnea with MRSA risk factor. After initial CURB-65 and respiratory assessment, evaluating ICU admission criteria is the next step per CAP guidelines to guide disposition and treatment intensity."
+    },
+    {
+      "action_id": "order_lab_procalcitonin",
+      "timestamp_minutes": 35.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Procalcitonin helps confirm bacterial vs. viral etiology, guides antibiotic stewardship, and is recommended in CAP workup alongside CBC and blood cultures already ordered."
+    },
+    {
+      "action_id": "order_lab_sputum_culture",
+      "timestamp_minutes": 40.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Patient has MRSA risk factor; sputum culture is indicated to identify causative organism including MRSA, which would alter antibiotic selection (would require adding vancomycin/linezolid to standard regimen)."
+    },
+    {
+      "action_id": "order_lab_bmp",
+      "timestamp_minutes": 45.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "BMP provides electrolytes, renal function, and glucose data relevant to CAP severity assessment and guides fluid management decisions in this patient with cough, fever, and dyspnea."
+    },
+    {
+      "action_id": "order_lab_legionella_antigen",
+      "timestamp_minutes": 50.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Patient presents with CAP symptoms and has MRSA risk; Legionella urinary antigen is recommended by IDSA/ATS guidelines for hospitalized CAP patients to guide targeted therapy."
+    },
+    {
+      "action_id": "give_respiratory_fluoroquinolone",
+      "timestamp_minutes": 55.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has MRSA risk comorbidity and CAP presentation. A respiratory fluoroquinolone (e.g., levofloxacin or moxifloxacin) provides appropriate monotherapy coverage for CAP including atypicals, and is an IDSA-recommended alternative especially when beta-lactam/macrolide combination may be less suitable given comorbidities."
+    },
+    {
+      "action_id": "give_beta_lactam_plus_macrolide",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has MRSA risk factor and community-acquired pneumonia presentation (cough, fever, dyspnea). A beta-lactam plus macrolide combination provides broad-spectrum coverage including atypicals. This is an optional action available in this phase and adds coverage breadth alongside the already-given respiratory fluoroquinolone, particularly given MRSA risk and pending culture results."
+    },
+    {
+      "action_id": "give_iv_fluids",
+      "timestamp_minutes": 65.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "fluid",
+        "dose": "standard"
+      },
+      "justification": "Patient with pneumonia and fever may benefit from IV fluid support to maintain hydration and perfusion while awaiting diagnostic results. Vitals are currently stable but IV access and fluids are a reasonable supportive measure in a febrile patient with respiratory illness."
+    },
+    {
+      "action_id": "give_vancomycin",
+      "timestamp_minutes": 70.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has documented MRSA risk comorbidity. Standard beta-lactam/macrolide and fluoroquinolone coverage already initiated but MRSA-specific coverage (vancomycin) not yet added. IDSA CAP guidelines recommend adding anti-MRSA therapy for patients with MRSA risk factors."
+    },
+    {
+      "action_id": "reassess_clinical_status",
+      "timestamp_minutes": 75.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "At 70 minutes post-arrival, reassessment of respiratory status and clinical response to initial therapies is warranted to determine if patient is improving or deteriorating."
+    },
+    {
+      "action_id": "order_lab_pneumococcal_antigen",
+      "timestamp_minutes": 80.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "IDSA/ATS CAP guidelines recommend urinary pneumococcal antigen testing for hospitalized CAP patients, especially those with MRSA risk and severe presentation. Not yet completed."
+    },
+    {
+      "action_id": "assess_clinical_presentation",
+      "timestamp_minutes": 85.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Formal structured assessment of clinical presentation (symptom duration, severity, character of cough/sputum) to complete the initial assessment phase and ensure no additional findings (e.g., pleuritic chest pain, hemoptysis) that would alter the differential or management."
+    },
+    {
+      "action_id": "assess_neurological_status",
+      "timestamp_minutes": 90.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has MRSA risk and fever; neurological assessment ensures no signs of hematogenous seeding or meningitis are missed, consistent with guideline-recommended evaluation in febrile patients with infectious presentations."
+    },
+    {
+      "action_id": "monitor_oxygen_saturation",
+      "timestamp_minutes": 95.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Continuous SpO2 monitoring is essential in CAP to detect early desaturation and guide oxygen therapy titration per IDSA/ATS guidelines targeting SpO2 \u226594%."
+    },
+    {
+      "action_id": "review_pending_labs",
+      "timestamp_minutes": 100.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "CBC, blood culture, procalcitonin, legionella/pneumococcal antigens, and BMP are all pending. Reviewing results will guide antibiotic de-escalation or escalation decisions, especially relevant for MRSA risk with vancomycin therapy."
+    },
+    {
+      "action_id": "review_imaging_results",
+      "timestamp_minutes": 105.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "unknown"
+      },
+      "justification": "Chest X-ray was ordered earlier; reviewing imaging results is the next logical step to confirm pneumonia diagnosis, assess extent of infiltrates, and guide further management."
+    },
+    {
+      "action_id": "monitor_fluid_balance",
+      "timestamp_minutes": 110.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "fluid",
+        "dose": "standard"
+      },
+      "justification": "Patient received IV fluids; monitoring fluid balance is important in pneumonia management to avoid fluid overload while ensuring adequate resuscitation."
+    },
+    {
+      "action_id": "review_culture_results",
+      "timestamp_minutes": 115.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Blood cultures and sputum cultures are pending. Reviewing these results when available will allow antibiotic de-escalation or targeted therapy, particularly important given MRSA risk and current broad-spectrum coverage with vancomycin."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "986e1bcb-582f-42ea-86a1-f07d7491e29f",
+      "violation_type": "deviation",
+      "timestamp_minutes": 65.0,
+      "action_involved": "give_crystalloid_fluid",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_crystalloid_fluid",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "1475c5c1-9338-4efe-86d9-ce4e858abf75",
+      "violation_type": "deviation",
+      "timestamp_minutes": 70.0,
+      "action_involved": "give_vancomycin",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='give_vancomycin'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "5b21715f-41b2-4e55-a1b7-1c4ca358ee7c",
+      "violation_type": "deviation",
+      "timestamp_minutes": 75.0,
+      "action_involved": "reassess_clinical_status",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='reassess_clinical_status'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "8399fef4-8c35-469b-9013-d9e55f3f9ca3",
+      "violation_type": "deviation",
+      "timestamp_minutes": 80.0,
+      "action_involved": "order_lab_pneumococcal_antigen",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='order_lab_pneumococcal_antigen'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "9d0114cc-9fcc-4df6-9adf-c4d76cc7828c",
+      "violation_type": "deviation",
+      "timestamp_minutes": 85.0,
+      "action_involved": "assess_clinical_presentation",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='assess_clinical_presentation'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "817ad09f-8990-4376-b81d-32cc34b39ca9",
+      "violation_type": "deviation",
+      "timestamp_minutes": 95.0,
+      "action_involved": "monitor_oxygen_saturation",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='monitor_oxygen_saturation'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "55aa8b1e-b94e-4476-ac28-bbde311bd4dc",
+      "violation_type": "deviation",
+      "timestamp_minutes": 100.0,
+      "action_involved": "review_pending_labs",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_pending_labs'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "1c84f151-d2ef-430b-9e93-7fe0c0000b58",
+      "violation_type": "deviation",
+      "timestamp_minutes": 105.0,
+      "action_involved": "review_imaging_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_imaging_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "717e1e09-e97f-46c5-ba32-d7f507e92805",
+      "violation_type": "deviation",
+      "timestamp_minutes": 110.0,
+      "action_involved": "monitor_fluid_balance",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='monitor_fluid_balance'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "b6e96c26-093c-42c9-a665-049e27275a65",
+      "violation_type": "deviation",
+      "timestamp_minutes": 115.0,
+      "action_involved": "review_culture_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_culture_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "7c419465-4ecb-4c18-a641-5b918fc6dc80",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "add_linezolid",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: add_linezolid",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "208be087-dd80-43bc-8231-ec505793c437",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "add_vancomycin",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_trap_mrsa_risk_coverage",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: add_vancomycin",
+      "guideline_reference": "CAP Initial Assessment"
+    }
+  ],
+  "expected_actions": [
+    "add_linezolid",
+    "add_vancomycin",
+    "assess_icu_criteria",
+    "assess_respiratory_status",
+    "assess_vital_signs",
+    "give_beta_lactam_plus_macrolide",
+    "give_iv_fluids",
+    "order_imaging_chest_xray",
+    "order_lab_blood_culture",
+    "order_lab_cbc"
+  ],
+  "forbidden_actions": [
+    "delay_antibiotics_for_cultures_beyond_1h",
+    "give_standard_empiric_without_mrsa_in_risk",
+    "omit_vancomycin_or_linezolid_in_mrsa_risk"
+  ],
+  "total_duration_minutes": 120.0,
+  "termination_reason": "timeout",
+  "total_llm_calls": 11,
+  "total_tokens": 30025,
+  "elapsed_seconds": 131.49
+}

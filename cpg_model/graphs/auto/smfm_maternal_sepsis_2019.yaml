@@ -1,0 +1,250 @@
+graph_id: smfm_maternal_sepsis_2019
+guideline_name: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+version: '2019.1'
+metadata:
+  source: 'SMFM Consult Series: Sepsis During Pregnancy and the Puerperium'
+  doi: 10.1097/AOG.0000000000003467
+  journal: Obstetrics & Gynecology
+  recommendation_system: ACOG Level of Evidence
+  description: Guideline for maternal sepsis including pregnancy-modified screening criteria, hour-1 bundle, vasopressor selection,
+    fetal monitoring, and delivery as source control
+  key_evidence: Maternal sepsis mortality is 4-10% in developed countries. Each hour of antibiotic delay increases mortality
+    ~4% (Kumar et al.). Norepinephrine has least impact on uteroplacental flow vs other vasopressors (Sligl et al. Obstet
+    Gynecol 2014). Chorioamnionitis is the leading cause of maternal sepsis.
+  target_population:
+    age_group: adult
+    max_age: 50
+    min_age: 15
+    sex: female_only
+    special_conditions:
+    - pregnant
+entry_node: sepsis_screening
+nodes:
+  sepsis_screening:
+    node_id: sepsis_screening
+    node_type: decision
+    name: Maternal Sepsis Screening (Modified qSOFA/SIRS)
+    description: 'Screen for sepsis using pregnancy-modified criteria. Normal pregnancy values differ: HR up to 100, WBC up
+      to 16,000, RR up to 20 may be physiological.'
+    precondition: null
+    mandatory_actions:
+    - screen_maternal_sepsis_criteria
+    - assess_vital_signs
+    - order_lab_lactate
+    allowed_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_urinalysis
+    - order_lab_procalcitonin
+    - order_lab_cbc
+    - order_lab_blood_culture
+    - screen_maternal_sepsis_criteria
+    - order_lab_bmp
+    - order_lab_lactate
+    - assess_fetal_heart_rate
+    forbidden_actions: []
+    deadlines:
+      screen_maternal_sepsis_criteria: 15
+      assess_vital_signs: 10
+      order_lab_lactate: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+    source_section: 'Section 1: Recognition in Pregnancy'
+    source_page: null
+    source_quote: 'Sepsis criteria must be modified for pregnancy. Normal physiological changes (increased HR, WBC, decreased
+      BP) can mask sepsis. Maternal early warning criteria: HR >110, RR >24, SBP <90, T >38C or <36C, WBC >17,000.'
+    next_nodes:
+    - initial_resuscitation
+    conditional_next: {}
+  initial_resuscitation:
+    node_id: initial_resuscitation
+    node_type: action
+    name: Hour-1 Sepsis Bundle (Adapted for Pregnancy)
+    description: Blood cultures before antibiotics, empiric IV antibiotics within 1 hour, crystalloid 30 mL/kg. In pregnancy,
+      consider left lateral tilt and modified fluid targets.
+    precondition: null
+    mandatory_actions:
+    - order_lab_blood_culture
+    - give_iv_antibiotics_within_1_hour
+    - give_crystalloid_30ml_kg
+    allowed_actions:
+    - give_iv_antibiotics_within_1_hour
+    - position_left_lateral_tilt
+    - give_ampicillin_sulbactam_iv
+    - monitor_urine_output
+    - give_ceftriaxone_plus_metronidazole
+    - give_piperacillin_tazobactam_iv
+    - reassess_lactate_at_6_hours
+    - order_lab_blood_culture
+    - give_crystalloid_30ml_kg
+    forbidden_actions:
+    - delay_antibiotics_for_culture_results
+    deadlines:
+      order_lab_blood_culture: 30
+      give_iv_antibiotics_within_1_hour: 60
+      give_crystalloid_30ml_kg: 180
+    required_prior_actions:
+      give_iv_antibiotics_within_1_hour:
+      - order_lab_blood_culture
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+    source_section: 'Section 2: Initial Resuscitation'
+    source_page: null
+    source_quote: 'Hour-1 bundle: blood cultures, broad-spectrum antibiotics within 1 hour, crystalloid 30 mL/kg. Each hour
+      of delay in antibiotics increases mortality by ~4% (Kumar et al. Crit Care Med 2006). Consider chorioamnionitis, endometritis,
+      pyelonephritis as sources.'
+    next_nodes:
+    - hemodynamic_management
+    conditional_next: {}
+  hemodynamic_management:
+    node_id: hemodynamic_management
+    node_type: plan
+    name: Hemodynamic Management & Vasopressors
+    description: If MAP <65 mmHg despite fluids, start norepinephrine. In pregnancy, maintain MAP >=65 to ensure uteroplacental
+      perfusion.
+    precondition: null
+    mandatory_actions:
+    - assess_map_after_fluids
+    - initiate_fetal_monitoring
+    allowed_actions:
+    - position_left_lateral_tilt
+    - start_vasopressor_norepinephrine
+    - assess_map_after_fluids
+    - order_lab_lactate_repeat
+    - place_arterial_line
+    - initiate_fetal_monitoring
+    - place_central_line
+    - reassess_fluid_responsiveness
+    forbidden_actions: []
+    deadlines:
+      assess_map_after_fluids: 180
+      initiate_fetal_monitoring: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+    source_section: 'Section 3: Hemodynamic Support'
+    source_page: null
+    source_quote: Norepinephrine is the first-line vasopressor in maternal sepsis. Phenylephrine should be avoided (reduces
+      uterine blood flow). Maintain MAP >=65 mmHg to ensure adequate uteroplacental perfusion.
+    next_nodes:
+    - source_control
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: MATSEP-VASOPRESSOR
+      condition: state.map_mmhg < 65
+      effect:
+        type: REQUIRED
+        actions:
+        - start_vasopressor_norepinephrine
+        deadline_minutes: 30
+      severity: CRITICAL
+      description: MAP <65 mmHg despite 30 mL/kg crystalloid requires vasopressor. Norepinephrine preferred — least impact
+        on uteroplacental flow.
+      evidence: Class I, Level B
+  source_control:
+    node_id: source_control
+    node_type: action
+    name: Source Control & Delivery Consideration
+    description: Identify and control infection source (chorioamnionitis, endometritis, pyelonephritis, wound infection).
+      Consider delivery if chorioamnionitis is the source or if fetal status is non-reassuring.
+    precondition: null
+    mandatory_actions:
+    - identify_infection_source
+    - assess_delivery_indication
+    allowed_actions:
+    - consider_delivery_for_source_control
+    - consult_maternal_fetal_medicine
+    - drain_abscess_if_identified
+    - consult_surgery_if_abscess
+    - assess_delivery_indication
+    - order_imaging_ultrasound
+    - identify_infection_source
+    forbidden_actions: []
+    deadlines:
+      identify_infection_source: 360
+      assess_delivery_indication: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+    source_section: 'Section 4: Source Control'
+    source_page: null
+    source_quote: Source control is critical in maternal sepsis. Delivery should be considered as source control for chorioamnionitis-related
+      sepsis. Gestational age and fetal status guide timing.
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: MATSEP-DELIVERY
+      condition: state.chorioamnionitis == True or state.fetal_distress == True
+      effect:
+        type: REQUIRED
+        actions:
+        - consider_delivery_for_source_control
+        deadline_minutes: 120
+      severity: CRITICAL
+      description: 'Chorioamnionitis with maternal sepsis: delivery is part of source control. Non-reassuring fetal status
+        may also mandate delivery.'
+      evidence: Class I, Level B
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Maternal & Fetal Monitoring
+    description: Serial lactate, vital signs, fetal heart rate monitoring. Reassess antibiotic adequacy and organ function.
+    precondition: null
+    mandatory_actions:
+    - monitor_lactate_serial
+    - continue_fetal_monitoring
+    allowed_actions:
+    - monitor_urine_output
+    - assess_organ_function
+    - monitor_lactate_serial
+    - order_lab_cbc
+    - order_lab_bmp
+    - reassess_vital_signs
+    - continue_fetal_monitoring
+    forbidden_actions: []
+    deadlines:
+      monitor_lactate_serial: 360
+      continue_fetal_monitoring: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+    source_section: 'Section 5: Monitoring'
+    source_page: null
+    source_quote: Lactate clearance >10% within 6 hours is a marker of adequate resuscitation. Continuous fetal monitoring
+      is recommended in viable gestations with maternal sepsis.
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Postpartum Care
+    description: Assess organ recovery, de-escalate antibiotics, plan postpartum follow-up.
+    precondition: null
+    mandatory_actions:
+    - assess_clinical_improvement
+    allowed_actions:
+    - plan_postpartum_followup
+    - assess_neonatal_status
+    - de_escalate_antibiotics
+    - provide_sepsis_survivorship_counseling
+    - assess_clinical_improvement
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SMFM/ACOG 2019 Guidelines for Maternal Sepsis
+    source_section: 'Section 6: Disposition'
+    source_page: null
+    source_quote: Maternal sepsis survivors have increased risk of postpartum depression, PTSD, and long-term organ dysfunction.
+      Follow-up should address both physical and psychological recovery.
+    next_nodes: []
+    conditional_next: {}

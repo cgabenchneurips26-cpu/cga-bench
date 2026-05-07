@@ -1,0 +1,149 @@
+#!/usr/bin/env python3
+"""Y.3 replication pillar 2: main-finding strict-FA under gpt-oss-120b catalogue.
+
+Monkey-patches audit.shims.llm_catalogue_shim to read the v2 catalogue
+(llm_raw_v2 from exp_cde_vs_llm_v2.py, gpt-oss-120b extraction), then
+re-runs the three LLM family shims (LlmAsc / LlmCwt / LlmPaf) and the
+consensus-FA comparison. Numbers land alongside the v1 (Qwen) results
+for a side-by-side robustness check.
+
+v1 (Qwen-397B) anchor: LLM triple strict-FA = 36.31%, CDE = 6.60%,
+ratio 5.50×.
+
+Usage:
+    PYTHONPATH=. python scripts/experiments/exp_mainfinding_llm_replication_v2.py
+"""
+
+from __future__ import annotations
+
+import argparse
+from datetime import UTC, datetime
+import json
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+
+# Monkey-patch catalogue path before llm_family_shims loads
+from audit.shims import llm_catalogue_shim as lcs  # noqa: E402
+
+lcs._LLM_CATALOGUE_DIR = (
+    ROOT / "evidence_pack" / "constraint_comparison" / "llm_raw_v2"
+)
+lcs._load_catalogue.cache_clear()
+
+from audit.shims._verdict_cache import get_verdict, load_w8_episodes  # noqa: E402
+from audit.shims.llm_family_shims import LlmAscShim, LlmCwtShim, LlmPafShim  # noqa: E402
+
+OUT_DIR = ROOT / "evidence_pack" / "constraint_comparison"
+PAPER_STRICT_FA_THREE_PCT = 6.6
+PAPER_FA_ALL_OBLIVIOUS_PCT = 11.6
+
+
+def _pct(vs: list[bool]) -> float:
+    return 100.0 * sum(vs) / len(vs)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Main-finding replication v2 (gpt-oss)")
+    parser.add_argument("--out-dir", type=str, default=str(OUT_DIR))
+    args = parser.parse_args()
+
+    eps = load_w8_episodes()
+    eids = sorted(eps.keys())
+    print(f"v2 catalogue path: {lcs._LLM_CATALOGUE_DIR}")
+    print(f"Running 3 shims × {len(eids)} episodes ...")
+
+    asc = LlmAscShim()
+    cwt = LlmCwtShim()
+    paf = LlmPafShim()
+    v_asc = [asc.verdict({"episode_id": e}) for e in eids]
+    v_cwt = [cwt.verdict({"episode_id": e}) for e in eids]
+    v_paf = [paf.verdict({"episode_id": e}) for e in eids]
+    v4 = [get_verdict(e, "v4_hard") for e in eids]
+
+    print(f"  LlmAsc pass  : {_pct(v_asc):.2f}%")
+    print(f"  LlmCwt pass  : {_pct(v_cwt):.2f}%")
+    print(f"  LlmPaf pass  : {_pct(v_paf):.2f}%")
+
+    triple = [a and b and c for a, b, c in zip(v_asc, v_cwt, v_paf)]
+    double = [a and b for a, b in zip(v_asc, v_cwt)]
+    hard_count = sum(1 for r in v4 if not r)
+    triple_fa_hard = sum(1 for t, r in zip(triple, v4) if t and not r)
+    double_fa_hard = sum(1 for t, r in zip(double, v4) if t and not r)
+
+    triple_fa_rate_total = 100.0 * triple_fa_hard / len(eids)
+    double_fa_rate_total = 100.0 * double_fa_hard / len(eids)
+
+    print(
+        f"\n  Triple consensus FA: {triple_fa_hard}/{hard_count} on-hard "
+        f"= {100.0 * triple_fa_hard / hard_count:.2f}% "
+        f"({triple_fa_rate_total:.2f}% of total)"
+    )
+    print(
+        f"  Double consensus FA: {double_fa_hard}/{hard_count} on-hard "
+        f"= {100.0 * double_fa_hard / hard_count:.2f}% "
+        f"({double_fa_rate_total:.2f}% of total)"
+    )
+
+    ratio_triple = triple_fa_rate_total / PAPER_STRICT_FA_THREE_PCT
+    ratio_double = double_fa_rate_total / PAPER_FA_ALL_OBLIVIOUS_PCT
+    print("\n  vs CDE paper anchors:")
+    print(f"    triple FA: v1 Qwen=36.31% (5.50×), v2 gpt-oss={triple_fa_rate_total:.2f}% ({ratio_triple:.2f}×)")
+    print(f"    double FA: v1 Qwen=36.31% (3.13×), v2 gpt-oss={double_fa_rate_total:.2f}% ({ratio_double:.2f}×)")
+
+    out = Path(args.out_dir)
+    summary = {
+        "timestamp": datetime.now(UTC).isoformat(),
+        "catalogue_version": "v2_gpt_oss_120b",
+        "catalogue_dir": str(lcs._LLM_CATALOGUE_DIR),
+        "n_episodes": len(eids),
+        "n_cde_hard": hard_count,
+        "per_family_pass_rate_pct": {
+            "LlmAsc": round(_pct(v_asc), 4),
+            "LlmCwt": round(_pct(v_cwt), 4),
+            "LlmPaf": round(_pct(v_paf), 4),
+        },
+        "triple": {
+            "pass_count": sum(triple),
+            "fa_on_hard_count": triple_fa_hard,
+            "fa_rate_on_hard_pct": round(100.0 * triple_fa_hard / hard_count, 4),
+            "fa_rate_on_total_pct": round(triple_fa_rate_total, 4),
+        },
+        "double": {
+            "pass_count": sum(double),
+            "fa_on_hard_count": double_fa_hard,
+            "fa_rate_on_hard_pct": round(100.0 * double_fa_hard / hard_count, 4),
+            "fa_rate_on_total_pct": round(double_fa_rate_total, 4),
+        },
+        "ratio_vs_paper": {
+            "triple": round(ratio_triple, 4),
+            "double": round(ratio_double, 4),
+        },
+        "v1_qwen_anchor": {
+            "triple_fa_total_pct": 36.31,
+            "ratio_triple": 5.50,
+            "double_fa_total_pct": 36.31,
+            "ratio_double": 3.13,
+        },
+    }
+    (out / "main_finding_full_replication_v2_results.json").write_text(
+        json.dumps(summary, indent=2) + "\n"
+    )
+    lines = [
+        "% Auto-generated by exp_mainfinding_llm_replication_v2.py",
+        f"\\providecommand{{\\mainReplV2LlmAscPct}}{{{_pct(v_asc):.2f}}}",
+        f"\\providecommand{{\\mainReplV2LlmCwtPct}}{{{_pct(v_cwt):.2f}}}",
+        f"\\providecommand{{\\mainReplV2LlmPafPct}}{{{_pct(v_paf):.2f}}}",
+        f"\\providecommand{{\\mainReplV2TripleFATotal}}{{{triple_fa_rate_total:.2f}}}",
+        f"\\providecommand{{\\mainReplV2DoubleFATotal}}{{{double_fa_rate_total:.2f}}}",
+        f"\\providecommand{{\\mainReplV2RatioTriple}}{{{ratio_triple:.2f}}}",
+        f"\\providecommand{{\\mainReplV2RatioDouble}}{{{ratio_double:.2f}}}",
+    ]
+    (out / "main_finding_full_replication_v2_macros.tex").write_text("\n".join(lines) + "\n")
+    print(f"\nSaved: {out}/main_finding_full_replication_v2_{{results.json, macros.tex}}")
+
+
+if __name__ == "__main__":
+    main()

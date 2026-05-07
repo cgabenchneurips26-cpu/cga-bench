@@ -1,0 +1,709 @@
+{
+  "metadata": {
+    "script": "v3_p8_core_vs_expansion.py",
+    "n_total_episodes": 180,
+    "n_core_scenarios": 3,
+    "n_expansion_scenarios": 6,
+    "models": [
+      "oss120b",
+      "qwen27b",
+      "qwen35b",
+      "qwen4b"
+    ],
+    "c2_completion_threshold": 0.7
+  },
+  "scenario_classification": [
+    {
+      "scenario_id": "adhf_warm_wet",
+      "domain": "aha_heart_failure_2022",
+      "graph": "aha_heart_failure_2022",
+      "subset": "other",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "af_new_onset_basic",
+      "domain": "AF",
+      "graph": "atrial_fibrillation",
+      "subset": "expansion",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "aki_stage1_basic",
+      "domain": "AKI",
+      "graph": "kdigo_aki_full",
+      "subset": "core",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "contrast_aki_prevention_basic",
+      "domain": "ContrastAKI",
+      "graph": "kdigo_contrast_aki",
+      "subset": "expansion",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "copd_moderate_exacerbation",
+      "domain": "COPD",
+      "graph": "copd_exacerbation",
+      "subset": "expansion",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_hypokalemia_trap",
+      "domain": "DKA",
+      "graph": "ada_dka_management",
+      "subset": "core",
+      "is_trap": true
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "graph": "ada_dka_management",
+      "subset": "core",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "gi_bleeding_upper_basic",
+      "domain": "GIBleed",
+      "graph": "gi_bleeding",
+      "subset": "expansion",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "hemorrhagic_stroke",
+      "domain": "aha_stroke_2019",
+      "graph": "aha_stroke_2019",
+      "subset": "other",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "htn_emergency_basic",
+      "domain": "HTNEmergency",
+      "graph": "hypertensive_emergency",
+      "subset": "expansion",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "pe_submassive_basic",
+      "domain": "PE",
+      "graph": "pulmonary_embolism",
+      "subset": "expansion",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "septic_shock_basic",
+      "domain": "ssc_sepsis_hour1_bundle",
+      "graph": "ssc_sepsis_hour1_bundle",
+      "subset": "other",
+      "is_trap": false
+    },
+    {
+      "scenario_id": "septic_shock_penicillin_allergy",
+      "domain": "ssc_sepsis_hour1_bundle",
+      "graph": "ssc_sepsis_hour1_bundle",
+      "subset": "other",
+      "is_trap": true
+    },
+    {
+      "scenario_id": "stemi_inferior_rv_trap",
+      "domain": "aha_chest_pain_evaluation",
+      "graph": "aha_chest_pain_evaluation",
+      "subset": "other",
+      "is_trap": true
+    },
+    {
+      "scenario_id": "stroke_tpa_eligible",
+      "domain": "aha_stroke_2019",
+      "graph": "aha_stroke_2019",
+      "subset": "other",
+      "is_trap": true
+    }
+  ],
+  "subsets": {
+    "core": {
+      "label": "Core",
+      "n_episodes": 36,
+      "n_scenarios": 3,
+      "mean_cga": 0.4894,
+      "std_cga": 0.1011,
+      "completion_passing_total": 24,
+      "completion_passing_rate": 0.6667,
+      "hard_violation_total": 24,
+      "hard_violation_rate": 0.6667,
+      "up_strong_total": 12,
+      "up_strong_rate": 0.5,
+      "violations_by_type": {
+        "deviation": 247,
+        "omission": 108,
+        "commission": 24,
+        "timing": 35
+      },
+      "friedman": {
+        "chi2": 5.357142857142857,
+        "p_value": 0.14743715853592698,
+        "n_scenarios": 3,
+        "n_models": 4,
+        "df": 3,
+        "note": "ok"
+      },
+      "model_rankings": {
+        "qwen35b": 1,
+        "qwen27b": 2,
+        "qwen4b": 3,
+        "oss120b": 4
+      },
+      "per_model": {
+        "oss120b": {
+          "label": "OSS-120B",
+          "n_episodes": 9,
+          "mean_cga": 0.4418,
+          "std_cga": 0.0924,
+          "completion_passing": 6,
+          "completion_passing_rate": 0.6667,
+          "hard_violation_episodes": 6,
+          "hard_violation_rate": 0.6667,
+          "up_strong": 3,
+          "up_strong_rate": 0.5,
+          "violations_by_type": {
+            "deviation": 111,
+            "omission": 24,
+            "timing": 23,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.625,
+            "C2_mandatory_completion": 0.7,
+            "C3_forbidden_avoidance": 0.3333,
+            "C4_timing_compliance": 0.7444,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen27b": {
+          "label": "Qwen-27B",
+          "n_episodes": 9,
+          "mean_cga": 0.5136,
+          "std_cga": 0.1021,
+          "completion_passing": 6,
+          "completion_passing_rate": 0.6667,
+          "hard_violation_episodes": 6,
+          "hard_violation_rate": 0.6667,
+          "up_strong": 3,
+          "up_strong_rate": 0.5,
+          "violations_by_type": {
+            "deviation": 48,
+            "omission": 30,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.8058,
+            "C2_mandatory_completion": 0.6333,
+            "C3_forbidden_avoidance": 0.3333,
+            "C4_timing_compliance": 1.0,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen35b": {
+          "label": "Qwen-35B",
+          "n_episodes": 9,
+          "mean_cga": 0.5219,
+          "std_cga": 0.1053,
+          "completion_passing": 6,
+          "completion_passing_rate": 0.6667,
+          "hard_violation_episodes": 6,
+          "hard_violation_rate": 0.6667,
+          "up_strong": 3,
+          "up_strong_rate": 0.5,
+          "violations_by_type": {
+            "deviation": 46,
+            "omission": 30,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.8141,
+            "C2_mandatory_completion": 0.6333,
+            "C3_forbidden_avoidance": 0.3333,
+            "C4_timing_compliance": 1.0,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen4b": {
+          "label": "Qwen-4B",
+          "n_episodes": 9,
+          "mean_cga": 0.4802,
+          "std_cga": 0.1011,
+          "completion_passing": 6,
+          "completion_passing_rate": 0.6667,
+          "hard_violation_episodes": 6,
+          "hard_violation_rate": 0.6667,
+          "up_strong": 3,
+          "up_strong_rate": 0.5,
+          "violations_by_type": {
+            "deviation": 42,
+            "omission": 24,
+            "timing": 12,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.7787,
+            "C2_mandatory_completion": 0.7,
+            "C3_forbidden_avoidance": 0.3333,
+            "C4_timing_compliance": 0.8667,
+            "C5_sequence_integrity": 1.0
+          }
+        }
+      }
+    },
+    "expansion": {
+      "label": "Expansion",
+      "n_episodes": 72,
+      "n_scenarios": 6,
+      "mean_cga": 0.4339,
+      "std_cga": 0.1292,
+      "completion_passing_total": 18,
+      "completion_passing_rate": 0.25,
+      "hard_violation_total": 15,
+      "hard_violation_rate": 0.2083,
+      "up_strong_total": 6,
+      "up_strong_rate": 0.3333,
+      "violations_by_type": {
+        "deviation": 587,
+        "timing": 17,
+        "omission": 146
+      },
+      "friedman": {
+        "chi2": 6.966101694915263,
+        "p_value": 0.07298611109014766,
+        "n_scenarios": 6,
+        "n_models": 4,
+        "df": 3,
+        "note": "ok"
+      },
+      "model_rankings": {
+        "oss120b": 1,
+        "qwen4b": 2,
+        "qwen35b": 3,
+        "qwen27b": 4
+      },
+      "per_model": {
+        "oss120b": {
+          "label": "OSS-120B",
+          "n_episodes": 18,
+          "mean_cga": 0.5314,
+          "std_cga": 0.1008,
+          "completion_passing": 7,
+          "completion_passing_rate": 0.3889,
+          "hard_violation_episodes": 3,
+          "hard_violation_rate": 0.1667,
+          "up_strong": 2,
+          "up_strong_rate": 0.2857,
+          "violations_by_type": {
+            "timing": 4,
+            "deviation": 185,
+            "omission": 29
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.6058,
+            "C2_mandatory_completion": 0.6815,
+            "C3_forbidden_avoidance": 1.0,
+            "C4_timing_compliance": 0.9556,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen27b": {
+          "label": "Qwen-27B",
+          "n_episodes": 18,
+          "mean_cga": 0.3962,
+          "std_cga": 0.1352,
+          "completion_passing": 6,
+          "completion_passing_rate": 0.3333,
+          "hard_violation_episodes": 4,
+          "hard_violation_rate": 0.2222,
+          "up_strong": 3,
+          "up_strong_rate": 0.5,
+          "violations_by_type": {
+            "deviation": 191,
+            "omission": 35,
+            "timing": 5
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.5536,
+            "C2_mandatory_completion": 0.6306,
+            "C3_forbidden_avoidance": 1.0,
+            "C4_timing_compliance": 0.9444,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen35b": {
+          "label": "Qwen-35B",
+          "n_episodes": 18,
+          "mean_cga": 0.3974,
+          "std_cga": 0.1242,
+          "completion_passing": 5,
+          "completion_passing_rate": 0.2778,
+          "hard_violation_episodes": 4,
+          "hard_violation_rate": 0.2222,
+          "up_strong": 1,
+          "up_strong_rate": 0.2,
+          "violations_by_type": {
+            "deviation": 145,
+            "timing": 4,
+            "omission": 36
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.5454,
+            "C2_mandatory_completion": 0.6074,
+            "C3_forbidden_avoidance": 1.0,
+            "C4_timing_compliance": 0.9556,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen4b": {
+          "label": "Qwen-4B",
+          "n_episodes": 18,
+          "mean_cga": 0.4107,
+          "std_cga": 0.1106,
+          "completion_passing": 0,
+          "completion_passing_rate": 0.0,
+          "hard_violation_episodes": 4,
+          "hard_violation_rate": 0.2222,
+          "up_strong": 0,
+          "up_strong_rate": 0.0,
+          "violations_by_type": {
+            "deviation": 66,
+            "timing": 4,
+            "omission": 46
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.7419,
+            "C2_mandatory_completion": 0.4935,
+            "C3_forbidden_avoidance": 1.0,
+            "C4_timing_compliance": 0.9556,
+            "C5_sequence_integrity": 1.0
+          }
+        }
+      }
+    },
+    "all": {
+      "label": "All-15",
+      "n_episodes": 180,
+      "n_scenarios": 15,
+      "mean_cga": 0.4556,
+      "std_cga": 0.2283,
+      "completion_passing_total": 78,
+      "completion_passing_rate": 0.4333,
+      "hard_violation_total": 73,
+      "hard_violation_rate": 0.4056,
+      "up_strong_total": 50,
+      "up_strong_rate": 0.641,
+      "violations_by_type": {
+        "deviation": 1044,
+        "omission": 511,
+        "timing": 115,
+        "commission": 24
+      },
+      "friedman": {
+        "chi2": 4.588235294117643,
+        "p_value": 0.2045536437775772,
+        "n_scenarios": 15,
+        "n_models": 4,
+        "df": 3,
+        "note": "ok"
+      },
+      "model_rankings": {
+        "oss120b": 1,
+        "qwen27b": 2,
+        "qwen35b": 3,
+        "qwen4b": 4
+      },
+      "per_model": {
+        "oss120b": {
+          "label": "OSS-120B",
+          "n_episodes": 45,
+          "mean_cga": 0.5072,
+          "std_cga": 0.2167,
+          "completion_passing": 22,
+          "completion_passing_rate": 0.4889,
+          "hard_violation_episodes": 19,
+          "hard_violation_rate": 0.4222,
+          "up_strong": 14,
+          "up_strong_rate": 0.6364,
+          "violations_by_type": {
+            "deviation": 411,
+            "timing": 46,
+            "omission": 114,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.6673,
+            "C2_mandatory_completion": 0.6156,
+            "C3_forbidden_avoidance": 0.8667,
+            "C4_timing_compliance": 0.8519,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen27b": {
+          "label": "Qwen-27B",
+          "n_episodes": 45,
+          "mean_cga": 0.4447,
+          "std_cga": 0.2395,
+          "completion_passing": 21,
+          "completion_passing_rate": 0.4667,
+          "hard_violation_episodes": 19,
+          "hard_violation_rate": 0.4222,
+          "up_strong": 15,
+          "up_strong_rate": 0.7143,
+          "violations_by_type": {
+            "deviation": 256,
+            "omission": 131,
+            "timing": 23,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.7543,
+            "C2_mandatory_completion": 0.5633,
+            "C3_forbidden_avoidance": 0.8667,
+            "C4_timing_compliance": 0.9022,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen35b": {
+          "label": "Qwen-35B",
+          "n_episodes": 45,
+          "mean_cga": 0.4389,
+          "std_cga": 0.2294,
+          "completion_passing": 20,
+          "completion_passing_rate": 0.4444,
+          "hard_violation_episodes": 20,
+          "hard_violation_rate": 0.4444,
+          "up_strong": 13,
+          "up_strong_rate": 0.65,
+          "violations_by_type": {
+            "deviation": 240,
+            "omission": 131,
+            "timing": 23,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.7029,
+            "C2_mandatory_completion": 0.5578,
+            "C3_forbidden_avoidance": 0.8667,
+            "C4_timing_compliance": 0.903,
+            "C5_sequence_integrity": 1.0
+          }
+        },
+        "qwen4b": {
+          "label": "Qwen-4B",
+          "n_episodes": 45,
+          "mean_cga": 0.4316,
+          "std_cga": 0.2269,
+          "completion_passing": 15,
+          "completion_passing_rate": 0.3333,
+          "hard_violation_episodes": 15,
+          "hard_violation_rate": 0.3333,
+          "up_strong": 8,
+          "up_strong_rate": 0.5333,
+          "violations_by_type": {
+            "omission": 135,
+            "deviation": 137,
+            "timing": 23,
+            "commission": 6
+          },
+          "sub_score_means": {
+            "C1_path_selection": 0.7887,
+            "C2_mandatory_completion": 0.5243,
+            "C3_forbidden_avoidance": 0.8667,
+            "C4_timing_compliance": 0.9267,
+            "C5_sequence_integrity": 1.0
+          }
+        }
+      }
+    }
+  },
+  "rank_stability": {
+    "core_ranks": {
+      "qwen35b": 1,
+      "qwen27b": 2,
+      "qwen4b": 3,
+      "oss120b": 4
+    },
+    "expansion_ranks": {
+      "oss120b": 1,
+      "qwen4b": 2,
+      "qwen35b": 3,
+      "qwen27b": 4
+    },
+    "all_ranks": {
+      "oss120b": 1,
+      "qwen27b": 2,
+      "qwen35b": 3,
+      "qwen4b": 4
+    },
+    "kendall_tau_core_vs_expansion": -0.6666666666666669,
+    "kendall_tau_core_vs_all": -0.3333333333333334,
+    "kendall_tau_expansion_vs_all": 0.0
+  },
+  "miscertification_in_core": [
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-35B",
+      "run_index": 0,
+      "cga": 0.6154,
+      "c2": 0.7,
+      "hard_violation_types": [
+        "commission"
+      ],
+      "total_violations": 5,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-35B",
+      "run_index": 1,
+      "cga": 0.6154,
+      "c2": 0.7,
+      "hard_violation_types": [
+        "commission"
+      ],
+      "total_violations": 5,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-35B",
+      "run_index": 2,
+      "cga": 0.6154,
+      "c2": 0.7,
+      "hard_violation_types": [
+        "commission"
+      ],
+      "total_violations": 5,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "OSS-120B",
+      "run_index": 0,
+      "cga": 0.3889,
+      "c2": 0.8,
+      "hard_violation_types": [
+        "timing",
+        "commission"
+      ],
+      "total_violations": 22,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "OSS-120B",
+      "run_index": 1,
+      "cga": 0.4375,
+      "c2": 0.8,
+      "hard_violation_types": [
+        "timing",
+        "commission"
+      ],
+      "total_violations": 18,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "OSS-120B",
+      "run_index": 2,
+      "cga": 0.4483,
+      "c2": 0.8,
+      "hard_violation_types": [
+        "timing",
+        "commission"
+      ],
+      "total_violations": 16,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-4B",
+      "run_index": 0,
+      "cga": 0.5333,
+      "c2": 0.8,
+      "hard_violation_types": [
+        "timing",
+        "commission"
+      ],
+      "total_violations": 7,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-4B",
+      "run_index": 1,
+      "cga": 0.5333,
+      "c2": 0.8,
+      "hard_violation_types": [
+        "timing",
+        "commission"
+      ],
+      "total_violations": 7,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-4B",
+      "run_index": 2,
+      "cga": 0.5333,
+      "c2": 0.8,
+      "hard_violation_types": [
+        "timing",
+        "commission"
+      ],
+      "total_violations": 7,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-27B",
+      "run_index": 0,
+      "cga": 0.6154,
+      "c2": 0.7,
+      "hard_violation_types": [
+        "commission"
+      ],
+      "total_violations": 5,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-27B",
+      "run_index": 1,
+      "cga": 0.6154,
+      "c2": 0.7,
+      "hard_violation_types": [
+        "commission"
+      ],
+      "total_violations": 5,
+      "is_trap": false
+    },
+    {
+      "scenario_id": "dka_moderate_basic",
+      "domain": "DKA",
+      "model": "Qwen-27B",
+      "run_index": 2,
+      "cga": 0.6154,
+      "c2": 0.7,
+      "hard_violation_types": [
+        "commission"
+      ],
+      "total_violations": 5,
+      "is_trap": false
+    }
+  ]
+}

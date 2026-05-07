@@ -1,0 +1,165 @@
+{
+  "normalizer_impact": {
+    "n_total": 16944,
+    "n_affected_episodes": 12459,
+    "pct_affected": 73.53,
+    "n_gap_actions_total": 20767,
+    "n_mandatory_gap_actions": 8010,
+    "n_coverage_could_flip": 1078,
+    "n_tcc_could_flip": 0,
+    "gap_fix_alias_count": 40,
+    "gap_fix_target_count": 21,
+    "top_targets": {
+      "establish_iv_access": 7027,
+      "monitor_urine_output": 2982,
+      "give_crystalloid_fluid": 2749,
+      "check_current_medications": 2585,
+      "consult_nephrology": 1650,
+      "give_anticoagulation": 1092,
+      "give_epinephrine_1mg_iv": 879,
+      "give_systemic_corticosteroid": 639,
+      "monitor_potassium": 465,
+      "admit_to_stroke_unit": 309,
+      "observe_minimum_4_hours": 280,
+      "optimize_volume_status": 106,
+      "use_minimum_contrast_volume": 4
+    },
+    "per_model_affected": {
+      "DeepSeek-R1-7B": 1533,
+      "Gemma31B": 1637,
+      "Nemotron30B": 1360,
+      "120B": 1712,
+      "27B": 1603,
+      "35B": 1619,
+      "397B": 1630,
+      "4B": 1365
+    },
+    "per_model_total": {
+      "DeepSeek-R1-7B": 2118,
+      "Gemma31B": 2118,
+      "Nemotron30B": 2118,
+      "120B": 2118,
+      "27B": 2118,
+      "35B": 2118,
+      "397B": 2118,
+      "4B": 2118
+    }
+  },
+  "version_matrix": {
+    "versions": {
+      "V3_current": {
+        "normalizer": "v1 (with gap-fix)",
+        "solver": "ILP",
+        "tcc_pass_rate": 50.48,
+        "ac_pass_rate": 74.42,
+        "mab_pass_rate": 52.95,
+        "fa_ac_rate": 7.97,
+        "fa_mab_rate": 18.57
+      },
+      "V1_tiered": {
+        "normalizer": "v1 (with gap-fix)",
+        "solver": "tiered",
+        "tcc_pass_rate": 50.48,
+        "ac_pass_rate": 74.42,
+        "mab_pass_rate": 52.95,
+        "fa_ac_rate": 7.97,
+        "fa_mab_rate": 18.57,
+        "note": "0 TCC verdict reversals from solver choice (EX-32)"
+      },
+      "V2_norm_v0_ilp": {
+        "normalizer": "v0 (without gap-fix)",
+        "solver": "ILP",
+        "tcc_pass_rate": 50.48,
+        "tcc_pass_rate_note": "OMISSION is soft → 0 TCC flips",
+        "ac_pass_rate_ub_delta": 6.36,
+        "ac_pass_rate_note": "upper bound: 1078 episodes could flip"
+      },
+      "V0_pre_fix": {
+        "normalizer": "v0 (without gap-fix)",
+        "solver": "tiered",
+        "tcc_pass_rate": 50.48,
+        "tcc_pass_rate_note": "0 flips: OMISSION is soft + 0 solver reversals",
+        "ac_pass_rate_ub_delta": 6.36
+      }
+    },
+    "evaluator_pass_rates_v3": {
+      "tcc": 50.48,
+      "ac_proxy": 74.42,
+      "mab_proxy": 52.95
+    },
+    "fa_rates_v3": {
+      "ac": 7.97,
+      "mab": 18.57
+    },
+    "solver_verdict_reversals": 0,
+    "solver_verdict_flip_rate_pct": 0.0,
+    "norm_tcc_flip_ub": 0,
+    "norm_ac_flip_ub": 1078,
+    "norm_ac_flip_rate_pct": 6.36,
+    "max_fa_delta_pp": 6.36,
+    "stability_checks": [
+      {
+        "metric": "TCC verdict flip",
+        "max_delta_pp": 0.0,
+        "threshold_pp": 2.0,
+        "stable": true
+      },
+      {
+        "metric": "AC-Proxy verdict flip (UB)",
+        "max_delta_pp": 6.36,
+        "threshold_pp": 2.0,
+        "stable": false
+      },
+      {
+        "metric": "FA(AC) delta",
+        "max_delta_pp": 6.36,
+        "threshold_pp": 2.0,
+        "stable": false
+      },
+      {
+        "metric": "FA(MAB) delta",
+        "max_delta_pp": 0.0,
+        "threshold_pp": 2.0,
+        "stable": true,
+        "note": "MAB F1 unchanged: same actions, same constraints"
+      },
+      {
+        "metric": "Solver Spearman rho",
+        "value": 0.918,
+        "threshold_min": 0.85,
+        "stable": true,
+        "note": "From EX-17: tiered↔ILP rho=0.918"
+      },
+      {
+        "metric": "Solver verdict reversals",
+        "value": 0,
+        "threshold_max": 10,
+        "stable": true
+      },
+      {
+        "metric": "Evaluator ranking preserved",
+        "stable": true,
+        "note": "Normalizer affects coverage uniformly; solver has 0 reversals"
+      },
+      {
+        "metric": "Model ranking stable",
+        "stable": true,
+        "note": "0 TCC flips → model rankings unchanged",
+        "model_pass_rates": {
+          "DeepSeek-R1-7B": 65.06,
+          "Gemma31B": 40.23,
+          "Nemotron30B": 43.96,
+          "120B": 53.68,
+          "27B": 55.34,
+          "35B": 47.26,
+          "397B": 54.63,
+          "4B": 43.67
+        }
+      }
+    ],
+    "n_stable": 6,
+    "n_metrics": 8,
+    "all_stable": false
+  },
+  "elapsed_seconds": 4.4
+}

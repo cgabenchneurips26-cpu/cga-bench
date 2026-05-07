@@ -1,0 +1,114 @@
+graph_id: acs_colorectal_cancer_2021
+guideline_name: ACS Colorectal Cancer Guidelines 2021
+version: '2021.1'
+metadata:
+  source: ACS Colorectal Cancer Guidelines 2021
+  doi: 10.3322/caac.21601
+  journal: 'CA: A Cancer Journal for Clinicians'
+  recommendation_system: ACS
+  description: Colorectal cancer screening, diagnosis, and treatment.
+  key_evidence: Multidisciplinary management improves survival.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Diagnostic Workup of Suspected Colorectal Cancer
+    description: Confirm diagnosis with colonoscopy + biopsy, baseline labs.
+    precondition: null
+    mandatory_actions:
+    - perform_colonoscopy_with_biopsy
+    - order_lab_cbc
+    - order_lab_cea
+    allowed_actions:
+    - perform_colonoscopy_with_biopsy
+    - order_imaging_ct_chest_abdomen_pelvis
+    - order_lab_bmp
+    - order_lab_cea
+    - order_lab_cbc
+    - order_lab_lft
+    - assess_performance_status
+    forbidden_actions: []
+    deadlines:
+      perform_colonoscopy_with_biopsy: 10080
+      order_lab_cea: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACS Colorectal Cancer Guidelines 2021
+    source_section: Diagnosis
+    source_page: null
+    source_quote: Colonoscopy with biopsy is the preferred diagnostic procedure for colorectal cancer.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Staging and Treatment Planning
+    description: Complete TNM staging and multidisciplinary treatment plan.
+    precondition: null
+    mandatory_actions:
+    - order_imaging_ct_chest_abdomen_pelvis
+    - consult_multidisciplinary_tumor_board
+    allowed_actions:
+    - order_imaging_ct_chest_abdomen_pelvis
+    - consult_surgical_oncology
+    - plan_neoadjuvant_therapy_if_indicated
+    - consult_radiation_oncology
+    - order_lab_molecular_profiling
+    - consult_medical_oncology
+    - consult_multidisciplinary_tumor_board
+    - plan_surgical_resection
+    - order_imaging_mri_pelvis_if_rectal
+    forbidden_actions:
+    - initiate_chemotherapy_without_staging
+    deadlines:
+      order_imaging_ct_chest_abdomen_pelvis: 10080
+      consult_multidisciplinary_tumor_board: 20160
+    required_prior_actions:
+      consult_multidisciplinary_tumor_board:
+      - perform_colonoscopy_with_biopsy
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACS Colorectal Cancer Guidelines 2021
+    source_section: Staging and Treatment
+    source_page: null
+    source_quote: Complete staging with cross-sectional imaging is required prior to definitive treatment.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Surveillance and Follow-up
+    description: Post-treatment surveillance per NCCN/ACS protocols.
+    precondition: null
+    mandatory_actions:
+    - schedule_surveillance_colonoscopy
+    - schedule_cea_monitoring
+    allowed_actions:
+    - schedule_cea_monitoring
+    - schedule_surveillance_colonoscopy
+    - consult_genetic_counseling_if_indicated
+    - schedule_imaging_surveillance
+    - assess_treatment_response
+    forbidden_actions: []
+    deadlines:
+      schedule_surveillance_colonoscopy: 525600
+      schedule_cea_monitoring: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ACS Colorectal Cancer Guidelines 2021
+    source_section: Surveillance
+    source_page: null
+    source_quote: Post-resection surveillance includes colonoscopy and serial CEA testing.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,214 @@
+graph_id: sccm_pediatric_septic_shock_2020
+guideline_name: Surviving Sepsis Campaign International Guidelines for Management of Septic Shock in Children (2020)
+version: '2020.1'
+metadata:
+  source: SCCM/ESICM Pediatric Septic Shock Guidelines 2020
+  doi: 10.1097/PCC.0000000000002198
+  journal: Pediatric Critical Care Medicine
+  recommendation_system: GRADE
+  description: Evidence-based guideline for recognition and management of septic shock and sepsis-associated organ dysfunction
+    in children
+  key_evidence: Initial fluid bolus 10-20 mL/kg over 5-20 min; epinephrine/norepinephrine preferred over dopamine as first-line
+    vasoactive
+  target_population:
+    age_group: pediatric
+    max_age: 17
+    min_age: 0
+    sex: any
+    special_conditions: []
+entry_node: initial_recognition
+nodes:
+  initial_recognition:
+    node_id: initial_recognition
+    node_type: decision
+    name: Pediatric Sepsis Recognition
+    description: Identify sepsis/septic shock in pediatric patient, assess perfusion
+    precondition: null
+    mandatory_actions:
+    - assess_perfusion_status
+    - assess_mental_status
+    - assess_vital_signs
+    allowed_actions:
+    - assess_perfusion_status
+    - assess_mental_status
+    - order_lab_cbc
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_coagulation
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - establish_io_access
+    forbidden_actions: []
+    deadlines:
+      assess_perfusion_status: 5
+      assess_vital_signs: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Pediatric Septic Shock 2020
+    source_section: Initial Recognition
+    source_page: null
+    source_quote: "Population \nIntervention \nComparator \nOutcome(s) \nChildren with suspected infection in \nacute care\
+      \ settings \nSystematic screening program \nUsual care \nMortality \nHospital LOS \nTransfer to the ICU \n  \n2 Should\
+      \ lactic acid be used to stratify children at low-versus versus high-risk of sepsis with orga"
+    next_nodes: []
+    conditional_next:
+      state.shock_type == 'warm_shock': warm_shock_bundle
+      state.shock_type == 'cold_shock': cold_shock_bundle
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.778
+  warm_shock_bundle:
+    node_id: warm_shock_bundle
+    node_type: plan
+    name: Warm Shock Resuscitation (Vasodilatory)
+    description: Fluid resuscitation + norepinephrine for warm/vasodilatory shock
+    precondition: state.shock_type == 'warm_shock'
+    mandatory_actions:
+    - give_crystalloid_bolus_20ml_kg
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - start_vasopressor_norepinephrine
+    allowed_actions:
+    - order_lab_cortisol
+    - start_vasopressor_vasopressin
+    - reassess_perfusion
+    - give_broad_spectrum_antibiotics
+    - place_central_line
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_hydrocortisone_stress_dose
+    - start_vasopressor_norepinephrine
+    - order_lab_glucose
+    - give_crystalloid_bolus_20ml_kg
+    forbidden_actions:
+    - give_dopamine_first_line
+    deadlines:
+      give_crystalloid_bolus_20ml_kg: 15
+      give_broad_spectrum_antibiotics: 60
+      order_lab_blood_culture: 60
+    required_prior_actions:
+      give_broad_spectrum_antibiotics:
+      - order_lab_blood_culture
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Pediatric Septic Shock 2020
+    source_section: 'Recommendation 10-14: Fluid Resuscitation & Vasoactive'
+    source_page: null
+    source_quote: We suggest using epinephrine or norepinephrine as first-line vasoactive agents rather than dopamine (weak,
+      very low quality)
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.286
+  cold_shock_bundle:
+    node_id: cold_shock_bundle
+    node_type: plan
+    name: Cold Shock Resuscitation (Low Cardiac Output)
+    description: Fluid resuscitation + epinephrine for cold/low CO shock
+    precondition: state.shock_type == 'cold_shock'
+    mandatory_actions:
+    - give_crystalloid_bolus_20ml_kg
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - start_vasopressor_epinephrine
+    allowed_actions:
+    - order_lab_cortisol
+    - reassess_perfusion
+    - give_milrinone
+    - give_broad_spectrum_antibiotics
+    - place_central_line
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_hydrocortisone_stress_dose
+    - start_vasopressor_epinephrine
+    - order_lab_glucose
+    - give_crystalloid_bolus_20ml_kg
+    forbidden_actions:
+    - give_dopamine_first_line
+    deadlines:
+      give_crystalloid_bolus_20ml_kg: 15
+      give_broad_spectrum_antibiotics: 60
+      order_lab_blood_culture: 60
+    required_prior_actions:
+      give_broad_spectrum_antibiotics:
+      - order_lab_blood_culture
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Pediatric Septic Shock 2020
+    source_section: 'Recommendation 10-14: Cold Shock'
+    source_page: null
+    source_quote: For cold shock, we suggest epinephrine as first-line vasoactive agent to improve cardiac output
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.091
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Monitoring & Reassessment
+    description: Reassess perfusion, lactate clearance, fluid responsiveness
+    precondition: null
+    mandatory_actions:
+    - reassess_perfusion
+    - remeasure_lactate_if_elevated
+    allowed_actions:
+    - reassess_perfusion
+    - assess_mental_status
+    - order_lab_blood_gas
+    - remeasure_lactate_if_elevated
+    - assess_fluid_responsiveness
+    - echocardiography
+    - order_lab_lactate
+    - monitor_urine_output
+    forbidden_actions: []
+    deadlines:
+      reassess_perfusion: 60
+      remeasure_lactate_if_elevated: 180
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Pediatric Septic Shock 2020
+    source_section: Monitoring & Targets
+    source_page: null
+    source_quote: Target MAP >5th percentile for age, lactate normalization, capillary refill <2s
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.111
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: ICU Disposition
+    description: Assess need for continued ICU care, escalation, or PICU transfer
+    precondition: null
+    mandatory_actions:
+    - assess_icu_transfer_need
+    allowed_actions:
+    - assess_icu_transfer_need
+    - escalate_to_picu
+    - continue_monitoring
+    - consider_ecmo_referral
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Pediatric Septic Shock 2020
+    source_section: Disposition
+    source_page: null
+    source_quote: Children with fluid-refractory or catecholamine-resistant shock should be managed in PICU
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.25

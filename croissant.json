@@ -1,0 +1,194 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "sc": "https://schema.org/",
+    "cr": "http://mlcommons.org/croissant/",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "dct": "http://purl.org/dc/terms/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform"
+  },
+  "conformsTo": "http://mlcommons.org/croissant/1.0",
+  "@type": "Dataset",
+  "name": "CGA-Bench",
+  "description": "Clinical Guideline Adherence Benchmark (CGA-Bench): Trace-level conformance auditing for medical AI agents against typed constraints (FORBIDDEN, REQUIRED, BEFORE, WITHIN) derived from clinical practice guideline graphs. Version 7.3 includes 49 CPG graphs, 418 SGSC scenarios, 706 V6 manual scenarios, 2,480 Tier-S auto_v2 scenarios, and 76,464+ agent episode traces across 9 LLMs (Qwen2.5-{4B,27B,35B-A3B,397B-FP8}, Gemma-4-31B, GPT-oss-120B, DeepSeek-R1-7B, Nemotron-3-Nano-30B, Llama-4-Scout-17B). RAG corpus, MIMIC-IV demo coupling, and CAV v0.6 action-canonicalization overlay ship with the benchmark. Anonymous URL retained for double-blind review; camera-ready URL: https://github.com/anonymous/cga_bench (commit 0496189).",
+  "version": "7.3",
+  "datePublished": "2026-04-10",
+  "dateModified": "2026-05-05",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "url": "https://huggingface.co/datasets/cga-bench-neurips26/cga-bench",
+  "creator": {
+    "@type": "Organization",
+    "name": "CGA-Bench Authors"
+  },
+  "keywords": [
+    "medical-ai",
+    "clinical-guidelines",
+    "benchmark",
+    "agent-evaluation",
+    "conformance-testing",
+    "neurips-2026"
+  ],
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "github-repo",
+      "name": "github-repo",
+      "description": "CGA-Bench source repository (anonymized for review; camera-ready: github.com/anonymous/cga_bench).",
+      "contentUrl": "https://huggingface.co/datasets/cga-bench-neurips26/cga-bench/resolve/main/anonymous/cga-bench",
+      "encodingFormat": "git+https",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "@type": "cr:FileSet",
+      "name": "cpg-graphs",
+      "description": "Clinical Practice Guideline graphs in YAML format (20 core + 5 held-out = 25 total)",
+      "containedIn": {
+        "@id": "github-repo"
+      },
+      "encodingFormat": "application/yaml",
+      "includes": "*.yaml",
+      "@id": "cpg-graphs"
+    },
+    {
+      "@type": "cr:FileSet",
+      "name": "scenarios-manual",
+      "description": "Manually curated evaluation scenarios (22 domain files, 107 scenarios). Note: excludes auto_generated_scenarios.yaml which is listed separately.",
+      "containedIn": {
+        "@id": "github-repo"
+      },
+      "encodingFormat": "application/yaml",
+      "includes": "*_scenarios.yaml",
+      "excludes": "auto_generated_scenarios.yaml",
+      "@id": "scenarios-manual"
+    },
+    {
+      "@type": "cr:FileObject",
+      "name": "scenarios-auto",
+      "description": "Auto-generated evaluation scenarios (599 scenarios used in paper; YAML file contains 601 candidates including 2 test-only) via constraint derivation engine",
+      "contentUrl": "configs/scenarios/auto_generated_scenarios.yaml",
+      "encodingFormat": "application/yaml",
+      "@id": "scenarios-auto",
+      "sha256": "79cb6fb0085b5d7bf27ac41ca0bb1274d9c5cf8ccb4824a12a9623c354c40860"
+    },
+    {
+      "@type": "cr:FileObject",
+      "name": "constraints-export",
+      "description": "De-duplicated typed constraint export (825 constraints: REQUIRED, FORBIDDEN, BEFORE, WITHIN) from all 25 CPG graphs. Paper uses template-level count of 1,049 which double-counts REQUIRED actions that also have WITHIN deadlines.",
+      "contentUrl": "constraints/constraints_export.json",
+      "encodingFormat": "application/json",
+      "@id": "constraints-export",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "@type": "cr:FileSet",
+      "name": "rag-corpus",
+      "description": "Parsed guideline documents for retrieval-augmented generation (25 clinical domains)",
+      "containedIn": {
+        "@id": "github-repo"
+      },
+      "encodingFormat": "application/json",
+      "includes": "*.parsed.json",
+      "@id": "rag-corpus"
+    },
+    {
+      "@type": "cr:FileSet",
+      "name": "episodes",
+      "description": "Agent episode traces from v6 benchmark evaluation (8 models, 2,118 episodes each, 3 runs per scenario; 16,944 total)",
+      "containedIn": {
+        "@id": "github-repo"
+      },
+      "encodingFormat": "application/json",
+      "includes": "**/*.json",
+      "@id": "episodes"
+    },
+    {
+      "@type": "cr:FileSet",
+      "name": "gold-set",
+      "description": "Entity linking gold standard with train/dev/test splits (338 instances)",
+      "containedIn": {
+        "@id": "github-repo"
+      },
+      "encodingFormat": "application/jsonl",
+      "includes": "*.jsonl",
+      "@id": "gold-set"
+    },
+    {
+      "@type": "cr:FileObject",
+      "name": "guideline-cards",
+      "description": "Per-graph provenance and constraint summary metadata for all 25 CPG graphs",
+      "contentUrl": "evidence_pack/guideline_cards.yaml",
+      "encodingFormat": "application/yaml",
+      "@id": "guideline-cards",
+      "sha256": "c7e672cc5b675f80e22aae40abc2c7e53fb606cb07a623fd6914c0af2a27ded8"
+    },
+    {
+      "@type": "cr:FileObject",
+      "name": "verdict-matrix",
+      "description": "Verdict matrix v6: mis-certification rates across 6 evaluators for 16,944 episodes with per-model and per-episode breakdowns",
+      "contentUrl": "evidence_pack/analysis/verdict_matrix_v6.json",
+      "encodingFormat": "application/json",
+      "@id": "verdict-matrix",
+      "sha256": "ef7681f5b593e1c7329e5e5129d92d02c175fc60836331152dc3ee3ed17d584c"
+    }
+  ],
+  "recordSet": [],
+  "rai:dataCollection": "dataCollectionType: rai:Derived. dataCollectionProcess: CPG graphs manually curated from published clinical practice guidelines (SSC 2021, AHA 2021/2019/2022/2017, KDIGO 2012, ADA 2009, ESC 2020/2019, ATS/IDSA 2019, GOLD 2024, ACG 2021, ACLS 2020, AABB 2016, and others) by domain experts. 107 scenarios manually authored; 599 auto-generated via constraint derivation engine with clinical review. Episode traces collected from 8 LLM models (oss120b, qwen27b, qwen35b, qwen4b, qwen397b, gemma31b, nemotron30b, deepseek_r1_7b) with 3 independent runs per scenario.",
+  "rai:dataAnnotation": "annotationProtocol: See evidence_pack/guideline_cards.yaml for per-graph provenance and constraint summaries. Manual scenarios authored by clinical informaticists following source guideline protocols. Auto-generated scenarios validated against CPG graph constraints.. annotatorDemographics: Clinical informaticists with expertise in emergency medicine, critical care, and clinical decision support",
+  "citeAs": "@inproceedings{cgabench2026, title={CGA-Bench: Clinical Guideline Adherence Benchmark for Medical AI Agents}, author={Anonymous}, booktitle={NeurIPS 2026 Datasets and Benchmarks Track}, year={2026}}",
+  "rai:personalSensitiveInformation": "description: All patient data is synthetic or derived from MIMIC-IV demo (de-identified public dataset, PhysioNet Credentialed Health Data License 1.5.0). No real patient identifiers are present.",
+  "rai:dataUseCases": "primaryIntendedUses: Evaluation of clinical AI agent adherence to time-sensitive treatment protocols from medical guidelines. Research benchmark for comparing agent architectures on clinical conformance.. outOfScopeUses: Direct clinical decision-making without human oversight; training production clinical systems without independent validation; use as a substitute for clinical judgment; patient-facing applications without regulatory approval",
+  "rai:dataLimitations": "knownLimitations: 25 clinical domains \u2014 does not cover all medical specialties (e.g., no pediatrics, obstetrics, psychiatry in core set); English language only \u2014 US/international clinical terminology conventions; Constraint derivation engine over-generates by 81.6% vs manual (see engine fidelity analysis in paper); Auto-generated scenarios (599/706) are derived from graph structure and may not capture all clinical edge cases; Patient simulation is simplified \u2014 does not model all physiological interactions; Episode evaluation assumes single-agent; multi-agent collaboration not assessed",
+  "rai:dataPreprocessing": [
+    "Action ID normalization via 1,422-entry DIRECT_MAPPINGS dictionary (assessor_core/action_normalizer.py) plus 25 PATTERN_RULES regex substitutions.",
+    "CAV v0.6 overlay (cav_v0_6/cav_v0_6.json, 2,276 entries / 2,452 mappings) auto-loaded at runtime to canonicalize agent-emitted action strings before constraint checking.",
+    "BM25 + dense (BGE-M3) retrieval over RAG corpus with score normalization for hybrid retrieval.",
+    "Vital sign key alias normalization (e.g., 'hr' \u2192 'heart_rate') applied uniformly across all scenarios.",
+    "Per-episode JSON includes raw actions list; downstream metrics (CGA score, typed compliance, sub-scores C1-C5) are computed deterministically from raw traces."
+  ],
+  "rai:dataReleaseMaintenancePlan": "releaseStrategy: GitHub repository (https://github.com/anonymous/cga_bench, post-camera-ready) with semantic versioning. Initial release v7.3 = NeurIPS 2026 submission snapshot.. maintenanceCommitment: Authors commit to maintaining the benchmark for 3 years post-publication (through 2029-05). Bug fixes and minor revisions tracked via GitHub issues. Major version bumps reserved for substantive corpus changes.. updateFrequency: Patch releases (typo/normalizer fixes) ad-hoc; minor releases (new CPGs/scenarios) ~quarterly; major version bumps annually if needed.. contactInfo: Issues tracker: https://github.com/anonymous/cga_bench/issues. Direct contact via paper corresponding author.. deprecationPolicy: Deprecated CPGs/scenarios moved to _archive/ with retention; previous versions remain accessible via git tags.",
+  "rai:dataBiases": [
+    "Geographic/cultural bias: All CPGs are AHA/ACC/ESC/ATS/IDSA/SCCM/KDIGO/ADA-derived (US/EU/multinational), under-representing low- and middle-income country (LMIC) practice.",
+    "Specialty bias: Critical care, cardiology, sepsis, and stroke are over-represented; outpatient primary care, mental health, and pediatrics are under-represented.",
+    "Vocabulary-selection bias: Scenario expected_actions are author-curated; agents using synonymous-but-different action vocabularies receive DEVIATION penalties even when behaviorally appropriate (documented in docs/critical_review/cpg_yaml_observer_dependence.md).",
+    "Temporal bias: Guidelines reflect 2017-2024 publication dates; medications/protocols introduced post-2024 are not yet captured.",
+    "Demographic bias: MIMIC-IV demo source patients are predominantly Boston-area academic-medical-center cohort; race/ethnicity/SES distributions are not representative of global populations."
+  ],
+  "rai:dataSocialImpact": "positiveImpact: Enables systematic, reproducible evaluation of medical AI agents against guideline conformance, reducing the risk of unsafe AI deployment in clinical decision support. Open-source release democratizes access to a previously expensive evaluation infrastructure.. negativeImpact: Risk of over-fitting agents to benchmark-specific vocabulary (Goodhart's law); benchmark performance does not guarantee real-world clinical safety. Cross-substrate validation (V6 vs V7.3) shows substrate-dependent ranking \u2014 single-corpus claims may mislead.. mitigations: Multi-substrate evaluation reporting (V6 manual + V7.3 SGSC) is the recommended protocol per paper \u00a7App AP. Authors discourage clinical deployment based on benchmark scores alone; benchmark intended for research/development only, not regulatory clearance.. dualUse: Possible dual-use: benchmark could be used to identify and exploit known guideline gaps. Mitigated by all CPGs being publicly available and gaps already known to clinical community."
+}

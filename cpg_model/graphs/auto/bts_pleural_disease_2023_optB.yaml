@@ -1,0 +1,266 @@
+graph_id: bts_pleural_disease_2023
+guideline_name: BTS 2023 Pleural Disease Guideline
+version: '2024.1'
+metadata:
+  source: British Thoracic Society
+  doi: 10.1136/thorax-2022-219630
+  recommendation_system: GRADE
+  description: Clinical pathway for the management of pleural diseases, including pneumothorax, pleural infection, and pleural
+    malignancy.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Pleural Assessment
+    description: Triage patient based on presenting pleural pathology and clinical stability.
+    mandatory_actions:
+    - calculate_rapid_score
+    allowed_actions:
+    - calculate_rapid_score
+    - perform_ultrasound_guided_thoracocentesis
+    forbidden_actions:
+    - perform_blind_thoracocentesis
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: General Assessment
+    source_page: null
+    source_quote: Image-guided (ultrasound-guided) thoracocentesis should always be used for pleural fluid sampling to reduce
+      the risk of complications.
+    source_recommendation_ids:
+    - rec_9
+    - rec_7
+    next_nodes: []
+    conditional_next:
+      state.pneumothorax_high_risk: critical_pneumothorax_bundle
+      state.pneumothorax_stable: stable_pneumothorax_bundle
+      state.pleural_infection: pleural_infection_bundle
+      state.suspected_malignancy: malignancy_diagnostic_bundle
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  critical_pneumothorax_bundle:
+    node_id: critical_pneumothorax_bundle
+    node_type: plan
+    name: High-Risk Pneumothorax Management
+    description: Immediate intervention for tension, hypoxic, or bilateral pneumothorax.
+    mandatory_actions:
+    - insert_intercostal_drainage
+    allowed_actions:
+    - insert_intercostal_drainage
+    - perform_needle_aspiration
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pneumothorax
+    source_page: null
+    source_quote: Consider intercostal drainage (ICD) or needle aspiration (NA) for high-risk pneumothorax including tension
+      pneumothorax, significant hypoxia, bilatera
+    source_recommendation_ids:
+    - rec_1
+    next_nodes:
+    - surgical_recurrence_assessment
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  stable_pneumothorax_bundle:
+    node_id: stable_pneumothorax_bundle
+    node_type: plan
+    name: Stable Pneumothorax Management
+    description: Conservative or ambulatory management for stable primary spontaneous pneumothorax.
+    mandatory_actions:
+    - start_ambulatory_management
+    allowed_actions:
+    - start_ambulatory_management
+    - perform_conservative_management
+    - close_observation
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pneumothorax
+    source_page: null
+    source_quote: For primary spontaneous pneumothorax, start with ambulatory management for patients with adequate support
+      and expert follow-up care. Conservative mana
+    source_recommendation_ids:
+    - rec_0
+    - rec_4
+    next_nodes:
+    - surgical_recurrence_assessment
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  pleural_infection_bundle:
+    node_id: pleural_infection_bundle
+    node_type: plan
+    name: Pleural Infection Management
+    description: Drainage and pharmacological management of infected pleural space.
+    mandatory_actions:
+    - insert_small_bore_chest_tube
+    allowed_actions:
+    - insert_small_bore_chest_tube
+    - administer_combined_tpa_dnase
+    forbidden_actions:
+    - administer_tpa_alone
+    - administer_dnase_alone
+    - order_pet_ct_for_pleural_infection
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pleural Infection
+    source_page: null
+    source_quote: Use a small-bore chest tube for initial drainage of infected pleural effusion.
+    source_recommendation_ids:
+    - rec_5
+    - rec_8
+    - rec_16
+    next_nodes:
+    - infection_monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  malignancy_diagnostic_bundle:
+    node_id: malignancy_diagnostic_bundle
+    node_type: plan
+    name: Malignancy Diagnostic Pathway
+    description: Sequential diagnostic testing for suspected pleural malignancy.
+    mandatory_actions:
+    - order_pleural_fluid_cytology
+    allowed_actions:
+    - order_pleural_fluid_cytology
+    - perform_image_guided_pleural_biopsy
+    - perform_thoracoscopic_pleural_biopsy
+    - perform_concurrent_biopsy_and_aspiration
+    forbidden_actions:
+    - perform_blind_pleural_biopsy
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pleural Malignancy
+    source_page: null
+    source_quote: Pleural fluid cytology should be used as an initial diagnostic test in patients with suspected secondary
+      pleural malignancy.
+    source_recommendation_ids:
+    - rec_11
+    - rec_10
+    - rec_13
+    next_nodes:
+    - pleurodesis_disposition
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  infection_monitoring:
+    node_id: infection_monitoring
+    node_type: action
+    name: Infection Follow-up
+    description: Timed assessment of pleural infection response.
+    mandatory_actions:
+    - assess_pleural_infection_48h
+    allowed_actions:
+    - assess_pleural_infection_48h
+    forbidden_actions: []
+    deadlines:
+      assess_pleural_infection_48h: 2880
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pleural Infection
+    source_page: null
+    source_quote: Assess patients with pleural infection at 48 hours rather than waiting for 7-day improvement period.
+    source_recommendation_ids:
+    - rec_6
+    next_nodes:
+    - pleurodesis_disposition
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  surgical_recurrence_assessment:
+    node_id: surgical_recurrence_assessment
+    node_type: decision
+    name: Recurrence Risk Assessment
+    description: Evaluate need for surgical intervention to prevent pneumothorax recurrence.
+    mandatory_actions:
+    - perform_vats
+    allowed_actions:
+    - perform_vats
+    - perform_thoracotomy
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pneumothorax
+    source_page: null
+    source_quote: VATS or thoracotomy show lower risk of PSP and SSP recurrence versus ICD and should be considered for the
+      treatment of spontaneous pneumothorax in adu
+    source_recommendation_ids:
+    - rec_3
+    next_nodes:
+    - pleurodesis_disposition
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  pleurodesis_disposition:
+    node_id: pleurodesis_disposition
+    node_type: plan
+    name: Final Disposition / Pleurodesis
+    description: Final management for persistent fluid or recurrence prevention.
+    mandatory_actions:
+    - administer_graded_talc_pleurodesis
+    allowed_actions:
+    - administer_graded_talc_pleurodesis
+    forbidden_actions:
+    - administer_ungraded_talc
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS 2023 Pleural Disease Guideline
+    source_section: Pleurodesis
+    source_page: null
+    source_quote: Graded talc remains the agent of choice for chemical pleurodesis instead of ungraded talc, which has been
+      linked to ARDS.
+    source_recommendation_ids:
+    - rec_2
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 20
+  actionable_count: 20
+  validation_errors: 0
+  generated_at: '2026-04-30T05:51:06.538568+00:00'

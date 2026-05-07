@@ -1,0 +1,116 @@
+graph_id: sign_acute_coronary_syndrome_2023
+guideline_name: SIGN Acute Coronary Syndrome Guideline 2023
+version: '2023.1'
+metadata:
+  source: SIGN Acute Coronary Syndrome Guideline 2023
+  doi: 10.1136/heartjnl-2022-321847
+  journal: Heart
+  recommendation_system: SIGN
+  description: Scottish ACS management guideline.
+  key_evidence: Cardiac rehabilitation reduces cardiovascular mortality post-ACS.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: ACS Triage and ECG Assessment
+    description: 12-lead ECG within 10 min, high-sensitivity troponin, risk stratify.
+    precondition: null
+    mandatory_actions:
+    - order_ecg_12_lead
+    - order_lab_troponin_high_sensitivity
+    - assess_vital_signs
+    - calculate_grace_score
+    allowed_actions:
+    - order_lab_bmp
+    - establish_iv_access
+    - order_lab_troponin_high_sensitivity
+    - place_continuous_cardiac_monitoring
+    - order_lab_cbc
+    - order_lab_lipid_panel
+    - calculate_grace_score
+    - order_ecg_12_lead
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      order_ecg_12_lead: 10
+      order_lab_troponin_high_sensitivity: 30
+      calculate_grace_score: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: SIGN Acute Coronary Syndrome Guideline 2023
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: GRACE score should be used to guide risk stratification in NSTE-ACS.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: Reperfusion and Antithrombotic Therapy
+    description: Dual antiplatelet + anticoagulation; PCI or fibrinolysis per indication.
+    precondition: null
+    mandatory_actions:
+    - give_aspirin_loading
+    - give_p2y12_inhibitor
+    - initiate_anticoagulation
+    allowed_actions:
+    - activate_cath_lab_if_stemi
+    - give_beta_blocker_if_no_contraindication
+    - initiate_anticoagulation
+    - give_high_intensity_statin
+    - give_aspirin_loading
+    - give_fibrinolysis_if_pci_unavailable_and_eligible
+    - give_oxygen_if_hypoxemic
+    - give_p2y12_inhibitor
+    - plan_early_invasive_strategy_if_high_risk
+    forbidden_actions:
+    - give_nsaids_in_acs
+    - give_nitroglycerin_in_rv_infarct
+    deadlines:
+      give_aspirin_loading: 30
+      give_p2y12_inhibitor: 60
+      activate_cath_lab_if_stemi: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: SIGN Acute Coronary Syndrome Guideline 2023
+    source_section: Reperfusion
+    source_page: null
+    source_quote: Primary PCI within 120 minutes is preferred to fibrinolysis for STEMI when available.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-ACS Secondary Prevention
+    description: DAPT duration, LV function, cardiac rehabilitation referral.
+    precondition: null
+    mandatory_actions:
+    - perform_echocardiogram_post_mi
+    - plan_dapt_duration
+    - refer_cardiac_rehabilitation
+    allowed_actions:
+    - counsel_lifestyle_modification
+    - optimize_secondary_prevention_therapy
+    - order_lab_troponin_repeat
+    - perform_echocardiogram_post_mi
+    - reassess_vital_signs
+    - refer_cardiac_rehabilitation
+    - plan_dapt_duration
+    forbidden_actions: []
+    deadlines:
+      perform_echocardiogram_post_mi: 2880
+      plan_dapt_duration: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: SIGN Acute Coronary Syndrome Guideline 2023
+    source_section: Secondary Prevention
+    source_page: null
+    source_quote: Cardiac rehabilitation should be offered to all patients following ACS.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,1109 @@
+{
+  "ada_dka_management": {
+    "graph_id": "ada_dka_management",
+    "guideline_name": "ADA Diabetic Ketoacidosis Management",
+    "file": "ada_dka_management.yaml",
+    "total_nodes": 8,
+    "total_mandatory_actions": 30,
+    "mandatory_actions": [
+      "admit_to_icu",
+      "arrange_followup",
+      "assess_anion_gap_closure",
+      "assess_mental_status",
+      "assess_vital_signs",
+      "classify_dka_severity",
+      "consider_bicarbonate_if_ph_below_6.9",
+      "continuous_cardiac_monitoring",
+      "diabetes_education",
+      "ensure_patient_education",
+      "ensure_stable_glucose_control",
+      "establish_iv_access",
+      "give_potassium_iv",
+      "hold_insulin_until_k_above_3.3",
+      "monitor_bmp_q2_4h",
+      "monitor_glucose_hourly",
+      "monitor_potassium_q2h",
+      "monitor_urine_output",
+      "order_lab_abg",
+      "order_lab_bmp",
+      "order_lab_glucose",
+      "order_lab_ketones",
+      "overlap_iv_insulin_2h",
+      "place_arterial_line",
+      "recheck_potassium_in_1h",
+      "resume_oral_intake",
+      "start_insulin_infusion",
+      "start_iv_fluid_ns",
+      "start_subcutaneous_insulin",
+      "verify_resolution_criteria"
+    ],
+    "total_forbidden_actions": 18,
+    "forbidden_actions": [
+      "admit_to_ward",
+      "delay_iv_access",
+      "delay_potassium_replacement",
+      "discharge_before_gap_closed",
+      "discharge_home",
+      "discharge_without_followup",
+      "discharge_without_insulin",
+      "discharge_without_insulin_plan",
+      "discontinue_insulin_for_low_glucose",
+      "give_bicarbonate_if_ph_above_7.0",
+      "give_insulin_bolus",
+      "give_oral_fluids_if_altered",
+      "give_subcutaneous_insulin_initially",
+      "start_insulin_infusion",
+      "stop_insulin_before_gap_closed",
+      "stop_iv_insulin_without_overlap",
+      "stop_monitoring_early",
+      "transition_before_criteria_met"
+    ],
+    "total_allowed_actions": 61,
+    "timing_constraints": 19,
+    "timing_details": {
+      "assess_vital_signs": 5,
+      "establish_iv_access": 10,
+      "start_iv_fluid_ns": 15,
+      "order_lab_glucose": 15,
+      "order_lab_bmp": 15,
+      "order_lab_ketones": 30,
+      "order_lab_abg": 30,
+      "classify_dka_severity": 45,
+      "give_potassium_iv": 30,
+      "recheck_potassium_in_1h": 90,
+      "start_insulin_infusion": 60,
+      "monitor_glucose_hourly": 60,
+      "monitor_potassium_q2h": 120,
+      "admit_to_icu": 30,
+      "continuous_cardiac_monitoring": 15,
+      "place_arterial_line": 60,
+      "monitor_bmp_q2_4h": 240,
+      "assess_anion_gap_closure": 240
+    },
+    "sequence_dependencies": 12,
+    "sequence_details": [
+      {
+        "action": "start_iv_fluid_ns",
+        "requires": "establish_iv_access",
+        "node": "initial_assessment"
+      },
+      {
+        "action": "classify_dka_severity",
+        "requires": "order_lab_abg",
+        "node": "severity_classification"
+      },
+      {
+        "action": "classify_dka_severity",
+        "requires": "order_lab_bmp",
+        "node": "severity_classification"
+      },
+      {
+        "action": "give_potassium_iv",
+        "requires": "order_lab_bmp",
+        "node": "potassium_replacement_first"
+      },
+      {
+        "action": "give_potassium_iv",
+        "requires": "establish_iv_access",
+        "node": "potassium_replacement_first"
+      },
+      {
+        "action": "start_insulin_infusion",
+        "requires": "order_lab_bmp",
+        "node": "insulin_therapy"
+      },
+      {
+        "action": "start_insulin_infusion",
+        "requires": "start_iv_fluid_ns",
+        "node": "insulin_therapy"
+      },
+      {
+        "action": "consider_bicarbonate_if_ph_below_6.9",
+        "requires": "order_lab_abg",
+        "node": "severe_dka_pathway"
+      },
+      {
+        "action": "transition_to_subq_insulin",
+        "requires": "assess_anion_gap_closure",
+        "node": "ongoing_monitoring"
+      },
+      {
+        "action": "start_subcutaneous_insulin",
+        "requires": "verify_resolution_criteria",
+        "node": "transition_to_maintenance"
+      },
+      {
+        "action": "start_subcutaneous_insulin",
+        "requires": "assess_anion_gap_closure",
+        "node": "transition_to_maintenance"
+      },
+      {
+        "action": "resume_oral_intake",
+        "requires": "assess_mental_status",
+        "node": "transition_to_maintenance"
+      }
+    ],
+    "conditional_branches": 3,
+    "evidence_strength_distribution": {
+      "STRONG": 3,
+      "MODERATE": 4,
+      "WEAK": 1
+    },
+    "evidence_strength_pct": {
+      "STRONG": 37.5,
+      "MODERATE": 50.0,
+      "WEAK": 12.5
+    }
+  },
+  "aha_chest_pain_evaluation": {
+    "graph_id": "aha_chest_pain_evaluation",
+    "guideline_name": "AHA Chest Pain Evaluation",
+    "file": "aha_chest_pain.yaml",
+    "total_nodes": 11,
+    "total_mandatory_actions": 23,
+    "mandatory_actions": [
+      "activate_cath_lab",
+      "admit_to_cardiology_service",
+      "admit_to_ccu",
+      "arrange_pci",
+      "assess_for_early_invasive",
+      "assess_vital_signs",
+      "calculate_risk_score",
+      "continue_dual_antiplatelet",
+      "continue_medical_therapy",
+      "determine_disposition",
+      "document_risk_assessment",
+      "give_anticoagulation",
+      "give_aspirin_loading",
+      "give_p2y12_inhibitor",
+      "initiate_secondary_prevention",
+      "interpret_ecg",
+      "obtain_12_lead_ecg",
+      "obtain_chest_pain_history",
+      "order_lab_troponin",
+      "provide_discharge_instructions",
+      "serial_ecg",
+      "serial_troponin",
+      "stress_testing_or_cta"
+    ],
+    "total_forbidden_actions": 9,
+    "forbidden_actions": [
+      "delay_anticoagulation",
+      "delay_ecg_for_registration",
+      "delay_reperfusion",
+      "discharge_home",
+      "discharge_without_documentation",
+      "discharge_without_ecg",
+      "discharge_without_serial_testing",
+      "discontinue_antiplatelet_early",
+      "give_nitrates_if_rv_infarct"
+    ],
+    "total_allowed_actions": 46,
+    "timing_constraints": 16,
+    "timing_details": {
+      "obtain_12_lead_ecg": 10,
+      "assess_vital_signs": 5,
+      "interpret_ecg": 15,
+      "activate_cath_lab": 10,
+      "give_aspirin_loading": 30,
+      "give_p2y12_inhibitor": 30,
+      "arrange_pci": 90,
+      "order_lab_troponin": 60,
+      "give_anticoagulation": 60,
+      "calculate_risk_score": 120,
+      "serial_troponin": 180,
+      "stress_testing_or_cta": 1440,
+      "assess_for_early_invasive": 120
+    },
+    "sequence_dependencies": 10,
+    "sequence_details": [
+      {
+        "action": "interpret_ecg",
+        "requires": "obtain_12_lead_ecg",
+        "node": "ecg_interpretation"
+      },
+      {
+        "action": "activate_cath_lab",
+        "requires": "obtain_12_lead_ecg",
+        "node": "stemi_pathway"
+      },
+      {
+        "action": "activate_cath_lab",
+        "requires": "interpret_ecg",
+        "node": "stemi_pathway"
+      },
+      {
+        "action": "give_nitrates_if_indicated",
+        "requires": "assess_vital_signs",
+        "node": "stemi_pathway"
+      },
+      {
+        "action": "give_nitrates_if_indicated",
+        "requires": "assess_vital_signs",
+        "node": "nste_acs_pathway"
+      },
+      {
+        "action": "give_p2y12_inhibitor",
+        "requires": "calculate_risk_score",
+        "node": "nste_acs_pathway"
+      },
+      {
+        "action": "calculate_risk_score",
+        "requires": "order_lab_troponin",
+        "node": "risk_stratification"
+      },
+      {
+        "action": "stress_testing_or_cta",
+        "requires": "serial_troponin",
+        "node": "observation_pathway"
+      },
+      {
+        "action": "stress_testing_or_cta",
+        "requires": "serial_ecg",
+        "node": "observation_pathway"
+      },
+      {
+        "action": "provide_discharge_instructions",
+        "requires": "document_risk_assessment",
+        "node": "low_risk_pathway"
+      }
+    ],
+    "conditional_branches": 8,
+    "evidence_strength_distribution": {
+      "STRONG": 4,
+      "MODERATE": 6,
+      "WEAK": 1
+    },
+    "evidence_strength_pct": {
+      "STRONG": 36.4,
+      "MODERATE": 54.5,
+      "WEAK": 9.1
+    }
+  },
+  "aha_heart_failure_2022": {
+    "graph_id": "aha_heart_failure_2022",
+    "guideline_name": "AHA/ACC/HFSA Heart Failure Guideline",
+    "file": "aha_heart_failure.yaml",
+    "total_nodes": 24,
+    "total_mandatory_actions": 68,
+    "mandatory_actions": [
+      "assess_candidacy_for_advanced_therapies",
+      "assess_crt_indication",
+      "assess_hemodynamic_profile",
+      "assess_icd_indication",
+      "assess_lvef",
+      "assess_nyha_class",
+      "assess_structural_abnormalities",
+      "careful_fluid_challenge",
+      "check_optimal_gdmt_duration",
+      "comprehensive_transplant_workup",
+      "confirm_optimal_gdmt",
+      "consider_combination_diuretics",
+      "consider_inotropes",
+      "consider_vasodilators",
+      "continuous_monitoring",
+      "daily_weights",
+      "discuss_advance_directives",
+      "discuss_goals_of_care",
+      "discuss_risks_benefits",
+      "document_hfmref_diagnosis",
+      "document_hfpef_diagnosis",
+      "document_hfref_diagnosis",
+      "evaluate_alternative_diagnoses",
+      "evaluate_diastolic_function",
+      "fluid_restrict",
+      "hemodynamic_monitoring",
+      "hospice_referral_if_appropriate",
+      "icu_admission",
+      "identify_etiology",
+      "identify_precipitating_factors",
+      "implant_crt",
+      "implant_icd",
+      "increase_diuretic_dose",
+      "initiate_ace_or_arb_or_arni",
+      "initiate_beta_blocker",
+      "initiate_mra",
+      "initiate_sglt2i",
+      "inotrope_support",
+      "invasive_hemodynamic_monitoring",
+      "iv_diuretics",
+      "list_if_appropriate",
+      "lvad_workup",
+      "manage_comorbidities",
+      "manage_volume_status",
+      "mechanical_circulatory_support_evaluation",
+      "monitor_electrolytes",
+      "monitor_for_deterioration",
+      "monitor_kidney_function",
+      "monitor_urine_output",
+      "multidisciplinary_team_evaluation",
+      "obtain_history",
+      "obtain_informed_consent",
+      "optimize_gdmt_titration",
+      "order_basic_metabolic_panel",
+      "order_bnp_or_ntprobnp",
+      "order_cbc",
+      "order_chest_xray",
+      "order_ecg",
+      "order_echocardiogram",
+      "order_tsh",
+      "palliative_care_discussion",
+      "patient_education",
+      "physical_examination",
+      "psychosocial_evaluation",
+      "regular_follow_up",
+      "select_mcs_device",
+      "symptom_management",
+      "vasopressor_support"
+    ],
+    "total_forbidden_actions": 9,
+    "forbidden_actions": [
+      "give_beta_blocker",
+      "give_diltiazem",
+      "give_diuretics",
+      "give_high_dose_beta_blocker",
+      "give_high_dose_diuretics_if_hypotensive",
+      "give_iv_inotropes",
+      "give_nsaid",
+      "give_thiazolidinedione",
+      "give_verapamil"
+    ],
+    "total_allowed_actions": 62,
+    "timing_constraints": 7,
+    "timing_details": {
+      "order_bnp_or_ntprobnp": 60,
+      "order_ecg": 60,
+      "order_echocardiogram": 1440,
+      "iv_diuretics": 30,
+      "consider_inotropes": 60,
+      "icu_admission": 30,
+      "vasopressor_support": 30
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 0,
+    "evidence_strength_distribution": {
+      "STRONG": 5,
+      "MODERATE": 11,
+      "WEAK": 1
+    },
+    "evidence_strength_pct": {
+      "STRONG": 29.4,
+      "MODERATE": 64.7,
+      "WEAK": 5.9
+    }
+  },
+  "aha_stroke_2019": {
+    "graph_id": "aha_stroke_2019",
+    "guideline_name": "AHA/ASA Acute Ischemic Stroke Guideline",
+    "file": "aha_stroke.yaml",
+    "total_nodes": 25,
+    "total_mandatory_actions": 91,
+    "mandatory_actions": [
+      "achieve_tici_2b_or_better",
+      "activate_neurointerventional_team",
+      "activate_stroke_team",
+      "admit_to_icu_or_stroke_unit",
+      "admit_to_stroke_unit",
+      "antiplatelet_therapy",
+      "aspirin_within_24_48h",
+      "assess_aspects_score",
+      "assess_prestroke_mrs",
+      "assess_surgical_risk",
+      "avoid_hyperglycemia",
+      "avoid_hyperthermia",
+      "bp_management",
+      "bp_management_long_term",
+      "bp_management_target_180_105",
+      "bp_reduction_target_140",
+      "calculate_chadsvasc",
+      "calculate_hasbled",
+      "calculate_time_from_onset",
+      "cardiac_monitoring_for_afib",
+      "carotid_evaluation",
+      "check_glucose",
+      "confirm_favorable_perfusion_imaging",
+      "confirm_lvo_on_imaging",
+      "confirm_stenosis_degree",
+      "consider_evacuation_if_indicated",
+      "diabetes_management",
+      "discharge_planning",
+      "discuss_with_patient_family",
+      "document_shared_decision",
+      "dual_antiplatelet_before_procedure",
+      "dvt_prophylaxis",
+      "dvt_prophylaxis_mechanical",
+      "early_mobilization",
+      "early_rehabilitation_assessment",
+      "elevate_head_of_bed",
+      "establish_iv_access",
+      "evaluate_for_edema",
+      "evaluate_for_hemorrhage",
+      "evaluate_for_recurrent_stroke",
+      "evd_for_hydrocephalus",
+      "give_alteplase_0.9mg_kg",
+      "give_cryoprecipitate",
+      "give_tranexamic_acid",
+      "goal_reduction_15_percent",
+      "groin_site_monitoring",
+      "hold_antiplatelet_anticoagulation_24h",
+      "icp_monitoring_if_indicated",
+      "icu_admission",
+      "icu_management",
+      "maintain_bp_below_180_105_post_tpa",
+      "monitor_bp_q15min_x2h_then_q30min_x6h",
+      "neurological_checks_q15min",
+      "neurological_monitoring",
+      "neurosurgery_consult",
+      "neurosurgery_consult_for_decompressive_craniectomy",
+      "neurosurgery_evaluation",
+      "obtain_12_lead_ecg",
+      "obtain_informed_consent",
+      "obtain_last_known_well_time",
+      "occupational_therapy",
+      "order_cbc_bmp_coag",
+      "order_stat_ct_head",
+      "perform_cas",
+      "perform_cea_within_2_weeks",
+      "perform_nihss",
+      "perform_thrombectomy_procedure",
+      "physical_therapy",
+      "reduce_bp_to_below_185_110_before_tpa",
+      "repeat_ct_24h",
+      "repeat_ct_6h_or_if_deterioration",
+      "repeat_nihss",
+      "reverse_anticoagulation_if_applicable",
+      "reverse_coagulopathy",
+      "review_anticoagulation_status",
+      "review_exclusion_criteria",
+      "review_inclusion_criteria",
+      "seizure_prophylaxis_consideration",
+      "smoking_cessation",
+      "speech_therapy_if_needed",
+      "start_antiplatelet_after_24h_if_no_hemorrhage",
+      "start_doac_preferred",
+      "stat_coagulation_panel",
+      "stat_ct_head",
+      "statin_therapy",
+      "stop_tpa_infusion",
+      "surgical_planning",
+      "swallow_screen",
+      "treat_if_bp_above_220_120",
+      "type_and_screen",
+      "use_iv_labetalol_or_nicardipine"
+    ],
+    "total_forbidden_actions": 15,
+    "forbidden_actions": [
+      "delay_ct_for_labs",
+      "give_anticoagulation",
+      "give_anticoagulation_before_24h",
+      "give_anticoagulation_for_stroke_prevention_in_first_24h",
+      "give_anticoagulation_within_24h",
+      "give_antiplatelet",
+      "give_antiplatelet_before_24h",
+      "give_antiplatelet_within_24h",
+      "give_heparin_within_24h",
+      "give_tpa",
+      "give_tpa_if_bp_uncontrolled",
+      "place_arterial_line_within_30min",
+      "place_foley_within_30min",
+      "place_ng_tube_within_30min",
+      "start_anticoagulation_before_24h_post_tpa"
+    ],
+    "total_allowed_actions": 70,
+    "timing_constraints": 6,
+    "timing_details": {
+      "check_glucose": 10,
+      "order_stat_ct_head": 25,
+      "give_alteplase_0.9mg_kg": 60,
+      "perform_thrombectomy_procedure": 60,
+      "reverse_anticoagulation_if_applicable": 60,
+      "stat_ct_head": 15
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 0,
+    "evidence_strength_distribution": {
+      "STRONG": 10,
+      "MODERATE": 7,
+      "WEAK": 2
+    },
+    "evidence_strength_pct": {
+      "STRONG": 52.6,
+      "MODERATE": 36.8,
+      "WEAK": 10.5
+    }
+  },
+  "atrial_fibrillation": {
+    "graph_id": "atrial_fibrillation",
+    "guideline_name": "AHA/ACC/HRS 2023 Atrial Fibrillation",
+    "file": "atrial_fibrillation.yaml",
+    "total_nodes": 3,
+    "total_mandatory_actions": 9,
+    "mandatory_actions": [
+      "assess_anticoagulation_need",
+      "assess_chadsvasc_score",
+      "assess_vital_signs",
+      "give_anticoagulation",
+      "give_rate_control",
+      "obtain_12_lead_ecg",
+      "order_lab_bmp",
+      "order_lab_tsh",
+      "perform_cardioversion"
+    ],
+    "total_forbidden_actions": 1,
+    "forbidden_actions": [
+      "give_rate_control_without_ecg"
+    ],
+    "total_allowed_actions": 30,
+    "timing_constraints": 2,
+    "timing_details": {
+      "obtain_12_lead_ecg": 10,
+      "perform_cardioversion": 30
+    },
+    "sequence_dependencies": 1,
+    "sequence_details": [
+      {
+        "action": "give_rate_control",
+        "requires": "obtain_12_lead_ecg",
+        "node": "stable_af_rate_control"
+      }
+    ],
+    "conditional_branches": 1,
+    "evidence_strength_distribution": {
+      "STRONG": 0,
+      "MODERATE": 3,
+      "WEAK": 0
+    },
+    "evidence_strength_pct": {
+      "STRONG": 0.0,
+      "MODERATE": 100.0,
+      "WEAK": 0.0
+    }
+  },
+  "cap_pneumonia": {
+    "graph_id": "cap_pneumonia",
+    "guideline_name": "IDSA/ATS Community-Acquired Pneumonia 2019",
+    "file": "cap_pneumonia.yaml",
+    "total_nodes": 3,
+    "total_mandatory_actions": 8,
+    "mandatory_actions": [
+      "assess_icu_criteria",
+      "assess_respiratory_status",
+      "assess_vital_signs",
+      "give_beta_lactam_plus_macrolide",
+      "give_iv_fluids",
+      "order_imaging_chest_xray",
+      "order_lab_blood_culture",
+      "order_lab_cbc"
+    ],
+    "total_forbidden_actions": 1,
+    "forbidden_actions": [
+      "delay_antibiotics_for_cultures_beyond_1h"
+    ],
+    "total_allowed_actions": 14,
+    "timing_constraints": 3,
+    "timing_details": {
+      "order_imaging_chest_xray": 60,
+      "give_beta_lactam_plus_macrolide": 60
+    },
+    "sequence_dependencies": 2,
+    "sequence_details": [
+      {
+        "action": "give_beta_lactam_plus_macrolide",
+        "requires": "order_lab_blood_culture",
+        "node": "inpatient_cap"
+      },
+      {
+        "action": "give_beta_lactam_plus_macrolide",
+        "requires": "order_lab_blood_culture",
+        "node": "severe_cap_icu"
+      }
+    ],
+    "conditional_branches": 2,
+    "evidence_strength_distribution": {
+      "STRONG": 2,
+      "MODERATE": 1,
+      "WEAK": 0
+    },
+    "evidence_strength_pct": {
+      "STRONG": 66.7,
+      "MODERATE": 33.3,
+      "WEAK": 0.0
+    }
+  },
+  "copd_exacerbation": {
+    "graph_id": "copd_exacerbation",
+    "guideline_name": "GOLD 2024 COPD Exacerbation Management",
+    "file": "copd_exacerbation.yaml",
+    "total_nodes": 2,
+    "total_mandatory_actions": 8,
+    "mandatory_actions": [
+      "assess_niv_eligibility",
+      "assess_respiratory_status",
+      "assess_vital_signs",
+      "give_antibiotics",
+      "give_bronchodilator",
+      "give_systemic_corticosteroid",
+      "order_imaging_chest_xray",
+      "order_lab_abg"
+    ],
+    "total_forbidden_actions": 2,
+    "forbidden_actions": [
+      "give_high_flow_o2_without_monitoring",
+      "give_sedatives"
+    ],
+    "total_allowed_actions": 21,
+    "timing_constraints": 2,
+    "timing_details": {
+      "assess_vital_signs": 10,
+      "give_bronchodilator": 30
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 1,
+    "evidence_strength_distribution": {
+      "STRONG": 1,
+      "MODERATE": 1,
+      "WEAK": 0
+    },
+    "evidence_strength_pct": {
+      "STRONG": 50.0,
+      "MODERATE": 50.0,
+      "WEAK": 0.0
+    }
+  },
+  "gi_bleeding": {
+    "graph_id": "gi_bleeding",
+    "guideline_name": "ACG 2021 GI Bleeding Management",
+    "file": "gi_bleeding.yaml",
+    "total_nodes": 2,
+    "total_mandatory_actions": 10,
+    "mandatory_actions": [
+      "assess_hemodynamic_status",
+      "assess_vital_signs",
+      "consult_gi",
+      "consult_surgery",
+      "establish_iv_access",
+      "give_iv_crystalloid_bolus",
+      "give_packed_rbc_if_hgb_below_7",
+      "order_lab_cbc",
+      "order_lab_coagulation",
+      "order_lab_type_and_crossmatch"
+    ],
+    "total_forbidden_actions": 1,
+    "forbidden_actions": [
+      "delay_resuscitation_for_endoscopy"
+    ],
+    "total_allowed_actions": 21,
+    "timing_constraints": 2,
+    "timing_details": {
+      "establish_iv_access": 15,
+      "give_iv_crystalloid_bolus": 15
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 1,
+    "evidence_strength_distribution": {
+      "STRONG": 1,
+      "MODERATE": 1,
+      "WEAK": 0
+    },
+    "evidence_strength_pct": {
+      "STRONG": 50.0,
+      "MODERATE": 50.0,
+      "WEAK": 0.0
+    }
+  },
+  "hypertensive_emergency": {
+    "graph_id": "hypertensive_emergency",
+    "guideline_name": "AHA/ACC 2017 Hypertension - Emergency Management",
+    "file": "hypertensive_emergency.yaml",
+    "total_nodes": 2,
+    "total_mandatory_actions": 8,
+    "mandatory_actions": [
+      "assess_bp",
+      "assess_end_organ_damage",
+      "assess_neurological_status",
+      "assess_vital_signs",
+      "continuous_bp_monitoring",
+      "give_iv_antihypertensive",
+      "order_lab_bmp",
+      "order_lab_troponin"
+    ],
+    "total_forbidden_actions": 2,
+    "forbidden_actions": [
+      "give_oral_antihypertensive_only",
+      "reduce_bp_more_than_25pct_in_1h"
+    ],
+    "total_allowed_actions": 25,
+    "timing_constraints": 2,
+    "timing_details": {
+      "assess_vital_signs": 5,
+      "give_iv_antihypertensive": 30
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 1,
+    "evidence_strength_distribution": {
+      "STRONG": 0,
+      "MODERATE": 2,
+      "WEAK": 0
+    },
+    "evidence_strength_pct": {
+      "STRONG": 0.0,
+      "MODERATE": 100.0,
+      "WEAK": 0.0
+    }
+  },
+  "kdigo_aki_full": {
+    "graph_id": "kdigo_aki_full",
+    "guideline_name": "KDIGO AKI 2012 Full",
+    "file": "kdigo_aki_full.yaml",
+    "total_nodes": 13,
+    "total_mandatory_actions": 44,
+    "mandatory_actions": [
+      "assess_aki_risk_factors",
+      "assess_ci_aki_risk",
+      "assess_for_ckd_development",
+      "assess_rrt_need",
+      "assess_vascular_access",
+      "avoid_contrast",
+      "calculate_aki_stage",
+      "calculate_egfr",
+      "consider_alternative_imaging",
+      "consult_nephrology",
+      "discontinue_nephrotoxins",
+      "discuss_risk_benefit_with_patient",
+      "ecg_for_hyperkalemia",
+      "evaluate_rrt_indications",
+      "hold_metformin",
+      "hold_nsaids",
+      "identify_aki_etiology",
+      "initiate_rrt_immediately",
+      "initiate_rrt_within_24h",
+      "iv_hydration_if_proceeding",
+      "iv_hydration_periprocedure",
+      "minimize_contrast_volume",
+      "monitor_acid_base",
+      "monitor_creatinine_daily",
+      "monitor_creatinine_q12h",
+      "monitor_creatinine_q6h",
+      "monitor_fluid_balance_hourly",
+      "monitor_potassium",
+      "monitor_potassium_q6h",
+      "monitor_recovery",
+      "monitor_urine_output",
+      "optimize_volume_status",
+      "order_baseline_creatinine",
+      "order_creatinine",
+      "plan_follow_up_creatinine",
+      "plan_rrt_modality",
+      "post_procedure_creatinine_48_72h",
+      "post_procedure_creatinine_48h",
+      "standard_contrast_protocol",
+      "treat_hyperkalemia_temporizing",
+      "urgent_nephrology_consult",
+      "use_iso_osmolar_contrast",
+      "use_low_or_iso_osmolar_contrast",
+      "vascular_access_placement"
+    ],
+    "total_forbidden_actions": 10,
+    "forbidden_actions": [
+      "give_aminoglycoside_without_monitoring",
+      "give_contrast",
+      "give_contrast_without_assessment",
+      "give_contrast_without_preparation",
+      "give_high_osmolar_contrast",
+      "give_magnesium_containing_antacids",
+      "give_nsaid",
+      "give_potassium",
+      "give_potassium_supplements_if_hyperkalemia",
+      "repeat_contrast_within_48h"
+    ],
+    "total_allowed_actions": 37,
+    "timing_constraints": 9,
+    "timing_details": {
+      "order_creatinine": 60,
+      "consult_nephrology": 240,
+      "urgent_nephrology_consult": 60,
+      "assess_rrt_need": 120,
+      "order_baseline_creatinine": 60,
+      "iv_hydration_if_proceeding": 360,
+      "initiate_rrt_immediately": 60,
+      "treat_hyperkalemia_temporizing": 30,
+      "initiate_rrt_within_24h": 1440
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 0,
+    "evidence_strength_distribution": {
+      "STRONG": 3,
+      "MODERATE": 6,
+      "WEAK": 1
+    },
+    "evidence_strength_pct": {
+      "STRONG": 30.0,
+      "MODERATE": 60.0,
+      "WEAK": 10.0
+    }
+  },
+  "kdigo_contrast_aki": {
+    "graph_id": "kdigo_contrast_aki",
+    "guideline_name": "KDIGO Contrast-Associated AKI Prevention",
+    "file": "kdigo_contrast_aki.yaml",
+    "total_nodes": 7,
+    "total_mandatory_actions": 21,
+    "mandatory_actions": [
+      "assess_hydration_status",
+      "assess_urine_output",
+      "avoid_additional_nephrotoxins",
+      "check_baseline_egfr",
+      "check_scr_at_48h",
+      "consider_alternative_imaging",
+      "document_egfr_check",
+      "document_stable_egfr",
+      "hold_metformin_if_applicable",
+      "hold_nephrotoxic_medications",
+      "iv_hydration_post_contrast",
+      "iv_hydration_pre_contrast",
+      "monitor_scr_48_72h",
+      "nephrology_consult",
+      "optimize_fluid_status",
+      "provide_discharge_instructions",
+      "review_risk_factors",
+      "schedule_followup",
+      "serial_scr_monitoring",
+      "standard_contrast_administration",
+      "use_minimum_contrast_volume"
+    ],
+    "total_forbidden_actions": 13,
+    "forbidden_actions": [
+      "additional_contrast_exposure",
+      "administer_contrast_without_egfr",
+      "administer_contrast_without_egfr_check",
+      "administer_contrast_without_hydration",
+      "continue_aminoglycosides",
+      "continue_nephrotoxic_drugs",
+      "continue_nsaids",
+      "discharge_without_egfr_confirmation",
+      "discharge_without_followup",
+      "discharge_without_scr_check",
+      "repeat_contrast_within_48h",
+      "skip_risk_assessment",
+      "use_high_osmolar_contrast"
+    ],
+    "total_allowed_actions": 58,
+    "timing_constraints": 8,
+    "timing_details": {
+      "check_baseline_egfr": 60,
+      "review_risk_factors": 60,
+      "iv_hydration_pre_contrast": 60,
+      "monitor_scr_48_72h": 4320,
+      "check_scr_at_48h": 2880,
+      "nephrology_consult": 120
+    },
+    "sequence_dependencies": 7,
+    "sequence_details": [
+      {
+        "action": "use_minimum_contrast_volume",
+        "requires": "check_baseline_egfr",
+        "node": "high_risk_pathway"
+      },
+      {
+        "action": "use_minimum_contrast_volume",
+        "requires": "iv_hydration_pre_contrast",
+        "node": "high_risk_pathway"
+      },
+      {
+        "action": "iv_hydration_post_contrast",
+        "requires": "iv_hydration_pre_contrast",
+        "node": "high_risk_pathway"
+      },
+      {
+        "action": "use_minimum_contrast_volume",
+        "requires": "check_baseline_egfr",
+        "node": "moderate_risk_pathway"
+      },
+      {
+        "action": "iv_hydration_post_contrast",
+        "requires": "iv_hydration_pre_contrast",
+        "node": "moderate_risk_pathway"
+      },
+      {
+        "action": "resume_metformin_if_egfr_stable",
+        "requires": "check_scr_at_48h",
+        "node": "post_contrast_monitoring"
+      },
+      {
+        "action": "provide_discharge_instructions",
+        "requires": "document_stable_egfr",
+        "node": "safe_discharge"
+      }
+    ],
+    "conditional_branches": 5,
+    "evidence_strength_distribution": {
+      "STRONG": 0,
+      "MODERATE": 5,
+      "WEAK": 2
+    },
+    "evidence_strength_pct": {
+      "STRONG": 0.0,
+      "MODERATE": 71.4,
+      "WEAK": 28.6
+    }
+  },
+  "pulmonary_embolism": {
+    "graph_id": "pulmonary_embolism",
+    "guideline_name": "ESC 2019 Pulmonary Embolism",
+    "file": "pulmonary_embolism.yaml",
+    "total_nodes": 3,
+    "total_mandatory_actions": 8,
+    "mandatory_actions": [
+      "assess_vital_signs",
+      "assess_wells_score",
+      "give_anticoagulation",
+      "give_thrombolysis",
+      "order_imaging_ct_pa",
+      "order_lab_bnp",
+      "order_lab_d_dimer",
+      "order_lab_troponin"
+    ],
+    "total_forbidden_actions": 2,
+    "forbidden_actions": [
+      "delay_anticoagulation",
+      "delay_anticoagulation_if_high_probability"
+    ],
+    "total_allowed_actions": 26,
+    "timing_constraints": 4,
+    "timing_details": {
+      "assess_vital_signs": 10,
+      "give_anticoagulation": 30,
+      "give_thrombolysis": 60
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 1,
+    "evidence_strength_distribution": {
+      "STRONG": 2,
+      "MODERATE": 1,
+      "WEAK": 0
+    },
+    "evidence_strength_pct": {
+      "STRONG": 66.7,
+      "MODERATE": 33.3,
+      "WEAK": 0.0
+    }
+  },
+  "ssc_sepsis_hour1_bundle": {
+    "graph_id": "ssc_sepsis_hour1_bundle",
+    "guideline_name": "Surviving Sepsis Campaign Hour-1 Bundle",
+    "file": "ssc_sepsis_hour1.yaml",
+    "total_nodes": 7,
+    "total_mandatory_actions": 12,
+    "mandatory_actions": [
+      "admit_to_icu",
+      "admit_to_ward",
+      "assess_infection_source",
+      "assess_organ_dysfunction",
+      "determine_disposition",
+      "give_broad_spectrum_antibiotics",
+      "give_crystalloid_30ml_kg",
+      "order_lab_blood_culture",
+      "order_lab_lactate",
+      "reassess_perfusion",
+      "remeasure_lactate_if_elevated",
+      "start_vasopressor_if_hypotensive"
+    ],
+    "total_forbidden_actions": 5,
+    "forbidden_actions": [
+      "admit_to_ward",
+      "delay_antibiotics",
+      "discharge_home",
+      "give_vasopressor_without_fluid",
+      "withhold_fluid_in_hypotension"
+    ],
+    "total_allowed_actions": 40,
+    "timing_constraints": 11,
+    "timing_details": {
+      "assess_infection_source": 10,
+      "assess_organ_dysfunction": 10,
+      "order_lab_lactate": 60,
+      "order_lab_blood_culture": 60,
+      "give_broad_spectrum_antibiotics": 60,
+      "give_crystalloid_30ml_kg": 180,
+      "start_vasopressor_if_hypotensive": 60,
+      "remeasure_lactate_if_elevated": 360
+    },
+    "sequence_dependencies": 4,
+    "sequence_details": [
+      {
+        "action": "give_broad_spectrum_antibiotics",
+        "requires": "order_lab_blood_culture",
+        "node": "sepsis_bundle"
+      },
+      {
+        "action": "give_broad_spectrum_antibiotics",
+        "requires": "order_lab_blood_culture",
+        "node": "septic_shock_bundle"
+      },
+      {
+        "action": "start_vasopressor_if_hypotensive",
+        "requires": "give_crystalloid_30ml_kg",
+        "node": "septic_shock_bundle"
+      },
+      {
+        "action": "remeasure_lactate_if_elevated",
+        "requires": "order_lab_lactate",
+        "node": "reassessment"
+      }
+    ],
+    "conditional_branches": 4,
+    "evidence_strength_distribution": {
+      "STRONG": 0,
+      "MODERATE": 4,
+      "WEAK": 3
+    },
+    "evidence_strength_pct": {
+      "STRONG": 0.0,
+      "MODERATE": 57.1,
+      "WEAK": 42.9
+    }
+  },
+  "universal_clinical_safety": {
+    "graph_id": "universal_clinical_safety",
+    "guideline_name": "Universal Clinical Safety Principles",
+    "file": "universal_clinical_safety.yaml",
+    "total_nodes": 3,
+    "total_mandatory_actions": 1,
+    "mandatory_actions": [
+      "assess_vital_signs"
+    ],
+    "total_forbidden_actions": 5,
+    "forbidden_actions": [
+      "discharge_critically_ill",
+      "discharge_without_assessment",
+      "discharge_without_diagnosis",
+      "give_contraindicated_medication",
+      "give_thrombolytics_without_imaging"
+    ],
+    "total_allowed_actions": 69,
+    "timing_constraints": 1,
+    "timing_details": {
+      "assess_vital_signs": 15
+    },
+    "sequence_dependencies": 0,
+    "sequence_details": [],
+    "conditional_branches": 0,
+    "evidence_strength_distribution": {
+      "STRONG": 0,
+      "MODERATE": 0,
+      "WEAK": 3
+    },
+    "evidence_strength_pct": {
+      "STRONG": 0.0,
+      "MODERATE": 0.0,
+      "WEAK": 100.0
+    }
+  }
+}

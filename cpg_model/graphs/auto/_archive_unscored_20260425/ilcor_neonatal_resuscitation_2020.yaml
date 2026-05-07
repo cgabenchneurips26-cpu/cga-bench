@@ -1,0 +1,114 @@
+graph_id: ilcor_neonatal_resuscitation_2020
+guideline_name: ILCOR Neonatal Resuscitation Consensus 2020
+version: '2020.1'
+metadata:
+  source: ILCOR Neonatal Resuscitation Consensus 2020
+  doi: 10.1161/CIR.0000000000000895
+  journal: Circulation
+  recommendation_system: ILCOR
+  description: Neonatal resuscitation at birth.
+  key_evidence: Therapeutic hypothermia for HIE reduces death and disability.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Assessment at Birth
+    description: Assess term, tone, breathing; dry, warm, stimulate.
+    precondition: null
+    mandatory_actions:
+    - assess_term_tone_breathing
+    - dry_stimulate_warm_newborn
+    - position_airway_and_clear_secretions
+    allowed_actions:
+    - position_airway_and_clear_secretions
+    - attach_ecg_monitor
+    - maintain_normothermia_36_5_to_37_5
+    - start_apgar_scoring
+    - assess_term_tone_breathing
+    - place_pulse_oximeter_right_hand
+    - dry_stimulate_warm_newborn
+    forbidden_actions: []
+    deadlines:
+      assess_term_tone_breathing: 1
+      dry_stimulate_warm_newborn: 1
+      position_airway_and_clear_secretions: 1
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ILCOR Neonatal Resuscitation Consensus 2020
+    source_section: Initial Steps
+    source_page: null
+    source_quote: Assessment of term, tone, and breathing should occur within 30 seconds of birth.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: Ventilation, Compressions, and Medications
+    description: PPV if HR<100, chest compressions if HR<60, epinephrine if HR remains low.
+    precondition: null
+    mandatory_actions:
+    - initiate_positive_pressure_ventilation_if_hr_below_100
+    - assess_heart_rate
+    - place_pulse_oximeter_right_hand
+    allowed_actions:
+    - intubate_if_ppv_ineffective
+    - give_volume_expander_if_hypovolemia_suspected
+    - initiate_chest_compressions_if_hr_below_60
+    - initiate_positive_pressure_ventilation_if_hr_below_100
+    - give_epinephrine_iv_if_hr_below_60_despite_ppv
+    - place_umbilical_venous_catheter
+    - place_pulse_oximeter_right_hand
+    - assess_heart_rate
+    - increase_fio2_if_persistent_bradycardia
+    forbidden_actions:
+    - give_routine_suctioning_if_vigorous
+    - give_sodium_bicarbonate_routinely
+    deadlines:
+      initiate_positive_pressure_ventilation_if_hr_below_100: 1
+      initiate_chest_compressions_if_hr_below_60: 2
+      give_epinephrine_iv_if_hr_below_60_despite_ppv: 5
+    required_prior_actions:
+      initiate_chest_compressions_if_hr_below_60:
+      - initiate_positive_pressure_ventilation_if_hr_below_100
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ILCOR Neonatal Resuscitation Consensus 2020
+    source_section: Resuscitation Algorithm
+    source_page: null
+    source_quote: Positive pressure ventilation is the cornerstone of neonatal resuscitation.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-resuscitation Monitoring and Transfer
+    description: Serial HR/SpO2, therapeutic hypothermia if eligible, NICU transfer.
+    precondition: null
+    mandatory_actions:
+    - reassess_heart_rate_and_spo2
+    - assess_apgar_at_5_and_10_minutes
+    allowed_actions:
+    - reassess_heart_rate_and_spo2
+    - order_lab_arterial_cord_blood_gas
+    - assess_apgar_at_5_and_10_minutes
+    - monitor_glucose_and_temperature
+    - initiate_therapeutic_hypothermia_if_hie_eligible
+    - transfer_to_nicu
+    forbidden_actions: []
+    deadlines:
+      reassess_heart_rate_and_spo2: 2
+      assess_apgar_at_5_and_10_minutes: 10
+      initiate_therapeutic_hypothermia_if_hie_eligible: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ILCOR Neonatal Resuscitation Consensus 2020
+    source_section: Post-resuscitation Care
+    source_page: null
+    source_quote: Therapeutic hypothermia should be offered to infants with moderate-severe HIE within 6 hours.
+    next_nodes: []
+    conditional_next: {}

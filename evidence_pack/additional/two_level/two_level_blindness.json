@@ -1,0 +1,61 @@
+{
+  "blindness_table": [
+    {
+      "violation_type": "WITHIN (timing)",
+      "terminal_output": "Blind",
+      "set_based": "Blind",
+      "process_aware": "Detects",
+      "bsr_evidence": "P1 BSR = 10.6% (identical across all baselines)"
+    },
+    {
+      "violation_type": "BEFORE (sequence)",
+      "terminal_output": "Blind",
+      "set_based": "Blind",
+      "process_aware": "Detects",
+      "bsr_evidence": "P2 BSR = 16.7% (identical across all baselines)"
+    },
+    {
+      "violation_type": "FORBIDDEN",
+      "terminal_output": "Blind",
+      "set_based": "Partially detects",
+      "process_aware": "Detects",
+      "bsr_evidence": "P4 BSR = 0.0% (Jaccard detects via set membership)"
+    },
+    {
+      "violation_type": "OMISSION",
+      "terminal_output": "Blind",
+      "set_based": "Partially detects",
+      "process_aware": "Detects",
+      "bsr_evidence": "P3 BSR varies: Jaccard=18.2%, C2=40.9%"
+    },
+    {
+      "violation_type": "OVERUSE",
+      "terminal_output": "Blind",
+      "set_based": "Partial (varies)",
+      "process_aware": "Detects",
+      "bsr_evidence": "P5 BSR: Jaccard=0.0%, C2=5.0%"
+    }
+  ],
+  "p5_analysis": [
+    {
+      "baseline": "B2-Jaccard",
+      "p5_bsr": 0.0,
+      "explanation": "Jaccard = |A\u2229E|/|A\u222aE|. Adding overuse actions increases |A\u222aE| but not |A\u2229E|, so Jaccard decreases \u2192 detects overuse \u2192 BSR=0%"
+    },
+    {
+      "baseline": "B3-C2Thresh",
+      "p5_bsr": 0.05,
+      "explanation": "C2Thresh checks C2\u22650.7. Overuse actions don't reduce C2 (mandatory coverage unchanged), but threshold boundary cases may flip \u2192 BSR=5%"
+    },
+    {
+      "baseline": "B4-ActionCov",
+      "p5_bsr": 0.05,
+      "explanation": "ActionCov = |A\u2229E|/|E|. Overuse adds to A but not to A\u2229E, so coverage unchanged. Threshold boundary cases \u2192 BSR=5%"
+    }
+  ],
+  "terminal_output_note": "Terminal-output metrics cannot distinguish any perturbation type from the original, because perturbations P1-P5 preserve the terminal state. This is a structural property, not an empirical finding, making DiagEM verification unnecessary for Proposition 2.",
+  "p1p2_invariance_note": "P1 (timing) and P2 (sequence) BSR rates are identical across all three set-based baselines (B2-Jaccard, B3-C2Thresh, B4-ActionCov) because these perturbations do not alter the action set. This invariance is a mathematical tautology for any set-based metric; the empirical contribution is quantifying the rate at which such invisible perturbations arise in practice.",
+  "epsilon": 0.05,
+  "delta": 0.1,
+  "latex_table": "\\begin{table}[t]\n\\centering\n\\caption{Two-level blindness structure. Terminal-output metrics are blind to all violation types; set-based metrics additionally detect omission and forbidden violations but remain blind to timing and sequence; process-aware evaluation (CGA-Bench) detects all five types.}\n\\label{tab:two_level}\n\\small\n\\begin{tabular}{lccc}\n\\toprule\n\\textbf{Violation Type} & \\textbf{Terminal-Output} & \\textbf{Set-Based} & \\textbf{Process-Aware} \\\\\n\\midrule\nWITHIN (timing) & \\xmark & \\xmark & \\cmark \\\\\nBEFORE (sequence) & \\xmark & \\xmark & \\cmark \\\\\nFORBIDDEN & \\xmark & $\\sim$ & \\cmark \\\\\nOMISSION & \\xmark & $\\sim$ & \\cmark \\\\\nOVERUSE & \\xmark & $\\sim$ & \\cmark \\\\\n\\bottomrule\n\\end{tabular}\n\\end{table}"
+}

@@ -1,0 +1,742 @@
+{
+  "meta": {
+    "generated": "2026-03-31",
+    "description": "Comprehensive verification of ALL premises supporting the Composite metric sensitivity claim",
+    "method": "Independent recomputation from composite_metric.json source data",
+    "branch": "eval_science"
+  },
+  "verification_1_saturation": {
+    "title": "67% saturation claim — CORRECTED",
+    "finding": "CRITICAL ERROR in previous docs: '67% of cells saturate with ÷exp' is WRONG. Actual: 90% with ÷exp, 67% with ÷(exp×2). The 67% number belongs to ÷(exp×2), not ÷exp. ÷exp is WORSE than claimed.",
+    "saturation_div_exp": {
+      "total": "54/60 = 90.0%",
+      "per_model": {
+        "oss-120b": "14/15 (93.3%)",
+        "Qwen3.5-35B": "14/15 (93.3%)",
+        "oss-20b": "14/15 (93.3%)",
+        "Qwen3-4B": "12/15 (80.0%)"
+      },
+      "non_saturated_cells": [
+        "stroke_tpa / oss-120b (acts=6, exp=9)",
+        "stroke_tpa / Qwen3.5-35B (acts=5, exp=9)",
+        "stroke_tpa / oss-20b (acts=4, exp=9)",
+        "af_new_onset / Qwen3-4B (acts=3, exp=5)",
+        "gi_bleeding / Qwen3-4B (acts=3, exp=6)",
+        "copd / Qwen3-4B (acts=2, exp=5)"
+      ]
+    },
+    "saturation_div_exp2": {
+      "total": "40/60 = 66.7%",
+      "per_model": {
+        "oss-120b": "13/15 (86.7%)",
+        "Qwen3.5-35B": "12/15 (80.0%)",
+        "oss-20b": "12/15 (80.0%)",
+        "Qwen3-4B": "3/15 (20.0%)"
+      },
+      "non_saturated_count_per_model": {
+        "oss-120b": 2,
+        "Qwen3.5-35B": 3,
+        "oss-20b": 3,
+        "Qwen3-4B": 12
+      }
+    },
+    "expected_actions": {
+      "source": "Scenario YAML configs (hand-defined expected action lists)",
+      "range": "4-10",
+      "mean": 6.2,
+      "values": {
+        "septic_shock_basic": 5,
+        "septic_shock_penicillin_allergy": 5,
+        "stemi_inferior_rv_trap": 6,
+        "dka_moderate_basic": 10,
+        "dka_hypokalemia_trap": 10,
+        "stroke_tpa_eligible": 9,
+        "contrast_aki_prevention_basic": 5,
+        "aki_stage1_basic": 5,
+        "af_new_onset_basic": 5,
+        "gi_bleeding_upper_basic": 6,
+        "htn_emergency_basic": 6,
+        "pe_submassive_basic": 4,
+        "copd_moderate_exacerbation": 5,
+        "adhf_warm_wet": 6,
+        "hemorrhagic_stroke": 6
+      }
+    },
+    "correction_needed": "composite_formula_comparison.md line 37: change '67% of cells' to '90% of cells (54/60)'. The 67% figure applies to ÷(exp×2), not ÷exp."
+  },
+  "verification_2_ranking_consistency": {
+    "title": "Ranking stability across normalization constants k",
+    "method": "Computed CGA × min(1, acts/(exp×k)) for k=0.5 to 4.0 in 0.1 increments",
+    "findings": {
+      "k_lte_1.0": "4B ranks 1st (CGA-like behavior, conservative wins)",
+      "k_1.1": "120B rises to 1st (transition point)",
+      "k_1.2_to_2.5": "Stable: 120B > 20B > 35B > 4B",
+      "k_2.6_to_3.2": "Middle flip: 120B > 35B > 20B > 4B",
+      "k_gte_3.3": "Stable: 120B > 20B > 35B > 4B"
+    },
+    "significance_threshold": {
+      "k_1.9": {
+        "p": 0.073,
+        "sig": false
+      },
+      "k_2.0": {
+        "p": 0.043,
+        "sig": true
+      },
+      "observation": "k=2.0 is the MINIMUM k that achieves significance (alpha=0.05)"
+    },
+    "weakness": "k=2.0 being the exact threshold is vulnerable to 'p-hacking' critique. Defense: Comp B (independent formula) gives p=0.040.",
+    "4B_always_last": "For ALL k >= 1.1, Qwen3-4B ranks last. Top rank (120B vs 20B vs 35B) varies.",
+    "ranks_by_k": {
+      "k=1.0_div_exp": [
+        "Qwen3-4B",
+        "oss-120b",
+        "oss-20b",
+        "Qwen3.5-35B"
+      ],
+      "k=1.5": [
+        "oss-120b",
+        "oss-20b",
+        "Qwen3.5-35B",
+        "Qwen3-4B"
+      ],
+      "k=2.0": [
+        "oss-120b",
+        "oss-20b",
+        "Qwen3.5-35B",
+        "Qwen3-4B"
+      ],
+      "k=2.5": [
+        "oss-120b",
+        "oss-20b",
+        "Qwen3.5-35B",
+        "Qwen3-4B"
+      ],
+      "k=3.0": [
+        "oss-120b",
+        "Qwen3.5-35B",
+        "oss-20b",
+        "Qwen3-4B"
+      ]
+    }
+  },
+  "verification_3_expansion_reliability": {
+    "title": "4B low action count on expansion scenarios — real or artifact?",
+    "verdict": "REAL. 4B genuinely generates 2-3 actions. NOT parser failure or ActionNormalizer artifact.",
+    "evidence": {
+      "copd_moderate_exacerbation": {
+        "runs": 4,
+        "actions_per_run": [
+          2,
+          2,
+          2,
+          2
+        ],
+        "actions": [
+          "assess_vital_signs",
+          "order_imaging_chest_xray"
+        ],
+        "llm_calls": 4,
+        "cga_score": 1.0,
+        "note": "ALL 4 runs identical. 4B stops after 2 actions. Already in standard CPG format — no normalization needed."
+      },
+      "af_new_onset_basic": {
+        "runs": 4,
+        "actions_per_run": [
+          3,
+          3,
+          3,
+          11
+        ],
+        "typical_actions": [
+          "assess_vital_signs",
+          "order_imaging_chest_xray",
+          "order_lab_bmp"
+        ],
+        "note": "3/4 runs = 3 actions (convergent). 1 outlier run with 11 actions."
+      },
+      "gi_bleeding_upper_basic": {
+        "runs": 4,
+        "actions_per_run": [
+          3,
+          3,
+          3,
+          10
+        ],
+        "typical_actions": [
+          "assess_vital_signs",
+          "order_lab_cbc",
+          "order_lab_bmp"
+        ],
+        "note": "3/4 runs = 3 actions (convergent). 1 outlier run with 10 actions."
+      }
+    },
+    "action_normalizer_check": {
+      "result": "Not applicable — 4B output is already in standard CPG action_id format (assess_vital_signs, order_lab_*, order_imaging_*). No normalization corrections needed or lost.",
+      "raw_action_ids_verified": true
+    },
+    "root_cause": "4B model (4 billion parameters) has limited instruction-following capability. It identifies 2-3 obvious initial actions but fails to plan beyond basic assessment. Only 4 LLM calls per episode (vs 10-30+ for larger models)."
+  },
+  "verification_4_friedman_input": {
+    "title": "All 60 Composite A input values for p=0.043 Friedman test",
+    "formula": "CGA × min(1.0, actions / (expected_actions × 2))",
+    "recomputation_result": {
+      "chi2": 8.1575,
+      "p": 0.042866,
+      "matches_reported": true
+    },
+    "mismatches": 0,
+    "all_60_values": {
+      "septic_shock_basic": {
+        "oss-120b": {
+          "cga": 0.9091,
+          "actions": 22,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.9091
+        },
+        "Qwen3.5-35B": {
+          "cga": 1.0,
+          "actions": 15,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 1.0
+        },
+        "oss-20b": {
+          "cga": 1.0,
+          "actions": 19,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 1.0
+        },
+        "Qwen3-4B": {
+          "cga": 1.0,
+          "actions": 7,
+          "exp_actions": 5,
+          "capped_cov": 0.7,
+          "comp_A": 0.7
+        }
+      },
+      "septic_shock_penicillin_allergy": {
+        "oss-120b": {
+          "cga": 0.9091,
+          "actions": 22,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.9091
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.9375,
+          "actions": 16,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.9375
+        },
+        "oss-20b": {
+          "cga": 0.9474,
+          "actions": 19,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.9474
+        },
+        "Qwen3-4B": {
+          "cga": 1.0,
+          "actions": 8,
+          "exp_actions": 5,
+          "capped_cov": 0.8,
+          "comp_A": 0.8
+        }
+      },
+      "stemi_inferior_rv_trap": {
+        "oss-120b": {
+          "cga": 0.8235,
+          "actions": 17,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.8235
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.7778,
+          "actions": 18,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.7778
+        },
+        "oss-20b": {
+          "cga": 0.8235,
+          "actions": 17,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.8235
+        },
+        "Qwen3-4B": {
+          "cga": 0.8182,
+          "actions": 11,
+          "exp_actions": 6,
+          "capped_cov": 0.9167,
+          "comp_A": 0.75
+        }
+      },
+      "dka_moderate_basic": {
+        "oss-120b": {
+          "cga": 0.5862,
+          "actions": 29,
+          "exp_actions": 10,
+          "capped_cov": 1.0,
+          "comp_A": 0.5862
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.7692,
+          "actions": 13,
+          "exp_actions": 10,
+          "capped_cov": 0.65,
+          "comp_A": 0.5
+        },
+        "oss-20b": {
+          "cga": 0.7692,
+          "actions": 13,
+          "exp_actions": 10,
+          "capped_cov": 0.65,
+          "comp_A": 0.5
+        },
+        "Qwen3-4B": {
+          "cga": 0.6,
+          "actions": 10,
+          "exp_actions": 10,
+          "capped_cov": 0.5,
+          "comp_A": 0.3
+        }
+      },
+      "dka_hypokalemia_trap": {
+        "oss-120b": {
+          "cga": 0.6522,
+          "actions": 23,
+          "exp_actions": 10,
+          "capped_cov": 1.0,
+          "comp_A": 0.6522
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.7692,
+          "actions": 13,
+          "exp_actions": 10,
+          "capped_cov": 0.65,
+          "comp_A": 0.5
+        },
+        "oss-20b": {
+          "cga": 0.5417,
+          "actions": 24,
+          "exp_actions": 10,
+          "capped_cov": 1.0,
+          "comp_A": 0.5417
+        },
+        "Qwen3-4B": {
+          "cga": 0.6364,
+          "actions": 11,
+          "exp_actions": 10,
+          "capped_cov": 0.55,
+          "comp_A": 0.35
+        }
+      },
+      "stroke_tpa_eligible": {
+        "oss-120b": {
+          "cga": 0.7778,
+          "actions": 6,
+          "exp_actions": 9,
+          "capped_cov": 0.3333,
+          "comp_A": 0.2593
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.7778,
+          "actions": 5,
+          "exp_actions": 9,
+          "capped_cov": 0.2778,
+          "comp_A": 0.2161
+        },
+        "oss-20b": {
+          "cga": 0.8889,
+          "actions": 4,
+          "exp_actions": 9,
+          "capped_cov": 0.2222,
+          "comp_A": 0.1975
+        },
+        "Qwen3-4B": {
+          "cga": 0.4,
+          "actions": 10,
+          "exp_actions": 9,
+          "capped_cov": 0.5556,
+          "comp_A": 0.2222
+        }
+      },
+      "contrast_aki_prevention_basic": {
+        "oss-120b": {
+          "cga": 0.6111,
+          "actions": 36,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.6111
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.5882,
+          "actions": 34,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.5882
+        },
+        "oss-20b": {
+          "cga": 0.5833,
+          "actions": 36,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.5833
+        },
+        "Qwen3-4B": {
+          "cga": 0.7222,
+          "actions": 18,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.7222
+        }
+      },
+      "aki_stage1_basic": {
+        "oss-120b": {
+          "cga": 0.5714,
+          "actions": 35,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.5714
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.5882,
+          "actions": 34,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.5882
+        },
+        "oss-20b": {
+          "cga": 0.6071,
+          "actions": 28,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.6071
+        },
+        "Qwen3-4B": {
+          "cga": 0.6875,
+          "actions": 16,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.6875
+        }
+      },
+      "af_new_onset_basic": {
+        "oss-120b": {
+          "cga": 0.375,
+          "actions": 24,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.375
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.4667,
+          "actions": 15,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.4667
+        },
+        "oss-20b": {
+          "cga": 0.4444,
+          "actions": 18,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.4444
+        },
+        "Qwen3-4B": {
+          "cga": 0.8,
+          "actions": 3,
+          "exp_actions": 5,
+          "capped_cov": 0.3,
+          "comp_A": 0.24
+        }
+      },
+      "gi_bleeding_upper_basic": {
+        "oss-120b": {
+          "cga": 0.6667,
+          "actions": 24,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.6667
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.4118,
+          "actions": 17,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.4118
+        },
+        "oss-20b": {
+          "cga": 0.3684,
+          "actions": 19,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.3684
+        },
+        "Qwen3-4B": {
+          "cga": 1.0,
+          "actions": 3,
+          "exp_actions": 6,
+          "capped_cov": 0.25,
+          "comp_A": 0.25
+        }
+      },
+      "htn_emergency_basic": {
+        "oss-120b": {
+          "cga": 0.7083,
+          "actions": 24,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.7083
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.4615,
+          "actions": 13,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.4615
+        },
+        "oss-20b": {
+          "cga": 0.5,
+          "actions": 10,
+          "exp_actions": 6,
+          "capped_cov": 0.8333,
+          "comp_A": 0.4167
+        },
+        "Qwen3-4B": {
+          "cga": 0.5,
+          "actions": 10,
+          "exp_actions": 6,
+          "capped_cov": 0.8333,
+          "comp_A": 0.4167
+        }
+      },
+      "pe_submassive_basic": {
+        "oss-120b": {
+          "cga": 0.5238,
+          "actions": 21,
+          "exp_actions": 4,
+          "capped_cov": 1.0,
+          "comp_A": 0.5238
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.5385,
+          "actions": 13,
+          "exp_actions": 4,
+          "capped_cov": 1.0,
+          "comp_A": 0.5385
+        },
+        "oss-20b": {
+          "cga": 0.75,
+          "actions": 8,
+          "exp_actions": 4,
+          "capped_cov": 1.0,
+          "comp_A": 0.75
+        },
+        "Qwen3-4B": {
+          "cga": 0.5556,
+          "actions": 9,
+          "exp_actions": 4,
+          "capped_cov": 1.0,
+          "comp_A": 0.5556
+        }
+      },
+      "copd_moderate_exacerbation": {
+        "oss-120b": {
+          "cga": 0.4167,
+          "actions": 24,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.4167
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.5385,
+          "actions": 13,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.5385
+        },
+        "oss-20b": {
+          "cga": 0.7,
+          "actions": 10,
+          "exp_actions": 5,
+          "capped_cov": 1.0,
+          "comp_A": 0.7
+        },
+        "Qwen3-4B": {
+          "cga": 1.0,
+          "actions": 2,
+          "exp_actions": 5,
+          "capped_cov": 0.2,
+          "comp_A": 0.2
+        }
+      },
+      "adhf_warm_wet": {
+        "oss-120b": {
+          "cga": 0.9,
+          "actions": 10,
+          "exp_actions": 6,
+          "capped_cov": 0.8333,
+          "comp_A": 0.75
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.6875,
+          "actions": 16,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.6875
+        },
+        "oss-20b": {
+          "cga": 0.6429,
+          "actions": 14,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.6429
+        },
+        "Qwen3-4B": {
+          "cga": 1.0,
+          "actions": 7,
+          "exp_actions": 6,
+          "capped_cov": 0.5833,
+          "comp_A": 0.5833
+        }
+      },
+      "hemorrhagic_stroke": {
+        "oss-120b": {
+          "cga": 0.5312,
+          "actions": 32,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.5312
+        },
+        "Qwen3.5-35B": {
+          "cga": 0.5385,
+          "actions": 13,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.5385
+        },
+        "oss-20b": {
+          "cga": 0.4375,
+          "actions": 16,
+          "exp_actions": 6,
+          "capped_cov": 1.0,
+          "comp_A": 0.4375
+        },
+        "Qwen3-4B": {
+          "cga": 0.5,
+          "actions": 8,
+          "exp_actions": 6,
+          "capped_cov": 0.6667,
+          "comp_A": 0.3333
+        }
+      }
+    },
+    "spot_checks": [
+      {
+        "cell": "htn_emergency_basic / oss-120b",
+        "cga": 0.7083,
+        "actions": 24,
+        "exp": 6,
+        "step1_exp_x2": 12,
+        "step2_acts_div": 2.0,
+        "step3_min": 1.0,
+        "step4_comp_a": 0.7083,
+        "reported": 0.7083,
+        "match": true
+      },
+      {
+        "cell": "septic_shock_penicillin / Qwen3-4B",
+        "cga": 1.0,
+        "actions": 8,
+        "exp": 5,
+        "step1_exp_x2": 10,
+        "step2_acts_div": 0.8,
+        "step3_min": 0.8,
+        "step4_comp_a": 0.8,
+        "reported": 0.8,
+        "match": true
+      },
+      {
+        "cell": "septic_shock_basic / Qwen3.5-35B",
+        "cga": 1.0,
+        "actions": 15,
+        "exp": 5,
+        "step1_exp_x2": 10,
+        "step2_acts_div": 1.5,
+        "step3_min": 1.0,
+        "step4_comp_a": 1.0,
+        "reported": 1.0,
+        "match": true
+      }
+    ]
+  },
+  "verification_5_div_exp_mechanism": {
+    "title": "Why ÷exp Friedman p=0.66 > CGA alone p=0.249",
+    "friedman_results": {
+      "cga_alone": {
+        "chi2": 4.1197,
+        "p": 0.2488
+      },
+      "comp_a_div_exp": {
+        "chi2": 1.5944,
+        "p": 0.6607
+      },
+      "comp_a_div_exp2": {
+        "chi2": 8.1575,
+        "p": 0.0429
+      }
+    },
+    "mechanism": {
+      "summary": "÷exp has only 6/60 non-saturated cells. These 6 cells CANCEL OUT the existing rank separation rather than amplifying it.",
+      "detail": [
+        "stroke_tpa: 120B/35B/20B all have acts < exp (4-6 vs 9). Their scores DROP. But 4B (acts=10 > exp=9) is NOT penalized. Effect: large models lose rank advantage on this scenario.",
+        "af/gi/copd: ONLY 4B has acts < exp. 4B loses its CGA-based rank advantage on these 3 scenarios.",
+        "NET: Large models are penalized on stroke; 4B is penalized on 3 expansion scenarios. These opposing effects COMPRESS rank sums, reducing chi2."
+      ],
+      "rank_sum_range": {
+        "cga_alone": 13.5,
+        "div_exp": 8.0,
+        "div_exp2": 18.0,
+        "interpretation": "÷exp compresses range (8.0 < 13.5), ÷(exp×2) expands range (18.0 > 13.5). Wider range → lower p."
+      },
+      "non_saturated_cells_per_model": {
+        "div_exp": {
+          "oss-120b": 1,
+          "Qwen3.5-35B": 1,
+          "oss-20b": 1,
+          "Qwen3-4B": 3
+        },
+        "div_exp2": {
+          "oss-120b": 2,
+          "Qwen3.5-35B": 3,
+          "oss-20b": 3,
+          "Qwen3-4B": 12
+        }
+      },
+      "key_insight": "÷(exp×2) creates ASYMMETRIC penalization: 4B has 12/15 non-saturated cells while large models have only 2-3. This consistent 4B penalty drives separation and significance."
+    }
+  },
+  "overall_assessment": {
+    "premises_verified": 5,
+    "premises_total": 5,
+    "critical_corrections": [
+      "CORRECTED: '67% with ÷exp' → '90% with ÷exp, 67% with ÷(exp×2)'. The ÷exp situation is WORSE than previously claimed.",
+      "VULNERABILITY: k=2.0 is the minimum k for significance. k=1.9 gives p=0.073 (ns). This must be disclosed.",
+      "MITIGANT: Comp B (harmonic mean, independent formula) gives p=0.040 regardless of k parameter."
+    ],
+    "documents_needing_correction": [
+      "composite_formula_comparison.md: line 37 — '67% of cells' → '90% of cells (54/60)'",
+      "composite_formula_comparison.md: line 98 — same correction",
+      "composite_formula_comparison.md: line 106 — same correction",
+      "FINAL_NUMBERS.md: line 30 — '67% of cells' → '90% of cells'",
+      "cga_bench_full_briefing.md: mention of 67% → 90%"
+    ]
+  }
+}

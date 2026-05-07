@@ -1,0 +1,138 @@
+graph_id: pals_pediatric_traumatic_arrest_2020
+guideline_name: pals_pediatric_traumatic_arrest_2020
+version: '2024.1'
+metadata:
+  source: PALS Pediatric Traumatic Arrest
+  doi: ''
+  recommendation_system: GRADE
+  description: Clinical workflow for pediatric traumatic arrest focusing on high-quality CPR, respiratory management, and
+    weight-based medication dosing.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Arrest Assessment
+    description: Assess patient for cardiac arrest and determine rhythm status.
+    mandatory_actions:
+    - provide_adequate_chest_compression_rate
+    - provide_adequate_chest_compression_depth
+    allowed_actions:
+    - provide_adequate_chest_compression_rate
+    - provide_adequate_chest_compression_depth
+    - minimize_cpr_interruptions
+    - allow_full_chest_recoil
+    - avoid_excessive_ventilation
+    forbidden_actions:
+    - excessive_ventilation
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: PALS Pediatric Traumatic Arrest
+    source_section: CPR Quality
+    source_page: null
+    source_quote: "New data reaffirm the key components of high-quality CPR: \nproviding adequate chest compression rate and\
+      \ depth, minimizing inter-\nruptions in CPR, allowing full chest recoil between compressions, and \navoiding excessive\
+      \ ventilation."
+    next_nodes: []
+    conditional_next:
+      state.nonshockable: medication_bundle
+      state.advanced_airway: respiratory_management
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.941
+  respiratory_management:
+    node_id: respiratory_management
+    node_type: plan
+    name: Respiratory Support
+    description: Manage ventilation rates and airway techniques.
+    mandatory_actions:
+    - set_respiratory_rate_20_to_30_bpm
+    allowed_actions:
+    - set_respiratory_rate_20_to_30_bpm
+    forbidden_actions:
+    - routine_use_of_cricoid_pressure
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: PALS Pediatric Traumatic Arrest
+    source_section: Airway
+    source_page: null
+    source_quote: A respiratory rate of 20 to 30 breaths per minute is new for infants and children who are (a) receiving
+      CPR with an advanced airway in place or (b) receiving rescue breathing and have a pulse.
+    next_nodes:
+    - medication_bundle
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  medication_bundle:
+    node_id: medication_bundle
+    node_type: action
+    name: Resuscitation Medication
+    description: Calculate and administer emergency medications based on weight.
+    mandatory_actions:
+    - calculate_drug_dose_by_body_weight
+    - administer_epinephrine
+    allowed_actions:
+    - calculate_drug_dose_by_body_weight
+    - administer_epinephrine
+    - use_body_length_tape
+    - use_cognitive_aids_for_dosing
+    forbidden_actions:
+    - exceed_adult_recommended_dose
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: PALS Pediatric Traumatic Arrest
+    source_section: Medications
+    source_page: null
+    source_quote: For resuscitation medication dosing, it is recommended to use the child’s body weight to calculate resuscitation
+      drug doses while not exceeding the recommended dose for adults.
+    next_nodes:
+    - monitoring_and_disposition
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  monitoring_and_disposition:
+    node_id: monitoring_and_disposition
+    node_type: enquiry
+    name: Monitoring and Disposition
+    description: Evaluate response to interventions and determine next steps.
+    mandatory_actions:
+    - minimize_cpr_interruptions
+    allowed_actions:
+    - minimize_cpr_interruptions
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: PALS Pediatric Traumatic Arrest
+    source_section: CPR Quality
+    source_page: null
+    source_quote: "New data reaffirm the key components of high-quality CPR: \nproviding adequate chest compression rate and\
+      \ depth, minimizing inter-\nruptions in CPR, allowing full chest recoil between compressions, and \navoiding excessive\
+      \ ventilation."
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.941
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 6
+  actionable_count: 6
+  validation_errors: 2
+  generated_at: '2026-04-29T17:12:16.381819+00:00'

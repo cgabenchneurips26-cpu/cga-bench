@@ -1,0 +1,44 @@
+{
+  "analysis_id": "healthbench_clinical_severity_v2",
+  "total_episodes": 5000,
+  "native_pass": 3997,
+  "discordant_rates": {
+    "original_definition": {
+      "count": 3586,
+      "rate": 89.72,
+      "note": "mc<1.0 OR fa<1.0 — treats ALL positive rubrics as mandatory"
+    },
+    "keyword_mandatory_strict": {
+      "rate": 21.3,
+      "note": "Only rubrics with clinical action keywords counted as mandatory"
+    },
+    "refined_with_50_sample_correction": {
+      "count": 1203,
+      "rate": 30.1,
+      "note": "commission + (omission-only * 16% true omission rate from 50-sample)"
+    },
+    "commission_only": {
+      "count": 749,
+      "rate": 13.79,
+      "note": "forbidden_avoidance < 1.0 — most clinically relevant"
+    }
+  },
+  "50_sample_correction_basis": {
+    "A_true_omission": "8/50 = 16%",
+    "B_matching_failure": "0/50 = 0%",
+    "C_over_classification": "42/50 = 84%"
+  },
+  "severity_breakdown": {
+    "likely_over_classification": 2269,
+    "possible_real_omission": 568,
+    "moderate_commission": 340,
+    "severe_commission": 225,
+    "mild_commission": 184
+  },
+  "cause_breakdown": {
+    "concordant": 411,
+    "omission_only": 2837,
+    "commission_only": 204,
+    "both_omission_and_commission": 545
+  }
+}

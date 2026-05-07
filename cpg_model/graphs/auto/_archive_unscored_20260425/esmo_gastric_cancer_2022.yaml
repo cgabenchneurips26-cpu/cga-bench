@@ -1,0 +1,109 @@
+graph_id: esmo_gastric_cancer_2022
+guideline_name: ESMO Gastric Cancer 2022
+version: '2022.1'
+metadata:
+  source: ESMO Gastric Cancer 2022
+  doi: 10.1016/j.annonc.2022.07.004
+  journal: Annals of Oncology
+  recommendation_system: ESMO-MCBS
+  description: Gastric cancer staging, treatment, and surveillance.
+  key_evidence: FLOT4 and KEYNOTE-859 trials inform modern systemic therapy.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Gastric Cancer Staging
+    description: Endoscopic biopsy, CT staging, HER2/PD-L1 profiling for advanced disease.
+    precondition: null
+    mandatory_actions:
+    - order_staging_endoscopy_biopsy
+    - order_staging_ct_chest_abdomen
+    - order_lab_cbc
+    allowed_actions:
+    - order_lab_her2_pdl1
+    - order_staging_pet_ct_if_indicated
+    - order_staging_ct_chest_abdomen
+    - order_lab_albumin
+    - order_lab_cbc
+    - order_lab_lft
+    - order_staging_endoscopy_biopsy
+    - order_staging_eus
+    - consult_oncology
+    forbidden_actions: []
+    deadlines:
+      order_staging_endoscopy_biopsy: 4320
+      order_staging_ct_chest_abdomen: 4320
+      order_lab_cbc: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ESMO Gastric Cancer 2022
+    source_section: Diagnosis and staging
+    source_page: null
+    source_quote: HER2 testing is required in advanced/metastatic gastric cancer.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Resection, Chemo, or Targeted Therapy
+    description: Perioperative FLOT for resectable; first-line chemo + trastuzumab for HER2+ advanced.
+    precondition: null
+    mandatory_actions:
+    - discuss_tumor_board
+    - plan_chemotherapy
+    allowed_actions:
+    - consult_palliative_care
+    - plan_chemotherapy
+    - plan_resection_if_operable
+    - plan_trastuzumab_if_her2_positive
+    - discuss_tumor_board
+    - plan_perioperative_flot
+    - plan_nivolumab_if_pdl1_positive
+    - consult_hepatobiliary_surgery
+    forbidden_actions:
+    - plan_resection_if_metastatic
+    deadlines:
+      discuss_tumor_board: 5760
+      plan_chemotherapy: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ESMO Gastric Cancer 2022
+    source_section: Treatment
+    source_page: null
+    source_quote: Perioperative FLOT improves survival in resectable gastric adenocarcinoma.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Surveillance & Nutrition
+    description: Regular clinical and imaging follow-up, nutrition optimization, symptom management.
+    precondition: null
+    mandatory_actions:
+    - plan_surveillance_imaging
+    - refer_nutrition
+    allowed_actions:
+    - refer_nutrition
+    - reassess_clinical_response
+    - plan_second_line_if_progression
+    - manage_cancer_pain
+    - monitor_weight_and_albumin
+    - plan_surveillance_imaging
+    forbidden_actions: []
+    deadlines:
+      plan_surveillance_imaging: 10080
+      refer_nutrition: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESMO Gastric Cancer 2022
+    source_section: Follow-up
+    source_page: null
+    source_quote: Nutritional support is essential throughout gastric cancer therapy.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,28 @@
+# LLM-Assist Agent Configuration
+# Hybrid agent combining rule-based accuracy with LLM extensibility
+agent:
+  type: "llm_assist"
+  agent_id: "llm_assist_baseline"
+
+  # LLM Settings - vLLM local server
+  llm_backend: "vllm"
+  llm_model: "Qwen/Qwen3-30B-A3B-Instruct-2507"
+  temperature: 0.1
+  base_url: "http://localhost:8013/v1"
+
+  # Domain Settings
+  domain: "general"  # Will be auto-detected from scenario
+  cpg_sources_path: "cpg_sources"
+
+  # Semantic Layer Feature Toggles
+  use_semantic_validation: true
+  use_constraint_synthesis: true
+  use_action_normalization: true
+
+  # Performance Settings
+  max_actions_per_step: 5
+  cache_parsed_guidelines: true
+
+  # Budget Settings
+  budget_limit_tokens: 50000
+  budget_limit_tool_calls: 100

@@ -1,0 +1,61 @@
+diff --git a/cga_bench/paper/appendix_v18.tex b/cga_bench/paper/appendix_v18.tex
+index 09aa8885..616712b9 100644
+--- a/cga_bench/paper/appendix_v18.tex
++++ b/cga_bench/paper/appendix_v18.tex
+@@ -804,7 +804,7 @@ Strict coarsened-observation consensus FA (ASC$\cap$PAF$\cap$CwT, $n_{\mathrm{FA
+ 
+ \begin{table}[h]
+ \centering\footnotesize
+-\caption{Strict-consensus FA decomposition by violation family (Phase~A 9-model corpus, $n{=}\numEpisodes{}$; recomputed 2026-04-30 from \texttt{verdict\_matrix\_v6.json}, exact-match cross-check against \texttt{exp\_e9\_safety\_core.json}). Rows in descending share. ``Mixed safety/process'' covers episodes whose violation set spans more than one of \textsc{within}/\textsc{before}/\textsc{forbid}/\textsc{must} but is not MUST-only (here: \textsc{forbid}+\textsc{within}). The safety-core total (rows excluding MUST-only) is \safetyCoreFAEpisodes{} (\safetyCoreFAPct{}\% of \numEpisodes{}). \emph{Released-matrix caveat:} \texttt{viol\_types} carries only \{WITHIN, FORBIDDEN, BEFORE\}; OMISSION-of-MUST manifests as WITHIN, so the WITHIN-only and MUST-only cells are operationally indistinguishable in v6. The MUST-only row reports the conflated cell; the separate WITHIN-only row is reported as $0$ to preserve table-row additivity (980+0+0+139+5 = \strictFAThreeCount{}).}
++\caption{Strict-consensus FA decomposition by violation family (Phase~A 9-model corpus, $n{=}\numEpisodes{}$; recomputed 2026-04-30 from \texttt{verdict\_matrix\_v6.json}, exact-match cross-check against \texttt{exp\_e9\_safety\_core.json}). Rows in descending share. ``Mixed safety/process'' covers episodes whose violation set spans more than one of \textsc{within}/\textsc{before}/\textsc{forbid}/\textsc{must} but is not MUST-only (here: \textsc{forbid}+\textsc{within}). The safety-core total (rows excluding MUST-only) is \safetyCoreFAEpisodes{} (\safetyCoreFAPct{}\% of \numEpisodes{}). \emph{Released-matrix caveat:} \texttt{viol\_types} carries only \{WITHIN, FORBIDDEN, BEFORE\}; OMISSION-of-MUST manifests as WITHIN, so the WITHIN-only and MUST-only cells are operationally indistinguishable in v6. The MUST-only row reports the conflated cell; the separate WITHIN-only row is reported as $0$ to preserve table-row additivity (980+0+0+139+5 = \strictFAThreeCount{}). Cross-cohort note: this decomposition is restricted to the strict-3-way consensus FA cohort ($n_{\mathrm{FA}}{=}\strictFAThreeCount{}$); corpus-wide timing-violation counts cited in §\ref{sec:formalism}--§\ref{sec:findings} are over the full \numEpisodes{}-episode hard-violating cohort and are not directly comparable to the row totals here.}
+ \label{tab:safety_core_decomposition}
+ \begin{tabular}{@{}lrr@{}}
+ \toprule
+@@ -2215,7 +2215,7 @@ strictly more violations under CDE coupling, the rest are unchanged.
+ 
+ \begin{table}[ht]
+ \centering
+-\caption{Headline metric changes after the v1.1 patch (n=\conflictPatternsN{} demo episodes).}
++\caption{Headline metric changes after the v1.1 patch (n=\conflictPatternsN{} demo episodes). \emph{Corpus boundary:} the \strictFAThreePre{}\%/\strictFAThreeFixed{}\% pre/post values are computed on the Phase A 8m demo corpus (n=16,944) used by the v1.1 demonstration pipeline (\texttt{scripts/scn012\_repatch/run\_re\_scoring.py}); the headline §\ref{sec:verdict_flip} value \strictFAThree{}\% is over the Phase A 9m corpus (n=\numEpisodes{}). The 6.6\%/6.6\% flat pre/post is qualitative-by-design (the synthesised demo episodes do not enter the strict-consensus intersection), not a regression.}
+ \label{tab:cde_pre_post}
+ \small
+ \begin{tabular}{l c c c}
+diff --git a/cga_bench/paper/auto_numbers.tex b/cga_bench/paper/auto_numbers.tex
+index 92d5f2d6..3d187137 100644
+--- a/cga_bench/paper/auto_numbers.tex
++++ b/cga_bench/paper/auto_numbers.tex
+@@ -399,6 +399,11 @@
+ \newcommand{\consensusFARate}{11.05}    % 2106/19062 Phase A 9m (recomputed 2026-04-30). Phase B 8m = 5.76. Typed CwT: 19.55.
+ \newcommand{\consensusFACritical}{139}      % Phase A 9m loose-FA v4_crit (recomputed 2026-04-30). Phase B 8m = 170. Typed CwT: 634.
+ \newcommand{\consensusFACriticalPct}{6.60}  % 139/2106 Phase A 9m (recomputed 2026-04-30). Phase B 8m = 3.86. Typed CwT: 4.24.
++% Phase B 8m critical FA — added 2026-04-30 to replace hardcoded 3.9 in main_final_v18.tex L438 (N7 fix)
++\providecommand{\consensusFACriticalPctPhaseB}{3.86}  % 170/4405 Phase B 8m loose-FA v4_crit
++\providecommand{\consensusFACriticalPhaseB}{170}      % Phase B 8m loose-FA v4_crit count
++\providecommand{\strictFACriticalPctPhaseB}{1.88}     % 56/2974 Phase B 8m strict-3way-FA v4_crit
++\providecommand{\strictFACriticalPhaseB}{56}         % Phase B 8m strict-3way-FA v4_crit count
+ \newcommand{\consensusFAHigh}{144}      % DEPRECATED 2026-04-29 — Phase B value, no longer referenced after App. T 2-tier rebuild (see docs/critical_review/v18_critical_fa_addendum_*.md)
+ \newcommand{\consensusFAMedium}{2674}    % DEPRECATED 2026-04-29 — Phase B value, no longer referenced
+ \newcommand{\consensusFALow}{1287}      % DEPRECATED 2026-04-29 — Phase B value, no longer referenced
+@@ -582,7 +587,8 @@
+ \newcommand{\strictFAFour}{3.89}                     % Phase B 8m TOM∩ASC∩PAF∩CwT FA. Phase A 9m = 5.90.
+ \newcommand{\strictFAFourCount}{2974}                % Phase B 8m. Phase A 9m = 1124.
+ \newcommand{\strictFACriticalPct}{1.96}              % 22/1124 Phase A 9m strict-3way v4_crit (recomputed 2026-04-30; was 2.0 mislabeled as Phase B). Phase B 8m = 1.88 (56/2974).
+-\newcommand{\strictFACriticalCount}{123}             % Phase A 8m safety-core (FORBIDDEN|BEFORE in strict3-FA) — NOT a v4_crit count; misnamed historically. Phase A 9m safety-core = 144 (=\safetyCoreFAEpisodes). v4_crit count is in \strictFACritical.
++% RETIRED 2026-04-30: \strictFACriticalCount was Phase A 8m safety-core (FORBIDDEN|BEFORE in strict3-FA), historically misnamed as "Critical" though it is not a v4_crit count. Zero paper-prose usage confirmed by grep; retired to prevent typo-swap risk with \strictFACritical (22, Phase A 9m v4_crit count). Use \safetyCoreFAEpisodes{} for Phase A 9m safety-core (=144) or \strictFACritical{} for v4_crit (=22). If the Phase A 8m value is needed in future, define a corpus-tagged macro (e.g., \strictFASafetyCorePhaseAEightm).
++% \newcommand{\strictFACriticalCount}{123}
+ \newcommand{\strictFAMedianViols}{1}                 % v6 Phase B median hard viols/strict FA3 (unchanged from Phase A).
+ 
+ % A3: Cross-replay BSR_cond
+diff --git a/cga_bench/paper/main_final_v18.tex b/cga_bench/paper/main_final_v18.tex
+index b3e3a79e..15d972b1 100644
+--- a/cga_bench/paper/main_final_v18.tex
++++ b/cga_bench/paper/main_final_v18.tex
+@@ -435,7 +435,7 @@ Three groups of stress tests reinforce the audit.
+ 
+ \emph{Cross-vendor and constraint-type sensitivity.} Cross-LLM-family Pillar~3 places $\mainReplRatioTriple{}\times$ and $\mainReplVTwoRatioTriple{}\times$ catalogues from Qwen-397B and gpt-oss-120B within $\dualFamilyDelta{}\times$, and Track-A re-extraction across \posebVendorsConfirmed{} vendor families lands \posebInBandCount{}/\posebTotalModels{} cataloguers in the $[\posebRatioBandLow{}\times, \posebRatioBandHigh{}\times]$ band (App.~\ref{app:cross_vendor_cataloguer}). The constraint-type subset probe E$_S$ shows that removing the author-dependent deviation channel preserves \cwtFourTypeRetentionPct{}\% of matched-pair discrimination (BSR $\cwtOrigBSR{}{\to}\cwtFourTypeBSR{}$); removing source-grounded omission collapses BSR to $\cwtTypedBSR{}{\approx}0.5$. Discriminative power is source-grounded, not author-chosen (App.~\ref{app:phase1_sensitivity}).
+ 
+-\paragraph{Typed-CwT robustness at scale.} Removing the \textsc{deviation} channel (the only violation type whose definition depends on per-CPG \texttt{allowed\_actions} authoring) reverses the variance ordering on the manual 706-scenario subset ($\eta^{2}_{\mathrm{eval}}{=}0.059$ vs.\ $\eta^{2}_{\mathrm{run}}{=}0.076$, $N{=}16{,}944$) but preserves it on the auto-expanded \phaseBEpisodes{}-episode corpus ($\cresFiveEtaSqTyped{}$ vs.\ $\cresFiveEtaRunTyped{}$, ratio $\cresFiveTypedRatio{}{\times}$; App.~\ref{app:typed_cwt_robustness}); the headline attribution survives at scale. Auto-expanded scenarios are by design lower-severity --- the engine generates compliance variants and Tier-S edge cases without inflating the catalogue-critical violation pool, so the loose-consensus critical fraction drops from 6.6\% (manual headline) to 3.9\% on Phase~B; the FA-direction signal (process-oblivious evaluators systematically over-credit) is unchanged at either scale.
++\paragraph{Typed-CwT robustness at scale.} Removing the \textsc{deviation} channel (the only violation type whose definition depends on per-CPG \texttt{allowed\_actions} authoring) reverses the variance ordering on the manual 706-scenario subset ($\eta^{2}_{\mathrm{eval}}{=}0.059$ vs.\ $\eta^{2}_{\mathrm{run}}{=}0.076$, $N{=}16{,}944$) but preserves it on the auto-expanded \phaseBEpisodes{}-episode corpus ($\cresFiveEtaSqTyped{}$ vs.\ $\cresFiveEtaRunTyped{}$, ratio $\cresFiveTypedRatio{}{\times}$; App.~\ref{app:typed_cwt_robustness}); the headline attribution survives at scale. Auto-expanded scenarios are by design lower-severity --- the engine generates compliance variants and Tier-S edge cases without inflating the catalogue-critical violation pool, so the loose-consensus critical fraction drops from \consensusFACriticalPct{}\% (manual headline, Phase A 9m) to \consensusFACriticalPctPhaseB{}\% on Phase~B (n=\phaseBEpisodes{}); the FA-direction signal (process-oblivious evaluators systematically over-credit) is unchanged at either scale.
+ 
+ \subsection{E7: Evaluator-Induced Ranking Reversal}
+ \label{sec:ranking_flip}

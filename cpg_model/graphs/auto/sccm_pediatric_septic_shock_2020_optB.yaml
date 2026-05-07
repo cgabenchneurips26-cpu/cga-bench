@@ -1,0 +1,222 @@
+graph_id: sccm_pediatric_septic_shock_2020
+guideline_name: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+version: '2024.1'
+metadata:
+  source: SCCM
+  doi: 10.1097/PCC.0000000000002198
+  recommendation_system: GRADE
+  description: Clinical workflow for the management of pediatric septic shock and sepsis-associated organ dysfunction.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Sepsis Assessment
+    description: Initial evaluation of the child for suspected sepsis or septic shock.
+    mandatory_actions:
+    - measure_blood_lactate
+    allowed_actions:
+    - measure_blood_lactate
+    - perform_pocus
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+    source_section: Initial Evaluation
+    source_page: null
+    source_quote: We recommend measuring blood lactate as part of initial evaluation and management of children with suspected
+      septic shock or sepsis-associated organ d
+    source_recommendation_ids:
+    - rec_1
+    next_nodes: []
+    conditional_next:
+      state.septic_shock: shock_bundle
+      state.organ_dysfunction_no_shock: sepsis_bundle
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  shock_bundle:
+    node_id: shock_bundle
+    node_type: plan
+    name: Septic Shock Resuscitation Bundle
+    description: Immediate aggressive resuscitation for children in septic shock.
+    mandatory_actions:
+    - start_antimicrobial_therapy
+    - administer_fluid_bolus
+    - administer_crystalloids
+    - administer_balanced_crystalloids
+    allowed_actions:
+    - start_antimicrobial_therapy
+    - administer_fluid_bolus
+    - administer_crystalloids
+    - administer_balanced_crystalloids
+    - perform_pocus
+    forbidden_actions:
+    - administer_albumin
+    - administer_saline_0_9
+    deadlines:
+      start_antimicrobial_therapy: 60
+      administer_fluid_bolus: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+    source_section: Shock Management
+    source_page: null
+    source_quote: In children with septic shock, we recommend starting antimicrobial therapy as soon as possible, ideally
+      within 1 hour of recognition.
+    source_recommendation_ids:
+    - rec_2
+    - rec_4
+    - rec_6
+    - rec_7
+    next_nodes:
+    - hemodynamic_optimization
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  sepsis_bundle:
+    node_id: sepsis_bundle
+    node_type: plan
+    name: Sepsis Organ Dysfunction Bundle
+    description: Management for sepsis-associated organ dysfunction without shock.
+    mandatory_actions:
+    - start_antimicrobial_therapy
+    - initiate_maintenance_fluids
+    allowed_actions:
+    - start_antimicrobial_therapy
+    - initiate_maintenance_fluids
+    - administer_crystalloids
+    forbidden_actions:
+    - administer_fluid_bolus
+    deadlines:
+      start_antimicrobial_therapy: 180
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+    source_section: Sepsis Management
+    source_page: null
+    source_quote: In children with sepsis-associated organ dysfunction but without shock, we suggest time-limited rapid investigation
+      and starting antimicrobial therapy
+    source_recommendation_ids:
+    - rec_3
+    - rec_5
+    next_nodes:
+    - hemodynamic_optimization
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  hemodynamic_optimization:
+    node_id: hemodynamic_optimization
+    node_type: action
+    name: Hemodynamic and Respiratory Optimization
+    description: Refining support using vasoactive agents and oxygenation targets.
+    mandatory_actions:
+    - initiate_vasoactive_meds_peripheral_access
+    allowed_actions:
+    - initiate_vasoactive_meds_peripheral_access
+    - add_vasopressin
+    - titrate_catecholamines
+    - target_scvo2_70_percent
+    - titrate_oxygen_spo2_88_92
+    forbidden_actions:
+    - delay_vasoactive_meds_for_central_access
+    - administer_etomidate
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+    source_section: Optimization
+    source_page: null
+    source_quote: We suggest initiating vasoactive medications through peripheral venous access rather than delaying while
+      establishing central venous access in childre
+    source_recommendation_ids:
+    - rec_10
+    - rec_11
+    - rec_8
+    - rec_12
+    - rec_13
+    next_nodes:
+    - rescue_therapy
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  rescue_therapy:
+    node_id: rescue_therapy
+    node_type: decision
+    name: Rescue Therapy Evaluation
+    description: Evaluation for ECMO in refractory cases.
+    mandatory_actions:
+    - perform_pocus
+    allowed_actions:
+    - perform_pocus
+    - initiate_venovenous_ecmo
+    - initiate_venoarterial_ecmo
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIb
+    evidence_level: C
+    source_guideline: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+    source_section: Rescue Therapy
+    source_page: null
+    source_quote: We suggest using venoarterial ECMO as rescue therapy only in children with septic shock refractory to all
+      other treatments including vasoactive agents
+    source_recommendation_ids:
+    - rec_20
+    - rec_21
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  disposition:
+    node_id: disposition
+    node_type: plan
+    name: Disposition and Monitoring
+    description: Final stabilization and transition of care.
+    mandatory_actions:
+    - target_scvo2_70_percent
+    allowed_actions:
+    - target_scvo2_70_percent
+    - titrate_oxygen_spo2_88_92
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: SCCM 2020 Surviving Sepsis Pediatric Septic Shock
+    source_section: Monitoring
+    source_page: null
+    source_quote: We suggest targeting central venous oxygen saturation (ScvO2) of 70% or greater when central venous access
+      is available in children with septic shock.
+    source_recommendation_ids:
+    - rec_8
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 24
+  actionable_count: 23
+  validation_errors: 0
+  generated_at: '2026-04-30T05:48:07.103211+00:00'

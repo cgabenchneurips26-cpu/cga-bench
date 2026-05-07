@@ -1,0 +1,44 @@
+diff --git a/cga_bench/paper/appendix_v18.tex b/cga_bench/paper/appendix_v18.tex
+index b8405f90..09aa8885 100644
+--- a/cga_bench/paper/appendix_v18.tex
++++ b/cga_bench/paper/appendix_v18.tex
+@@ -804,20 +804,20 @@ Strict coarsened-observation consensus FA (ASC$\cap$PAF$\cap$CwT, $n_{\mathrm{FA
+ 
+ \begin{table}[h]
+ \centering\footnotesize
+-\caption{Strict-consensus FA decomposition by violation family. ``Mixed safety/process'' covers episodes whose violation set spans more than one of \textsc{within}/\textsc{before}/\textsc{forbid}/\textsc{must} but is not MUST-only. The safety-core total (rows excluding MUST-only) is \safetyCoreFAEpisodes{} (\safetyCoreFAPct{}\% of \numEpisodes{}).}
++\caption{Strict-consensus FA decomposition by violation family (Phase~A 9-model corpus, $n{=}\numEpisodes{}$; recomputed 2026-04-30 from \texttt{verdict\_matrix\_v6.json}, exact-match cross-check against \texttt{exp\_e9\_safety\_core.json}). Rows in descending share. ``Mixed safety/process'' covers episodes whose violation set spans more than one of \textsc{within}/\textsc{before}/\textsc{forbid}/\textsc{must} but is not MUST-only (here: \textsc{forbid}+\textsc{within}). The safety-core total (rows excluding MUST-only) is \safetyCoreFAEpisodes{} (\safetyCoreFAPct{}\% of \numEpisodes{}). \emph{Released-matrix caveat:} \texttt{viol\_types} carries only \{WITHIN, FORBIDDEN, BEFORE\}; OMISSION-of-MUST manifests as WITHIN, so the WITHIN-only and MUST-only cells are operationally indistinguishable in v6. The MUST-only row reports the conflated cell; the separate WITHIN-only row is reported as $0$ to preserve table-row additivity (980+0+0+139+5 = \strictFAThreeCount{}).}
+ \label{tab:safety_core_decomposition}
+ \begin{tabular}{@{}lrr@{}}
+ \toprule
+ Subset of strict FA & Episodes & \% of strict FA \\
+ \midrule
+-\textsc{within}-only         & \faWithinOnlyEpisodes{}      & --- \\
++\textsc{forbid}-only         & \faForbidOnlyEpisodes{}      & 12.4\% \\
++Mixed safety/process (\textsc{forbid}+\textsc{within}) & \faMixedSafetyEpisodes{} & 0.4\% \\
++\textsc{within}-only (excl.\ MUST-omission; see caveat) & \faWithinOnlyEpisodes{} & --- \\
+ \textsc{before}-only         & \faBeforeOnlyEpisodes{}      & --- \\
+-\textsc{forbid}-only         & \faForbidOnlyEpisodes{}      & --- \\
+-Mixed safety/process         & \faMixedSafetyEpisodes{}     & --- \\
+ \midrule
+-Safety-core subtotal (non-MUST-only) & \safetyCoreFAEpisodes{} & --- \\
++Safety-core subtotal (non-MUST-only) & \safetyCoreFAEpisodes{} & 12.8\% \\
+ \midrule
+-\textsc{must}-only omission  & \faMustOnlyEpisodes{}        & \faMustOnlyPct{}\% \\
++\textsc{must}-only omission (= WITHIN-only operationally) & \faMustOnlyEpisodes{} & \faMustOnlyPct{}\% \\
+ \bottomrule
+ \end{tabular}
+ \end{table}
+diff --git a/cga_bench/paper/main_final_v18.tex b/cga_bench/paper/main_final_v18.tex
+index ef996aaf..b3e3a79e 100644
+--- a/cga_bench/paper/main_final_v18.tex
++++ b/cga_bench/paper/main_final_v18.tex
+@@ -473,7 +473,7 @@ Overall               & \hlAllMAB{}           & \hlAllAC{}           & \hlAllTCC
+ \label{sec:limitations}
+ \label{sec:conclusion}
+ 
+-\paragraph{Limitations.} Runs use one ReAct scaffold on \numModels{} open-weight models (4B--397B) at $T{=}0.1$; frontier APIs and broader $T$ sweeps are deferred (App.~\ref{app:temperature_sensitivity}). Scenarios are engine-synthetic, so absolute rates are engine-conditional. Three facts mitigate this. Thm.~\ref{thm:coarsening} is distribution-independent. A Tier~S expansion (+\tierSExtraCPGs{}~CPGs, +\tierSExtraEpisodes{}~episodes) preserves every reported metric within $\pm$\tierSMaxMetricShift{}\,pp. A Phase~B auto-expansion (\numTotalScenarios{} scenarios, \phaseBEpisodes{} episodes, $4.5{\times}$ the manual 706-scenario base) tightens cell-level pair-reversal from $46.3$\% to $\cellPairReversal{}$\% and preserves the typed-CwT $\eta^{2}_{\mathrm{eval}}{>}\eta^{2}_{\mathrm{run}}$ ordering (\S\ref{sec:robustness_summary}). The load-bearing real-data probe is the pre-registered MIMIC-IV re-scoring (App.~\ref{app:dandb_ethics}), deferred. Clinician adjudication of catalogue-flagged violations is in progress and is not used as evidence for the present submission; the claims here are observation-level mis-certification relative to a source-traceable guideline catalogue, not clinical-safety judgement. Four standing threats (scaffold, engine realism, held-out, clinician-pending) admit falsifiable probes (Table~\ref{tab:defense}). Three v6 disclosures (nemotron empty 0.99\%, Step-11 LLM-judge substitute, gemma31b auto\_v2 only) are documented in App.~\ref{app:v6_disclosures}.
++\paragraph{Limitations.} Runs use one ReAct scaffold on \numModels{} open-weight models (4B--397B) at $T{=}0.1$; frontier APIs and broader $T$ sweeps are deferred (App.~\ref{app:temperature_sensitivity}). Scenarios are engine-synthetic, so absolute rates are engine-conditional. Three facts mitigate this. Thm.~\ref{thm:coarsening} is distribution-independent. A Tier~S expansion (+\tierSExtraCPGs{}~CPGs, +\tierSExtraEpisodes{}~episodes) preserves every reported metric within $\pm$\tierSMaxMetricShift{}\,pp. A Phase~B auto-expansion (\numTotalScenarios{} scenarios, \phaseBEpisodes{} episodes, $4.5{\times}$ the manual 706-scenario base) tightens cell-level pair-reversal from $46.3$\% to $\cellPairReversal{}$\% and preserves the typed-CwT $\eta^{2}_{\mathrm{eval}}{>}\eta^{2}_{\mathrm{run}}$ ordering (\S\ref{sec:robustness_summary}). The load-bearing real-data probe is the pre-registered MIMIC-IV re-scoring (App.~\ref{app:dandb_ethics}), deferred. Systematic clinician adjudication of catalogue-flagged violations is in progress and is not used as scoring evidence for the present submission; one validator-surfaced finding has been integrated as a catalogue-curation refinement (v1.1 patch, App.~\ref{app:conflict_patch}), but pairwise alignment scoring against clinician verdicts is deferred. The claims here are observation-level mis-certification relative to a source-traceable guideline catalogue, not clinical-safety judgement. Four standing threats (scaffold, engine realism, held-out, clinician-pending) admit falsifiable probes (Table~\ref{tab:defense}). Three v6 disclosures (nemotron empty 0.99\%, Step-11 LLM-judge substitute, gemma31b auto\_v2 only) are documented in App.~\ref{app:v6_disclosures}.
+ 
+ \paragraph{Iterative refinement under expert review (v1.1 patch).}
+ Clinician validation surfaced one massive-PE scenario where the runtime engine---by construction evaluating only static \texttt{mandatory\_actions}/\texttt{forbidden\_actions} lists, not the per-node \texttt{conditional\_rules} block---assigned full credit despite an action being simultaneously required and contraindicated under co-satisfiable conditions. We address this by coupling the Constraint Derivation Engine into the scoring path (App.~\ref{app:conflict_patch}): episode trajectories are unchanged, but violation extraction now consumes both engine-derived and CDE-derived constraints and emits a new \emph{conflict} violation type when an action is mandated and forbidden simultaneously. A static audit across all \cdeAuditCpgsTotal{}~CPGs identifies \conflictPatternsN{} same-action conflict patterns spanning \conflictGraphsN{} graphs (Tier~A/B/C: \tierAN{}/\tierBN{}/\tierCN{}; App.~\ref{app:conflict_patch}). The patch is strictly additive: with the feature flag off, scoring is byte-identical to v1.0 (regression-guarded by \texttt{tests/test\_assessor/test\_cde\_rescoring\_regression.py}); the \strictFAThree{}\% headline is preserved while CONFLICT events are now reported separately as a sixth sub-construct. This demonstrates the operational value of the audit-not-validation framing: the framework surfaces its own catalogue gaps under expert review.

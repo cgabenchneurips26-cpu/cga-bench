@@ -1,0 +1,431 @@
+#!/usr/bin/env python3
+"""Clean Slate Experiment Runner.
+
+Runs 4 models x 15 scenarios x 3 runs = 180 episodes from scratch.
+All episodes use baseline condition (no prompt patches).
+Results saved to results/clean_slate_TIMESTAMP/.
+"""
+
+from datetime import datetime
+import json
+import logging
+from pathlib import Path
+import subprocess
+import sys
+import time
+from typing import Any
+
+import yaml
+
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(f"/tmp/clean_slate_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"),
+    ],
+)
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+
+SCENARIOS = [
+    "septic_shock_basic",
+    "septic_shock_penicillin_allergy",
+    "stemi_inferior_rv_trap",
+    "dka_moderate_basic",
+    "dka_hypokalemia_trap",
+    "stroke_tpa_eligible",
+    "contrast_aki_prevention_basic",
+    "aki_stage1_basic",
+    "af_new_onset_basic",
+    "gi_bleeding_upper_basic",
+    "htn_emergency_basic",
+    "pe_submassive_basic",
+    "copd_moderate_exacerbation",
+    "adhf_warm_wet",
+    "hemorrhagic_stroke",
+]
+
+MODELS = {
+    "oss120b": {
+        "config": "configs/agents/clean_slate_oss120b.yaml",
+        "port": 28000,
+        "label": "oss-120b",
+    },
+    "qwen35b": {
+        "config": "configs/agents/clean_slate_qwen35b.yaml",
+        "port": 8013,
+        "label": "Qwen3.5-35B",
+    },
+    "qwen27b": {
+        "config": "configs/agents/clean_slate_qwen27b.yaml",
+        "port": 28010,
+        "label": "Qwen3.5-27B",
+    },
+    "qwen4b": {
+        "config": "configs/agents/clean_slate_qwen4b.yaml",
+        "port": 8101,
+        "label": "Qwen3-4B",
+    },
+}
+
+RUNS_PER_SCENARIO = 3
+GIT_HASH = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip()
+
+# Scenario -> graph file mapping
+SCENARIO_GRAPH_MAP = {
+    "septic_shock_basic": "ssc_sepsis_hour1",
+    "septic_shock_penicillin_allergy": "ssc_sepsis_hour1",
+    "stemi_inferior_rv_trap": "aha_chest_pain",
+    "dka_moderate_basic": "ada_dka_management",
+    "dka_hypokalemia_trap": "ada_dka_management",
+    "stroke_tpa_eligible": "aha_stroke",
+    "contrast_aki_prevention_basic": "kdigo_contrast_aki",
+    "aki_stage1_basic": "kdigo_aki_full",
+    "af_new_onset_basic": "atrial_fibrillation",
+    "gi_bleeding_upper_basic": "gi_bleeding",
+    "htn_emergency_basic": "hypertensive_emergency",
+    "pe_submassive_basic": "pulmonary_embolism",
+    "copd_moderate_exacerbation": "copd_exacerbation",
+    "adhf_warm_wet": "aha_heart_failure",
+    "hemorrhagic_stroke": "aha_stroke",
+}
+
+# Scenario config files
+
+# (Scenario configs loaded via ScenarioLoader, no manual mapping needed)
+
+
+def health_check(port: int, api_key: str = "sk-no-key-required") -> bool:
+    """Check if vLLM endpoint is responding."""
+    import urllib.request
+
+    try:
+        req = urllib.request.Request(
+            f"http://localhost:{port}/v1/models",
+            headers={"Authorization": f"Bearer {api_key}"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read())
+            return len(data.get("data", [])) > 0
+    except Exception:
+        return False
+
+
+def run_single_episode(
+    model_key: str,
+    scenario_id: str,
+    run_index: int,
+    output_dir: Path,
+) -> dict[str, Any] | None:
+    """Run a single episode using the eval harness."""
+    from cga_bench.agent_runner.rag_agent import RAGAgent, RAGConfig
+    from cga_bench.eval_harness.runner import EvaluationRunner, ExperimentConfig
+    from cga_bench.eval_harness.scenario_loader import ScenarioLoader
+
+    model_info = MODELS[model_key]
+    agent_config_path = Path(model_info["config"])
+    agent_yaml = yaml.safe_load(agent_config_path.read_text())["agent"]
+
+    # Create agent
+    agent_config = RAGConfig(
+        agent_id=f"{agent_yaml['agent_id']}_baseline",
+        llm_backend=agent_yaml["llm_backend"],
+        llm_model=agent_yaml["llm_model"],
+        temperature=agent_yaml.get("temperature", 0.1),
+        use_llm=agent_yaml.get("use_llm", True),
+        base_url=agent_yaml["base_url"],
+        api_key=agent_yaml.get("api_key", "sk-no-key-required"),
+        top_k=agent_yaml.get("top_k", 5),
+        use_bm25=agent_yaml.get("use_bm25", True),
+        max_actions_per_step=agent_yaml.get("max_actions_per_step", 3),
+        budget_limit_tokens=agent_yaml.get("budget_limit_tokens", 100000),
+        budget_limit_tool_calls=agent_yaml.get("budget_limit_tool_calls", 50),
+    )
+    agent = RAGAgent(agent_config)
+
+    # Load scenario via ScenarioLoader
+    loader = ScenarioLoader()
+    scenario_def = loader.get_scenario(scenario_id)
+    if scenario_def is None:
+        logger.error(f"Scenario {scenario_id} not found in ScenarioLoader")
+        return None
+
+    # Create environment
+    env = loader.create_environment(scenario_id)
+
+    # Graph path
+    graph_path = str(loader.get_cpg_graph_path(scenario_id))
+
+    # Build violation extractor and harm scorer configs from defaults
+    from cga_bench.assessor_core.harm_scorer import HarmScorerConfig
+    from cga_bench.assessor_core.violations import (
+        HarmSeverityMapping,
+        TimingSeverityThreshold,
+        ViolationExtractorConfig,
+    )
+    from cga_bench.cpg_model.schemas.base import (
+        HarmSeverity,
+        RecommendationClass,
+        ViolationType,
+    )
+
+    ve_config = ViolationExtractorConfig(
+        harm_severity_mappings=[
+            HarmSeverityMapping(action_pattern="", severity=HarmSeverity.MODERATE),
+        ],
+        timing_severity_thresholds=[
+            TimingSeverityThreshold(max_delay_minutes=15.0, severity=HarmSeverity.MINOR),
+            TimingSeverityThreshold(max_delay_minutes=30.0, severity=HarmSeverity.MODERATE),
+            TimingSeverityThreshold(max_delay_minutes=60.0, severity=HarmSeverity.MAJOR),
+            TimingSeverityThreshold(max_delay_minutes=120.0, severity=HarmSeverity.SEVERE),
+        ],
+        default_deviation_severity=HarmSeverity.MODERATE,
+        default_deviation_preventability=0.8,
+    )
+
+    hs_config = HarmScorerConfig(
+        severity_weights={
+            HarmSeverity.MINOR: 0.1,
+            HarmSeverity.MODERATE: 0.3,
+            HarmSeverity.MAJOR: 0.6,
+            HarmSeverity.SEVERE: 0.85,
+            HarmSeverity.CATASTROPHIC: 1.0,
+        },
+        guideline_strength_weights={
+            RecommendationClass.CLASS_I: 1.0,
+            RecommendationClass.CLASS_IIA: 0.75,
+            RecommendationClass.CLASS_IIB: 0.5,
+            RecommendationClass.CLASS_III: 0.25,
+            None: 0.5,
+        },
+        violation_type_weights={
+            ViolationType.OMISSION: 0.8,
+            ViolationType.COMMISSION: 1.0,
+            ViolationType.TIMING: 0.7,
+            ViolationType.SEQUENCE: 0.6,
+            ViolationType.DEVIATION: 0.4,
+        },
+    )
+
+    # Get mandatory count and forbidden actions
+    total_mandatory = len(scenario_def.expected_actions) if scenario_def.expected_actions else 5
+    forbidden_actions = scenario_def.forbidden_actions or []
+
+    try:
+        runner = EvaluationRunner(
+            ExperimentConfig(
+                experiment_id="clean_slate",
+                scenarios=[scenario_id],
+                agents=[model_key],
+                num_runs_per_scenario=1,
+            )
+        )
+        expected_actions = scenario_def.expected_actions or []
+        episode_log, score, violations = runner.run_episode(
+            agent=agent,
+            environment=env,
+            scenario_id=scenario_id,
+            guideline_graph_path=graph_path,
+            total_mandatory_count=total_mandatory,
+            violation_extractor_config=ve_config,
+            harm_scorer_config=hs_config,
+            scenario_forbidden_actions=forbidden_actions if forbidden_actions else None,
+            scenario_expected_actions=expected_actions if expected_actions else None,
+        )
+
+        # Build result
+        result = {
+            "scenario_id": scenario_id,
+            "condition": "baseline",
+            "agent_id": f"{agent_yaml['agent_id']}_baseline",
+            "model_name": model_info["label"],
+            "run_index": run_index,
+            "prompt_condition": "baseline",
+            "pipeline_version": GIT_HASH,
+            "c3_formula": "binary",
+            "timestamp": datetime.now().isoformat(),
+            "compliance_score": score.compliance_score,
+            "peak_risk": score.peak_risk,
+            "aggregate_risk": score.aggregate_risk,
+            "total_violations": score.total_violations,
+            "sub_scores": score.sub_scores,
+            "violations_by_type": score.violations_by_type,
+            "violation_events": [
+                e.model_dump() if hasattr(e, "model_dump") else str(e) for e in score.violation_events
+            ],
+            "llm_calls": getattr(agent.metrics, "total_llm_calls", 0),
+            "total_tokens": getattr(agent.metrics, "total_tokens", 0),
+            "actions_count": len(episode_log.actions),
+            "actions": [
+                {
+                    "action_id": a.action_id,
+                    "timestamp": a.timestamp_minutes,
+                    "type": a.type.value if hasattr(a.type, "value") else str(a.type),
+                }
+                for a in episode_log.actions
+            ],
+            "expected_actions": scenario_def.expected_actions or [],
+            "n_expected_actions": len(scenario_def.expected_actions or []),
+            "forbidden_actions": forbidden_actions,
+        }
+
+        # Save
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{scenario_id}_{model_key}_r{run_index}_{ts}.json"
+        out_path = output_dir / model_key / filename
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump(result, f, indent=2, default=str)
+
+        logger.info(
+            f"[{model_key}] {scenario_id} r{run_index}: "
+            f"CGA={score.compliance_score:.3f}, "
+            f"actions={len(episode_log.actions)}, "
+            f"violations={score.total_violations}"
+        )
+        return result
+
+    except Exception as e:
+        logger.error(f"[{model_key}] {scenario_id} r{run_index} FAILED: {e}")
+        # Save failure record
+        failure = {
+            "scenario_id": scenario_id,
+            "model_name": model_info["label"],
+            "run_index": run_index,
+            "status": "agent_failure",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat(),
+        }
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{scenario_id}_{model_key}_r{run_index}_FAIL_{ts}.json"
+        out_path = output_dir / model_key / filename
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_path, "w") as f:
+            json.dump(failure, f, indent=2)
+        return None
+
+
+def run_model(model_key: str, output_dir: Path) -> dict[str, Any]:
+    """Run all scenarios for a single model."""
+    model_info = MODELS[model_key]
+    logger.info(f"\n{'=' * 60}")
+    logger.info(f"Starting model: {model_info['label']} ({model_key})")
+    logger.info(f"{'=' * 60}")
+
+    # Health check
+    if not health_check(model_info["port"]):
+        logger.error(f"Model {model_key} not responding on port {model_info['port']}")
+        return {"model": model_key, "status": "offline", "episodes": 0}
+
+    results = []
+    failures = 0
+    total = len(SCENARIOS) * RUNS_PER_SCENARIO
+
+    for scenario_id in SCENARIOS:
+        for run_idx in range(RUNS_PER_SCENARIO):
+            result = run_single_episode(model_key, scenario_id, run_idx, output_dir)
+            if result is None:
+                failures += 1
+                # Retry once
+                logger.info(f"Retrying {scenario_id} r{run_idx}...")
+                time.sleep(2)
+                result = run_single_episode(model_key, scenario_id, run_idx, output_dir)
+                if result is None:
+                    failures += 1
+            if result:
+                results.append(result)
+
+    # Validation
+    n_episodes = len(results)
+    failure_rate = failures / max(total, 1)
+
+    summary = {
+        "model": model_key,
+        "label": model_info["label"],
+        "total_episodes": n_episodes,
+        "expected_episodes": total,
+        "failures": failures,
+        "failure_rate": round(failure_rate, 3),
+        "status": "ok" if failure_rate < 0.1 else "high_failure_rate",
+    }
+
+    # Quick validation
+    cga_scores = [r["compliance_score"] for r in results]
+    if cga_scores:
+        summary["cga_mean"] = round(sum(cga_scores) / len(cga_scores), 4)
+        summary["cga_min"] = round(min(cga_scores), 4)
+        summary["cga_max"] = round(max(cga_scores), 4)
+        zero_action = sum(1 for r in results if r["actions_count"] == 0)
+        summary["zero_action_episodes"] = zero_action
+
+    # Save model summary
+    with open(output_dir / model_key / "model_summary.json", "w") as f:
+        json.dump(summary, f, indent=2)
+
+    logger.info(f"\n{model_key} complete: {n_episodes}/{total} episodes, {failures} failures")
+    return summary
+
+
+def main():
+    """Run clean slate experiment."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_dir = Path(f"results/clean_slate_{timestamp}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    logger.info("Clean Slate Experiment")
+    logger.info(f"Output: {output_dir}")
+    logger.info(f"Git: {GIT_HASH}")
+    logger.info(f"Models: {list(MODELS.keys())}")
+    logger.info(f"Scenarios: {len(SCENARIOS)}")
+    logger.info(f"Runs per scenario: {RUNS_PER_SCENARIO}")
+    logger.info(f"Total episodes: {len(SCENARIOS) * RUNS_PER_SCENARIO * len(MODELS)}")
+
+    # Accept output dir override as 2nd arg
+    if len(sys.argv) > 2:
+        output_dir = Path(sys.argv[2])
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+    # If a single model is specified via CLI, run only that
+    if len(sys.argv) > 1:
+        model_key = sys.argv[1]
+        if model_key not in MODELS:
+            logger.error(f"Unknown model: {model_key}. Available: {list(MODELS.keys())}")
+            sys.exit(1)
+        summary = run_model(model_key, output_dir)
+        print(json.dumps(summary, indent=2))
+        return
+
+    # Run all models sequentially (use parallel.sh for parallel)
+    all_summaries = {}
+    for model_key in MODELS:
+        summary = run_model(model_key, output_dir)
+        all_summaries[model_key] = summary
+
+    # Save overall summary
+    with open(output_dir / "experiment_summary.json", "w") as f:
+        json.dump(
+            {
+                "timestamp": timestamp,
+                "git_hash": GIT_HASH,
+                "models": all_summaries,
+                "total_episodes": sum(s["total_episodes"] for s in all_summaries.values()),
+                "total_failures": sum(s["failures"] for s in all_summaries.values()),
+            },
+            f,
+            indent=2,
+        )
+
+    logger.info(f"\n{'=' * 60}")
+    logger.info("EXPERIMENT COMPLETE")
+    logger.info(f"{'=' * 60}")
+    for k, s in all_summaries.items():
+        logger.info(f"  {k}: {s['total_episodes']}/{s['expected_episodes']} episodes")
+
+
+if __name__ == "__main__":
+    main()

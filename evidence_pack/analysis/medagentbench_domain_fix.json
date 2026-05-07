@@ -1,0 +1,3778 @@
+{
+  "analysis_timestamp": "2026-03-31T01:32:03.557464",
+  "analysis_type": "MedAgentBench Domain Detection Improvement Analysis",
+  "steps_completed": [
+    "step_10",
+    "step_11",
+    "step_12",
+    "step_13"
+  ],
+  "scenario_content_examples": [
+    {
+      "index": 0,
+      "task_id": "task1_1",
+      "instruction": "What’s the MRN of the patient with name Peter Stafford and DOB of 1932-12-29? If the patient does not exist, the answer should be \"Patient not found\"",
+      "context": "",
+      "sol": "['S6534835']",
+      "eval_MRN": "S6534835",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "general",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - patient MRN lookup"
+    },
+    {
+      "index": 30,
+      "task_id": "task2_1",
+      "instruction": "What's the age of the patient with MRN of S2874099?",
+      "context": "It's 2023-11-13T10:15:00+00:00 now, and the answer should be rounded down to an integer.",
+      "sol": "",
+      "eval_MRN": "S2874099",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "general",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - age calculation"
+    },
+    {
+      "index": 60,
+      "task_id": "task3_1",
+      "instruction": "I just measured the blood pressure for patient with MRN of S2380121, and it is \"118/77 mmHg\". Help me record it.",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The flowsheet ID for blood pressure is BP.",
+      "sol": "",
+      "eval_MRN": "S2380121",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "hypertensive_emergency",
+      "final_score": 0.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - vital sign recording (FHIR write)"
+    },
+    {
+      "index": 90,
+      "task_id": "task4_1",
+      "instruction": "What’s the most recent magnesium level of the patient S3032536 within last 24 hours?",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The code for magnesium is \"MG\". The answer should be a single number converted to a unit of mg/dL, and it should be -1 if a measurement within last 24 hours is not available.",
+      "sol": "",
+      "eval_MRN": "S3032536",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "general",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - lab value retrieval (FHIR read)"
+    },
+    {
+      "index": 120,
+      "task_id": "task5_1",
+      "instruction": "Check patient S6315806's last serum magnesium level within last 24 hours. If low, then order replacement IV magnesium according to dosing instructions. If no magnesium level has been recorded in the last 24 hours, don't order anything.\n",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The code for magnesium is \"MG\". The NDC for replacement IV magnesium is 0338-1715-40. Dosing instructions: (1) Mild deficiency (eg, serum magnesium 1.5 to 1.9 mg/dL):\nIV: 1 g over 1 hour.\n(2) Moderate deficiency (eg, serum magnesium 1 to <1.5 mg/dL):\nIV: 2 g over 2 hours.\n(3) Severe deficiency (eg, serum magnesium <1 mg/dL):\nIV: 4 g over 4 hours.\n",
+      "sol": "",
+      "eval_MRN": "S6315806",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "general",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Weakly clinical - conditional medication ordering"
+    },
+    {
+      "index": 150,
+      "task_id": "task6_1",
+      "instruction": "What is the average CBG of the patient S6307599 over the last 24 hours?",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The code for CBG is \"GLU\". The answer should be a single number converted to a unit of mg/dL, and it should be -1 if a measurement within last 24 hours is not available.",
+      "sol": "",
+      "eval_MRN": "S6307599",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "dka",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - lab aggregation query"
+    },
+    {
+      "index": 180,
+      "task_id": "task7_1",
+      "instruction": "What is the most recent CBG of the patient S2823623?",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The code for CBG is \"GLU\"",
+      "sol": "",
+      "eval_MRN": "S2823623",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "dka",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - lab retrieval query"
+    },
+    {
+      "index": 210,
+      "task_id": "task8_1",
+      "instruction": "Order orthopedic surgery referral for patient S2016972. Specify within the free text of the referral, \"Situation: acute left knee injury, Background: radiology report indicates ACL tear. Assessment: ACL tear grade II. Recommendation: request for Orthopedic service to evaluate and provide management recommendations.\"",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The SNOMED code for orthopedic surgery referral is 306181000000106.",
+      "sol": "",
+      "eval_MRN": "S2016972",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "general",
+      "final_score": 0.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Not clinical - referral ordering (FHIR write)"
+    },
+    {
+      "index": 240,
+      "task_id": "task9_1",
+      "instruction": "Check patient S3241217's most recent potassium level. If low, then order replacement potassium according to dosing instructions. Also pair this order with a morning serum potassium level to be completed the next day at 8am. \n",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The code for potassium is \"K\".The NDC for replacement potassium is 40032-917-01. Dosing instructions: for every 0.1 mEq/L (or mmol/L) below threshold, order 10 mEq potassium oral repletion) to reach a goal of 3.5 serum level. The LOINC code for serum potassium level is 2823-3.",
+      "sol": "",
+      "eval_MRN": "S3241217",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "general",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Weakly clinical - conditional medication + lab ordering"
+    },
+    {
+      "index": 270,
+      "task_id": "task10_1",
+      "instruction": "What’s the last HbA1C (hemoglobin A1C) value in the chart for patient S6227720 and when was it recorded? If the lab value result date is greater than 1 year old, order a new HbA1C lab test. ",
+      "context": "It's 2023-11-13T10:15:00+00:00 now. The code for HbA1C is \"A1C\". The LOINC code for ordering HbA1C lab is: 4548-4. The answer should be [-1] if a measurement is not available.",
+      "sol": "",
+      "eval_MRN": "S6227720",
+      "detected_domain_current": "general",
+      "detected_domain_improved": "dka",
+      "final_score": 1.0,
+      "cpg_compliance_score": 1.0,
+      "manual_domain_assessment": "Weakly clinical - conditional lab ordering"
+    }
+  ],
+  "current_detection_logic": {
+    "function": "detect_domain() in run_external_benchmark.py (line 611)",
+    "text_fields_used": [
+      "scenario.expected_diagnosis (= str(sol) = MRN codes like ['S6534835'])",
+      "scenario.description (= instruction[:100])",
+      "scenario.patient_state.chief_complaint (= instruction)",
+      "scenario.patient_state.symptoms (= {} empty)",
+      "scenario.patient_state.history (= '' empty)",
+      "scenario.patient_state.test_results (= {} empty)"
+    ],
+    "keyword_matching": "Multi-feature scoring with threshold >= 3.0. Six domains: sepsis, chest_pain, stroke, heart_failure, aki, dka.",
+    "medagentbench_specific_issue": "MedAgentBench instruction text contains FHIR operation descriptions (MRN lookup, lab queries, vital recording) with no clinical scenario keywords. The expected_diagnosis field contains MRN codes like ['S6534835'], not clinical diagnoses.",
+    "threshold": 3.0,
+    "available_domains_in_function": [
+      "sepsis",
+      "chest_pain",
+      "stroke",
+      "heart_failure",
+      "aki",
+      "dka"
+    ]
+  },
+  "detection_failure_examples": [
+    {
+      "index": 150,
+      "task_id": "task6_1",
+      "instruction_text": "What is the average CBG of the patient S6307599 over the last 24 hours?",
+      "text_fed_to_detection": " what is the average cbg of the patient s6307599 over the last 24 hours? what is the average cbg of the patient s6307599 over the last 24 hours?",
+      "domain_keyword_results": {
+        "sepsis": {
+          "keywords_checked": [
+            "sepsis",
+            "septic",
+            "bacteremia",
+            "septicemia",
+            "sirs"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "chest_pain": {
+          "keywords_checked": [
+            "stemi",
+            "nstemi",
+            "acs",
+            "acute coronary",
+            "myocardial infarction",
+            "chest pain"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "stroke": {
+          "keywords_checked": [
+            "stroke",
+            "cerebrovascular",
+            "cva"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "heart_failure": {
+          "keywords_checked": [
+            "heart failure",
+            "hf ",
+            "chf",
+            "cardiomyopathy"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "aki": {
+          "keywords_checked": [
+            "aki",
+            "acute kidney",
+            "renal failure"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "dka": {
+          "keywords_checked": [
+            "dka",
+            "diabetic ketoacidosis",
+            "ketoacidosis"
+          ],
+          "hits": [],
+          "score": 0.0
+        }
+      },
+      "result": "general (all domain scores = 0, threshold = 3.0)",
+      "reason": "Task 'task6_1' is a FHIR operational task with no clinical domain keywords. The text contains lab codes (MG, GLU, K, A1C) and FHIR instructions, not clinical scenario descriptions."
+    },
+    {
+      "index": 180,
+      "task_id": "task7_1",
+      "instruction_text": "What is the most recent CBG of the patient S2823623?",
+      "text_fed_to_detection": " what is the most recent cbg of the patient s2823623? what is the most recent cbg of the patient s2823623?",
+      "domain_keyword_results": {
+        "sepsis": {
+          "keywords_checked": [
+            "sepsis",
+            "septic",
+            "bacteremia",
+            "septicemia",
+            "sirs"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "chest_pain": {
+          "keywords_checked": [
+            "stemi",
+            "nstemi",
+            "acs",
+            "acute coronary",
+            "myocardial infarction",
+            "chest pain"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "stroke": {
+          "keywords_checked": [
+            "stroke",
+            "cerebrovascular",
+            "cva"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "heart_failure": {
+          "keywords_checked": [
+            "heart failure",
+            "hf ",
+            "chf",
+            "cardiomyopathy"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "aki": {
+          "keywords_checked": [
+            "aki",
+            "acute kidney",
+            "renal failure"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "dka": {
+          "keywords_checked": [
+            "dka",
+            "diabetic ketoacidosis",
+            "ketoacidosis"
+          ],
+          "hits": [],
+          "score": 0.0
+        }
+      },
+      "result": "general (all domain scores = 0, threshold = 3.0)",
+      "reason": "Task 'task7_1' is a FHIR operational task with no clinical domain keywords. The text contains lab codes (MG, GLU, K, A1C) and FHIR instructions, not clinical scenario descriptions."
+    },
+    {
+      "index": 270,
+      "task_id": "task10_1",
+      "instruction_text": "What’s the last HbA1C (hemoglobin A1C) value in the chart for patient S6227720 and when was it recorded? If the lab value result date is greater than 1 year old, order a new HbA1C lab test. ",
+      "text_fed_to_detection": " what’s the last hba1c (hemoglobin a1c) value in the chart for patient s6227720 and when was it recor what’s the last hba1c (hemoglobin a1c) value in the chart for patient s6227720 and when was it recorded? if the lab value result date is greater than 1 year old, order a new hba1c lab test. ",
+      "domain_keyword_results": {
+        "sepsis": {
+          "keywords_checked": [
+            "sepsis",
+            "septic",
+            "bacteremia",
+            "septicemia",
+            "sirs"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "chest_pain": {
+          "keywords_checked": [
+            "stemi",
+            "nstemi",
+            "acs",
+            "acute coronary",
+            "myocardial infarction",
+            "chest pain"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "stroke": {
+          "keywords_checked": [
+            "stroke",
+            "cerebrovascular",
+            "cva"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "heart_failure": {
+          "keywords_checked": [
+            "heart failure",
+            "hf ",
+            "chf",
+            "cardiomyopathy"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "aki": {
+          "keywords_checked": [
+            "aki",
+            "acute kidney",
+            "renal failure"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "dka": {
+          "keywords_checked": [
+            "dka",
+            "diabetic ketoacidosis",
+            "ketoacidosis"
+          ],
+          "hits": [],
+          "score": 0.0
+        }
+      },
+      "result": "general (all domain scores = 0, threshold = 3.0)",
+      "reason": "Task 'task10_1' is a FHIR operational task with no clinical domain keywords. The text contains lab codes (MG, GLU, K, A1C) and FHIR instructions, not clinical scenario descriptions."
+    },
+    {
+      "index": 60,
+      "task_id": "task3_1",
+      "instruction_text": "I just measured the blood pressure for patient with MRN of S2380121, and it is \"118/77 mmHg\". Help me record it.",
+      "text_fed_to_detection": " i just measured the blood pressure for patient with mrn of s2380121, and it is \"118/77 mmhg\". help m i just measured the blood pressure for patient with mrn of s2380121, and it is \"118/77 mmhg\". help me record it.",
+      "domain_keyword_results": {
+        "sepsis": {
+          "keywords_checked": [
+            "sepsis",
+            "septic",
+            "bacteremia",
+            "septicemia",
+            "sirs"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "chest_pain": {
+          "keywords_checked": [
+            "stemi",
+            "nstemi",
+            "acs",
+            "acute coronary",
+            "myocardial infarction",
+            "chest pain"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "stroke": {
+          "keywords_checked": [
+            "stroke",
+            "cerebrovascular",
+            "cva"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "heart_failure": {
+          "keywords_checked": [
+            "heart failure",
+            "hf ",
+            "chf",
+            "cardiomyopathy"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "aki": {
+          "keywords_checked": [
+            "aki",
+            "acute kidney",
+            "renal failure"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "dka": {
+          "keywords_checked": [
+            "dka",
+            "diabetic ketoacidosis",
+            "ketoacidosis"
+          ],
+          "hits": [],
+          "score": 0.0
+        }
+      },
+      "result": "general (all domain scores = 0, threshold = 3.0)",
+      "reason": "Task 'task3_1' is a FHIR operational task with no clinical domain keywords. The text contains lab codes (MG, GLU, K, A1C) and FHIR instructions, not clinical scenario descriptions."
+    },
+    {
+      "index": 210,
+      "task_id": "task8_1",
+      "instruction_text": "Order orthopedic surgery referral for patient S2016972. Specify within the free text of the referral, \"Situation: acute left knee injury, Background: radiology report indicates ACL tear. Assessment: ACL tear grade II. Recommendation: request for Orthopedic service to evaluate and provide management recommendations.\"",
+      "text_fed_to_detection": " order orthopedic surgery referral for patient s2016972. specify within the free text of the referral order orthopedic surgery referral for patient s2016972. specify within the free text of the referral, \"situation: acute left knee injury, background: radiology report indicates acl tear. assessment:",
+      "domain_keyword_results": {
+        "sepsis": {
+          "keywords_checked": [
+            "sepsis",
+            "septic",
+            "bacteremia",
+            "septicemia",
+            "sirs"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "chest_pain": {
+          "keywords_checked": [
+            "stemi",
+            "nstemi",
+            "acs",
+            "acute coronary",
+            "myocardial infarction",
+            "chest pain"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "stroke": {
+          "keywords_checked": [
+            "stroke",
+            "cerebrovascular",
+            "cva"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "heart_failure": {
+          "keywords_checked": [
+            "heart failure",
+            "hf ",
+            "chf",
+            "cardiomyopathy"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "aki": {
+          "keywords_checked": [
+            "aki",
+            "acute kidney",
+            "renal failure"
+          ],
+          "hits": [],
+          "score": 0.0
+        },
+        "dka": {
+          "keywords_checked": [
+            "dka",
+            "diabetic ketoacidosis",
+            "ketoacidosis"
+          ],
+          "hits": [],
+          "score": 0.0
+        }
+      },
+      "result": "general (all domain scores = 0, threshold = 3.0)",
+      "reason": "Task 'task8_1' is a FHIR operational task with no clinical domain keywords. The text contains lab codes (MG, GLU, K, A1C) and FHIR instructions, not clinical scenario descriptions."
+    }
+  ],
+  "improved_domain_distribution": {
+    "medagentbench_0": {
+      "task_id": "task1_1",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_1": {
+      "task_id": "task1_2",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_2": {
+      "task_id": "task1_3",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_3": {
+      "task_id": "task1_4",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_4": {
+      "task_id": "task1_5",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_5": {
+      "task_id": "task1_6",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_6": {
+      "task_id": "task1_7",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_7": {
+      "task_id": "task1_8",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_8": {
+      "task_id": "task1_9",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_9": {
+      "task_id": "task1_10",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_10": {
+      "task_id": "task1_11",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_11": {
+      "task_id": "task1_12",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_12": {
+      "task_id": "task1_13",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_13": {
+      "task_id": "task1_14",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_14": {
+      "task_id": "task1_15",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_15": {
+      "task_id": "task1_16",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_16": {
+      "task_id": "task1_17",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_17": {
+      "task_id": "task1_18",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_18": {
+      "task_id": "task1_19",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_19": {
+      "task_id": "task1_20",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_20": {
+      "task_id": "task1_21",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_21": {
+      "task_id": "task1_22",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_22": {
+      "task_id": "task1_23",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_23": {
+      "task_id": "task1_24",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_24": {
+      "task_id": "task1_25",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_25": {
+      "task_id": "task1_26",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_26": {
+      "task_id": "task1_27",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_27": {
+      "task_id": "task1_28",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_28": {
+      "task_id": "task1_29",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_29": {
+      "task_id": "task1_30",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_30": {
+      "task_id": "task2_1",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_31": {
+      "task_id": "task2_2",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_32": {
+      "task_id": "task2_3",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_33": {
+      "task_id": "task2_4",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_34": {
+      "task_id": "task2_5",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_35": {
+      "task_id": "task2_6",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_36": {
+      "task_id": "task2_7",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_37": {
+      "task_id": "task2_8",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_38": {
+      "task_id": "task2_9",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_39": {
+      "task_id": "task2_10",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_40": {
+      "task_id": "task2_11",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_41": {
+      "task_id": "task2_12",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_42": {
+      "task_id": "task2_13",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_43": {
+      "task_id": "task2_14",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_44": {
+      "task_id": "task2_15",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_45": {
+      "task_id": "task2_16",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_46": {
+      "task_id": "task2_17",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_47": {
+      "task_id": "task2_18",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_48": {
+      "task_id": "task2_19",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_49": {
+      "task_id": "task2_20",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_50": {
+      "task_id": "task2_21",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_51": {
+      "task_id": "task2_22",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_52": {
+      "task_id": "task2_23",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_53": {
+      "task_id": "task2_24",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_54": {
+      "task_id": "task2_25",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_55": {
+      "task_id": "task2_26",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_56": {
+      "task_id": "task2_27",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_57": {
+      "task_id": "task2_28",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_58": {
+      "task_id": "task2_29",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_59": {
+      "task_id": "task2_30",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_60": {
+      "task_id": "task3_1",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_61": {
+      "task_id": "task3_2",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_62": {
+      "task_id": "task3_3",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_63": {
+      "task_id": "task3_4",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_64": {
+      "task_id": "task3_5",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_65": {
+      "task_id": "task3_6",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_66": {
+      "task_id": "task3_7",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_67": {
+      "task_id": "task3_8",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_68": {
+      "task_id": "task3_9",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_69": {
+      "task_id": "task3_10",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_70": {
+      "task_id": "task3_11",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_71": {
+      "task_id": "task3_12",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_72": {
+      "task_id": "task3_13",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_73": {
+      "task_id": "task3_14",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_74": {
+      "task_id": "task3_15",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_75": {
+      "task_id": "task3_16",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_76": {
+      "task_id": "task3_17",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_77": {
+      "task_id": "task3_18",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_78": {
+      "task_id": "task3_19",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_79": {
+      "task_id": "task3_20",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_80": {
+      "task_id": "task3_21",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_81": {
+      "task_id": "task3_22",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_82": {
+      "task_id": "task3_23",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_83": {
+      "task_id": "task3_24",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_84": {
+      "task_id": "task3_25",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_85": {
+      "task_id": "task3_26",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_86": {
+      "task_id": "task3_27",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_87": {
+      "task_id": "task3_28",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_88": {
+      "task_id": "task3_29",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_89": {
+      "task_id": "task3_30",
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency",
+      "matched_keywords": [
+        "blood pressure"
+      ],
+      "cpg_graph": "hypertensive_emergency.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_90": {
+      "task_id": "task4_1",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_91": {
+      "task_id": "task4_2",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_92": {
+      "task_id": "task4_3",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_93": {
+      "task_id": "task4_4",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_94": {
+      "task_id": "task4_5",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_95": {
+      "task_id": "task4_6",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_96": {
+      "task_id": "task4_7",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_97": {
+      "task_id": "task4_8",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_98": {
+      "task_id": "task4_9",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_99": {
+      "task_id": "task4_10",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_100": {
+      "task_id": "task4_11",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_101": {
+      "task_id": "task4_12",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_102": {
+      "task_id": "task4_13",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_103": {
+      "task_id": "task4_14",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_104": {
+      "task_id": "task4_15",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_105": {
+      "task_id": "task4_16",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_106": {
+      "task_id": "task4_17",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_107": {
+      "task_id": "task4_18",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_108": {
+      "task_id": "task4_19",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_109": {
+      "task_id": "task4_20",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_110": {
+      "task_id": "task4_21",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_111": {
+      "task_id": "task4_22",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_112": {
+      "task_id": "task4_23",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_113": {
+      "task_id": "task4_24",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_114": {
+      "task_id": "task4_25",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_115": {
+      "task_id": "task4_26",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_116": {
+      "task_id": "task4_27",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_117": {
+      "task_id": "task4_28",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_118": {
+      "task_id": "task4_29",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_119": {
+      "task_id": "task4_30",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_120": {
+      "task_id": "task5_1",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_121": {
+      "task_id": "task5_2",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_122": {
+      "task_id": "task5_3",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_123": {
+      "task_id": "task5_4",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_124": {
+      "task_id": "task5_5",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_125": {
+      "task_id": "task5_6",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_126": {
+      "task_id": "task5_7",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_127": {
+      "task_id": "task5_8",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_128": {
+      "task_id": "task5_9",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_129": {
+      "task_id": "task5_10",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_130": {
+      "task_id": "task5_11",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_131": {
+      "task_id": "task5_12",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_132": {
+      "task_id": "task5_13",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_133": {
+      "task_id": "task5_14",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_134": {
+      "task_id": "task5_15",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_135": {
+      "task_id": "task5_16",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_136": {
+      "task_id": "task5_17",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_137": {
+      "task_id": "task5_18",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_138": {
+      "task_id": "task5_19",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_139": {
+      "task_id": "task5_20",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_140": {
+      "task_id": "task5_21",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_141": {
+      "task_id": "task5_22",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_142": {
+      "task_id": "task5_23",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_143": {
+      "task_id": "task5_24",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_144": {
+      "task_id": "task5_25",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_145": {
+      "task_id": "task5_26",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_146": {
+      "task_id": "task5_27",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_147": {
+      "task_id": "task5_28",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_148": {
+      "task_id": "task5_29",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_149": {
+      "task_id": "task5_30",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_150": {
+      "task_id": "task6_1",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_151": {
+      "task_id": "task6_2",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_152": {
+      "task_id": "task6_3",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_153": {
+      "task_id": "task6_4",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_154": {
+      "task_id": "task6_5",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_155": {
+      "task_id": "task6_6",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_156": {
+      "task_id": "task6_7",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_157": {
+      "task_id": "task6_8",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_158": {
+      "task_id": "task6_9",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_159": {
+      "task_id": "task6_10",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_160": {
+      "task_id": "task6_11",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_161": {
+      "task_id": "task6_12",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_162": {
+      "task_id": "task6_13",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_163": {
+      "task_id": "task6_14",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_164": {
+      "task_id": "task6_15",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_165": {
+      "task_id": "task6_16",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_166": {
+      "task_id": "task6_17",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_167": {
+      "task_id": "task6_18",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_168": {
+      "task_id": "task6_19",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_169": {
+      "task_id": "task6_20",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_170": {
+      "task_id": "task6_21",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_171": {
+      "task_id": "task6_22",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_172": {
+      "task_id": "task6_23",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_173": {
+      "task_id": "task6_24",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_174": {
+      "task_id": "task6_25",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_175": {
+      "task_id": "task6_26",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_176": {
+      "task_id": "task6_27",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_177": {
+      "task_id": "task6_28",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_178": {
+      "task_id": "task6_29",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_179": {
+      "task_id": "task6_30",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_180": {
+      "task_id": "task7_1",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_181": {
+      "task_id": "task7_2",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_182": {
+      "task_id": "task7_3",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_183": {
+      "task_id": "task7_4",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_184": {
+      "task_id": "task7_5",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_185": {
+      "task_id": "task7_6",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_186": {
+      "task_id": "task7_7",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_187": {
+      "task_id": "task7_8",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_188": {
+      "task_id": "task7_9",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_189": {
+      "task_id": "task7_10",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_190": {
+      "task_id": "task7_11",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_191": {
+      "task_id": "task7_12",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_192": {
+      "task_id": "task7_13",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_193": {
+      "task_id": "task7_14",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_194": {
+      "task_id": "task7_15",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_195": {
+      "task_id": "task7_16",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_196": {
+      "task_id": "task7_17",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_197": {
+      "task_id": "task7_18",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_198": {
+      "task_id": "task7_19",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_199": {
+      "task_id": "task7_20",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_200": {
+      "task_id": "task7_21",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_201": {
+      "task_id": "task7_22",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_202": {
+      "task_id": "task7_23",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_203": {
+      "task_id": "task7_24",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_204": {
+      "task_id": "task7_25",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_205": {
+      "task_id": "task7_26",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_206": {
+      "task_id": "task7_27",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_207": {
+      "task_id": "task7_28",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_208": {
+      "task_id": "task7_29",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_209": {
+      "task_id": "task7_30",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "cbg"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_210": {
+      "task_id": "task8_1",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_211": {
+      "task_id": "task8_2",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_212": {
+      "task_id": "task8_3",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_213": {
+      "task_id": "task8_4",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_214": {
+      "task_id": "task8_5",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_215": {
+      "task_id": "task8_6",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_216": {
+      "task_id": "task8_7",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_217": {
+      "task_id": "task8_8",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_218": {
+      "task_id": "task8_9",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_219": {
+      "task_id": "task8_10",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_220": {
+      "task_id": "task8_11",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_221": {
+      "task_id": "task8_12",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_222": {
+      "task_id": "task8_13",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_223": {
+      "task_id": "task8_14",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_224": {
+      "task_id": "task8_15",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_225": {
+      "task_id": "task8_16",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_226": {
+      "task_id": "task8_17",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_227": {
+      "task_id": "task8_18",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_228": {
+      "task_id": "task8_19",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_229": {
+      "task_id": "task8_20",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_230": {
+      "task_id": "task8_21",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_231": {
+      "task_id": "task8_22",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_232": {
+      "task_id": "task8_23",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_233": {
+      "task_id": "task8_24",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_234": {
+      "task_id": "task8_25",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_235": {
+      "task_id": "task8_26",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_236": {
+      "task_id": "task8_27",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_237": {
+      "task_id": "task8_28",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_238": {
+      "task_id": "task8_29",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_239": {
+      "task_id": "task8_30",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_240": {
+      "task_id": "task9_1",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_241": {
+      "task_id": "task9_2",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_242": {
+      "task_id": "task9_3",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_243": {
+      "task_id": "task9_4",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_244": {
+      "task_id": "task9_5",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_245": {
+      "task_id": "task9_6",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_246": {
+      "task_id": "task9_7",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_247": {
+      "task_id": "task9_8",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_248": {
+      "task_id": "task9_9",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_249": {
+      "task_id": "task9_10",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_250": {
+      "task_id": "task9_11",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_251": {
+      "task_id": "task9_12",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_252": {
+      "task_id": "task9_13",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_253": {
+      "task_id": "task9_14",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_254": {
+      "task_id": "task9_15",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_255": {
+      "task_id": "task9_16",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_256": {
+      "task_id": "task9_17",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_257": {
+      "task_id": "task9_18",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_258": {
+      "task_id": "task9_19",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_259": {
+      "task_id": "task9_20",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_260": {
+      "task_id": "task9_21",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_261": {
+      "task_id": "task9_22",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_262": {
+      "task_id": "task9_23",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_263": {
+      "task_id": "task9_24",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_264": {
+      "task_id": "task9_25",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_265": {
+      "task_id": "task9_26",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_266": {
+      "task_id": "task9_27",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_267": {
+      "task_id": "task9_28",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_268": {
+      "task_id": "task9_29",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_269": {
+      "task_id": "task9_30",
+      "current_domain": "general",
+      "improved_domain": "general",
+      "matched_keywords": [],
+      "cpg_graph": null,
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_270": {
+      "task_id": "task10_1",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_271": {
+      "task_id": "task10_2",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_272": {
+      "task_id": "task10_3",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_273": {
+      "task_id": "task10_4",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_274": {
+      "task_id": "task10_5",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_275": {
+      "task_id": "task10_6",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_276": {
+      "task_id": "task10_7",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_277": {
+      "task_id": "task10_8",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_278": {
+      "task_id": "task10_9",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_279": {
+      "task_id": "task10_10",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_280": {
+      "task_id": "task10_11",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_281": {
+      "task_id": "task10_12",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_282": {
+      "task_id": "task10_13",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_283": {
+      "task_id": "task10_14",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_284": {
+      "task_id": "task10_15",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_285": {
+      "task_id": "task10_16",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_286": {
+      "task_id": "task10_17",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_287": {
+      "task_id": "task10_18",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_288": {
+      "task_id": "task10_19",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_289": {
+      "task_id": "task10_20",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_290": {
+      "task_id": "task10_21",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_291": {
+      "task_id": "task10_22",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_292": {
+      "task_id": "task10_23",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_293": {
+      "task_id": "task10_24",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_294": {
+      "task_id": "task10_25",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_295": {
+      "task_id": "task10_26",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_296": {
+      "task_id": "task10_27",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_297": {
+      "task_id": "task10_28",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_298": {
+      "task_id": "task10_29",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    },
+    "medagentbench_299": {
+      "task_id": "task10_30",
+      "current_domain": "general",
+      "improved_domain": "dka",
+      "matched_keywords": [
+        "hba1c",
+        "hemoglobin a1c",
+        "a1c"
+      ],
+      "cpg_graph": "ada_dka_management.yaml",
+      "is_true_clinical_match": false,
+      "note": "Keyword match is spurious - FHIR task, not clinical scenario"
+    }
+  },
+  "improvement_stats": {
+    "general_before": 300,
+    "general_after": 180,
+    "domain_matched_raw": 120,
+    "domain_matched_true_clinical": 0,
+    "domain_distribution_improved": {
+      "general": 180,
+      "dka": 90,
+      "hypertensive_emergency": 30
+    },
+    "note": "All 'domain matches' are spurious. CBG/glucose mentions are lab queries, not DKA. BP mentions are vital recording, not hypertensive emergency. TRUE clinical domain match = 0."
+  },
+  "available_cpg_graphs": [
+    {
+      "filename": "ada_dka_management.yaml",
+      "domain": "ada_dka_management",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "aha_chest_pain.yaml",
+      "domain": "aha_chest_pain",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "aha_heart_failure.yaml",
+      "domain": "aha_heart_failure",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "aha_stroke.yaml",
+      "domain": "aha_stroke",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "atrial_fibrillation.yaml",
+      "domain": "atrial_fibrillation",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "cap_pneumonia.yaml",
+      "domain": "cap_pneumonia",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "copd_exacerbation.yaml",
+      "domain": "copd_exacerbation",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "gi_bleeding.yaml",
+      "domain": "gi_bleeding",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "hypertensive_emergency.yaml",
+      "domain": "hypertensive_emergency",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "kdigo_aki_full.yaml",
+      "domain": "kdigo_aki_full",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "kdigo_contrast_aki.yaml",
+      "domain": "kdigo_contrast_aki",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "pulmonary_embolism.yaml",
+      "domain": "pulmonary_embolism",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "ssc_sepsis_hour1.yaml",
+      "domain": "ssc_sepsis_hour1",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    },
+    {
+      "filename": "universal_clinical_safety.yaml",
+      "domain": "universal_clinical_safety",
+      "would_help_medagentbench": false,
+      "reason": "MedAgentBench tasks are FHIR operations, not clinical decision scenarios"
+    }
+  ],
+  "bimodal_resolution_prediction": {
+    "would_improved_detection_resolve_bimodality": false,
+    "confidence": "high",
+    "reasoning": [
+      "The bimodal artifact (75.3% at 1.0, 20.0% at 0.0) stems from task type mismatch, not domain detection failure.",
+      "Score=1.0 cases: Agent 'assess_*' actions satisfy universal_clinical_safety.yaml's basic_assessment checks.",
+      "Score=0.0 cases: Tasks requiring FHIR write operations (POST) where agent assessment actions are irrelevant.",
+      "Improved domain detection would move some cases from universal_clinical_safety.yaml to domain-specific graphs.",
+      "But domain-specific graphs have MORE mandatory actions (antibiotics, insulin drips, etc.), causing MORE violations.",
+      "Net effect: would WORSEN ~90 cases (0.797 average -> lower) while NOT fixing the 60 zero-score cases."
+    ],
+    "estimated_impact": {
+      "cases_would_improve": 0,
+      "cases_would_worsen": "90-120 (false clinical domain assignment)",
+      "cases_unchanged": "180-210",
+      "predicted_avg_score_change": "negative (worse)"
+    }
+  },
+  "zero_score_block_analysis": {
+    "block_60_89": {
+      "task_type": "task3 (record blood pressure)",
+      "zero_score_count": 30,
+      "total_in_block": 30,
+      "current_domain": "general",
+      "improved_domain": "hypertensive_emergency (spurious match on 'blood pressure')",
+      "root_cause": "Agent performs 'assess_*' actions but task expects FHIR POST /Observation. Action vocabulary mismatch, not domain detection.",
+      "would_domain_fix_help": false,
+      "would_worsen": true,
+      "explanation": "Mapping to hypertensive_emergency.yaml would add mandatory actions (IV antihypertensives, etc.) that are completely inappropriate for a BP recording task."
+    },
+    "block_210_239": {
+      "task_type": "task8 (order referral)",
+      "zero_score_count": 30,
+      "total_in_block": 30,
+      "current_domain": "general",
+      "improved_domain": "general (no CPG domain for referral ordering)",
+      "root_cause": "Agent performs 'assess_*' actions but task expects FHIR ServiceRequest creation. Action vocabulary mismatch.",
+      "would_domain_fix_help": false,
+      "would_worsen": false,
+      "explanation": "No CPG domain applies. Referral ordering is an administrative task."
+    },
+    "total_zero_score_cases": 60,
+    "zero_score_indices": [
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      210,
+      211,
+      212,
+      213,
+      214,
+      215,
+      216,
+      217,
+      218,
+      219,
+      220,
+      221,
+      222,
+      223,
+      224,
+      225,
+      226,
+      227,
+      228,
+      229,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      239
+    ]
+  },
+  "task_type_analysis": {
+    "task1_patient_lookup": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general"
+    },
+    "task2_age_calculation": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general"
+    },
+    "task3_bp_recording": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general",
+      "spurious_match": "hypertensive_emergency"
+    },
+    "task4_mg_retrieval": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general"
+    },
+    "task5_mg_conditional": {
+      "count": 30,
+      "clinical_relevance": "weak",
+      "best_domain": "general"
+    },
+    "task6_cbg_average": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general",
+      "spurious_match": "dka"
+    },
+    "task7_cbg_retrieval": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general",
+      "spurious_match": "dka"
+    },
+    "task8_referral_order": {
+      "count": 30,
+      "clinical_relevance": "none",
+      "best_domain": "general"
+    },
+    "task9_k_conditional": {
+      "count": 30,
+      "clinical_relevance": "weak",
+      "best_domain": "general"
+    },
+    "task10_hba1c_check": {
+      "count": 30,
+      "clinical_relevance": "weak",
+      "best_domain": "general",
+      "spurious_match": "dka"
+    }
+  },
+  "root_cause_summary": "MedAgentBench is a FHIR API operational benchmark (EHR task automation), not a clinical decision benchmark. All 300 tasks are administrative EHR operations: patient lookup, age calculation, vital sign recording, lab retrieval, conditional medication ordering, referral creation. Domain detection correctly identifies 'general' because these tasks have no clinical domain. The bimodal scoring artifact is caused by action vocabulary mismatch (agent outputs 'assess_*' actions vs FHIR expects 'POST /Observation' operations), NOT domain detection failure. Improving domain detection would WORSEN results by applying inappropriate clinical guidelines to non-clinical tasks."
+}

@@ -1,0 +1,252 @@
+graph_id: wses_pelvic_trauma_reboa_2017
+guideline_name: WSES 2017 Classification and Guidelines for Pelvic Trauma
+version: '2017.1'
+metadata:
+  source: World Society of Emergency Surgery Classification and Guidelines for Pelvic Trauma
+  doi: 10.1186/s13017-017-0149-0
+  journal: World Journal of Emergency Surgery
+  recommendation_system: GRADE
+  description: Evidence-based guideline for hemodynamically unstable pelvic trauma including pelvic binder, massive transfusion,
+    REBOA Zone 3, angioembolization, and preperitoneal packing
+  key_evidence: 'Pelvic binder reduces pelvic volume and tamponades venous bleeding. REBOA Zone 3 provides 60-90 min bridge
+    to definitive hemostasis. TXA within 3 hours reduces mortality (CRASH-2: OR 0.72). Angioembolization success rate 80-100%
+    for arterial pelvic hemorrhage.'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: hemodynamic_assessment
+nodes:
+  hemodynamic_assessment:
+    node_id: hemodynamic_assessment
+    node_type: decision
+    name: Hemodynamic Assessment & Pelvic Binder
+    description: Assess hemodynamic stability in pelvic trauma. Apply pelvic binder immediately for suspected unstable pelvic
+      fracture. FAST exam.
+    precondition: null
+    mandatory_actions:
+    - assess_hemodynamic_status
+    - apply_pelvic_binder
+    - perform_fast_exam
+    allowed_actions:
+    - assess_vital_signs
+    - order_lab_blood_type_crossmatch
+    - order_lab_cbc
+    - establish_large_bore_iv_access
+    - order_lab_base_deficit
+    - order_lab_coagulation
+    - assess_hemodynamic_status
+    - order_lab_lactate
+    - apply_pelvic_binder
+    - perform_fast_exam
+    forbidden_actions: []
+    deadlines:
+      assess_hemodynamic_status: 5
+      apply_pelvic_binder: 10
+      perform_fast_exam: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Guidelines for Pelvic Trauma Management
+    source_section: 'Section 2: Initial Assessment'
+    source_page: null
+    source_quote: Pelvic binder application is the first step in hemorrhage control for suspected unstable pelvic ring injury.
+      FAST exam assesses for free intraperitoneal fluid.
+    next_nodes: []
+    conditional_next:
+      state.hemodynamically_unstable == True: hemorrhage_control
+      state.hemodynamically_stable == True: ct_evaluation
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.176
+  hemorrhage_control:
+    node_id: hemorrhage_control
+    node_type: action
+    name: Massive Transfusion & REBOA Consideration
+    description: Activate massive transfusion protocol (1:1:1 ratio). Consider REBOA (Zone 3) as temporizing measure in hemodynamically
+      unstable patients not responding to initial resuscitation.
+    precondition: state.hemodynamically_unstable == True
+    mandatory_actions:
+    - activate_massive_transfusion_protocol
+    - give_tranexamic_acid_1g
+    allowed_actions:
+    - give_tranexamic_acid_1g
+    - order_lab_fibrinogen
+    - perform_reboa_zone_3
+    - give_calcium_chloride_for_transfusion
+    - activate_massive_transfusion_protocol
+    - give_cryoprecipitate_if_fibrinogen_low
+    - transfuse_prbc_ffp_platelets_1_1_1
+    - reassess_hemodynamic_status
+    - consider_reboa_zone_3
+    forbidden_actions:
+    - perform_reboa_zone_1_for_pelvic_injury
+    deadlines:
+      activate_massive_transfusion_protocol: 15
+      give_tranexamic_acid_1g: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Guidelines for Pelvic Trauma Management
+    source_section: 'Section 3: Hemorrhage Control'
+    source_page: null
+    source_quote: Massive transfusion with 1:1:1 ratio (PRBC:FFP:PLT). TXA within 3 hours of injury (CRASH-2 trial). REBOA
+      Zone 3 is a bridge to definitive hemorrhage control — not a definitive treatment.
+    next_nodes:
+    - surgical_intervention
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: PELVIS-REBOA
+      condition: state.sbp < 70 and state.pelvic_hemorrhage == True
+      effect:
+        type: REQUIRED
+        actions:
+        - perform_reboa_zone_3
+        deadline_minutes: 30
+      severity: CRITICAL
+      description: REBOA in Zone 3 (infrarenal aorta) provides temporary hemorrhage control in exsanguinating pelvic trauma.
+        Do NOT place in Zone 1 for pelvic hemorrhage alone.
+      evidence: Class I, Level B
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.158
+  ct_evaluation:
+    node_id: ct_evaluation
+    node_type: enquiry
+    name: CT with Contrast & Fracture Classification
+    description: CT abdomen/pelvis with IV contrast for hemodynamically stable patients. Identify active arterial extravasation,
+      fracture pattern (Tile/Young-Burgess).
+    precondition: state.hemodynamically_stable == True
+    mandatory_actions:
+    - order_imaging_ct_pelvis_with_contrast
+    - classify_fracture_pattern
+    allowed_actions:
+    - classify_fracture_pattern
+    - assess_urethral_injury
+    - order_imaging_ct_abdomen
+    - assess_bladder_injury
+    - identify_active_extravasation
+    - consult_orthopedic_surgery
+    - order_imaging_ct_pelvis_with_contrast
+    forbidden_actions: []
+    deadlines:
+      order_imaging_ct_pelvis_with_contrast: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Guidelines for Pelvic Trauma Management
+    source_section: 'Section 4: Imaging'
+    source_page: null
+    source_quote: CT with IV contrast is the gold standard for assessing pelvic fracture severity, vascular injury, and concomitant
+      intra-abdominal injury. Active extravasation on CT indicates need for angioembolization.
+    next_nodes: []
+    conditional_next:
+      state.active_extravasation == True: surgical_intervention
+      state.active_extravasation == False: monitoring_reassessment
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.176
+  surgical_intervention:
+    node_id: surgical_intervention
+    node_type: action
+    name: Angioembolization or Preperitoneal Packing
+    description: Angioembolization for arterial bleeding identified on CT/angiography. Preperitoneal pelvic packing (PPP)
+      for diffuse venous bleeding or when angioembolization is not available.
+    precondition: null
+    mandatory_actions:
+    - perform_definitive_hemorrhage_control
+    allowed_actions:
+    - consult_orthopedic_surgery
+    - perform_external_fixation
+    - continue_transfusion_support
+    - perform_definitive_hemorrhage_control
+    - consult_interventional_radiology
+    - perform_angioembolization
+    - perform_preperitoneal_packing
+    - reassess_hemodynamic_status
+    forbidden_actions: []
+    deadlines:
+      perform_definitive_hemorrhage_control: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Guidelines for Pelvic Trauma Management
+    source_section: 'Section 5: Surgical Management'
+    source_page: null
+    source_quote: Angioembolization controls arterial bleeding in 80-100% of cases. Preperitoneal packing is faster, does
+      not require specialized equipment, and controls venous bleeding more effectively. Combined approach may be needed for
+      mixed arteriovenous injury.
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.143
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: ICU Monitoring & Coagulopathy Correction
+    description: 'Monitor for ongoing hemorrhage, correct coagulopathy (lethal triad: hypothermia, acidosis, coagulopathy).
+      Serial labs.'
+    precondition: null
+    mandatory_actions:
+    - monitor_hemodynamic_status
+    - correct_coagulopathy
+    allowed_actions:
+    - rewarm_patient
+    - correct_coagulopathy
+    - order_lab_lactate_serial
+    - reassess_pelvic_binder
+    - order_lab_coagulation_serial
+    - monitor_hemodynamic_status
+    - order_lab_cbc_serial
+    - monitor_compartment_pressures
+    forbidden_actions: []
+    deadlines:
+      monitor_hemodynamic_status: 60
+      correct_coagulopathy: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Guidelines for Pelvic Trauma Management
+    source_section: 'Section 6: ICU Management'
+    source_page: null
+    source_quote: 'Resuscitation targets: pH >7.2, temperature >35C, fibrinogen >1.5 g/L, platelets >50,000. The lethal triad
+      (hypothermia, acidosis, coagulopathy) is the primary driver of non-surgical mortality in pelvic trauma.'
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.158
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Definitive Fracture Management
+    description: Plan definitive fracture fixation once hemodynamically stable. VTE prophylaxis, rehabilitation planning.
+    precondition: null
+    mandatory_actions:
+    - plan_definitive_fixation
+    allowed_actions:
+    - consult_rehabilitation
+    - schedule_follow_up_imaging
+    - initiate_vte_prophylaxis
+    - remove_pelvic_binder_when_stable
+    - plan_definitive_fixation
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Guidelines for Pelvic Trauma Management
+    source_section: 'Section 7: Definitive Management'
+    source_page: null
+    source_quote: Definitive internal fixation is typically performed within 5-7 days once the patient is hemodynamically
+      stable. Early VTE prophylaxis is recommended given high DVT/PE risk in pelvic fractures.
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.286

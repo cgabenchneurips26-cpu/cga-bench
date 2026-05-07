@@ -1,0 +1,109 @@
+graph_id: eacts_esc_myocardial_revascularization_2024
+guideline_name: EACTS/ESC Myocardial Revascularization 2024
+version: '2024.1'
+metadata:
+  source: EACTS/ESC Myocardial Revascularization 2024
+  doi: 10.1093/eurheartj/ehae456
+  journal: European Heart Journal
+  recommendation_system: ESC Class/Level
+  description: Myocardial revascularization selection and peri-procedural care.
+  key_evidence: ISCHEMIA, EXCEL, and NOBLE trials inform modern revascularization decisions.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Ischemia & Anatomy Characterization
+    description: Characterize CAD complexity via angiography, FFR, and viability testing.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_coronary_angiography
+    - order_lab_troponin
+    allowed_actions:
+    - order_ecg
+    - order_lab_troponin
+    - assess_vital_signs
+    - order_ffr_or_ifr
+    - order_coronary_angiography
+    - calculate_syntax_score
+    - order_lab_hba1c
+    - assess_lv_function
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 15
+      order_coronary_angiography: 1440
+      order_lab_troponin: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: EACTS/ESC Myocardial Revascularization 2024
+    source_section: Pre-revascularization evaluation
+    source_page: null
+    source_quote: Functional assessment is recommended in intermediate-severity lesions.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Heart Team Revascularization
+    description: Select PCI or CABG per SYNTAX, diabetes, LV function; optimize peri-procedural antithrombotics.
+    precondition: null
+    mandatory_actions:
+    - discuss_heart_team_evaluation
+    - initiate_guideline_antiplatelet_therapy
+    allowed_actions:
+    - initiate_statin_high_intensity
+    - initiate_guideline_antiplatelet_therapy
+    - consult_cardiothoracic_surgery
+    - plan_radial_access_if_pci
+    - plan_pci_if_appropriate
+    - discuss_heart_team_evaluation
+    - plan_cabg_if_diabetes_multivessel
+    - plan_cabg_if_complex_anatomy
+    forbidden_actions:
+    - perform_elective_pci_in_stable_angina_without_ischemia_evidence
+    deadlines:
+      discuss_heart_team_evaluation: 4320
+      initiate_guideline_antiplatelet_therapy: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EACTS/ESC Myocardial Revascularization 2024
+    source_section: Revascularization strategy
+    source_page: null
+    source_quote: A Heart Team approach is recommended for complex multivessel disease.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-procedural Care & Secondary Prevention
+    description: DAPT duration, cardiac rehabilitation, risk factor modification, periodic ischemia reassessment.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - plan_dual_antiplatelet_duration
+    allowed_actions:
+    - refer_cardiac_rehab
+    - manage_diabetes
+    - reassess_vital_signs
+    - counsel_smoking_cessation
+    - plan_dual_antiplatelet_duration
+    - assess_repeat_ischemia_if_symptomatic
+    - plan_lipid_followup
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      plan_dual_antiplatelet_duration: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: EACTS/ESC Myocardial Revascularization 2024
+    source_section: Secondary prevention
+    source_page: null
+    source_quote: Secondary prevention is essential after any revascularization.
+    next_nodes: []
+    conditional_next: {}

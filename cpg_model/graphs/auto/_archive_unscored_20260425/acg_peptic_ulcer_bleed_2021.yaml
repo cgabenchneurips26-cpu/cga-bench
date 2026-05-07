@@ -1,0 +1,113 @@
+graph_id: acg_peptic_ulcer_bleed_2021
+guideline_name: ACG Peptic Ulcer Bleeding 2021
+version: '2021.1'
+metadata:
+  source: ACG Peptic Ulcer Bleeding 2021
+  doi: 10.14309/ajg.0000000000001245
+  journal: American Journal of Gastroenterology
+  recommendation_system: GRADE
+  description: Acute peptic ulcer bleeding diagnosis, endoscopy, and medical management.
+  key_evidence: Randomized trials support restrictive transfusion and IV PPI infusion.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: UGIB Recognition & Risk Stratification
+    description: Hematemesis/melena evaluation with Glasgow-Blatchford score and hemodynamic assessment.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_type_and_crossmatch
+    - order_lab_coagulation
+    allowed_actions:
+    - calculate_glasgow_blatchford_score
+    - order_lab_type_and_crossmatch
+    - order_ecg
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_lft
+    - order_lab_coagulation
+    - order_lab_bmp
+    - establish_iv_access_large_bore
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 10
+      order_lab_cbc: 30
+      order_lab_type_and_crossmatch: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ACG Peptic Ulcer Bleeding 2021
+    source_section: Initial evaluation
+    source_page: null
+    source_quote: Assess hemodynamic status and initiate resuscitation before endoscopy.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: PPI + Endoscopy Within 24h
+    description: High-dose IV PPI and endoscopic hemostasis within 24 hours; restrictive transfusion threshold Hb<7.
+    precondition: null
+    mandatory_actions:
+    - give_iv_ppi_infusion
+    - consult_gastroenterology_for_endoscopy
+    - resuscitate_with_crystalloid
+    allowed_actions:
+    - perform_endoscopy_within_24h
+    - transfuse_prbc_if_hb_below_7
+    - reverse_anticoagulation_if_indicated
+    - resuscitate_with_crystalloid
+    - hold_antiplatelets_temporarily
+    - give_iv_ppi_infusion
+    - consult_gastroenterology_for_endoscopy
+    - apply_endoscopic_hemostasis
+    forbidden_actions:
+    - transfuse_prbc_if_hb_above_9
+    - delay_endoscopy_beyond_24h_in_unstable
+    deadlines:
+      give_iv_ppi_infusion: 60
+      consult_gastroenterology_for_endoscopy: 120
+      perform_endoscopy_within_24h: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACG Peptic Ulcer Bleeding 2021
+    source_section: Endoscopic management
+    source_page: null
+    source_quote: Endoscopy should be performed within 24 hours for acute UGIB.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-endoscopy Monitoring
+    description: Reassess bleeding, H. pylori testing, and discharge planning with oral PPI.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - order_lab_hpylori_test
+    allowed_actions:
+    - plan_second_look_endoscopy_if_rebleed
+    - order_lab_hpylori_test
+    - counsel_nsaid_avoidance
+    - reassess_vital_signs
+    - eradicate_hpylori_if_positive
+    - continue_oral_ppi_8wks
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      order_lab_hpylori_test: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACG Peptic Ulcer Bleeding 2021
+    source_section: Post-bleeding management
+    source_page: null
+    source_quote: Test for and eradicate H. pylori in all patients with ulcer-related bleeding.
+    next_nodes: []
+    conditional_next: {}

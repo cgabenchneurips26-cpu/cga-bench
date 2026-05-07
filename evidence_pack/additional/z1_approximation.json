@@ -1,0 +1,413 @@
+{
+  "summary": {
+    "total_conditions": 27,
+    "n_z1_determined": 13,
+    "n_dynamic": 3,
+    "n_mixed": 4,
+    "n_unconditional": 7,
+    "n_conditional": 20,
+    "z1_ratio_of_conditional": 0.65,
+    "n_unconditional_deadlines": 92,
+    "total_constraints": 112,
+    "z1_plus_unconditional": 105,
+    "z1_approx_ratio": 0.9375
+  },
+  "graph_breakdown": {
+    "ada_dka_management": {
+      "z1": 0,
+      "dynamic": 2,
+      "mixed": 0,
+      "unconditional": 1,
+      "total": 3
+    },
+    "aha_chest_pain": {
+      "z1": 4,
+      "dynamic": 0,
+      "mixed": 1,
+      "unconditional": 3,
+      "total": 8
+    },
+    "aha_heart_failure": {
+      "z1": 0,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 0
+    },
+    "aha_stroke": {
+      "z1": 0,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 0
+    },
+    "atrial_fibrillation": {
+      "z1": 1,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 1
+    },
+    "cap_pneumonia": {
+      "z1": 2,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 2
+    },
+    "copd_exacerbation": {
+      "z1": 1,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 1
+    },
+    "gi_bleeding": {
+      "z1": 1,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 1
+    },
+    "hypertensive_emergency": {
+      "z1": 1,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 1
+    },
+    "kdigo_aki_full": {
+      "z1": 0,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 0
+    },
+    "kdigo_contrast_aki": {
+      "z1": 0,
+      "dynamic": 0,
+      "mixed": 3,
+      "unconditional": 2,
+      "total": 5
+    },
+    "pulmonary_embolism": {
+      "z1": 1,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 1
+    },
+    "ssc_sepsis_hour1": {
+      "z1": 2,
+      "dynamic": 1,
+      "mixed": 0,
+      "unconditional": 1,
+      "total": 4
+    },
+    "universal_clinical_safety": {
+      "z1": 0,
+      "dynamic": 0,
+      "mixed": 0,
+      "unconditional": 0,
+      "total": 0
+    }
+  },
+  "all_conditions": [
+    {
+      "graph": "ada_dka_management",
+      "node": "severity_classification",
+      "condition": "state.ph < 7.0 or state.mental_status == 'obtunded'",
+      "target": "severe_dka_pathway",
+      "classification": "dynamic",
+      "variables": [
+        "mental_status",
+        "ph"
+      ]
+    },
+    {
+      "graph": "ada_dka_management",
+      "node": "severity_classification",
+      "condition": "state.potassium < 3.3",
+      "target": "potassium_replacement_first",
+      "classification": "dynamic",
+      "variables": [
+        "potassium"
+      ]
+    },
+    {
+      "graph": "ada_dka_management",
+      "node": "severity_classification",
+      "condition": "True",
+      "target": "insulin_therapy",
+      "classification": "unconditional",
+      "variables": []
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "ecg_interpretation",
+      "condition": "state.ecg_finding == 'STEMI'",
+      "target": "stemi_pathway",
+      "classification": "z1_determined",
+      "variables": [
+        "ecg_finding"
+      ]
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "ecg_interpretation",
+      "condition": "state.ecg_finding == 'NSTEMI' or state.ecg_finding == 'ischemic_changes'",
+      "target": "nste_acs_pathway",
+      "classification": "z1_determined",
+      "variables": [
+        "ecg_finding"
+      ]
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "ecg_interpretation",
+      "condition": "True",
+      "target": "risk_stratification",
+      "classification": "unconditional",
+      "variables": []
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "risk_stratification",
+      "condition": "state.risk_score == 'high'",
+      "target": "nste_acs_pathway",
+      "classification": "z1_determined",
+      "variables": [
+        "risk_score"
+      ]
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "risk_stratification",
+      "condition": "state.risk_score == 'intermediate'",
+      "target": "observation_pathway",
+      "classification": "z1_determined",
+      "variables": [
+        "risk_score"
+      ]
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "risk_stratification",
+      "condition": "True",
+      "target": "low_risk_pathway",
+      "classification": "unconditional",
+      "variables": []
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "invasive_strategy_decision",
+      "condition": "state.requires_urgent_pci",
+      "target": "stemi_pathway",
+      "classification": "mixed",
+      "variables": [
+        "requires_urgent_pci"
+      ]
+    },
+    {
+      "graph": "aha_chest_pain",
+      "node": "invasive_strategy_decision",
+      "condition": "True",
+      "target": "admit_to_cardiology",
+      "classification": "unconditional",
+      "variables": []
+    },
+    {
+      "graph": "atrial_fibrillation",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'unstable_af'",
+      "target": "unstable_af",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "cap_pneumonia",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'severe_cap'",
+      "target": "severe_cap_icu",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "cap_pneumonia",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'inpatient_cap'",
+      "target": "inpatient_cap",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "copd_exacerbation",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'severe_copd_exacerbation'",
+      "target": "severe_exacerbation",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "gi_bleeding",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'hemodynamically_unstable_gi_bleed'",
+      "target": "hemodynamically_unstable",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "hypertensive_emergency",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'hypertensive_emergency'",
+      "target": "hypertensive_emergency_node",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "kdigo_contrast_aki",
+      "node": "risk_assessment",
+      "condition": "state.egfr < 30",
+      "target": "high_risk_pathway",
+      "classification": "mixed",
+      "variables": [
+        "egfr"
+      ]
+    },
+    {
+      "graph": "kdigo_contrast_aki",
+      "node": "risk_assessment",
+      "condition": "state.egfr < 60",
+      "target": "moderate_risk_pathway",
+      "classification": "mixed",
+      "variables": [
+        "egfr"
+      ]
+    },
+    {
+      "graph": "kdigo_contrast_aki",
+      "node": "risk_assessment",
+      "condition": "True",
+      "target": "low_risk_pathway",
+      "classification": "unconditional",
+      "variables": []
+    },
+    {
+      "graph": "kdigo_contrast_aki",
+      "node": "post_contrast_monitoring",
+      "condition": "state.scr_increase >= 0.3 or state.scr_ratio >= 1.5",
+      "target": "aki_management",
+      "classification": "mixed",
+      "variables": [
+        "scr_increase",
+        "scr_ratio"
+      ]
+    },
+    {
+      "graph": "kdigo_contrast_aki",
+      "node": "post_contrast_monitoring",
+      "condition": "True",
+      "target": "safe_discharge",
+      "classification": "unconditional",
+      "variables": []
+    },
+    {
+      "graph": "pulmonary_embolism",
+      "node": "initial_assessment",
+      "condition": "state.working_diagnosis == 'massive_pe'",
+      "target": "massive_pe",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "ssc_sepsis_hour1",
+      "node": "initial_recognition",
+      "condition": "state.working_diagnosis == 'septic_shock'",
+      "target": "septic_shock_bundle",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "ssc_sepsis_hour1",
+      "node": "initial_recognition",
+      "condition": "state.working_diagnosis == 'sepsis'",
+      "target": "sepsis_bundle",
+      "classification": "z1_determined",
+      "variables": [
+        "working_diagnosis"
+      ]
+    },
+    {
+      "graph": "ssc_sepsis_hour1",
+      "node": "disposition_decision",
+      "condition": "state.vitals.map_mmhg < 65 or 'vasopressor' in str(state.medications_given)",
+      "target": "admit_to_icu",
+      "classification": "dynamic",
+      "variables": [
+        "map_mmhg",
+        "medications_given",
+        "vitals"
+      ]
+    },
+    {
+      "graph": "ssc_sepsis_hour1",
+      "node": "disposition_decision",
+      "condition": "True",
+      "target": "admit_to_ward",
+      "classification": "unconditional",
+      "variables": []
+    }
+  ],
+  "dynamic_conditions": [
+    {
+      "graph": "ada_dka_management",
+      "node": "severity_classification",
+      "condition": "state.ph < 7.0 or state.mental_status == 'obtunded'",
+      "target": "severe_dka_pathway",
+      "classification": "dynamic",
+      "variables": [
+        "mental_status",
+        "ph"
+      ]
+    },
+    {
+      "graph": "ada_dka_management",
+      "node": "severity_classification",
+      "condition": "state.potassium < 3.3",
+      "target": "potassium_replacement_first",
+      "classification": "dynamic",
+      "variables": [
+        "potassium"
+      ]
+    },
+    {
+      "graph": "ssc_sepsis_hour1",
+      "node": "disposition_decision",
+      "condition": "state.vitals.map_mmhg < 65 or 'vasopressor' in str(state.medications_given)",
+      "target": "admit_to_icu",
+      "classification": "dynamic",
+      "variables": [
+        "map_mmhg",
+        "medications_given",
+        "vitals"
+      ]
+    }
+  ],
+  "paragraph": "Of 112 total constraints (conditional transitions + deadline constraints), 105 (94%) are determined by the presenting state z\u2081 or are unconditionally active. Only 3 (3% of total) depend on dynamic state changes during the episode."
+}

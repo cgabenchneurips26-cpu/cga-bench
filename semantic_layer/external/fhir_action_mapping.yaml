@@ -1,0 +1,63 @@
+fhir_resource_to_cpg:
+  ServiceRequest: "order_lab"
+  MedicationRequest: "give_medication"
+  MedicationAdministration: "give_medication"
+  Procedure: "perform_procedure"
+  ImagingStudy: "order_imaging"
+  Observation: "assess"
+  Patient: "assess_patient"
+  Condition: "assess_condition"
+  Encounter: "assess_patient"
+  DiagnosticReport: "assess"
+  AllergyIntolerance: "assess_condition"
+  Immunization: "give_medication"
+  MedicationStatement: "assess"
+  Appointment: "consult"
+  ReferralRequest: "consult"
+  ServiceRequest_referral: "consult"
+
+# FHIR method (GET vs POST) modifier
+# GET = read/assess action, POST = create/order action
+fhir_method_to_verb:
+  GET: "assess"
+  POST: "order"
+  PUT: "update"
+  PATCH: "update"
+  DELETE: "discontinue"
+
+# MedAgentBench task_id to CPG action mapping
+task_to_cpg:
+  task1: "assess_patient"          # Patient lookup by name/DOB
+  task2: "assess_patient"          # Patient age calculation
+  task3: "document_vitals"         # Blood pressure documentation (POST vital sign)
+  task4: "assess"                  # Lab result lookup
+  task5: "order_lab"               # Magnesium check + replacement order
+  task6: "assess"                  # CBG average calculation
+  task7: "assess"                  # Recent CBG lookup
+  task8: "consult"                 # Orthopedic referral
+  task9: "order_lab"               # Potassium check + replacement order
+  task10: "assess"                 # HbA1c review
+
+# LOINC codes to CPG action
+loinc_to_action:
+  "4548-4": "assess_lab_hba1c"
+  "2160-0": "order_lab_creatinine"
+  "2524-7": "order_lab_lactate"
+  "2823-3": "order_lab_potassium"
+  "2601-3": "order_lab_magnesium"
+  "33914-3": "order_lab_egfr"
+  "59408-5": "assess_oxygen_saturation"
+  "8867-4": "assess_heart_rate"
+  "8480-6": "assess_blood_pressure"
+  "8310-5": "assess_temperature"
+  "2345-7": "order_lab_glucose"
+  "1988-5": "order_lab_crp"
+  "1975-2": "order_lab_bilirubin"
+  "6598-7": "order_lab_troponin"
+  "48065-7": "order_lab_bnp"
+
+# SNOMED codes to CPG action (common)
+snomed_to_action:
+  "182836005": "give_medication"
+  "229070002": "perform_procedure"
+  "108252007": "order_lab"

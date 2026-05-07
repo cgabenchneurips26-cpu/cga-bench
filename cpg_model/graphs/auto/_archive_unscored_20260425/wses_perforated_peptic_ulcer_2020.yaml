@@ -1,0 +1,117 @@
+graph_id: wses_perforated_peptic_ulcer_2020
+guideline_name: WSES Perforated Peptic Ulcer 2020
+version: '2020.1'
+metadata:
+  source: WSES Perforated Peptic Ulcer 2020
+  doi: 10.1186/s13017-020-00306-3
+  journal: World Journal of Emergency Surgery
+  recommendation_system: WSES GRADE
+  description: Perforated peptic ulcer resuscitation, source control, and follow-up.
+  key_evidence: Boey score stratifies mortality risk in perforated PUD.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Perforation Recognition & Resuscitation
+    description: Sudden severe epigastric pain with pneumoperitoneum on imaging; fluid and antibiotic resuscitation.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_imaging_upright_chest_xray
+    - order_lab_cbc
+    - order_lab_type_and_crossmatch
+    allowed_actions:
+    - order_imaging_upright_chest_xray
+    - order_imaging_ct_abdomen
+    - assess_vital_signs
+    - order_lab_coagulation
+    - order_lab_cbc
+    - resuscitate_with_crystalloid
+    - order_lab_lactate
+    - order_lab_type_and_crossmatch
+    - order_lab_bmp
+    - establish_iv_access_large_bore
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 10
+      order_imaging_upright_chest_xray: 30
+      order_lab_cbc: 30
+      order_lab_type_and_crossmatch: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES Perforated Peptic Ulcer 2020
+    source_section: Diagnosis
+    source_page: null
+    source_quote: CT abdomen confirms perforation when plain films are equivocal.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Early Antibiotics & Source Control
+    description: Broad-spectrum antibiotics, IV PPI, and source control via surgery within 6 hours.
+    precondition: null
+    mandatory_actions:
+    - give_broad_spectrum_antibiotics
+    - give_iv_ppi_infusion
+    - consult_general_surgery
+    allowed_actions:
+    - plan_source_control_within_6h
+    - transfuse_prbc_if_hb_below_7
+    - give_broad_spectrum_antibiotics
+    - plan_laparoscopic_repair_if_stable
+    - resuscitate_with_crystalloid
+    - consult_icu_if_septic
+    - give_iv_ppi_infusion
+    - consult_general_surgery
+    - plan_open_repair_if_unstable
+    forbidden_actions:
+    - delay_source_control_beyond_6h_in_unstable
+    deadlines:
+      give_broad_spectrum_antibiotics: 60
+      give_iv_ppi_infusion: 60
+      consult_general_surgery: 60
+      plan_source_control_within_6h: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WSES Perforated Peptic Ulcer 2020
+    source_section: Management
+    source_page: null
+    source_quote: Early source control within 6 hours improves survival in perforated PUD.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-op Recovery & Ulcer Etiology
+    description: Monitor for leak/sepsis, complete antibiotic course, test H. pylori, address NSAID use.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - order_lab_hpylori_test
+    allowed_actions:
+    - refer_nutrition
+    - order_lab_hpylori_test
+    - counsel_nsaid_avoidance
+    - monitor_for_anastomotic_leak
+    - reassess_vital_signs
+    - eradicate_hpylori_if_positive
+    - continue_oral_ppi_8wks
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      order_lab_hpylori_test: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WSES Perforated Peptic Ulcer 2020
+    source_section: Post-operative care
+    source_page: null
+    source_quote: H. pylori eradication reduces ulcer recurrence after perforation.
+    next_nodes: []
+    conditional_next: {}

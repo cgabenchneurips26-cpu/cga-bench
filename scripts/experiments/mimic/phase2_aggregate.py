@@ -1,0 +1,206 @@
+#!/usr/bin/env python3
+"""Phase 2 aggregator — read ``verdict_matrix_mimic_iv.parquet`` produced by
+``phase2_score_trajectories.py`` and emit the Table 1 analog plus the tex
+fragment appended to App AQ.
+
+Outputs:
+  * evidence_pack/mimic_iv/phase2/table1_mimic_iv.json
+  * tex/appendix_AQ_mimic_iv_table.tex
+  * Macros appended to tex/auto_numbers_mimic_iv.tex:
+      \\MimicIvNEpisodes{}
+      \\MimicIvAscFa{} \\MimicIvCwtFa{} \\MimicIvPafFa{} \\MimicIvTccFa{}
+      \\MimicIvAcovFa{} \\MimicIvTomFa{}
+      \\MimicIvStrictConsensusFa{} (ASC ∩ CwT ∩ PAF — § 5.3 framing)
+      \\MimicIvVerdictFlipPrevalence{} (any-pair flip rate)
+
+The contract calls these "FA" rates. In our local terminology FA == pass
+rate; "False-Accept" semantics are evaluator-specific and not asserted
+here. This script reports raw pass rates so downstream interpretation
+remains owner-controlled.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import time
+from itertools import combinations
+from pathlib import Path
+
+import pandas as pd
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(REPO_ROOT))
+
+from scripts.experiments.mimic._common import (  # noqa: E402
+    EVIDENCE_ROOT,
+    PhaseSummary,
+    git_sha,
+    mimic_version,
+    resolve_mimic_root,
+)
+
+INPUT_PARQUET = (
+    REPO_ROOT / "evidence_pack" / "verdicts" / "verdict_matrix_mimic_iv.parquet"
+)
+PHASE2_DIR = EVIDENCE_ROOT / "phase2"
+OUTPUT_JSON = PHASE2_DIR / "table1_mimic_iv.json"
+OUTPUT_TEX = REPO_ROOT / "tex" / "appendix_AQ_mimic_iv_table.tex"
+OUTPUT_MACROS = REPO_ROOT / "tex" / "auto_numbers_mimic_iv.tex"
+
+EVALUATORS = ("TCC", "CwT", "ASC", "PAF", "TOM", "ACov")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--seed", type=int, default=42)
+    args = ap.parse_args()
+
+    t0 = time.time()
+    if not INPUT_PARQUET.is_file():
+        print(f"[error] missing {INPUT_PARQUET}; run phase2_score_trajectories.py",
+              file=sys.stderr)
+        return 2
+
+    df = pd.read_parquet(INPUT_PARQUET)
+    n = len(df)
+    print(f"[phase2_agg] {n:,} episodes")
+
+    pass_rates = {ev: float(df[f"verdict_{ev.lower()}"].mean()) for ev in EVALUATORS}
+    pass_counts = {ev: int(df[f"verdict_{ev.lower()}"].sum()) for ev in EVALUATORS}
+
+    # Strict 3-way consensus pass-rate (ASC ∩ CwT ∩ PAF).
+    consensus_mask = (
+        df["verdict_asc"].astype(bool)
+        & df["verdict_cwt"].astype(bool)
+        & df["verdict_paf"].astype(bool)
+    )
+    consensus_rate = float(consensus_mask.mean()) if n else 0.0
+
+    # Verdict-flip prevalence: fraction of episodes where ANY pair of
+    # evaluators disagree.
+    flip_count = 0
+    for _, row in df.iterrows():
+        verdicts = {ev: bool(row[f"verdict_{ev.lower()}"]) for ev in EVALUATORS}
+        # any pair flipping = at least one True and at least one False across
+        # the six evaluators.
+        if 0 < sum(verdicts.values()) < len(verdicts):
+            flip_count += 1
+    flip_prevalence = flip_count / n if n else 0.0
+
+    # Pairwise disagreement counts (used by App AQ table).
+    pairwise = {}
+    for a, b in combinations(EVALUATORS, 2):
+        diff = (df[f"verdict_{a.lower()}"] != df[f"verdict_{b.lower()}"]).sum()
+        pairwise[f"{a}_vs_{b}"] = int(diff)
+
+    # Median compliance score (informational only)
+    median_compliance = (
+        float(df["compliance_score"].median()) if "compliance_score" in df.columns else 0.0
+    )
+
+    payload = {
+        "metadata": {
+            "input": str(INPUT_PARQUET.relative_to(REPO_ROOT)),
+            "git_sha": git_sha(),
+            "mimic_version": mimic_version(resolve_mimic_root(prefer_full=True)),
+            "n_episodes": n,
+        },
+        "pass_rate_per_evaluator": pass_rates,
+        "pass_count_per_evaluator": pass_counts,
+        "strict_consensus_asc_cwt_paf": consensus_rate,
+        "verdict_flip_prevalence": flip_prevalence,
+        "pairwise_disagreement_counts": pairwise,
+        "median_compliance_score": median_compliance,
+    }
+    OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT_JSON.write_text(json.dumps(payload, indent=2) + "\n")
+    print(f"[phase2_agg] wrote {OUTPUT_JSON}")
+
+    _write_tex(payload)
+    _append_macros(payload)
+
+    summary = PhaseSummary(
+        script_name="phase2_aggregate",
+        phase="phase2",
+        n_episodes=int(n),
+        seed=args.seed,
+        git_sha=git_sha(),
+        mimic_version=mimic_version(resolve_mimic_root(prefer_full=True)),
+        wall_time_s=time.time() - t0,
+        extra=payload,
+    )
+    summary.write(PHASE2_DIR)
+    print(f"[phase2_agg] done in {time.time() - t0:.1f}s")
+    return 0
+
+
+def _write_tex(payload: dict) -> None:
+    OUTPUT_TEX.parent.mkdir(parents=True, exist_ok=True)
+    rates = payload["pass_rate_per_evaluator"]
+    counts = payload["pass_count_per_evaluator"]
+    n = payload["metadata"]["n_episodes"]
+    lines = [
+        "% Auto-generated by scripts/experiments/mimic/phase2_aggregate.py",
+        "% Table 1 analog on MIMIC-IV (App AQ.1).",
+        "\\begin{tabular}{@{}lrr@{}}",
+        "\\toprule",
+        f"Evaluator & Pass rate & Pass count (of {n:,}) \\\\",
+        "\\midrule",
+    ]
+    for ev in EVALUATORS:
+        lines.append(
+            f"{ev} & {rates[ev] * 100:.1f}\\% & {counts[ev]:,} \\\\"
+        )
+    lines += [
+        "\\midrule",
+        f"Strict ASC$\\cap$CwT$\\cap$PAF consensus & "
+        f"{payload['strict_consensus_asc_cwt_paf'] * 100:.1f}\\% & --- \\\\",
+        f"Verdict-flip prevalence (any pair) & "
+        f"{payload['verdict_flip_prevalence'] * 100:.1f}\\% & --- \\\\",
+        "\\bottomrule",
+        "\\end{tabular}",
+    ]
+    OUTPUT_TEX.write_text("\n".join(lines) + "\n")
+    print(f"[phase2_agg] wrote {OUTPUT_TEX}")
+
+
+def _append_macros(payload: dict) -> None:
+    rates = payload["pass_rate_per_evaluator"]
+    n = payload["metadata"]["n_episodes"]
+    block = (
+        "% Phase 2 (MIMIC-IV scoring)\n"
+        f"\\newcommand{{\\MimicIvNEpisodes}}{{{n:,}}}\n"
+        f"\\newcommand{{\\MimicIvTccFa}}{{{rates['TCC'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvCwtFa}}{{{rates['CwT'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvAscFa}}{{{rates['ASC'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvPafFa}}{{{rates['PAF'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvTomFa}}{{{rates['TOM'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvAcovFa}}{{{rates['ACov'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvStrictConsensusFa}}{{"
+        f"{payload['strict_consensus_asc_cwt_paf'] * 100:.1f}}}\n"
+        f"\\newcommand{{\\MimicIvVerdictFlipPrevalence}}{{"
+        f"{payload['verdict_flip_prevalence'] * 100:.1f}}}\n"
+    )
+    if OUTPUT_MACROS.is_file():
+        existing = OUTPUT_MACROS.read_text()
+        marker = "% Phase 2 (MIMIC-IV scoring)"
+        if marker in existing:
+            head, _ = existing.split(marker, 1)
+            tail_after = existing.split(marker, 1)[1]
+            tail_lines = tail_after.splitlines(keepends=True)
+            i = 0
+            while i < len(tail_lines) and tail_lines[i].startswith(("\\newcommand", "\n")):
+                i += 1
+            new = head + block + "".join(tail_lines[i:])
+            OUTPUT_MACROS.write_text(new)
+        else:
+            OUTPUT_MACROS.write_text(existing + "\n" + block)
+    else:
+        OUTPUT_MACROS.write_text("% Auto-generated MIMIC-IV macros.\n" + block)
+    print(f"[phase2_agg] updated {OUTPUT_MACROS}")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

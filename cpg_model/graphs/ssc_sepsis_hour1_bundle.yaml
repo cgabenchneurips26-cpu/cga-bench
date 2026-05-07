@@ -1,0 +1,534 @@
+graph_id: ssc_sepsis_hour1_bundle
+guideline_name: Surviving Sepsis Campaign Hour-1 Bundle
+version: '2021.1'
+metadata:
+  source: SSC Guidelines 2021
+  doi: 10.1007/s00134-021-06506-y
+  pmcid: PMC8486643
+  source_url: https://pmc.ncbi.nlm.nih.gov/articles/PMC8486643/
+  journal: Intensive Care Medicine
+  citation: Intensive Care Med. 2021;47(11):1181-1247
+  bundle_window_minutes: 60
+  recommendation_system: GRADE
+  description: Hour-1 bundle for sepsis and septic shock management
+  key_evidence: 'Each additional hour of antibiotic delay: OR 1.09 mortality (OR 1.14 in shock)'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_recognition
+nodes:
+  initial_recognition:
+    node_id: initial_recognition
+    node_type: decision
+    name: Sepsis Recognition
+    description: Identify sepsis/septic shock and initiate bundle
+    precondition: null
+    mandatory_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    allowed_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - assess_vital_signs
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - give_crystalloid_fluid
+    - start_vasopressor_norepinephrine
+    - start_vasopressor_vasopressin
+    - remeasure_lactate_if_elevated
+    - reassess_perfusion
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_cmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_lab_blood_gas
+    - order_lab_urine_culture
+    - order_lab_urinalysis
+    - order_lab_liver_function_tests
+    - order_imaging_chest_xray
+    - order_imaging_ct_abdomen
+    - order_imaging_ct_chest
+    - order_imaging_ultrasound_abdomen
+    - place_central_line
+    - place_arterial_line
+    - request_consultation
+    forbidden_actions: []
+    deadlines:
+      assess_infection_source: 10
+      assess_organ_dysfunction: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Initial Resuscitation
+    source_page: Recommendation 4
+    source_quote: Sepsis and septic shock are medical emergencies, and we recommend that treatment and resuscitation begin
+      immediately
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'septic_shock': septic_shock_bundle
+      state.working_diagnosis == 'sepsis': sepsis_bundle
+  sepsis_bundle:
+    node_id: sepsis_bundle
+    node_type: plan
+    name: Sepsis Hour-1 Bundle
+    description: Bundle for sepsis without shock - Strong recommendation for antibiotics within 1 hour
+    precondition: state.working_diagnosis == 'sepsis'
+    mandatory_actions:
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    allowed_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - assess_vital_signs
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_fluid
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_coagulation
+    - order_imaging_chest_xray
+    - reassess_perfusion
+    - remeasure_lactate_if_elevated
+    forbidden_actions:
+    - discharge_home
+    - give_vasopressor_without_fluid
+    deadlines:
+      order_lab_lactate: 60
+      order_lab_blood_culture: 60
+      give_broad_spectrum_antibiotics: 60
+    required_prior_actions:
+      give_broad_spectrum_antibiotics:
+      - order_lab_blood_culture
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Hour-1 Bundle
+    source_page: Table 1
+    source_figure: null
+    source_quote: For adults with possible septic shock or a high likelihood for sepsis, we recommend administering antimicrobials
+      immediately, ideally within 1 hour of recognition
+    source_recommendation: Recommendation 12
+    next_nodes:
+    - reassessment
+    conditional_next: {}
+  septic_shock_bundle:
+    node_id: septic_shock_bundle
+    node_type: plan
+    name: Septic Shock Hour-1 Bundle
+    description: Bundle for septic shock - includes fluid 30mL/kg and vasopressors for MAP ≥65
+    precondition: state.working_diagnosis == 'septic_shock'
+    mandatory_actions:
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - start_vasopressor_if_hypotensive
+    allowed_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - assess_vital_signs
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - give_crystalloid_fluid
+    - start_vasopressor_norepinephrine
+    - start_vasopressor_vasopressin
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_coagulation
+    - order_lab_procalcitonin
+    - order_imaging_chest_xray
+    - place_central_line
+    - place_arterial_line
+    - reassess_perfusion
+    - remeasure_lactate_if_elevated
+    forbidden_actions:
+    - discharge_home
+    - delay_antibiotics
+    - withhold_fluid_in_hypotension
+    deadlines:
+      order_lab_lactate: 60
+      order_lab_blood_culture: 60
+      give_broad_spectrum_antibiotics: 60
+      give_crystalloid_30ml_kg: 180
+      start_vasopressor_if_hypotensive: 60
+    required_prior_actions:
+      give_broad_spectrum_antibiotics:
+      - order_lab_blood_culture
+      start_vasopressor_if_hypotensive:
+      - give_crystalloid_30ml_kg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: Hour-1 Bundle - Septic Shock
+    source_page: Table 1
+    source_figure: null
+    source_quote: Measure lactate; obtain blood cultures; administer broad-spectrum antibiotics; give 30 mL/kg crystalloid
+      for hypotension or lactate ≥4 mmol/L; apply vasopressors if hypotensive during/after resuscitation
+    source_quotes:
+      lactate: Measure lactate level - Strong recommendation, low quality evidence
+      antibiotics: Administer broad-spectrum antibiotics - Strong recommendation, low quality evidence
+      fluid: At least 30 mL/kg of IV crystalloid fluid within first 3 hours - Weak recommendation, low-quality evidence
+      vasopressor: Initial target MAP of 65 mmHg - Strong recommendation, moderate-quality evidence
+    source_recommendations:
+    - Recommendation 5 (fluids)
+    - Recommendation 9 (MAP target)
+    - Recommendation 12 (antibiotics)
+    - Recommendation 26 (lactate)
+    conditional_rules:
+    - rule_id: SEPSIS-PENICILLIN-ANAPHYLAXIS-NO-CEPH
+      condition: '''penicillin_anaphylaxis'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_cephalosporin
+        - give_ceftriaxone
+        - give_cefepime
+        - give_piperacillin_tazobactam
+      evidence: SSC 2021; IDSA Cross-Reactivity Guidance
+      severity: CRITICAL
+      description: Penicillin anaphylaxis patients have cross-reactivity risk with cephalosporins.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: penicillin_anaphylaxis
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: penicillin_anaphylaxis
+          type: list_not_contains
+    - rule_id: SEPSIS-HF-CAUTIOUS-FLUID
+      condition: '''heart_failure'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_aggressive_fluid_bolus
+        - give_crystalloid_60ml_kg
+      evidence: SSC 2021; Maitland et al, FEAST Trial 2011
+      severity: HIGH
+      description: Aggressive fluid resuscitation in HF patients causes pulmonary edema.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: heart_failure
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: heart_failure
+          type: list_not_contains
+    - rule_id: SEPSIS-CIRRHOSIS-NO-LACTATED-RINGER
+      condition: '''cirrhosis'' in patient.comorbidities or ''liver_failure'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_lactated_ringer_in_liver_failure
+      evidence: SSC 2021; Myburgh JA, Finfer S, SAFE Study Investigators
+      severity: MODERATE
+      description: Cirrhotic patients cannot metabolize lactate in LR efficiently.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: cirrhosis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: cirrhosis
+          type: list_not_contains
+    - rule_id: SEPSIS-ADRENAL-INSUFFICIENCY-STEROIDS
+      condition: '''adrenal_insufficiency'' in patient.comorbidities or ''chronic_steroid_use'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_stress_dose_steroids
+      evidence: 'SSC 2021, Section: Corticosteroids'
+      severity: HIGH
+      description: Patients on chronic steroids need stress-dose steroids in septic shock.
+      condition_variables:
+      - patient.comorbidities
+      - patient.medications
+      trigger_range:
+        patient.comorbidities:
+          contains: adrenal_insufficiency
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: adrenal_insufficiency
+          type: list_not_contains
+    - rule_id: SEPSIS-ADRENAL-INSUFFICIENCY-STEROIDS-FORBIDDEN
+      condition: '''adrenal_insufficiency'' in patient.comorbidities or ''chronic_steroid_use'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - withhold_steroids_in_refractory_shock
+        - give_high_dose_dexamethasone_in_septic_shock
+      evidence: SSC 2021; stress-dose hydrocortisone (200mg/day) for refractory shock; high-dose dex increases infection/mortality
+      severity: HIGH
+      description: Refractory septic shock requires stress-dose hydrocortisone; high-dose dexamethasone worsens immunosuppression
+        and outcomes.
+      condition_variables:
+      - patient.comorbidities
+      - patient.medications
+      trigger_range:
+        patient.comorbidities:
+          contains: adrenal_insufficiency
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: adrenal_insufficiency
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: SEPSIS-ESRD-NO-FLUID-BOLUS
+      condition: '''esrd'' in patient.comorbidities or ''hemodialysis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_crystalloid_30ml_kg
+        - give_large_volume_fluid
+      evidence: SSC 2021; Silversides JA, Intensive Care Med 2017
+      severity: HIGH
+      description: ESRD patients on dialysis cannot handle large fluid volumes.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: esrd
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: esrd
+          type: list_not_contains
+    - rule_id: SEPSIS-NEUTROPENIC-BROAD-SPECTRUM
+      condition: '''acute_myeloid_leukemia'' in patient.comorbidities or ''chemotherapy_recent'' in patient.comorbidities
+        or ''neutropenia'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_standard_cap_antibiotics_only
+        - delay_antibiotics_for_source
+        - delay_antibiotics_until_culture
+      evidence: IDSA Febrile Neutropenia 2010; SSC 2021
+      severity: CRITICAL
+      description: Neutropenic sepsis needs immediate broad-spectrum, not standard CAP coverage.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: neutropenia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: neutropenia
+          type: list_not_contains
+    - rule_id: SEPSIS-ELDERLY-AFEBRILE-NO-DISMISS
+      condition: patient.age > 70 and 'dementia' in str(patient.comorbidities)
+      effect:
+        type: FORBIDDEN
+        actions:
+        - attribute_ams_to_dementia
+        - delay_antibiotics_due_to_no_fever
+        - discharge_without_sepsis_workup
+      evidence: SSC 2021; Nasa P, Crit Care 2012
+      severity: HIGH
+      description: Elderly patients may be afebrile in sepsis. AMS should not be attributed to dementia.
+      condition_variables:
+      - patient.age
+      - patient.comorbidities
+      trigger_range:
+        patient.age:
+          min: 71
+          max: 100
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 70
+          type: int
+    - rule_id: SEPSIS-HF-NO-AGGRESSIVE-FLUID-VARIANT
+      condition: '''heart_failure_hfref'' in patient.comorbidities or ''hfref'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_aggressive_fluid_30ml_kg
+        - give_full_crystalloid_30ml_kg_without_assessment
+      evidence: SSC 2021; Boyd JH, Chest 2011
+      severity: HIGH
+      description: HFrEF patients need cautious fluid resuscitation.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: heart_failure_hfref
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: heart_failure_hfref
+          type: list_not_contains
+    - rule_id: SEPSIS-CKD-NO-NEPHROTOXINS
+      condition: '''ckd_stage_3'' in patient.comorbidities or ''ckd_stage_4'' in patient.comorbidities or ''ckd'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_aminoglycoside_high_dose
+        - give_aminoglycoside_without_adjustment
+        - give_nsaid
+        - give_contrast_without_precaution
+        - order_ct_with_contrast_without_renal_assessment
+      evidence: KDIGO AKI 2012; SSC 2021
+      severity: HIGH
+      description: CKD patients need nephrotoxin avoidance in sepsis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: ckd_stage_4
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: ckd_stage_4
+          type: list_not_contains
+    - rule_id: SEPSIS-VANCOMYCIN-RED-MAN
+      condition: '''vancomycin_red_man_syndrome'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_vancomycin_without_premedication
+      evidence: Red Man Syndrome; Sivagnanam S, Crit Care 2003
+      severity: HIGH
+      description: Patients with vancomycin red man syndrome need slow infusion + premedication.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: vancomycin_red_man_syndrome
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: vancomycin_red_man_syndrome
+          type: list_not_contains
+    next_nodes:
+    - reassessment
+    conditional_next: {}
+  reassessment:
+    node_id: reassessment
+    node_type: enquiry
+    name: Reassessment after Initial Bundle
+    description: Reassess patient response and lactate clearance - remeasure if >2 mmol/L
+    precondition: null
+    mandatory_actions:
+    - reassess_perfusion
+    - remeasure_lactate_if_elevated
+    allowed_actions:
+    - reassess_perfusion
+    - remeasure_lactate_if_elevated
+    - adjust_vasopressor
+    - additional_fluid_bolus
+    - order_echocardiogram
+    - escalate_to_icu
+    forbidden_actions:
+    - discharge_home
+    deadlines:
+      remeasure_lactate_if_elevated: 360
+    required_prior_actions:
+      remeasure_lactate_if_elevated:
+      - order_lab_lactate
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SSC 2021
+    source_section: Ongoing Resuscitation
+    source_page: Table 1, Item 6
+    source_quote: Remeasure lactate if initial lactate elevated (>2 mmol/L)
+    next_nodes:
+    - disposition_decision
+    conditional_next: {}
+  disposition_decision:
+    node_id: disposition_decision
+    node_type: decision
+    name: Disposition Decision
+    description: Determine appropriate level of care based on shock status
+    precondition: null
+    mandatory_actions:
+    - determine_disposition
+    allowed_actions:
+    - admit_to_icu
+    - admit_to_ward
+    - transfer_to_higher_care
+    forbidden_actions:
+    - discharge_home
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SSC 2021
+    source_section: ICU Admission
+    source_page: '1198'
+    source_quote: We recommend that hospitals and health systems have a performance improvement program for sepsis, including
+      sepsis screening for acutely ill, high-risk patients
+    next_nodes: []
+    conditional_next:
+      state.vitals.map_mmhg < 65 or 'vasopressor' in str(state.medications_given): admit_to_icu
+      'True': admit_to_ward
+  admit_to_icu:
+    node_id: admit_to_icu
+    node_type: action
+    name: ICU Admission
+    description: Admit patient to ICU for intensive monitoring - required for vasopressor use
+    precondition: null
+    mandatory_actions:
+    - admit_to_icu
+    allowed_actions:
+    - admit_to_icu
+    - continue_vasopressor
+    - arterial_line_monitoring
+    - central_line_access
+    forbidden_actions:
+    - discharge_home
+    - admit_to_ward
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: ICU Admission
+    source_page: '1199'
+    source_quote: We recommend against using vasopressin as the sole initial vasopressor; norepinephrine is the first-line
+      vasopressor requiring ICU-level monitoring
+    next_nodes: []
+    conditional_next: {}
+  admit_to_ward:
+    node_id: admit_to_ward
+    node_type: action
+    name: Ward Admission
+    description: Admit patient to general ward for continued monitoring
+    precondition: null
+    mandatory_actions:
+    - admit_to_ward
+    allowed_actions:
+    - admit_to_ward
+    - continue_antibiotics
+    - serial_lactate_monitoring
+    forbidden_actions:
+    - discharge_home
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SSC 2021
+    source_section: Ward Admission
+    source_page: '1198'
+    source_quote: For adults with sepsis or septic shock, we recommend continued monitoring and reassessment of fluid responsiveness
+      to guide ongoing resuscitation
+    next_nodes: []
+    conditional_next: {}

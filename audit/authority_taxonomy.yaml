@@ -1,0 +1,66 @@
+# E9 High-Authority Core Robustness — Authority Classification Taxonomy
+#
+# Spec source: docs/attack_gap_exp_exp/260430_e9_High-Authority_Core_Robustness.md
+#
+# A constraint is "high-authority" iff it satisfies ANY of the rules below.
+# Otherwise it is "low-authority". Constraints with no class/LOE and no
+# strong-society source remain "unknown" and are excluded from both subsets
+# during the audit.
+#
+# Citation policy (paper §5.5): the GRADE Working Group separates evidence
+# certainty (LOE) from recommendation strength (Class). We use Class as the
+# primary filter and LOE as a tie-breaker, preserving that distinction.
+
+version: 1
+generator: docs/attack_gap_exp_exp/260430_e9_High-Authority_Core_Robustness.md
+
+high_authority_rules:
+  # Rule 1 — AHA-style strong recommendations with high evidence
+  - id: aha_class_i_loe_ab
+    description: "AHA Class I + LOE A or B"
+    match:
+      recommendation_class_in: ["I", "1"]
+      evidence_level_in: ["A", "B"]
+
+  # Rule 2 — AHA-style moderate-strength recommendations with high evidence
+  # (Class IIa is "reasonable" — kept high only when the underlying evidence
+  # is also strong, per the spec.)
+  - id: aha_class_iia_loe_ab
+    description: "AHA Class IIa + LOE A or B"
+    match:
+      recommendation_class_in: ["IIa", "1a", "1A"]
+      evidence_level_in: ["A", "B"]
+
+  # Rule 3 — GRADE 1A / 1B explicit
+  - id: grade_strong
+    description: "GRADE 1A or 1B (strong with high/moderate evidence)"
+    match:
+      recommendation_class_in: ["1A", "1B"]
+
+  # Rule 4 — Source guideline carries an embedded strong-recommendation tag
+  # IDSA, KDIGO, and AABB use "strong recommendation" as a labelled category;
+  # treat any node whose source_guideline string includes one of these tokens
+  # as high-authority even if class/LOE are absent.
+  - id: source_guideline_strong
+    description: "Source guideline embeds a strong-recommendation label"
+    match:
+      source_guideline_contains_any: ["IDSA", "KDIGO", "AABB", "Strong recommendation", "GRADE 1A", "GRADE 1B"]
+
+  # Rule 5 — Drug-allergy contraindications (allergy_map injection)
+  # Drug-allergy CI is universally Class I + LOE A by clinical convention.
+  - id: drug_allergy
+    description: "Drug allergy contraindication"
+    match:
+      provenance_starts_with: "allergy_map:"
+
+low_authority_examples:
+  # Documented for paper appendix transparency.
+  - "AHA Class IIb + LOE C"
+  - "Class III recommendations (do-not-do, kept separately)"
+  - "Author-dependent expert consensus without GRADE label"
+
+unknown_handling:
+  # Constraints whose recommendation_class, evidence_level, and source_guideline
+  # are all absent get authority_tier="unknown" in DerivedConstraint.
+  # E9 reports them as a separate cell in the appendix table for transparency.
+  policy: report_separately

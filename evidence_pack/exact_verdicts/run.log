@@ -1,0 +1,165 @@
+============================================================
+EXACT EVALUATOR VERDICT 재계산 시작
+============================================================
+[INFO] Loaded 8169 episodes
+
+[INFO] Episode data availability:
+  actions:          YES
+  expected_actions: YES
+  violation_events: YES
+
+[STEP 1] Computing evaluator verdicts for 8169 episodes...
+  ... 5000/8169
+[STEP 2] Computing aggregate metrics...
+[STEP 3] Generating report...
+[SAVED] evidence_pack/exact_verdicts/exact_verdict_report.md
+[SAVED] evidence_pack/exact_verdicts/exact_auto_numbers_update.tex
+[SAVED] evidence_pack/exact_verdicts/exact_verdict_results.json
+================================================================================
+EXACT EVALUATOR VERDICT 재계산 보고서
+총 8169 episodes
+================================================================================
+
+## 1. Evaluator Pass Rates
+  Evaluator   Pass Rate    FA Rate   FA Count   BSR_cond
+  -------------------------------------------------------
+  TOM            100.0%      80.8%       6598      80.8%
+  ASC             73.6%      59.0%       4820      80.1%
+  CwT             36.5%      27.4%       2238      75.2%
+  PAF             57.2%      47.0%       3842      82.3%
+  TCC             19.2%       0.0%          0       0.0%
+
+## 2. All-Oblivious FA (Hero Metric)
+  ★ TOM+ASC+CwT 모두 pass AND hard violation:
+    27.4% (2238/8169)
+  ★ TOM+ASC+PAF 모두 pass AND hard violation:
+    43.1% (3523/8169)
+
+  ⚠️ 이전 근사치: ~24.1% (±5pp)
+  ⚠️ 정확한 값:   27.4%
+  ✅ 차이 3.3pp — 근사치가 유효 범위 내
+
+## 3. Verdict-Flip
+  Flip rate: 93.8% (7661/8169)
+  이전 근사치: ~56.2%
+
+## 4. Pairwise Disagreement
+  ASC_vs_CwT          :  3037 (37.2%)
+  ASC_vs_PAF          :  2079 (25.4%)
+  ASC_vs_TCC          :  5196 (63.6%)
+  CwT_vs_PAF          :  3566 (43.7%)
+  CwT_vs_TCC          :  3069 (37.6%)
+  PAF_vs_TCC          :  4585 (56.1%)
+  TOM_vs_ASC          :  2154 (26.4%)
+  TOM_vs_CwT          :  5191 (63.5%)
+  TOM_vs_PAF          :  3499 (42.8%)
+  TOM_vs_TCC          :  6598 (80.8%)
+
+## 5. Model별 Pass/FA Rates
+
+  [gemma31b]
+    ASC_fa_rate              : 57.8%
+    ASC_pass_rate            : 63.0%
+    CwT_pass_rate            : 35.5%
+    PAF_pass_rate            : 55.0%
+    TCC_pass_rate            : 5.1%
+    TOM_pass_rate            : 100.0%
+
+  [nemotron30b]
+    ASC_fa_rate              : 44.3%
+    ASC_pass_rate            : 46.5%
+    CwT_pass_rate            : 17.5%
+    PAF_pass_rate            : 46.8%
+    TCC_pass_rate            : 7.9%
+    TOM_pass_rate            : 100.0%
+
+  [oss120b]
+    ASC_fa_rate              : 77.5%
+    ASC_pass_rate            : 88.0%
+    CwT_pass_rate            : 48.6%
+    PAF_pass_rate            : 62.7%
+    TCC_pass_rate            : 14.0%
+    TOM_pass_rate            : 100.0%
+
+  [qwen27b]
+    ASC_fa_rate              : 59.1%
+    ASC_pass_rate            : 85.1%
+    CwT_pass_rate            : 47.0%
+    PAF_pass_rate            : 67.1%
+    TCC_pass_rate            : 32.4%
+    TOM_pass_rate            : 100.0%
+
+  [qwen35b]
+    ASC_fa_rate              : 59.5%
+    ASC_pass_rate            : 81.9%
+    CwT_pass_rate            : 37.6%
+    PAF_pass_rate            : 51.7%
+    TCC_pass_rate            : 25.2%
+    TOM_pass_rate            : 100.0%
+
+  [qwen397b]
+    ASC_fa_rate              : 85.7%
+    ASC_pass_rate            : 90.6%
+    CwT_pass_rate            : 47.0%
+    PAF_pass_rate            : 72.3%
+    TCC_pass_rate            : 5.0%
+    TOM_pass_rate            : 100.0%
+
+  [qwen4b]
+    ASC_fa_rate              : 50.6%
+    ASC_pass_rate            : 62.9%
+    CwT_pass_rate            : 25.3%
+    PAF_pass_rate            : 52.3%
+    TCC_pass_rate            : 23.2%
+    TOM_pass_rate            : 100.0%
+
+## 6. FA Episode 내 Median Violations
+  TOM       : median 10.0 violations per FA episode
+  ASC       : median 9.0 violations per FA episode
+  CwT       : median 6.0 violations per FA episode
+  PAF       : median 10.0 violations per FA episode
+
+## 7. 권장 조치
+============================================================
+
+  1. auto_numbers.tex에 아래 매크로를 반영:
+     → exact_auto_numbers_update.tex 파일 생성됨
+     → paper/auto_numbers.tex에 copy-paste 또는 \input
+
+  2. Abstract에서 faAllOblivious를 매크로로 참조하고 있으므로
+     매크로만 갱신하면 자동 반영됨
+
+  3. 이 스크립트의 evaluator 구현이 실제 코드와 정확히 일치하는지 확인:
+     → 특히 CwT의 timing penalty 계산 방식
+     → PAF의 forbidden penalty 계수
+     → ASC의 threshold (0.5)
+     
+  4. 실제 evaluator 코드(cpg_model/ 내)를 import해서 재채점하는 것이 더 정확:
+     → make post-episode 실행 시 이 로직이 포함되어야 함
+
+
+## 8. ⚠️ 이 스크립트의 한계
+
+  이 스크립트는 episode JSON에서 action set을 추출하여 evaluator verdict를
+  **독립적으로 재계산**합니다. 하지만 아래 한계가 있습니다:
+
+  1. CwT의 정확한 timing penalty 공식을 모름
+     → 현재 violation당 0.05 감점으로 추정
+     → 실제 구현과 다를 수 있음
+
+  2. PAF의 정확한 forbidden penalty 공식을 모름
+     → 현재 forbidden action당 0.1 감점으로 추정
+
+  3. Action normalization이 episode JSON에서 이미 적용되었는지 불확실
+     → 대소문자, 공백 등의 차이로 false mismatch 가능
+
+  4. Expected actions가 episode JSON에 포함되지 않은 경우 coverage 계산 불가
+     → 이 경우 compliance_score를 fallback으로 사용
+
+  ➡️ 최선의 방법: `make post-episode`에서 실제 evaluator 코드를 사용하여 재채점.
+     이 스크립트는 그 전까지의 best-effort 추정입니다.
+
+
+============================================================
+재계산 완료
+============================================================

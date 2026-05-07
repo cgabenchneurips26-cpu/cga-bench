@@ -1,0 +1,34 @@
+version: "3.9"
+
+networks:
+  scorer-net:
+    # Scorer is isolated from the agent network
+  agent-net:
+
+services:
+  scorer:
+    build:
+      context: .
+      dockerfile: Dockerfile.scorer
+    networks:
+      - scorer-net
+    # No agent_runner/, agent_rules/, or tool_api/ in this container.
+    # Optionally run with --network=none to enforce no egress.
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    networks:
+      - agent-net
+      - scorer-net
+    # No cpg_engine/ or assessor_core/ in this container.
+    environment:
+      - PYTHONPATH=/app
+      - SCORER_URL=http://scorer:8000
+    depends_on:
+      - scorer
+    restart: unless-stopped

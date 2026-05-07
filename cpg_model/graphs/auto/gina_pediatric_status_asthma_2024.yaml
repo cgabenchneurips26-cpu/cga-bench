@@ -1,0 +1,267 @@
+graph_id: gina_pediatric_status_asthma_2024
+guideline_name: GINA 2024 Severe Pediatric Asthma Exacerbation
+version: '2024.1'
+metadata:
+  source: Global Initiative for Asthma (GINA) 2024 Report
+  doi: 10.1183/13993003.00735-2024
+  journal: European Respiratory Journal
+  recommendation_system: GINA Evidence Levels
+  description: Management of severe pediatric asthma exacerbation including status asthmaticus requiring continuous nebulized
+    SABA, IV corticosteroids, IV magnesium, and intubation criteria
+  key_evidence: IV MgSO4 reduces hospital admission in severe asthma (OR 0.75, 95% CI 0.60-0.92, Rowe meta-analysis). Ipratropium
+    added to SABA reduces hospitalization in severe exacerbation (Plotnick & Ducharme, Cochrane 2000).
+  target_population:
+    age_group: pediatric
+    max_age: 17
+    min_age: 0
+    sex: any
+    special_conditions: []
+entry_node: severity_assessment
+nodes:
+  severity_assessment:
+    node_id: severity_assessment
+    node_type: decision
+    name: Asthma Exacerbation Severity Assessment
+    description: 'Classify severity: mild-moderate vs severe vs life-threatening. Assess accessory muscle use, SpO2, ability
+      to speak, mental status.'
+    precondition: null
+    mandatory_actions:
+    - assess_exacerbation_severity
+    - measure_spo2
+    - assess_vital_signs
+    allowed_actions:
+    - assess_ability_to_speak
+    - assess_vital_signs
+    - assess_mental_status
+    - assess_accessory_muscle_use
+    - measure_spo2
+    - order_lab_abg_if_severe
+    - measure_peak_flow
+    - assess_exacerbation_severity
+    forbidden_actions: []
+    deadlines:
+      assess_exacerbation_severity: 5
+      measure_spo2: 5
+      assess_vital_signs: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: GINA 2024 — Management of Asthma Exacerbations
+    source_section: 'Box 4-3: Management of Asthma Exacerbations in Acute Care'
+    source_page: Box 4-4
+    source_quote: 'Mild-moderate: talks in phrases, PEF >50%. Severe: sits hunched, talks in words, PEF <50%. Life-threatening:
+      drowsy/confused, silent chest.'
+    next_nodes: []
+    conditional_next:
+      state.severity == 'life_threatening': life_threatening_bundle
+      state.severity == 'severe': severe_asthma_bundle
+      state.severity == 'mild_moderate': initial_bronchodilator_therapy
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.824
+  initial_bronchodilator_therapy:
+    node_id: initial_bronchodilator_therapy
+    node_type: action
+    name: Initial Bronchodilator Therapy (Mild-Moderate)
+    description: pMDI + spacer SABA (4-10 puffs q20min x3), oral prednisolone, controlled oxygen to target SpO2 94-98%.
+    precondition: state.severity == 'mild_moderate'
+    mandatory_actions:
+    - give_saba_inhaled_q20min
+    - give_oral_corticosteroid
+    - apply_controlled_oxygen
+    allowed_actions:
+    - give_oral_corticosteroid
+    - give_ipratropium_if_poor_response
+    - reassess_at_1_hour
+    - measure_peak_flow
+    - give_saba_inhaled_q20min
+    - apply_controlled_oxygen
+    forbidden_actions: []
+    deadlines:
+      give_saba_inhaled_q20min: 15
+      give_oral_corticosteroid: 60
+      apply_controlled_oxygen: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: GINA 2024 — Management of Asthma Exacerbations
+    source_section: 'Box 4-3: Initial Treatment'
+    source_page: Box 4-4
+    source_quote: 'For mild-moderate exacerbations: salbutamol 4-10 puffs via pMDI/spacer, repeated every 20 minutes for first
+      hour. Add oral corticosteroids early (prednisolone 40-50 mg or equivalent).'
+    next_nodes:
+    - reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.643
+  severe_asthma_bundle:
+    node_id: severe_asthma_bundle
+    node_type: plan
+    name: Severe Asthma Exacerbation Bundle
+    description: Continuous nebulized albuterol, ipratropium bromide q20min x3, systemic corticosteroids, IV magnesium sulfate.
+    precondition: state.severity == 'severe'
+    mandatory_actions:
+    - give_continuous_nebulized_albuterol
+    - give_ipratropium_bromide_q20min
+    - give_systemic_corticosteroids_iv
+    - apply_high_flow_oxygen
+    allowed_actions:
+    - continuous_spo2_monitoring
+    - establish_iv_access
+    - order_imaging_chest_xray
+    - give_ipratropium_bromide_q20min
+    - apply_high_flow_oxygen
+    - give_systemic_corticosteroids_iv
+    - order_lab_abg
+    - give_continuous_nebulized_albuterol
+    - give_iv_magnesium_sulfate
+    forbidden_actions:
+    - give_sedatives
+    - give_mucolytics_during_acute
+    deadlines:
+      give_continuous_nebulized_albuterol: 15
+      give_ipratropium_bromide_q20min: 20
+      give_systemic_corticosteroids_iv: 60
+      apply_high_flow_oxygen: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: GINA 2024 — Management of Asthma Exacerbations
+    source_section: 'Box 4-3: Severe Exacerbation'
+    source_page: null
+    source_quote: 'Severe exacerbation: continuous nebulized SABA + ipratropium, systemic corticosteroids. Add IV MgSO4 (single
+      dose 40-50 mg/kg, max 2g) if poor response. Do NOT sedate the child.'
+    next_nodes:
+    - reassessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.353
+  life_threatening_bundle:
+    node_id: life_threatening_bundle
+    node_type: plan
+    name: Life-Threatening Asthma / Status Asthmaticus
+    description: 'ICU-level care: continuous nebulized SABA, IV corticosteroids, IV magnesium, consider IV aminophylline,
+      heliox, or intubation.'
+    precondition: state.severity == 'life_threatening'
+    mandatory_actions:
+    - give_continuous_nebulized_albuterol
+    - give_iv_methylprednisolone
+    - give_iv_magnesium_sulfate
+    - apply_high_flow_oxygen
+    - continuous_cardiorespiratory_monitoring
+    allowed_actions:
+    - establish_iv_access
+    - give_ipratropium_bromide_q20min
+    - perform_intubation
+    - order_lab_abg
+    - prepare_for_intubation
+    - order_lab_bmp
+    - give_iv_aminophylline
+    - consider_heliox
+    - apply_high_flow_oxygen
+    - continuous_cardiorespiratory_monitoring
+    - give_iv_methylprednisolone
+    - give_continuous_nebulized_albuterol
+    - give_iv_magnesium_sulfate
+    forbidden_actions:
+    - give_sedatives
+    - give_mucolytics_during_acute
+    deadlines:
+      give_continuous_nebulized_albuterol: 10
+      give_iv_methylprednisolone: 30
+      give_iv_magnesium_sulfate: 60
+      apply_high_flow_oxygen: 5
+      continuous_cardiorespiratory_monitoring: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: GINA 2024 — Management of Asthma Exacerbations
+    source_section: 'Box 4-3: Life-Threatening Exacerbation'
+    source_page: null
+    source_quote: 'Life-threatening features: drowsy, confused, silent chest, cyanosis, SpO2 <90%, peak flow <33% predicted.
+      Requires ICU admission. IV MgSO4 recommended if poor response to initial therapy.'
+    next_nodes:
+    - reassessment
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: ASTHMA-INTUBATION
+      condition: state.respiratory_failure_imminent == True
+      effect:
+        type: REQUIRED
+        actions:
+        - perform_intubation
+        deadline_minutes: 15
+      severity: CRITICAL
+      description: 'Intubation is indicated for impending respiratory arrest: drowsy, silent chest, bradycardia, cyanosis'
+      evidence: Class I, Level B
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.381
+  reassessment:
+    node_id: reassessment
+    node_type: enquiry
+    name: Clinical Reassessment at 1 Hour
+    description: Reassess severity at 1 hour, determine response to therapy, decide on disposition.
+    precondition: null
+    mandatory_actions:
+    - reassess_severity_at_1_hour
+    - reassess_spo2
+    allowed_actions:
+    - reassess_severity_at_1_hour
+    - adjust_bronchodilator_frequency
+    - reassess_spo2
+    - reassess_mental_status
+    - measure_peak_flow
+    - order_lab_abg_repeat
+    forbidden_actions: []
+    deadlines:
+      reassess_severity_at_1_hour: 60
+      reassess_spo2: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: GINA 2024 — Management of Asthma Exacerbations
+    source_section: 'Box 4-3: Reassessment'
+    source_page: null
+    source_quote: 'Reassess at 1 hour (or earlier if worsening). Good response: SpO2 >=94%, talks in sentences. Poor response:
+      escalate to severe/life-threatening pathway.'
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.333
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition Decision
+    description: Discharge vs continued observation vs ICU admission based on response.
+    precondition: null
+    mandatory_actions:
+    - determine_disposition
+    allowed_actions:
+    - review_inhaler_technique
+    - admit_to_icu
+    - prescribe_oral_corticosteroid_course
+    - provide_discharge_action_plan
+    - determine_disposition
+    - schedule_followup_48_hours
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: GINA 2024 — Management of Asthma Exacerbations
+    source_section: 'Box 4-3: Disposition'
+    source_page: null
+    source_quote: 'Discharge criteria: improved symptoms, SpO2 >=94% on room air, PEF >60% predicted. All discharged patients
+      need a written action plan and 48-hour follow-up.'
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.278

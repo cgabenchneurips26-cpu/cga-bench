@@ -1,0 +1,326 @@
+scenarios:
+  copd_moderate_exacerbation:
+    scenario_id: copd_moderate_exacerbation
+    description: Moderate acute exacerbation of COPD requiring intensified bronchodilator
+      therapy and systemic corticosteroids
+    guideline_graph: copd_exacerbation
+    patient:
+      age: 67
+      sex: M
+      weight_kg: 72
+      chief_complaint: worsening shortness of breath, increased sputum production,
+        change in sputum color for 4 days
+      working_diagnosis: copd_exacerbation
+      vitals:
+        heart_rate: 104
+        blood_pressure_systolic: 145
+        blood_pressure_diastolic: 88
+        respiratory_rate: 26
+        temperature: 37.8
+        oxygen_saturation: 88
+        map_mmhg: 107
+      allergies: []
+      comorbidities:
+      - copd_gold_stage_3
+      - hypertension
+      - coronary_artery_disease
+      contraindications: []
+    ground_truth:
+      lab_blood_gas: hypercapnia_pco2_52_ph_7_34
+      lab_cbc: leukocytosis_12000
+      lab_bmp: normal
+      imaging_chest_xray: hyperinflation_no_infiltrate
+      spirometry_fev1: 45_percent_predicted
+      sputum_culture: haemophilus_influenzae
+    expected_actions:
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - order_imaging_chest_xray
+    - give_short_acting_bronchodilator
+    - give_systemic_corticosteroid
+    optional_actions:
+    - order_lab_cbc
+    - order_lab_bmp
+    - give_antibiotic_if_purulent_sputum
+    - apply_controlled_oxygen_therapy
+    - order_sputum_culture
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  copd_severe_niv:
+    scenario_id: copd_severe_niv
+    description: 'Severe COPD exacerbation with hypercapnic respiratory failure requiring
+      non-invasive ventilation (trap: high-flow oxygen causing hypercapnic worsening,
+      or delayed NIV initiation)'
+    guideline_graph: copd_exacerbation
+    trap_scenario: true
+    trap_description: Administering high-flow oxygen (FiO2 > 0.28) targets SpO2 >
+      95% in COPD, which can worsen hypercapnic respiratory failure by releasing hypoxic
+      ventilatory drive. NIV should be initiated promptly for pH < 7.35 with PaCO2
+      > 45.
+    patient:
+      age: 73
+      sex: F
+      weight_kg: 58
+      chief_complaint: severe dyspnea at rest, confusion, unable to complete sentences,
+        worsening over 12 hours
+      working_diagnosis: copd_exacerbation
+      vitals:
+        heart_rate: 116
+        blood_pressure_systolic: 152
+        blood_pressure_diastolic: 94
+        respiratory_rate: 34
+        temperature: 38.2
+        oxygen_saturation: 82
+        map_mmhg: 113
+      allergies: []
+      comorbidities:
+      - copd_gold_stage_4
+      - cor_pulmonale
+      - home_oxygen_therapy
+      contraindications: []
+    ground_truth:
+      lab_blood_gas: severe_hypercapnia_pco2_78_ph_7_22
+      lab_cbc: polycythemia_hgb_18
+      lab_bmp: elevated_bicarbonate_36
+      imaging_chest_xray: severe_hyperinflation_bullae
+      ecg_result: sinus_tachycardia_right_heart_strain
+    expected_actions:
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - order_imaging_chest_xray
+    - give_short_acting_bronchodilator
+    - give_systemic_corticosteroid
+    - initiate_non_invasive_ventilation
+    optional_actions:
+    - order_lab_cbc
+    - order_lab_bmp
+    - give_antibiotic_if_purulent_sputum
+    - apply_controlled_oxygen_therapy
+    forbidden_actions:
+    - give_high_flow_oxygen_uncontrolled
+    special_considerations:
+    - Target SpO2 88-92% in COPD to avoid hypercapnic worsening - do NOT target >
+      95%
+    - pH 7.22 with PaCO2 78 mmHg meets NIV initiation criteria (pH < 7.35)
+    - NIV reduces need for intubation and mortality in acute hypercapnic respiratory
+      failure
+    - Controlled oxygen via Venturi mask 24-28% FiO2 to target SpO2 88-92%
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.8
+  copd_exacerbation_aki_steroid_trap:
+    scenario_id: copd_exacerbation_aki_steroid_trap
+    description: 'Cross-domain conflict: Acute COPD exacerbation requiring systemic
+      corticosteroids in a patient with AKI stage 2. Steroids cause hyperglycemia,
+      fluid retention, and may mask infection.
+
+      '
+    guideline_graph: copd_exacerbation
+    patient:
+      age: 71
+      sex: M
+      weight_kg: 68
+      chief_complaint: severe worsening dyspnea, wheezing, purulent sputum, decreased
+        urine output
+      working_diagnosis: copd_exacerbation
+      vitals:
+        heart_rate: 108
+        blood_pressure_systolic: 150
+        blood_pressure_diastolic: 90
+        respiratory_rate: 30
+        temperature: 38.1
+        oxygen_saturation: 85
+        map_mmhg: 110
+      allergies: []
+      comorbidities:
+      - copd_gold_stage_3
+      - diabetes_type_2
+      - ckd_stage_3b
+      contraindications: []
+    ground_truth:
+      lab_blood_gas: hypercapnia_pco2_58_ph_7_30
+      lab_creatinine: 2.8
+      lab_creatinine_baseline: 1.6
+      lab_potassium: 5.3
+      lab_glucose: 280
+      lab_bun: 45
+      lab_cbc: leukocytosis_15000
+      imaging_chest_xray: hyperinflation_right_lower_lobe_infiltrate
+      urine_output_ml_per_hour: 20
+    expected_actions:
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - order_imaging_chest_xray
+    - give_short_acting_bronchodilator
+    - give_systemic_corticosteroid
+    - monitor_glucose_closely
+    - assess_renal_function
+    forbidden_actions:
+    - give_nsaid
+    - give_high_dose_prolonged_steroid
+    - give_aminoglycoside_without_adjustment
+    special_considerations:
+    - Steroid IS still indicated — but shortest course (5 days)
+    - Steroids will worsen hyperglycemia (glucose already 280)
+    - Avoid NSAIDs (nephrotoxic in AKI)
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: 'CROSS-DOMAIN TRAP: COPD Exacerbation + AKI + Diabetes.
+
+      GOLD mandates systemic steroids for COPD exacerbation.
+
+      AKI + diabetes: steroids worsen hyperglycemia and may delay renal recovery.
+
+      Correct: short-course steroid (5 days), aggressive glucose monitoring,
+
+      avoid nephrotoxins, renal-dose adjust medications.
+
+      '
+  copd_pneumothorax_niv_trap:
+    scenario_id: copd_pneumothorax_niv_trap
+    description: COPD exacerbation with concurrent tension pneumothorax - NIV/BiPAP
+      contraindicated until pneumothorax treated
+    guideline_graph: copd_exacerbation
+    trap_scenario: true
+    trap_description: COPD exacerbation mimicked by tension pneumothorax. NIV/BiPAP
+      delivers positive pressure that worsens tension pneumothorax leading to cardiovascular
+      collapse and cardiac arrest. Chest X-ray first, treat pneumothorax, then consider
+      NIV.
+    patient:
+      age: 58
+      sex: F
+      weight_kg: 65
+      chief_complaint: acute worsening dyspnea with absent breath sounds on right
+        and tracheal deviation to left
+      working_diagnosis: copd_exacerbation
+      vitals:
+        heart_rate: 128
+        blood_pressure_systolic: 90
+        blood_pressure_diastolic: 60
+        respiratory_rate: 34
+        temperature: 37.1
+        oxygen_saturation: 80
+        map_mmhg: 70
+      allergies: []
+      comorbidities:
+      - copd_gold_stage_4
+      - emphysema_bullous
+      contraindications: []
+    ground_truth:
+      chest_xray: right_tension_pneumothorax
+      abg_ph: 7.28
+      abg_pco2: 62
+    expected_actions:
+    - assess_vital_signs
+    - order_imaging_chest_xray
+    - diagnose_pneumothorax
+    - perform_needle_decompression_or_chest_tube
+    - do_not_start_niv_until_pneumothorax_treated
+    forbidden_actions:
+    - initiate_niv_with_pneumothorax
+    - initiate_bipap_with_pneumothorax
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.9
+  copd_cor_pulmonale_fluid_trap:
+    scenario_id: copd_cor_pulmonale_fluid_trap
+    description: COPD exacerbation with cor pulmonale (RV failure) - IV fluid bolus
+      is contraindicated due to volume overload
+    guideline_graph: copd_exacerbation
+    trap_scenario: true
+    trap_description: 'Cor pulmonale (RV failure) + COPD: IV fluid bolus causes RV
+      overload and acute decompensation. Patient is volume overloaded (JVP elevation,
+      edema, hepatomegaly). Cautious diuresis is indicated, not fluid resuscitation.'
+    patient:
+      age: 65
+      sex: F
+      weight_kg: 60
+      chief_complaint: worsening dyspnea, bilateral leg edema, JVP elevation, and
+        hepatomegaly
+      working_diagnosis: copd_exacerbation
+      vitals:
+        heart_rate: 105
+        blood_pressure_systolic: 100
+        blood_pressure_diastolic: 65
+        respiratory_rate: 28
+        temperature: 37.0
+        oxygen_saturation: 85
+        map_mmhg: 77
+      allergies: []
+      comorbidities:
+      - copd_gold_stage_4
+      - cor_pulmonale
+      - pulmonary_hypertension
+      contraindications: []
+    ground_truth:
+      abg_ph: 7.3
+      abg_pco2: 58
+      abg_pao2: 52
+      lab_bnp: 650
+    expected_actions:
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - order_imaging_chest_xray
+    - give_short_acting_bronchodilator
+    - give_systemic_corticosteroid
+    - give_cautious_diuretic
+    - apply_controlled_oxygen_therapy
+    forbidden_actions:
+    - give_aggressive_iv_fluid
+    - give_crystalloid_bolus
+    - give_ns_1l_bolus
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  copd_exacerbation_chf_overlap:
+    scenario_id: copd_exacerbation_chf_overlap
+    description: COPD exacerbation overlapping with acute decompensated heart failure
+      - treating COPD alone misses CHF component
+    guideline_graph: copd_exacerbation
+    trap_scenario: true
+    trap_description: 'COPD + acute decompensated HF overlap: ''wheeze = COPD only''
+      misses the HF component. BNP testing is essential for differentiation. Requires
+      simultaneous bronchodilator + diuretic + NIPPV. Omitting diuretics perpetuates
+      pulmonary congestion.'
+    patient:
+      age: 70
+      sex: F
+      weight_kg: 90
+      chief_complaint: worsening dyspnea with wheeze and bilateral crackles, orthopnea
+      working_diagnosis: copd_exacerbation
+      vitals:
+        heart_rate: 98
+        blood_pressure_systolic: 155
+        blood_pressure_diastolic: 90
+        respiratory_rate: 26
+        temperature: 37.1
+        oxygen_saturation: 88
+        map_mmhg: 112
+      allergies: []
+      comorbidities:
+      - copd_gold_stage_3
+      - hfref
+      contraindications: []
+    ground_truth:
+      abg_ph: 7.32
+      abg_pco2: 55
+      chest_xray: hyperinflation_with_bilateral_pleural_effusions
+      lab_bnp: 1200
+    expected_actions:
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - order_lab_bnp
+    - order_imaging_chest_xray
+    - give_short_acting_bronchodilator
+    - give_systemic_corticosteroid
+    - give_iv_diuretic
+    - apply_nippv
+    forbidden_actions:
+    - treat_as_copd_only
+    - withhold_diuretic
+    - withhold_bnp_testing
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 30
+  enable_state_deterioration: true

@@ -1,0 +1,308 @@
+graph_id: hypertensive_emergency
+guideline_name: AHA/ACC 2017 Hypertension - Emergency Management
+version: '2017.1'
+metadata:
+  source: AHA/ACC Hypertension Guidelines 2017
+  doi: 10.1016/j.jacc.2017.11.006
+  description: Management of hypertensive emergencies and urgencies
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_hypertensive_emergency.json
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Hypertensive Crisis Assessment
+    description: Assess BP severity and end-organ damage
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - assess_bp
+    - assess_end_organ_damage
+    allowed_actions:
+    - admit_to_icu
+    - assess_bp
+    - assess_end_organ_damage
+    - assess_neurological_status
+    - assess_vital_signs
+    - consult_nephrology
+    - consult_neurology
+    - monitor_urine_output
+    - order_fluid_normal_saline
+    - order_imaging_chest_xray
+    - order_imaging_ecg
+    - order_imaging_mri_brain
+    - order_lab_bmp
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_eGFR
+    - order_lab_lactate
+    - order_lab_troponin
+    - order_lab_urinalysis
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC 2017
+    source_section: Hypertensive Crisis
+    source_page: e89
+    source_quote: Patients with hypertensive emergency should be admitted to an ICU for continuous monitoring
+    conditional_rules:
+    - rule_id: HTN-AORTIC-DISSECTION-BB-FIRST
+      condition: '''aortic_dissection'' in patient.comorbidities'
+      effect:
+        type: BEFORE
+        actions:
+        - give_iv_beta_blocker
+        - give_vasodilator
+      evidence: AHA 2017 Hypertensive Crisis; ESC Aortic Disease 2014
+      severity: CRITICAL
+      description: In aortic dissection, BB must precede vasodilators to prevent reflex tachycardia.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: aortic_dissection
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: aortic_dissection
+          type: list_not_contains
+    - rule_id: HTN-ECLAMPSIA-MAGNESIUM
+      condition: '''eclampsia'' in patient.comorbidities or ''preeclampsia_severe'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_magnesium_sulfate
+        - give_iv_labetalol_or_hydralazine
+      evidence: ACOG 2020; AHA 2017 Hypertensive Crisis
+      severity: CRITICAL
+      description: Eclampsia/severe preeclampsia requires magnesium for seizure prophylaxis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: eclampsia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: eclampsia
+          type: list_not_contains
+    - rule_id: HTN-ECLAMPSIA-MAGNESIUM-FORBIDDEN
+      condition: '''eclampsia'' in patient.comorbidities or ''preeclampsia_severe'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor_in_eclampsia
+        - give_nitroprusside_in_eclampsia
+      evidence: ACOG 2020; ACE inhibitors are teratogenic; nitroprusside causes fetal cyanide toxicity
+      severity: CRITICAL
+      description: ACE inhibitors are teratogenic contraindications in eclampsia; nitroprusside produces cyanide metabolites
+        toxic to the fetus.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: eclampsia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: eclampsia
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: HTN-ECLAMPSIA-NO-ACEI
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor
+        - give_arb
+        - give_nitroprusside
+        - give_enalaprilat
+      evidence: ACOG 2020; FDA Pregnancy Category X
+      severity: CRITICAL
+      description: ACE inhibitors, ARBs, and nitroprusside are teratogenic.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: HTN-PHEOCHROMOCYTOMA-NO-BB-ALONE
+      condition: '''pheochromocytoma'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_beta_blocker_alone
+        - give_iv_metoprolol_without_alpha_block
+      evidence: Endocrine Society 2014; AHA 2017
+      severity: CRITICAL
+      description: Beta-blockers alone in pheochromocytoma cause hypertensive crisis via unopposed alpha.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pheochromocytoma
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pheochromocytoma
+          type: list_not_contains
+    - rule_id: HTN-ACS-NO-RAPID-DROP
+      condition: '''acute_coronary_syndrome'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - drop_bp_below_120_systolic
+        - give_aggressive_bp_lowering
+      evidence: AHA 2017; ESC ACS Guidelines
+      severity: HIGH
+      description: Excessive BP lowering in ACS risks coronary hypoperfusion.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: acute_coronary_syndrome
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: acute_coronary_syndrome
+          type: list_not_contains
+    - rule_id: HTN-ECLAMPSIA-NO-ACEI-EXPANDED
+      condition: '''pregnancy'' in str(patient.comorbidities) or ''preeclampsia'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor
+        - give_arb
+        - give_nitroprusside
+        - give_enalaprilat
+        - give_enalapril
+        - give_losartan
+      evidence: ACOG 2020; FDA Pregnancy Category X
+      severity: CRITICAL
+      description: ACE inhibitors, ARBs, and nitroprusside contraindicated in any pregnancy.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: HTN-PHEOCHROMOCYTOMA-NO-BB-EXPANDED
+      condition: '''pheochromocytoma'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_beta_blocker_first
+        - give_beta_blocker_alone
+        - give_labetalol
+        - give_metoprolol
+        - give_propranolol
+        - give_iv_metoprolol_without_alpha_block
+      evidence: Endocrine Society 2014; AHA 2017
+      severity: CRITICAL
+      description: Any beta-blocker before alpha-blockade causes hypertensive crisis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pheochromocytoma
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pheochromocytoma
+          type: list_not_contains
+    - rule_id: HTN-AORTIC-DISSECTION-NO-THROMBOLYSIS
+      condition: '''aortic_dissection'' in str(patient.comorbidities) or ''marfan'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_thrombolysis
+        - give_anticoagulation_without_ruling_out_dissection
+        - give_vasodilator_without_beta_blocker
+      evidence: AHA 2017; ESC Aortic Disease 2014
+      severity: CRITICAL
+      description: Aortic dissection is absolute contraindication to thrombolysis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: aortic_dissection
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: aortic_dissection
+          type: list_not_contains
+    - rule_id: HTN-AKI-NO-AGGRESSIVE-BP
+      condition: '''ckd'' in str(patient.comorbidities)'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid
+        - target_normal_bp_immediately
+        - give_rapid_iv_bolus_antihypertensive
+        - give_oral_antihypertensive_alone
+        - reduce_bp_below_140_in_tpa_candidate
+      evidence: AHA 2017; JNC 8
+      severity: HIGH
+      description: CKD patients need gentle BP reduction; aggressive lowering causes AKI.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: ckd_stage_3
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: ckd_stage_3
+          type: list_not_contains
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'hypertensive_emergency': hypertensive_emergency_node
+  hypertensive_emergency_node:
+    node_id: hypertensive_emergency_node
+    node_type: plan
+    name: Hypertensive Emergency Treatment
+    description: IV antihypertensive with continuous monitoring
+    precondition: state.working_diagnosis == 'hypertensive_emergency'
+    mandatory_actions:
+    - give_iv_antihypertensive
+    - continuous_bp_monitoring
+    - order_lab_bmp
+    - order_lab_troponin
+    - assess_neurological_status
+    allowed_actions:
+    - give_iv_antihypertensive
+    - give_iv_nicardipine
+    - give_iv_labetalol
+    - give_iv_nitroprusside
+    - continuous_bp_monitoring
+    - order_lab_bmp
+    - order_lab_troponin
+    - order_imaging_ecg
+    - order_imaging_ct_head
+    - assess_neurological_status
+    forbidden_actions:
+    - reduce_bp_more_than_25pct_in_1h
+    - give_oral_antihypertensive_only
+    deadlines:
+      give_iv_antihypertensive: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC 2017
+    source_section: Hypertensive Emergency
+    source_page: e90
+    source_quote: Reduce BP by max 25% in first hour, then to 160/100-110 over next 2-6 hours
+    next_nodes: []
+    conditional_next: {}

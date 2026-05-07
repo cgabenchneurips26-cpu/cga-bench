@@ -1,0 +1,228 @@
+# Real-cohort reference for App Z (Patient-level Distribution Check).
+# Anchors are reproduced from `paper/distribution_check_table.tex` (auto-generated
+# table) so Phase 1 of the MIMIC-IV augmentation pipeline can compute patient-level
+# percentiles on the same observables and produce a side-by-side comparison.
+#
+# Each observable carries:
+#   - engine.median  / engine.iqr        : CGA-Bench engine marginal
+#   - literature.median / literature.p5_p95 : pre-registered cited cohort range
+#   - mimic_iv_lookup                    : how to compute the MIMIC-IV patient-level
+#                                          percentile (table + itemid for labs, or a
+#                                          cohort-column reference for demographics)
+#
+# Cohorts referenced:
+#   sepsis      -> data/mimic_iv_local/cohort_sepsis3.parquet
+#   chest_pain  -> ICD-10 I21.* / I22.* (built on demand by Phase 1)
+#   stroke      -> ICD-10 I63.* (built on demand by Phase 1)
+#   aki         -> ICD-10 N17.* (built on demand by Phase 1)
+#
+# Literature anchors are pre-registered in
+# docs/attack_gap_exp_exp/W9_scenario_realism_plan.md (M90 >= 70% verdict rule
+# committed before results were computed).
+
+version: 1
+n_observables: 24
+domains: [sepsis, chest_pain, stroke, aki]
+
+observables:
+
+# -------------------------------- SEPSIS (6) --------------------------------
+- key: sepsis_age
+  domain: sepsis
+  observable: Age
+  unit: years
+  engine:    {median: 55.0, iqr: [55.0, 60.0]}
+  literature: {median: 67.0, p5_p95: [30.0, 90.0], citation: "Rhee 2017 / SSC 2021"}
+  mimic_iv_lookup: {kind: cohort_column, cohort: sepsis, column: anchor_age}
+
+- key: sepsis_initial_map
+  domain: sepsis
+  observable: Initial MAP
+  unit: mmHg
+  engine:    {median: 97.0, iqr: [64.0, 97.0]}
+  literature: {median: 75.0, p5_p95: [55.0, 105.0], citation: "Rhee 2017"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220181, 220052, 225312]}
+
+- key: sepsis_initial_hr
+  domain: sepsis
+  observable: Initial HR
+  unit: bpm
+  engine:    {median: 80.0, iqr: [80.0, 110.0]}
+  literature: {median: 105.0, p5_p95: [70.0, 140.0], citation: "Rhee 2017"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220045]}
+
+- key: sepsis_initial_rr
+  domain: sepsis
+  observable: Initial RR
+  unit: per_min
+  engine:    {median: 16.0, iqr: [16.0, 24.0]}
+  literature: {median: 22.0, p5_p95: [14.0, 36.0], citation: "Rhee 2017"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220210, 224690]}
+
+- key: sepsis_initial_temp
+  domain: sepsis
+  observable: Initial Temp
+  unit: celsius
+  engine:    {median: 37.0, iqr: [37.0, 38.9]}
+  literature: {median: 38.0, p5_p95: [35.8, 40.0], citation: "Rhee 2017"}
+  mimic_iv_lookup:
+    kind: chartevent_first24h
+    itemids: [223762]                  # Celsius
+    fallback_itemids_fahrenheit: [223761]  # convert: (F - 32) * 5/9
+
+- key: sepsis_lactate
+  domain: sepsis
+  observable: Lactate
+  unit: mmol_per_L
+  engine:    {median: 4.3, iqr: [3.5, 5.2]}
+  literature: {median: 2.2, p5_p95: [0.9, 6.5], citation: "SSC 2021"}
+  mimic_iv_lookup: {kind: labevent_first24h, itemids: [50813]}
+
+# ----------------------------- CHEST PAIN (6) -------------------------------
+- key: chestpain_age
+  domain: chest_pain
+  observable: Age
+  unit: years
+  engine:    {median: 55.0, iqr: [55.0, 62.0]}
+  literature: {median: 63.0, p5_p95: [38.0, 88.0], citation: "GWTG-CAD / DETO2X-AMI"}
+  mimic_iv_lookup: {kind: cohort_column, cohort: chest_pain, column: anchor_age}
+
+- key: chestpain_initial_sbp
+  domain: chest_pain
+  observable: Initial SBP
+  unit: mmHg
+  engine:    {median: 130.0, iqr: [130.0, 135.0]}
+  literature: {median: 138.0, p5_p95: [90.0, 195.0], citation: "GWTG-CAD"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220179, 220050, 225309]}
+
+- key: chestpain_initial_hr
+  domain: chest_pain
+  observable: Initial HR
+  unit: bpm
+  engine:    {median: 80.0, iqr: [80.0, 88.0]}
+  literature: {median: 78.0, p5_p95: [50.0, 115.0], citation: "GWTG-CAD"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220045]}
+
+- key: chestpain_initial_spo2
+  domain: chest_pain
+  observable: Initial SpO2
+  unit: percent
+  engine:    {median: 98.0, iqr: [96.0, 98.0]}
+  literature: {median: 97.0, p5_p95: [88.0, 100.0], citation: "GWTG-CAD"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220277, 224697]}
+
+- key: chestpain_initial_rr
+  domain: chest_pain
+  observable: Initial RR
+  unit: per_min
+  engine:    {median: 16.0, iqr: [16.0, 18.0]}
+  literature: {median: 18.0, p5_p95: [12.0, 30.0], citation: "GWTG-CAD"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220210, 224690]}
+
+- key: chestpain_troponin
+  domain: chest_pain
+  observable: Troponin
+  unit: ng_per_mL
+  engine:    {median: 2.5, iqr: [0.8, 4.2]}
+  literature: {median: 2.5, p5_p95: [0.3, 15.0], citation: "DETO2X-AMI"}
+  mimic_iv_lookup: {kind: labevent_first24h, itemids: [51003, 52642]}  # Troponin T
+
+# -------------------------------- STROKE (6) --------------------------------
+- key: stroke_age
+  domain: stroke
+  observable: Age
+  unit: years
+  engine:    {median: 55.0, iqr: [55.0, 66.0]}
+  literature: {median: 71.0, p5_p95: [45.0, 93.0], citation: "GWTG-Stroke / ENCHANTED / SITS-ISTR"}
+  mimic_iv_lookup: {kind: cohort_column, cohort: stroke, column: anchor_age}
+
+- key: stroke_initial_sbp
+  domain: stroke
+  observable: Initial SBP
+  unit: mmHg
+  engine:    {median: 155.0, iqr: [130.0, 186.0]}
+  literature: {median: 155.0, p5_p95: [105.0, 220.0], citation: "ENCHANTED"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220179, 220050, 225309]}
+
+- key: stroke_initial_dbp
+  domain: stroke
+  observable: Initial DBP
+  unit: mmHg
+  engine:    {median: 80.0, iqr: [80.0, 95.0]}
+  literature: {median: 85.0, p5_p95: [55.0, 115.0], citation: "ENCHANTED"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220180, 220051, 225310]}
+
+- key: stroke_initial_hr
+  domain: stroke
+  observable: Initial HR
+  unit: bpm
+  engine:    {median: 80.0, iqr: [80.0, 82.0]}
+  literature: {median: 78.0, p5_p95: [50.0, 120.0], citation: "GWTG-Stroke"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220045]}
+
+- key: stroke_nihss
+  domain: stroke
+  observable: NIHSS
+  unit: dimensionless
+  engine:    {median: 11.0, iqr: [8.0, 14.0]}
+  literature: {median: 4.0, p5_p95: [0.0, 22.0], citation: "GWTG-Stroke"}
+  mimic_iv_lookup:
+    kind: skip
+    note: "NIHSS is documented in nursing notes, not chartevents reliably; deferred."
+
+- key: stroke_glucose
+  domain: stroke
+  observable: Glucose
+  unit: mg_per_dL
+  engine:    {median: 155.0, iqr: [145.0, 165.0]}
+  literature: {median: 120.0, p5_p95: [85.0, 210.0], citation: "ENCHANTED"}
+  mimic_iv_lookup: {kind: labevent_first24h, itemids: [50931, 50809]}
+
+# ---------------------------------- AKI (6) ---------------------------------
+- key: aki_age
+  domain: aki
+  observable: Age
+  unit: years
+  engine:    {median: 65.0, iqr: [65.0, 70.0]}
+  literature: {median: 62.0, p5_p95: [28.0, 86.0], citation: "AKI-EPI 2015"}
+  mimic_iv_lookup: {kind: cohort_column, cohort: aki, column: anchor_age}
+
+- key: aki_initial_map
+  domain: aki
+  observable: Initial MAP
+  unit: mmHg
+  engine:    {median: 98.0, iqr: [98.0, 103.0]}
+  literature: {median: 75.0, p5_p95: [55.0, 105.0], citation: "Casserly 2015"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220181, 220052, 225312]}
+
+- key: aki_initial_sbp
+  domain: aki
+  observable: Initial SBP
+  unit: mmHg
+  engine:    {median: 135.0, iqr: [135.0, 140.0]}
+  literature: {median: 125.0, p5_p95: [85.0, 180.0], citation: "AKI-EPI 2015"}
+  mimic_iv_lookup: {kind: chartevent_first24h, itemids: [220179, 220050, 225309]}
+
+- key: aki_creatinine
+  domain: aki
+  observable: Creatinine
+  unit: mg_per_dL
+  engine:    {median: 3.5, iqr: [2.0, 3.5]}
+  literature: {median: 1.4, p5_p95: [0.7, 5.0], citation: "AKI-EPI 2015"}
+  mimic_iv_lookup: {kind: labevent_first24h, itemids: [50912]}
+
+- key: aki_bun
+  domain: aki
+  observable: BUN
+  unit: mg_per_dL
+  engine:    {median: 45.0, iqr: [45.0, 45.0]}
+  literature: {median: 30.0, p5_p95: [10.0, 100.0], citation: "Casserly 2015"}
+  mimic_iv_lookup: {kind: labevent_first24h, itemids: [51006]}
+
+- key: aki_potassium
+  domain: aki
+  observable: Potassium
+  unit: mEq_per_L
+  engine:    {median: 5.2, iqr: [5.2, 6.2]}
+  literature: {median: 4.4, p5_p95: [3.3, 6.3], citation: "AKI-EPI 2015"}
+  mimic_iv_lookup: {kind: labevent_first24h, itemids: [50971, 52610]}

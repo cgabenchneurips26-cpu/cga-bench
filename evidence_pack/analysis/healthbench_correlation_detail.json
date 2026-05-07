@@ -1,0 +1,382 @@
+{
+  "analysis_id": "healthbench_correlation_detail",
+  "timestamp": "2026-03-31T01:12:13.012396",
+  "data_summary": {
+    "healthbench_total_records": 5000,
+    "healthbench_files": [
+      "results/healthbench_sample_1000.json",
+      "results/healthbench_shard2_2000.json",
+      "results/healthbench_shard3_2000.json"
+    ],
+    "agentclinic_total_records": 321,
+    "agentclinic_file": "results/agentclinic_full_321.json",
+    "deduplication": "by prompt_id, 5000 unique (no duplicates found)"
+  },
+  "task_1_correlation_identity": {
+    "finding": "r=0.992 measures Pearson correlation between rubric_track_a and native_normalized",
+    "exact_r": 0.992242,
+    "p_value": 0.0,
+    "confidence_interval_95": [
+      0.9918,
+      0.9927
+    ],
+    "n": 5000,
+    "interpretation": "rubric_track_a is CGA's rubric-based compliance score; native_normalized is HealthBench's native scoring (positive_earned - negative_incurred, normalized). Both measure adherence to rubric criteria, explaining near-perfect correlation. The CGA scoring system maps HealthBench rubrics into mandatory/forbidden action classifications that track the same underlying construct as native HealthBench scoring.",
+    "all_pairs_vs_native": {
+      "rubric_track_a": {
+        "r": 0.992242,
+        "p": 0.0,
+        "ci_95": [
+          0.9918,
+          0.9927
+        ],
+        "n": 5000
+      },
+      "mandatory_coverage": {
+        "r": 0.913371,
+        "p": 0.0,
+        "ci_95": [
+          0.9087,
+          0.9179
+        ],
+        "n": 5000
+      },
+      "forbidden_avoidance": {
+        "r": 0.324255,
+        "p": 9.45351373299807e-123,
+        "ci_95": [
+          0.2992,
+          0.3488
+        ],
+        "n": 5000
+      },
+      "composite_score": {
+        "r": 0.97956,
+        "p": 0.0,
+        "ci_95": [
+          0.9784,
+          0.9807
+        ],
+        "n": 5000
+      },
+      "cga_track_a": {
+        "r": 0.018847,
+        "p": 0.18269608828281328,
+        "ci_95": [
+          -0.0089,
+          0.0465
+        ],
+        "n": 5000
+      },
+      "semantic_match_score": {
+        "r": 0.008396,
+        "p": 0.5528190471783335,
+        "ci_95": [
+          -0.0193,
+          0.0361
+        ],
+        "n": 5000
+      },
+      "empathy_score": {
+        "r": -0.029712,
+        "p": 0.03564831913019276,
+        "ci_95": [
+          -0.0574,
+          -0.002
+        ],
+        "n": 5000
+      },
+      "accuracy_score": {
+        "r": 0.743566,
+        "p": 0.0,
+        "ci_95": [
+          0.7309,
+          0.7557
+        ],
+        "n": 5000
+      },
+      "dialogue_quality": {
+        "r": 0.861011,
+        "p": 0.0,
+        "ci_95": [
+          0.8537,
+          0.868
+        ],
+        "n": 5000
+      }
+    }
+  },
+  "task_2_discordant_cases": {
+    "finding": "50 discordant cases (agreement='moderate'), zero cases with |delta|>0.3. Discordant cases are characterized by significantly fewer rubrics (7.3 vs 11.5, d=-0.90) and fewer forbidden items (1.8 vs 3.5, d=-0.93). In 70% of discordant cases, native_normalized exceeds rubric_track_a (native gives higher score).",
+    "discordant_count_moderate": 50,
+    "discordant_count_delta_03": 0,
+    "discordant_union": 50,
+    "direction": {
+      "native_higher": 35,
+      "CGA_higher": 15
+    },
+    "what_makes_them_different": {
+      "n_rubrics": {
+        "discordant_mean": 7.28,
+        "concordant_mean": 11.49,
+        "cohens_d": -0.9,
+        "p": 1.99e-07
+      },
+      "n_mandatory": {
+        "discordant_mean": 0.88,
+        "concordant_mean": 1.72,
+        "cohens_d": -0.673,
+        "p": 0.000112
+      },
+      "n_forbidden": {
+        "discordant_mean": 1.84,
+        "concordant_mean": 3.53,
+        "cohens_d": -0.934,
+        "p": 5.25e-08
+      },
+      "forbidden_avoidance": {
+        "discordant_mean": 0.782,
+        "concordant_mean": 0.869,
+        "cohens_d": -0.267,
+        "p": 0.036
+      }
+    },
+    "interpretation": "Discordant cases are low-complexity prompts with few rubrics (mean 7.3 vs 11.5). With fewer mandatory/forbidden items, the CGA score granularity decreases, leading to quantization mismatch with the continuous native score. The native scorer has finer resolution when rubric count is small.",
+    "top_10_discordant_prompt_ids": [
+      {
+        "prompt_id": "ff97341f-fa7c-49da-af80-9f9a556002f5",
+        "rubric_track_a": 0.625,
+        "native_normalized": 0.4167,
+        "delta": 0.2083,
+        "mandatory_coverage": 0.5,
+        "forbidden_avoidance": 1.0,
+        "n_rubrics": 3,
+        "n_mandatory": 1,
+        "n_forbidden": 1
+      },
+      {
+        "prompt_id": "5d752020-e5c0-48eb-8d98-e6c96214a627",
+        "rubric_track_a": 0.5873,
+        "native_normalized": 0.7857,
+        "delta": 0.1984,
+        "mandatory_coverage": 0.5556,
+        "forbidden_avoidance": 1.0,
+        "n_rubrics": 10,
+        "n_mandatory": 2,
+        "n_forbidden": 1
+      },
+      {
+        "prompt_id": "d2c5640b-7993-43d1-b93e-42c29cd61914",
+        "rubric_track_a": 0.7182,
+        "native_normalized": 0.8909,
+        "delta": 0.1727,
+        "mandatory_coverage": 1.0,
+        "forbidden_avoidance": 0.5,
+        "n_rubrics": 11,
+        "n_mandatory": 1,
+        "n_forbidden": 6
+      },
+      {
+        "prompt_id": "d6db09c0-0bed-4113-bca2-a3b8abb814a7",
+        "rubric_track_a": 0.5088,
+        "native_normalized": 0.6735,
+        "delta": 0.1647,
+        "mandatory_coverage": 0.4,
+        "forbidden_avoidance": 0.6667,
+        "n_rubrics": 8,
+        "n_mandatory": 1,
+        "n_forbidden": 3
+      },
+      {
+        "prompt_id": "14ab8404-bae7-433c-9c23-8ab80e6a4304",
+        "rubric_track_a": 0.6571,
+        "native_normalized": 0.82,
+        "delta": 0.1629,
+        "mandatory_coverage": 0.5714,
+        "forbidden_avoidance": 1.0,
+        "n_rubrics": 8,
+        "n_mandatory": 0,
+        "n_forbidden": 1
+      },
+      {
+        "prompt_id": "f4dba17d-666e-477d-836c-f2e0ecd852b0",
+        "rubric_track_a": 0.4,
+        "native_normalized": 0.25,
+        "delta": 0.15,
+        "mandatory_coverage": 0.4,
+        "forbidden_avoidance": 0.0,
+        "n_rubrics": 5,
+        "n_mandatory": 2,
+        "n_forbidden": 0
+      },
+      {
+        "prompt_id": "c6b82b5e-b6dc-474b-8d13-c9b6b035db98",
+        "rubric_track_a": 0.77,
+        "native_normalized": 0.92,
+        "delta": 0.15,
+        "mandatory_coverage": 0.75,
+        "forbidden_avoidance": 1.0,
+        "n_rubrics": 5,
+        "n_mandatory": 0,
+        "n_forbidden": 1
+      },
+      {
+        "prompt_id": "2b97f3a2-afda-495d-94fb-12b95f7170b7",
+        "rubric_track_a": 0.7,
+        "native_normalized": 0.85,
+        "delta": 0.15,
+        "mandatory_coverage": 0.5,
+        "forbidden_avoidance": 1.0,
+        "n_rubrics": 3,
+        "n_mandatory": 0,
+        "n_forbidden": 1
+      },
+      {
+        "prompt_id": "996299c7-637e-4a96-8b02-7943a9052b10",
+        "rubric_track_a": 0.6765,
+        "native_normalized": 0.8235,
+        "delta": 0.147,
+        "mandatory_coverage": 0.5,
+        "forbidden_avoidance": 1.0,
+        "n_rubrics": 4,
+        "n_mandatory": 0,
+        "n_forbidden": 2
+      },
+      {
+        "prompt_id": "8e724a46-bd99-4705-9c34-c3c21a26d505",
+        "rubric_track_a": 0.2,
+        "native_normalized": 0.0556,
+        "delta": 0.1444,
+        "mandatory_coverage": 0.2,
+        "forbidden_avoidance": 0.0,
+        "n_rubrics": 5,
+        "n_mandatory": 1,
+        "n_forbidden": 0
+      }
+    ]
+  },
+  "task_3_agentclinic_vs_healthbench": {
+    "finding": "CGA aligns with rubric-based evaluation (HealthBench r=0.992) but is weakly negatively correlated with task-completion metrics (AgentClinic cpg_compliance vs action_coverage r=-0.127). The reported r=-0.06 corresponds to action_coverage vs actions_taken (r=-0.060). This orthogonality is expected: HealthBench rubrics and CGA both decompose into mandatory/forbidden action checks (same construct), while AgentClinic measures diagnosis-driven task completion (different construct).",
+    "healthbench_r": {
+      "pair": "rubric_track_a vs native_normalized",
+      "r": 0.992242,
+      "p": 0.0,
+      "ci_95": [
+        0.9918,
+        0.9927
+      ],
+      "n": 5000
+    },
+    "agentclinic_correlations": {
+      "action_coverage_vs_final_score": {
+        "r": 0.9321,
+        "p": 8.67e-143,
+        "n": 321,
+        "ci_95": [
+          0.9162,
+          0.9452
+        ]
+      },
+      "cpg_compliance_vs_action_coverage": {
+        "r": -0.1272,
+        "p": 0.0237,
+        "n": 316,
+        "ci_95": [
+          -0.2343,
+          -0.0171
+        ]
+      },
+      "cpg_compliance_vs_final_score": {
+        "r": 0.1962,
+        "p": 0.000452,
+        "n": 316
+      },
+      "action_coverage_vs_actions_taken": {
+        "r": -0.0597,
+        "p": 0.286,
+        "n": 321,
+        "note": "closest to reported r=-0.06"
+      },
+      "modular_overall_vs_final_score": {
+        "r": 0.0648,
+        "p": 0.247,
+        "n": 321
+      }
+    },
+    "construct_analysis": {
+      "healthbench_construct": "rubric-based adherence (mandatory + forbidden criteria)",
+      "agentclinic_construct": "task-completion coverage (action set overlap)",
+      "why_different": "HealthBench rubrics encode 'do X, avoid Y' which maps directly to CGA mandatory/forbidden. AgentClinic measures 'did agent perform expected diagnostic actions' which is coverage-based, not adherence-based. CGA penalizes off-protocol actions (deviations), while AgentClinic rewards any matching action regardless of protocol compliance."
+    }
+  },
+  "task_4_empathy_analysis": {
+    "finding": "57.8% of cases (2,889/5,000) have zero empathy score. This is primarily an evaluation artifact: empathy is nearly uncorrelated with accuracy (r=-0.022, p=0.11) and negatively correlated with rubric-based scores (r=-0.031). The only meaningful positive correlation is with dialogue_quality (r=0.332, p<1e-128). 672 cases (13.4%) are clinically competent (accuracy>=0.6) but show zero empathy, with no statistically significant difference in overall score compared to empathetic counterparts (Cohen's d=0.017, p=0.79).",
+    "empathy_distribution": {
+      "zero_count": 2889,
+      "zero_pct": 57.8,
+      "nonzero_count": 2111,
+      "mean": 0.1155,
+      "std": 0.1714,
+      "median": 0.0,
+      "bins": {
+        "exactly_0": 2889,
+        "(0, 0.1]": 438,
+        "(0.1, 0.2]": 139,
+        "(0.2, 0.3]": 984,
+        "(0.3, 0.5]": 350,
+        "(0.5, 0.7]": 173,
+        "(0.7, 1.0]": 27
+      }
+    },
+    "correlations_with_empathy": {
+      "rubric_track_a": {
+        "r": -0.031,
+        "p": 0.028
+      },
+      "native_normalized": {
+        "r": -0.03,
+        "p": 0.036
+      },
+      "mandatory_coverage": {
+        "r": -0.032,
+        "p": 0.026
+      },
+      "forbidden_avoidance": {
+        "r": -0.027,
+        "p": 0.056
+      },
+      "accuracy_score": {
+        "r": -0.022,
+        "p": 0.114
+      },
+      "dialogue_quality": {
+        "r": 0.332,
+        "p": 1.54e-128
+      },
+      "composite_score": {
+        "r": 0.099,
+        "p": 2.53e-12
+      }
+    },
+    "high_accuracy_zero_empathy": {
+      "count": 672,
+      "pct_of_total": 13.4,
+      "mean_rubric_track_a": 0.8802,
+      "mean_native_normalized": 0.8863,
+      "vs_high_accuracy_with_empathy": {
+        "count": 405,
+        "mean_native_normalized": 0.8839,
+        "ttest_p": 0.794,
+        "cohens_d": 0.017,
+        "interpretation": "No meaningful difference -- empathy does not affect scoring"
+      }
+    },
+    "is_artifact_or_model_limitation": "Both. (1) Evaluation artifact: the empathy detection module requires explicit emotional language markers, but medical LLM completions tend to be factual/clinical without emotional phrasing. (2) Model limitation: LLM completions in HealthBench are optimized for medical accuracy, not bedside manner. Zero-empathy cases have slightly MORE n_turns (2.73 vs 2.45, p<1e-4), suggesting longer clinical discussions that are thorough but impersonal. The empathy dimension is essentially orthogonal to clinical quality in this dataset."
+  },
+  "figures": [
+    ".omc/scientist/figures/healthbench_correlation_trio.png",
+    ".omc/scientist/figures/healthbench_empathy_analysis.png",
+    ".omc/scientist/figures/healthbench_correlation_heatmap.png",
+    ".omc/scientist/figures/healthbench_discordant_cases.png"
+  ]
+}

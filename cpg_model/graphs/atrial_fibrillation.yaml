@@ -1,0 +1,220 @@
+graph_id: atrial_fibrillation
+guideline_name: AHA/ACC/HRS 2023 Atrial Fibrillation
+version: '2023.1'
+metadata:
+  source: AHA/ACC/HRS AF Guidelines 2023
+  doi: 10.1016/j.jacc.2023.08.017
+  description: Management of atrial fibrillation
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: AF Initial Assessment
+    description: Assess hemodynamic stability and rate/rhythm strategy
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - order_lab_tsh
+    - order_lab_bmp
+    - assess_chadsvasc_score
+    allowed_actions:
+    - assess_chadsvasc_score
+    - assess_vital_signs
+    - consult_cardiology
+    - consult_electrophysiology
+    - consult_nephrology
+    - continuous_monitoring
+    - give_iv_fluids
+    - obtain_12_lead_ecg
+    - order_ecg
+    - order_echocardiogram
+    - order_imaging_chest_xray
+    - order_imaging_echocardiogram
+    - order_lab_bmp
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_creatinine
+    - order_lab_inr
+    - order_lab_lactate
+    - order_lab_ntproBNP
+    - order_lab_troponin
+    - order_lab_tsh
+    forbidden_actions: []
+    deadlines:
+      obtain_12_lead_ecg: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    conditional_rules:
+      - rule_id: "AF-WPW-NO-AV-BLOCKER"
+        condition: "'wpw_syndrome' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_diltiazem, give_verapamil, give_digoxin, give_adenosine, give_beta_blocker_iv]
+        evidence: "AHA/ACC/HRS 2023 AF Guidelines, Section 7.3.4.1"
+        severity: CRITICAL
+        description: "AV nodal blockers in WPW bypass the AV node, accelerating conduction through accessory pathway causing VF."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "wpw_syndrome", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "wpw_syndrome", type: list_not_contains}
+
+      - rule_id: "AF-SEVERE-CKD-NO-DOAC"
+        condition: "patient.labs.egfr < 15"
+        effect:
+          type: FORBIDDEN
+          actions: [give_rivaroxaban, give_apixaban, give_edoxaban, give_dabigatran]
+        evidence: "AHA/ACC/HRS 2023 AF Guidelines, Section 5.1.3"
+        severity: HIGH
+        description: "DOACs contraindicated in severe CKD (eGFR <15) due to lack of safety data."
+        condition_variables: [patient.labs.egfr]
+        trigger_range:
+          patient.labs.egfr: {min: 1, max: 14, type: float}
+        normal_range:
+          patient.labs.egfr: {min: 30, max: 120, type: float}
+
+      - rule_id: "AF-MECHANICAL-VALVE-NO-DOAC"
+        condition: "'mechanical_heart_valve' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_dabigatran, give_rivaroxaban, give_apixaban, give_edoxaban]
+        evidence: "AHA/ACC/HRS 2023 AF Guidelines; RE-ALIGN Trial"
+        severity: CRITICAL
+        description: "DOACs in mechanical valves increase thrombotic events. Warfarin required."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "mechanical_heart_valve", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "mechanical_heart_valve", type: list_not_contains}
+
+      - rule_id: "AF-ANTICOAG-REQUIRES-CHADSVASC"
+        condition: "True"
+        effect:
+          type: FORBIDDEN
+          actions: [give_anticoagulation_without_chadsvasc]
+        evidence: "AHA/ACC/HRS 2023 AF Guidelines, Section 5.1"
+        severity: HIGH
+        description: "Anticoagulation decision requires CHA2DS2-VASc assessment."
+        condition_variables: []
+        trigger_range: {}
+        normal_range: {}
+
+      - rule_id: "AF-AMIODARONE-THYROID-VARIANT"
+        condition: "'graves_disease_suspected' in patient.comorbidities or 'thyrotoxicosis' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_amiodarone_without_thyroid_evaluation, give_amiodarone_iv, add_amiodarone_loading, increase_amiodarone_dose]
+        evidence: "AHA/ACC/HRS 2023; Bogazzi F, Thyroid 2012"
+        severity: HIGH
+        description: "Thyroid disease is contraindication to amiodarone without evaluation."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "graves_disease_suspected", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "graves_disease_suspected", type: list_not_contains}
+
+    source_guideline: AHA/ACC/HRS 2023
+    source_section: Evaluation
+    source_page: e1-e149
+    source_quote: 12-lead ECG should be obtained to confirm diagnosis and assess for
+      pre-excitation
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'unstable_af': unstable_af
+  unstable_af:
+    node_id: unstable_af
+    node_type: plan
+    name: Hemodynamically Unstable AF
+    description: Emergent cardioversion
+    precondition: state.working_diagnosis == 'unstable_af'
+    mandatory_actions:
+    - perform_cardioversion
+    - give_anticoagulation
+    allowed_actions:
+    - perform_cardioversion
+    - give_anticoagulation
+    - give_heparin
+    - give_iv_amiodarone
+    forbidden_actions: []
+    deadlines:
+      perform_cardioversion: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    conditional_rules:
+      - rule_id: "AF-CARDIOVERSION-ANTICOAG-GATE"
+        condition: "patient.presentation.af_duration_hours > 48"
+        effect:
+          type: FORBIDDEN
+          actions: [perform_cardioversion_without_anticoag, perform_cardioversion_without_tee]
+        evidence: "AHA/ACC/HRS 2023 AF Guidelines, Section 6.2"
+        severity: CRITICAL
+        description: "Cardioversion after 48h AF without anticoagulation/TEE risks stroke."
+        condition_variables: [patient.presentation.af_duration_hours]
+        trigger_range:
+          patient.presentation.af_duration_hours: {min: 49, max: 720, type: float}
+        normal_range:
+          patient.presentation.af_duration_hours: {min: 0, max: 48, type: float}
+
+    source_guideline: AHA/ACC/HRS 2023
+    source_section: Unstable AF
+    source_page: e1-e149
+    source_quote: Immediate cardioversion is recommended for hemodynamically unstable
+      AF
+    next_nodes: []
+    conditional_next: {}
+  stable_af_rate_control:
+    node_id: stable_af_rate_control
+    node_type: plan
+    name: Stable AF - Rate Control
+    description: Rate control strategy for stable AF
+    precondition: null
+    mandatory_actions:
+    - give_rate_control
+    - assess_anticoagulation_need
+    allowed_actions:
+    - give_rate_control
+    - give_beta_blocker
+    - give_calcium_channel_blocker
+    - give_digoxin
+    - assess_anticoagulation_need
+    - give_anticoagulation
+    forbidden_actions:
+    - give_rate_control_without_ecg
+    deadlines: {}
+    required_prior_actions:
+      give_rate_control:
+      - obtain_12_lead_ecg
+    recommendation_class: I
+    evidence_level: B
+    conditional_rules:
+      - rule_id: "AF-AMIODARONE-THYROID-CHECK"
+        condition: "'amiodarone_use_chronic' in patient.medications"
+        effect:
+          type: FORBIDDEN
+          actions: [increase_amiodarone_dose, add_amiodarone_loading, give_amiodarone_iv]
+        evidence: "AHA/ACC/HRS 2023 AF Guidelines; Bogazzi F, Thyroid 2012"
+        severity: HIGH
+        description: "Chronic amiodarone use requires thyroid function assessment before dose changes."
+        condition_variables: [patient.medications]
+        trigger_range:
+          patient.medications: {contains: "amiodarone_use_chronic", type: list_contains}
+        normal_range:
+          patient.medications: {not_contains: "amiodarone_use_chronic", type: list_not_contains}
+
+    source_guideline: AHA/ACC/HRS 2023
+    source_section: Rate Control
+    source_page: e1-e149
+    source_quote: Rate control is recommended as initial strategy for most patients
+      with AF
+    next_nodes: []
+    conditional_next: {}

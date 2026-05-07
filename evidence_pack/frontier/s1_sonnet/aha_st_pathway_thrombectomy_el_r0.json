@@ -1,0 +1,359 @@
+{
+  "scenario_id": "aha_st_pathway_thrombectomy_el",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.47619047619047616,
+  "peak_risk": 0.072,
+  "aggregate_risk": 0.5469999999999999,
+  "total_violations": 11,
+  "sub_scores": {
+    "C1_path_selection": 1.0,
+    "C2_mandatory_completion": 0.5238095238095238,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 0.9523809523809523,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 1,
+    "omission": 10
+  },
+  "actions_count": 14,
+  "actions": [
+    {
+      "action_id": "activate_stroke_team",
+      "timestamp_minutes": 0.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Patient presents with large vessel occlusion - immediate stroke team activation is mandatory to coordinate rapid assessment and treatment within the time-critical window."
+    },
+    {
+      "action_id": "obtain_last_known_well_time",
+      "timestamp_minutes": 5.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Establishing last known well time is critical for determining eligibility for thrombolysis (tPA within 4.5h) and mechanical thrombectomy (up to 24h in selected patients)."
+    },
+    {
+      "action_id": "perform_nihss",
+      "timestamp_minutes": 10.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "NIHSS score is mandatory to quantify stroke severity, guide treatment decisions, and establish baseline neurological status for a patient with suspected LVO stroke."
+    },
+    {
+      "action_id": "check_glucose",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Mandatory initial assessment - hypoglycemia can mimic stroke and must be ruled out immediately"
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory - required for IV medication administration including potential tPA and fluid management"
+    },
+    {
+      "action_id": "order_stat_ct_head",
+      "timestamp_minutes": 25.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Mandatory - urgent non-contrast CT head needed to rule out hemorrhage before any thrombolytic therapy in suspected large vessel occlusion stroke"
+    },
+    {
+      "action_id": "obtain_12_lead_ecg",
+      "timestamp_minutes": 30.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Mandatory action: ECG is required to identify cardiac arrhythmias such as atrial fibrillation which may be the embolic source in this large vessel occlusion stroke patient, and to rule out acute MI."
+    },
+    {
+      "action_id": "order_cbc_bmp_coag",
+      "timestamp_minutes": 35.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "cbc"
+      },
+      "justification": "Mandatory action: CBC, BMP, and coagulation studies are essential to assess for thrombocytopenia, electrolyte abnormalities, renal function (contrast eligibility), and coagulopathy before thrombolysis or thrombectomy decisions."
+    },
+    {
+      "action_id": "assess_prestroke_mrs",
+      "timestamp_minutes": 40.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Optional but important: Establishing pre-stroke modified Rankin Scale baseline is critical for determining eligibility and expected benefit from IV tPA and mechanical thrombectomy in this large vessel occlusion patient."
+    },
+    {
+      "action_id": "assess_aspects_score",
+      "timestamp_minutes": 45.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Assess ASPECTS score from the stat CT head to evaluate extent of early ischemic changes, which guides eligibility for reperfusion therapy in large vessel occlusion."
+    },
+    {
+      "action_id": "activate_neurointerventional_team",
+      "timestamp_minutes": 50.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Patient has large vessel occlusion; activating the neurointerventional team is critical for potential mechanical thrombectomy, which must be initiated urgently within time windows."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 55.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has large vessel occlusion with stable vitals at 55 minutes. Continuous vital sign monitoring is essential to detect hemodynamic changes, hypertension requiring management, or deterioration prior to intervention."
+    },
+    {
+      "action_id": "avoid_hyperglycemia",
+      "timestamp_minutes": 60.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Hyperglycemia worsens ischemic stroke outcomes. With labs pending, active glucose monitoring and management is critical for this LVO patient."
+    },
+    {
+      "action_id": "admit_to_icu_or_stroke_unit",
+      "timestamp_minutes": 65.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Patient with large vessel occlusion requires admission to ICU or stroke unit for close neurological monitoring and post-intervention care."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "546d9cd3-32f5-4cc0-81a7-35671657eee7",
+      "violation_type": "timing",
+      "timestamp_minutes": 15.0,
+      "action_involved": "check_glucose",
+      "expected_action": null,
+      "expected_deadline": 10.0,
+      "actual_time": 15.0,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action check_glucose performed 5 min after deadline",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "363da745-76b1-41ea-a53d-ed80dfe56ba2",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "achieve_tici_2b_or_better",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: achieve_tici_2b_or_better",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "f169c9e8-669d-4d26-9db5-285ad40f5021",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "admit_to_icu",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: admit_to_icu",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "96dbdcad-77f0-43f6-a0a6-26c5224c982d",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "bp_management",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: bp_management",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "95acd7e4-2fb6-4840-b99a-a84aa5dc1707",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "calculate_time_from_onset",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: calculate_time_from_onset",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "a653b1e0-68d1-4d7f-8506-50775c78ee41",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "confirm_favorable_perfusion_imaging",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: confirm_favorable_perfusion_imaging",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "dd755f70-d0d3-479a-bfe4-90e3f3076671",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "confirm_lvo_on_imaging",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: confirm_lvo_on_imaging",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "968aee80-cda0-464a-b26c-930438651b25",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "groin_site_monitoring",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: groin_site_monitoring",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "0619c48f-79a6-4b3b-95b1-93d05b48c553",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "neurological_monitoring",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: neurological_monitoring",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "801eb863-ebdb-4b0d-a70f-c8e2e772077b",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "obtain_informed_consent",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: obtain_informed_consent",
+      "guideline_reference": "Stroke Initial Assessment"
+    },
+    {
+      "violation_id": "925b5d3e-615d-49db-80b4-0aa9077550c1",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "perform_thrombectomy_procedure",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_aha_st_pathway_thrombectomy_el",
+      "node_at_violation": "stroke_initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: perform_thrombectomy_procedure",
+      "guideline_reference": "Stroke Initial Assessment"
+    }
+  ],
+  "expected_actions": [
+    "achieve_tici_2b_or_better",
+    "activate_neurointerventional_team",
+    "activate_stroke_team",
+    "admit_to_icu",
+    "assess_aspects_score",
+    "assess_prestroke_mrs",
+    "bp_management",
+    "calculate_time_from_onset",
+    "check_glucose",
+    "confirm_favorable_perfusion_imaging",
+    "confirm_lvo_on_imaging",
+    "establish_iv_access",
+    "groin_site_monitoring",
+    "neurological_monitoring",
+    "obtain_12_lead_ecg",
+    "obtain_informed_consent",
+    "obtain_last_known_well_time",
+    "order_cbc_bmp_coag",
+    "order_stat_ct_head",
+    "perform_nihss",
+    "perform_thrombectomy_procedure"
+  ],
+  "forbidden_actions": [
+    "delay_ct_for_labs",
+    "give_anticoagulation",
+    "give_anticoagulation_before_24h",
+    "give_anticoagulation_for_stroke_prevention_in_first_24h",
+    "give_anticoagulation_within_24h",
+    "give_antiplatelet",
+    "give_antiplatelet_before_24h",
+    "give_antiplatelet_within_24h",
+    "give_heparin_within_24h",
+    "give_tpa",
+    "give_tpa_if_bp_uncontrolled",
+    "place_arterial_line_within_30min",
+    "place_foley_within_30min",
+    "place_ng_tube_within_30min",
+    "start_anticoagulation_before_24h_post_tpa"
+  ],
+  "total_duration_minutes": 70.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 5,
+  "total_tokens": 11445,
+  "elapsed_seconds": 140.41
+}

@@ -1,0 +1,198 @@
+{
+  "part1_c3_comparison": {
+    "compliance_delta_stats": {
+      "min": -0.0769,
+      "max": -0.0345,
+      "mean": -0.0617
+    },
+    "formula_comparison_table": {
+      "A_binary": {
+        "DKA_C3_mean": 0.0,
+        "STEMI_C3_mean": 0.0,
+        "design_consistency": "LOW \u2014 only binary sub-construct",
+        "interpretability": "HIGH \u2014 clear zero-tolerance semantics"
+      },
+      "B_weighted": {
+        "DKA_C3_mean": 0.6667,
+        "STEMI_C3_mean": 0.7667,
+        "design_consistency": "HIGH \u2014 matches C1/C2/C4/C5 pattern",
+        "interpretability": "MEDIUM \u2014 depends on forbidden_count normalization"
+      },
+      "C_max_severity": {
+        "DKA_C3_mean": 0.0,
+        "STEMI_C3_mean": 0.3,
+        "design_consistency": "MEDIUM \u2014 uses severity but different aggregation",
+        "interpretability": "HIGH \u2014 intuitive worst-case semantics"
+      }
+    },
+    "friedman_composite_a": {
+      "pre_fix_single": {
+        "chi2": 8.1575,
+        "p": 0.042866
+      },
+      "post_fix_single": {
+        "chi2": 6.9658,
+        "p": 0.072997
+      },
+      "post_fix_multi": {
+        "chi2": 10.76,
+        "p": 0.013097
+      },
+      "note": "Composite A = CGA * capped_coverage. C3 formula choice does NOT affect Composite A \u2014 it only affects the C3 sub-construct score. All three formulas produce identical Friedman results for Composite A."
+    },
+    "friedman_c3_subconstruct": {
+      "formula_A_binary": {
+        "chi2": 6.0,
+        "p": 0.11161
+      },
+      "note": "C3 Friedman p=0.112 under binary formula. Under severity-weighted formulas, C3 variance decreases (values move away from 0/1 extremes toward mid-range), potentially reducing Friedman power."
+    },
+    "key_finding": "CRITICAL: C3 formula choice does NOT affect Composite A Friedman results. The p=0.043->0.073 shift was caused by adding commission violations to the total violation count (changing compliance_score), not by the C3 formula. All three formulas (A/B/C) produce identical Composite A Friedman p-values. The formula choice only affects C3 sub-construct analysis.",
+    "recommendation": "Formula C (1-max_severity) is recommended. Rationale: (1) DKA insulin in hypokalemia is CATASTROPHIC -> C3=0.0 (same as binary). (2) STEMI morphine is MAJOR -> C3=0.3 (more nuanced than binary 0.0). (3) Minor commissions get proportional penalty, not zero-tolerance. (4) Formula choice does NOT affect the primary Composite A metric, so this is purely a sub-construct design decision with no cherry-picking risk.",
+    "n_dka_affected": 14,
+    "n_stemi_affected": 15,
+    "dka_c3_means": {
+      "A_binary": 0.0,
+      "B_weighted": 0.6667,
+      "C_max_severity": 0.0
+    },
+    "stemi_c3_means": {
+      "A_binary": 0.0,
+      "B_weighted": 0.7667,
+      "C_max_severity": 0.3
+    }
+  },
+  "part2_leave_one_out": {
+    "baseline": {
+      "chi2": 10.76,
+      "p": 0.013097,
+      "n_scenarios": 15
+    },
+    "leave_one_out_results": [
+      {
+        "removed_scenario": "stemi_inferior_rv_trap",
+        "friedman_chi2": 8.7429,
+        "friedman_p": 0.032913,
+        "significant": true,
+        "delta_p_from_baseline": 0.019815
+      },
+      {
+        "removed_scenario": "pe_submassive_basic",
+        "friedman_chi2": 8.7429,
+        "friedman_p": 0.032913,
+        "significant": true,
+        "delta_p_from_baseline": 0.019815
+      },
+      {
+        "removed_scenario": "adhf_warm_wet",
+        "friedman_chi2": 8.7429,
+        "friedman_p": 0.032913,
+        "significant": true,
+        "delta_p_from_baseline": 0.019815
+      },
+      {
+        "removed_scenario": "septic_shock_penicillin_allergy",
+        "friedman_chi2": 8.8286,
+        "friedman_p": 0.031659,
+        "significant": true,
+        "delta_p_from_baseline": 0.018562
+      },
+      {
+        "removed_scenario": "copd_moderate_exacerbation",
+        "friedman_chi2": 8.8286,
+        "friedman_p": 0.031659,
+        "significant": true,
+        "delta_p_from_baseline": 0.018562
+      },
+      {
+        "removed_scenario": "dka_hypokalemia_trap",
+        "friedman_chi2": 9.5143,
+        "friedman_p": 0.02318,
+        "significant": true,
+        "delta_p_from_baseline": 0.010083
+      },
+      {
+        "removed_scenario": "gi_bleeding_upper_basic",
+        "friedman_chi2": 9.5143,
+        "friedman_p": 0.02318,
+        "significant": true,
+        "delta_p_from_baseline": 0.010083
+      },
+      {
+        "removed_scenario": "htn_emergency_basic",
+        "friedman_chi2": 9.5143,
+        "friedman_p": 0.02318,
+        "significant": true,
+        "delta_p_from_baseline": 0.010083
+      },
+      {
+        "removed_scenario": "septic_shock_basic",
+        "friedman_chi2": 9.6857,
+        "friedman_p": 0.021436,
+        "significant": true,
+        "delta_p_from_baseline": 0.008339
+      },
+      {
+        "removed_scenario": "hemorrhagic_stroke",
+        "friedman_chi2": 9.6857,
+        "friedman_p": 0.021436,
+        "significant": true,
+        "delta_p_from_baseline": 0.008339
+      },
+      {
+        "removed_scenario": "af_new_onset_basic",
+        "friedman_chi2": 10.0286,
+        "friedman_p": 0.018325,
+        "significant": true,
+        "delta_p_from_baseline": 0.005228
+      },
+      {
+        "removed_scenario": "dka_moderate_basic",
+        "friedman_chi2": 10.3714,
+        "friedman_p": 0.015659,
+        "significant": true,
+        "delta_p_from_baseline": 0.002562
+      },
+      {
+        "removed_scenario": "stroke_tpa_eligible",
+        "friedman_chi2": 13.1143,
+        "friedman_p": 0.004396,
+        "significant": true,
+        "delta_p_from_baseline": -0.008701
+      },
+      {
+        "removed_scenario": "contrast_aki_prevention_basic",
+        "friedman_chi2": 13.8,
+        "friedman_p": 0.00319,
+        "significant": true,
+        "delta_p_from_baseline": -0.009907
+      },
+      {
+        "removed_scenario": "aki_stage1_basic",
+        "friedman_chi2": 13.9714,
+        "friedman_p": 0.002944,
+        "significant": true,
+        "delta_p_from_baseline": -0.010153
+      }
+    ],
+    "summary": {
+      "n_significant_of_15": 15,
+      "pct_robust": 100.0,
+      "most_weakening_scenario": "stemi_inferior_rv_trap",
+      "most_weakening_p": 0.032913,
+      "most_strengthening_scenario": "aki_stage1_basic",
+      "most_strengthening_p": 0.002944
+    },
+    "c3_affected_scenarios": {
+      "dka_hypokalemia_trap": {
+        "p_when_removed": 0.02318,
+        "still_significant": true
+      },
+      "stemi_inferior_rv_trap": {
+        "p_when_removed": 0.032913,
+        "still_significant": true
+      }
+    },
+    "interpretation": "Multi-run p=0.020 is robust: 15/15 leave-one-out sets remain significant."
+  }
+}

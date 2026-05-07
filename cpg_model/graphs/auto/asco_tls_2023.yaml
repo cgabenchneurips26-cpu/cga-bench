@@ -1,0 +1,243 @@
+graph_id: asco_tls_2023
+guideline_name: ASCO 2023 Guidelines on Tumor Lysis Syndrome Prevention and Treatment
+version: '2023.1'
+metadata:
+  source: ASCO TLS Clinical Practice Guidelines 2023
+  doi: 10.1200/JCO.22.02592
+  journal: Journal of Clinical Oncology
+  recommendation_system: GRADE
+  description: Evidence-based guideline for tumor lysis syndrome risk stratification, prophylaxis, and treatment emphasizing
+    rasburicase for high-risk and aggressive hydration
+  key_evidence: Rasburicase reduces uric acid faster than allopurinol (4h vs 24-48h). Cairo-Bishop grading system standardizes
+    TLS definition. Urine alkalinization no longer recommended (promotes calcium phosphate precipitation).
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: TLS Risk Stratification (Cairo-Bishop Criteria)
+    description: Stratify TLS risk (low/intermediate/high) based on tumor type, burden, renal function, and baseline labs
+    precondition: null
+    mandatory_actions:
+    - assess_tls_risk_cairo_bishop
+    - order_lab_uric_acid
+    - order_lab_bmp
+    allowed_actions:
+    - order_lab_potassium
+    - order_lab_calcium
+    - assess_tls_risk_cairo_bishop
+    - order_lab_phosphate
+    - order_lab_cbc
+    - order_lab_creatinine
+    - establish_iv_access
+    - order_lab_ldh
+    - order_lab_bmp
+    - assess_vital_signs
+    - order_lab_uric_acid
+    forbidden_actions: []
+    deadlines:
+      assess_tls_risk_cairo_bishop: 30
+      order_lab_uric_acid: 30
+      order_lab_bmp: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Tumor Lysis Syndrome Guidelines 2023
+    source_section: Risk Stratification
+    source_page: null
+    source_quote: 'Cairo-Bishop criteria: laboratory TLS = ≥2 of: uric acid ≥8, potassium ≥6, phosphate ≥4.5 (mg/dL), calcium
+      ≤7, within 3 days before or 7 days after chemotherapy'
+    next_nodes: []
+    conditional_next:
+      state.tls_risk == 'high': high_risk_prophylaxis
+      state.tls_risk == 'intermediate': intermediate_risk_prophylaxis
+      state.tls_risk == 'low': low_risk_monitoring
+  low_risk_monitoring:
+    node_id: low_risk_monitoring
+    node_type: plan
+    name: Low-Risk TLS Monitoring
+    description: Adequate hydration, allopurinol prophylaxis, labs q12-24h
+    precondition: state.tls_risk == 'low'
+    mandatory_actions:
+    - initiate_iv_hydration_2L_m2_day
+    - give_allopurinol_prophylaxis
+    allowed_actions:
+    - give_allopurinol_prophylaxis
+    - initiate_iv_hydration_2L_m2_day
+    - order_lab_uric_acid_q24h
+    - monitor_fluid_balance
+    - order_lab_bmp_q24h
+    - monitor_urine_output
+    forbidden_actions: []
+    deadlines:
+      initiate_iv_hydration_2L_m2_day: 120
+      give_allopurinol_prophylaxis: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Tumor Lysis Syndrome Guidelines 2023
+    source_section: 'Recommendation 1: Low-Risk Management'
+    source_page: null
+    source_quote: 'Low-risk patients: oral hydration and allopurinol prophylaxis with monitoring q12-24h'
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+  intermediate_risk_prophylaxis:
+    node_id: intermediate_risk_prophylaxis
+    node_type: plan
+    name: Intermediate-Risk TLS Prophylaxis
+    description: Aggressive IV hydration 3L/m2/day, allopurinol, serial labs q8-12h
+    precondition: state.tls_risk == 'intermediate'
+    mandatory_actions:
+    - initiate_iv_hydration_3L_m2_day
+    - give_allopurinol_prophylaxis
+    - order_lab_bmp_q8h
+    - order_lab_uric_acid_q8h
+    allowed_actions:
+    - give_rasburicase_if_uric_acid_rising
+    - give_allopurinol_prophylaxis
+    - order_lab_phosphate_q8h
+    - initiate_iv_hydration_3L_m2_day
+    - order_lab_bmp_q8h
+    - order_lab_uric_acid_q8h
+    - monitor_fluid_balance
+    - monitor_urine_output_hourly
+    - order_lab_calcium_q8h
+    forbidden_actions:
+    - give_rasburicase_with_g6pd_deficiency
+    deadlines:
+      initiate_iv_hydration_3L_m2_day: 60
+      give_allopurinol_prophylaxis: 60
+      order_lab_bmp_q8h: 480
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Tumor Lysis Syndrome Guidelines 2023
+    source_section: 'Recommendation 2: Intermediate-Risk'
+    source_page: null
+    source_quote: 'Intermediate-risk: aggressive IV hydration (3 L/m2/day), allopurinol prophylaxis, labs q8-12h. Consider
+      rasburicase if uric acid rises despite allopurinol'
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+  high_risk_prophylaxis:
+    node_id: high_risk_prophylaxis
+    node_type: plan
+    name: High-Risk TLS Prophylaxis & Treatment
+    description: Rasburicase, aggressive hydration 3L/m2/day, electrolyte management q6h, ICU monitoring
+    precondition: state.tls_risk == 'high'
+    mandatory_actions:
+    - give_rasburicase_0_2mg_kg
+    - initiate_iv_hydration_3L_m2_day
+    - order_lab_bmp_q6h
+    - order_lab_uric_acid_q6h
+    - continuous_cardiac_monitoring
+    allowed_actions:
+    - order_lab_uric_acid_q6h
+    - give_phosphate_binder
+    - give_kayexalate_for_hyperkalemia
+    - initiate_rrt_if_refractory
+    - consult_nephrology
+    - give_insulin_dextrose_for_hyperkalemia
+    - give_calcium_gluconate_if_symptomatic
+    - initiate_iv_hydration_3L_m2_day
+    - order_lab_bmp_q6h
+    - continuous_cardiac_monitoring
+    - give_rasburicase_0_2mg_kg
+    - monitor_urine_output_hourly
+    forbidden_actions:
+    - give_rasburicase_with_g6pd_deficiency
+    - give_allopurinol_with_rasburicase
+    - alkalinize_urine
+    deadlines:
+      give_rasburicase_0_2mg_kg: 30
+      initiate_iv_hydration_3L_m2_day: 60
+      continuous_cardiac_monitoring: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ASCO Tumor Lysis Syndrome Guidelines 2023
+    source_section: 'Recommendation 3-4: High-Risk / Established TLS'
+    source_page: null
+    source_quote: Rasburicase (0.2 mg/kg IV) is recommended for high-risk patients and established TLS (strong recommendation).
+      Do NOT use with G6PD deficiency (hemolytic anemia). Do NOT alkalinize urine (promotes calcium phosphate precipitation)
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: TLS-HYPERKALEMIA-CRITICAL
+      condition: state.potassium_meq_l >= 6.5
+      effect:
+        type: REQUIRED
+        actions:
+        - give_calcium_gluconate_if_symptomatic
+        - give_insulin_dextrose_for_hyperkalemia
+        deadline_minutes: 15
+      severity: CRITICAL
+      description: 'K+ ≥6.5 mEq/L: cardiac arrest risk; immediate calcium gluconate for membrane stabilization + insulin/dextrose
+        for intracellular shift'
+      evidence: Class I, Level A
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Serial Monitoring & Electrolyte Correction
+    description: Monitor labs q6-8h, manage electrolyte derangements, assess renal function
+    precondition: null
+    mandatory_actions:
+    - monitor_labs_serial
+    - assess_renal_function
+    allowed_actions:
+    - assess_renal_function
+    - adjust_hydration_rate
+    - consult_nephrology_for_rrt
+    - order_lab_bmp
+    - monitor_labs_serial
+    - monitor_urine_output
+    - order_lab_uric_acid
+    - order_lab_phosphate
+    forbidden_actions: []
+    deadlines:
+      monitor_labs_serial: 480
+      assess_renal_function: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Tumor Lysis Syndrome Guidelines 2023
+    source_section: Monitoring
+    source_page: null
+    source_quote: Serial metabolic panels q6-8h during high-risk period (typically 24-72h post-chemotherapy). Renal replacement
+      therapy for refractory hyperkalemia, hyperphosphatemia, or oliguric renal failure
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Follow-Up
+    description: Step down monitoring, transition to oral hydration, plan subsequent chemotherapy cycles
+    precondition: null
+    mandatory_actions:
+    - assess_metabolic_stability
+    allowed_actions:
+    - arrange_lab_follow_up
+    - plan_tls_prevention_next_cycle
+    - transition_to_oral_hydration
+    - resume_allopurinol_maintenance
+    - assess_metabolic_stability
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Tumor Lysis Syndrome Guidelines 2023
+    source_section: Disposition
+    source_page: null
+    source_quote: Labs should normalize within 3-7 days. Continue TLS prophylaxis for subsequent cycles if high-risk persists
+    next_nodes: []
+    conditional_next: {}

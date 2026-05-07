@@ -1,0 +1,977 @@
+graph_id: aha_stroke_2019
+version: '2019.1'
+description: AHA/ASA Guidelines for the Early Management of Acute Ischemic Stroke
+metadata:
+  source: 2019 AHA/ASA Guidelines for Acute Ischemic Stroke
+  doi: 10.1161/STR.0000000000000211
+  publication_year: 2019
+  key_recommendations:
+  - IV alteplase within 4.5 hours of symptom onset
+  - Mechanical thrombectomy within 24 hours for LVO
+  - Blood pressure management in acute stroke
+  - Stroke unit admission for all stroke patients
+  recommendation_class_mapping:
+    CLASS_I: Strong recommendation, benefit >>> risk
+    CLASS_IIA: Moderate recommendation, benefit >> risk
+    CLASS_IIB: Weak recommendation, benefit >= risk
+    CLASS_III_NO_BENEFIT: No benefit
+    CLASS_III_HARM: Harm
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_aha_stroke_2019.json
+entry_node: stroke_initial_assessment
+nodes:
+  stroke_initial_assessment:
+    node_id: stroke_initial_assessment
+    node_type: action
+    description: Initial stroke assessment - CODE STROKE activation
+    mandatory_actions:
+    - activate_stroke_team
+    - obtain_last_known_well_time
+    - perform_nihss
+    - check_glucose
+    - establish_iv_access
+    - order_stat_ct_head
+    - order_cbc_bmp_coag
+    - obtain_12_lead_ecg
+    forbidden_actions:
+    - delay_ct_for_labs
+    allowed_actions:
+    - activate_neurointerventional_team
+    - admit_to_icu_or_stroke_unit
+    - assess_aspects_score
+    - assess_prestroke_mrs
+    - assess_vital_signs
+    - bp_reduction_target_140
+    - calculate_time_from_onset
+    - confirm_lvo_on_imaging
+    - consult_neurosurgery
+    - give_alteplase_0.9mg_kg
+    - give_antiseizure_prophylaxis
+    - give_aspirin_loading
+    - give_osmotic_therapy
+    - hold_antiplatelet_anticoagulation_24h
+    - admit_to_icu
+    - monitor_bp_q15min_x2h_then_q30min_x6h
+    - neurological_checks_q15min
+    - neurosurgery_consult
+    - obtain_ct_angiography
+    - obtain_ct_perfusion
+    - obtain_informed_consent
+    - order_ct_angiography
+    - order_imaging_chest_xray
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_lactate
+    - order_lab_troponin
+    - perform_thrombectomy_procedure
+    - place_evd_if_hydrocephalus
+    - reduce_bp_to_below_185_110_before_tpa
+    - repeat_ct_head
+    - request_consultation
+    - reverse_anticoagulation_if_applicable
+    - review_anticoagulation_status
+    - review_exclusion_criteria
+    - review_inclusion_criteria
+    - use_iv_labetalol_or_nicardipine
+    deadlines:
+      check_glucose: 10
+      order_stat_ct_head: 25
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: hemorrhagic_stroke
+      target_node: hemorrhagic_stroke_management
+    - condition: ischemic_stroke
+      target_node: tpa_eligibility_assessment
+    source_guideline: AHA Stroke Guideline Section 4
+    source_section: Initial Assessment and Emergency Evaluation
+    source_page: Section 4.1
+    source_quote: Stroke systems should prioritize rapid neurologic assessment and immediate brain imaging to determine reperfusion
+      eligibility.
+    source_figure: Figure 1 - Acute Stroke Algorithm
+    name: Stroke Initial Assessment
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  tpa_eligibility_assessment:
+    node_id: tpa_eligibility_assessment
+    node_type: decision
+    description: Assess eligibility for IV thrombolysis
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities or ''acute_ischemic_stroke'' in patient.comorbidities'
+    mandatory_actions:
+    - review_inclusion_criteria
+    - review_exclusion_criteria
+    - calculate_time_from_onset
+    - review_anticoagulation_status
+    transitions:
+    - condition: time_from_onset <= 270 and eligible
+      target_node: administer_iv_tpa
+    - condition: time_from_onset <= 270 and relative_contraindication
+      target_node: tpa_risk_benefit_discussion
+    - condition: time_from_onset > 270 and lvo_suspected
+      target_node: thrombectomy_eligibility
+    - condition: not_tpa_eligible and not_lvo
+      target_node: non_reperfusion_management
+    recommendation_class: I
+    evidence_level: B
+    conditional_rules:
+    - rule_id: STROKE-BP-UNCONTROLLED-NO-TPA
+      condition: patient.vitals.sbp > 185 or patient.vitals.dbp > 110
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_alteplase
+        - give_tpa
+      evidence: AHA/ASA 2019 Acute Ischemic Stroke Guidelines, Section 3.5
+      severity: CRITICAL
+      description: tPA with BP >185/110 increases risk of intracranial hemorrhage.
+      condition_variables:
+      - patient.vitals.sbp
+      - patient.vitals.dbp
+      trigger_range:
+        patient.vitals.sbp:
+          min: 186
+          max: 260
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 100
+          max: 185
+          type: int
+    - rule_id: STROKE-SEIZURE-MIMIC-NO-TPA
+      condition: '''seizure_at_onset'' in patient.history or ''todds_paralysis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_alteplase_without_ruling_out_mimic
+        - give_tpa_for_todds_paralysis
+      evidence: AHA/ASA 2019, Section 3.4 Stroke Mimics
+      severity: HIGH
+      description: Seizure at onset may indicate stroke mimic. tPA without exclusion is harmful.
+      condition_variables:
+      - patient.history
+      trigger_range:
+        patient.history:
+          contains: seizure_at_onset
+          type: list_contains
+      normal_range:
+        patient.history:
+          not_contains: seizure_at_onset
+          type: list_not_contains
+    - rule_id: STROKE-POSTERIOR-NO-DISCHARGE-LOW-NIHSS
+      condition: '''posterior_circulation'' in patient.presentation or ''vertebrobasilar'' in patient.presentation'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - discharge_with_low_nihss
+        - withhold_treatment_based_on_low_nihss
+      evidence: AHA/ASA 2019, Section 3.6 Posterior Circulation Stroke
+      severity: HIGH
+      description: Posterior circulation strokes may have low NIHSS but devastating outcomes.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: posterior_circulation
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: posterior_circulation
+          type: list_not_contains
+    - rule_id: STROKE-TPA-HEPARIN-TIMING
+      condition: '''tpa_given'' in patient.history or ''alteplase_given'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_heparin_within_24h_of_tpa
+        - start_doac_immediately
+      evidence: AHA/ASA 2019, Section 3.5; NINDS tPA Protocol
+      severity: CRITICAL
+      description: Anticoagulation within 24h of tPA increases hemorrhagic transformation risk.
+      condition_variables:
+      - patient.history
+      trigger_range:
+        patient.history:
+          contains: tpa_given
+          type: list_contains
+      normal_range:
+        patient.history:
+          not_contains: tpa_given
+          type: list_not_contains
+    - rule_id: STROKE-EXTENDED-WINDOW-NO-TPA
+      condition: patient.presentation.symptom_onset_hours > 4.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_alteplase
+      evidence: AHA/ASA 2019, Section 3.3
+      severity: CRITICAL
+      description: IV tPA contraindicated beyond 4.5h window.
+      condition_variables:
+      - patient.presentation.symptom_onset_hours
+      trigger_range:
+        patient.presentation.symptom_onset_hours:
+          min: 4.6
+          max: 24
+          type: float
+      normal_range:
+        patient.presentation.symptom_onset_hours:
+          min: 0
+          max: 4.5
+          type: float
+    source_guideline: AHA Stroke Guideline Section 5.1
+    source_section: IV Alteplase Eligibility Criteria
+    source_page: Table 3
+    source_quote: IV alteplase is recommended for eligible patients presenting within the treatment window after exclusion
+      of contraindications.
+    source_figure: Table 3 - tPA Eligibility
+    name: Tpa Eligibility Assessment
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  tpa_risk_benefit_discussion:
+    node_id: tpa_risk_benefit_discussion
+    node_type: decision
+    description: Discuss risks and benefits of tPA with relative contraindications
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities and patient.presentation.get(''symptom_onset_hours'',
+      99) <= 4.5'
+    mandatory_actions:
+    - discuss_with_patient_family
+    - document_shared_decision
+    transitions:
+    - condition: decision_to_treat
+      target_node: administer_iv_tpa
+    - condition: decision_not_to_treat
+      target_node: thrombectomy_eligibility
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: AHA Stroke Guideline Section 5.2
+    source_section: Shared Decision-Making for Relative Contraindications
+    source_page: Section 5.2
+    source_quote: When relative contraindications exist, treatment should follow individualized risk-benefit discussion and
+      documented shared decision-making.
+    name: Tpa Risk Benefit Discussion
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  administer_iv_tpa:
+    node_id: administer_iv_tpa
+    node_type: action
+    description: Administer IV alteplase
+    precondition: state.no_absolute_contraindications and state.time_from_onset <= 270
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities and patient.presentation.get(''symptom_onset_hours'',
+      99) <= 4.5'
+    mandatory_actions:
+    - obtain_informed_consent
+    - give_alteplase_0.9mg_kg
+    - admit_to_icu_or_stroke_unit
+    - monitor_bp_q15min_x2h_then_q30min_x6h
+    - neurological_checks_q15min
+    - hold_antiplatelet_anticoagulation_24h
+    forbidden_actions:
+    - give_antiplatelet_within_24h
+    - give_anticoagulation_within_24h
+    - give_heparin_within_24h
+    - place_foley_within_30min
+    - place_ng_tube_within_30min
+    - place_arterial_line_within_30min
+    deadlines:
+      give_alteplase_0.9mg_kg: 60
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: lvo_on_cta
+      target_node: thrombectomy_eligibility
+    - condition: no_lvo
+      target_node: post_tpa_monitoring
+    - condition: neurological_deterioration
+      target_node: hemorrhagic_transformation_evaluation
+    source_guideline: AHA Stroke Guideline Section 5.3
+    source_section: IV Alteplase Administration
+    source_page: Section 5.3
+    source_quote: Eligible patients should receive IV alteplase promptly, followed by protocolized monitoring and avoidance
+      of early antithrombotic therapy.
+    name: Administer Iv Tpa
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  post_tpa_monitoring:
+    node_id: post_tpa_monitoring
+    node_type: action
+    description: Post-tPA monitoring and management
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities and patient.presentation.get(''symptom_onset_hours'',
+      99) <= 4.5'
+    mandatory_actions:
+    - neurological_monitoring
+    - bp_management_target_180_105
+    - repeat_ct_24h
+    - start_antiplatelet_after_24h_if_no_hemorrhage
+    forbidden_actions:
+    - give_antiplatelet_before_24h
+    - give_anticoagulation_before_24h
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: stable_24h
+      target_node: stroke_secondary_prevention
+    - condition: hemorrhagic_transformation
+      target_node: hemorrhagic_transformation_management
+    source_guideline: AHA Stroke Guideline Section 5.4
+    source_section: Post-Thrombolysis Monitoring
+    source_page: Section 5.4
+    source_quote: After alteplase, frequent neurologic and blood pressure monitoring is required, with follow-up imaging before
+      starting antithrombotics.
+    name: Post Tpa Monitoring
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  thrombectomy_eligibility:
+    node_id: thrombectomy_eligibility
+    node_type: decision
+    description: Assess eligibility for mechanical thrombectomy
+    patient_activation_condition: '''large_vessel_occlusion'' in patient.comorbidities'
+    mandatory_actions:
+    - confirm_lvo_on_imaging
+    - assess_aspects_score
+    - calculate_time_from_onset
+    - assess_prestroke_mrs
+    transitions:
+    - condition: lvo_confirmed and time_from_onset <= 360 and aspects >= 6
+      target_node: perform_thrombectomy
+    - condition: lvo_confirmed and time_from_onset <= 1440 and favorable_perfusion
+      target_node: extended_window_thrombectomy
+    - condition: not_eligible_for_thrombectomy
+      target_node: non_reperfusion_management
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA Stroke Guideline Section 6
+    source_section: Mechanical Thrombectomy Selection
+    source_page: Section 6.1
+    source_quote: Patients with large-vessel occlusion should be screened for thrombectomy based on time, imaging profile,
+      and functional baseline.
+    name: Thrombectomy Eligibility
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  perform_thrombectomy:
+    node_id: perform_thrombectomy
+    node_type: action
+    description: Perform mechanical thrombectomy
+    precondition: state.lvo_confirmed and state.time_from_onset <= 360
+    patient_activation_condition: '''large_vessel_occlusion'' in patient.comorbidities'
+    mandatory_actions:
+    - activate_neurointerventional_team
+    - obtain_informed_consent
+    - perform_thrombectomy_procedure
+    - achieve_tici_2b_or_better
+    deadlines:
+      perform_thrombectomy_procedure: 60
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: successful_recanalization
+      target_node: post_thrombectomy_care
+    - condition: failed_recanalization
+      target_node: non_reperfusion_management
+    source_guideline: AHA Stroke Guideline Section 6.2
+    source_section: Early Window Thrombectomy
+    source_page: Section 6.2
+    source_quote: Mechanical thrombectomy is strongly recommended for eligible large-vessel occlusion strokes in the early
+      treatment window.
+    name: Perform Thrombectomy
+    forbidden_actions: []
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  extended_window_thrombectomy:
+    node_id: extended_window_thrombectomy
+    node_type: action
+    description: Thrombectomy in extended time window (6-24 hours)
+    precondition: state.lvo_confirmed and state.favorable_perfusion_imaging and state.time_from_onset <= 1440
+    patient_activation_condition: '''large_vessel_occlusion'' in patient.comorbidities'
+    mandatory_actions:
+    - confirm_favorable_perfusion_imaging
+    - perform_thrombectomy_procedure
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: successful_recanalization
+      target_node: post_thrombectomy_care
+    - condition: failed_recanalization
+      target_node: non_reperfusion_management
+    source_guideline: AHA Stroke Guideline Section 6.3 (DAWN/DEFUSE-3)
+    source_section: Extended Window Thrombectomy
+    source_page: Section 6.3
+    source_quote: Selected patients with favorable perfusion mismatch can benefit from thrombectomy up to 24 hours from last
+      known well.
+    name: Extended Window Thrombectomy
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  post_thrombectomy_care:
+    node_id: post_thrombectomy_care
+    node_type: action
+    description: Post-thrombectomy care
+    patient_activation_condition: '''large_vessel_occlusion'' in patient.comorbidities'
+    mandatory_actions:
+    - admit_to_icu
+    - neurological_monitoring
+    - bp_management
+    - groin_site_monitoring
+    allowed_actions:
+    - follow_up_imaging
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: stable
+      target_node: stroke_secondary_prevention
+    - condition: hemorrhagic_transformation
+      target_node: hemorrhagic_transformation_management
+    source_guideline: AHA Stroke Guideline Section 6.4
+    source_section: Post-Endovascular Care
+    source_page: Section 6.4
+    source_quote: After thrombectomy, intensive monitoring and blood pressure control are essential to reduce complications
+      and optimize recovery.
+    name: Post Thrombectomy Care
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  non_reperfusion_management:
+    node_id: non_reperfusion_management
+    node_type: action
+    description: Management without reperfusion therapy
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities and patient.presentation.get(''symptom_onset_hours'',
+      99) > 4.5'
+    mandatory_actions:
+    - admit_to_stroke_unit
+    - aspirin_within_24_48h
+    - dvt_prophylaxis
+    - swallow_screen
+    - early_mobilization
+    forbidden_actions:
+    - give_anticoagulation_for_stroke_prevention_in_first_24h
+    allowed_actions:
+    - dual_antiplatelet_for_minor_stroke_tia
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: stable
+      target_node: stroke_secondary_prevention
+    - condition: deterioration
+      target_node: stroke_deterioration_evaluation
+    source_guideline: AHA Stroke Guideline Section 7
+    source_section: Acute Ischemic Stroke Care Without Reperfusion
+    source_page: Section 7
+    source_quote: Patients not receiving reperfusion should receive stroke-unit care, early antiplatelet therapy, and complication
+      prevention measures.
+    name: Non Reperfusion Management
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  bp_management_tpa_candidate:
+    node_id: bp_management_tpa_candidate
+    node_type: action
+    description: BP management for tPA candidates
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities and patient.presentation.get(''symptom_onset_hours'',
+      99) <= 4.5'
+    mandatory_actions:
+    - reduce_bp_to_below_185_110_before_tpa
+    - use_iv_labetalol_or_nicardipine
+    - maintain_bp_below_180_105_post_tpa
+    forbidden_actions:
+    - give_tpa_if_bp_uncontrolled
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA Stroke Guideline Section 4.3
+    source_section: Blood Pressure Targets for Thrombolysis Candidates
+    source_page: Section 4.3
+    source_quote: Blood pressure must be reduced below 185/110 mmHg before alteplase and maintained below 180/105 mmHg afterward.
+    name: Bp Management Tpa Candidate
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  bp_management_non_tpa:
+    node_id: bp_management_non_tpa
+    node_type: action
+    description: BP management for non-tPA patients
+    patient_activation_condition: '''ischemic_stroke'' in patient.comorbidities and patient.presentation.get(''symptom_onset_hours'',
+      99) > 4.5'
+    mandatory_actions:
+    - treat_if_bp_above_220_120
+    - goal_reduction_15_percent
+    allowed_actions:
+    - permissive_hypertension_below_220_120
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: AHA Stroke Guideline Section 4.3
+    source_section: Blood Pressure Management Without Thrombolysis
+    source_page: Section 4.3
+    source_quote: In patients not receiving thrombolysis, permissive hypertension is acceptable unless blood pressure is markedly
+      elevated.
+    name: Bp Management Non Tpa
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  hemorrhagic_stroke_management:
+    node_id: hemorrhagic_stroke_management
+    node_type: action
+    description: Intracerebral hemorrhage management
+    patient_activation_condition: '''hemorrhagic_stroke'' in patient.comorbidities or ''intracerebral_hemorrhage'' in patient.comorbidities
+      or ''subarachnoid_hemorrhage'' in patient.comorbidities'
+    mandatory_actions:
+    - admit_to_icu
+    - bp_reduction_target_140
+    - reverse_anticoagulation_if_applicable
+    - neurosurgery_consult
+    - repeat_ct_6h_or_if_deterioration
+    allowed_actions:
+    - activate_stroke_team
+    - obtain_last_known_well_time
+    - perform_nihss
+    - check_glucose
+    - establish_iv_access
+    - order_stat_ct_head
+    - order_cbc_bmp_coag
+    - obtain_12_lead_ecg
+    - obtain_ct_angiography
+    - stat_coagulation_panel
+    - type_and_screen
+    - give_cryoprecipitate
+    - give_tranexamic_acid
+    - reverse_coagulopathy
+    - icu_management
+    - evd_for_hydrocephalus
+    - consider_evacuation_if_indicated
+    - icp_monitoring_if_indicated
+    - seizure_prophylaxis_consideration
+    - dvt_prophylaxis_mechanical
+    - neurosurgery_evaluation
+    forbidden_actions:
+    - give_tpa
+    - give_antiplatelet
+    - give_anticoagulation
+    deadlines:
+      reverse_anticoagulation_if_applicable: 60
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: surgical_indication
+      target_node: neurosurgical_intervention
+    - condition: conservative_management
+      target_node: ich_conservative_management
+    conditional_rules:
+    - rule_id: STROKE-WARFARIN-PCC-PREFERRED
+      condition: '''warfarin'' in patient.medications and ''intracerebral_hemorrhage'' in patient.imaging'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ffp_as_sole_reversal
+        - delay_reversal_for_inr_result
+      evidence: AHA/ASA 2022 ICH Guidelines, Section 5.2; Steiner T, Stroke 2016
+      severity: HIGH
+      description: FFP alone is insufficient for warfarin reversal in ICH. PCC preferred.
+      condition_variables:
+      - patient.medications
+      - patient.imaging
+      trigger_range:
+        patient.medications:
+          contains: warfarin
+        patient.imaging:
+          contains: intracerebral_hemorrhage
+      normal_range:
+        patient.medications:
+          not_contains: warfarin
+    source_guideline: AHA ICH Guideline 2015
+    source_section: Initial Intracerebral Hemorrhage Management
+    source_page: Section 4
+    source_quote: Hemorrhagic stroke management includes urgent reversal of coagulopathy, blood pressure control, and neurosurgical
+      evaluation.
+    name: Hemorrhagic Stroke Management
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  neurosurgical_intervention:
+    node_id: neurosurgical_intervention
+    node_type: action
+    description: Neurosurgical intervention for ICH
+    patient_activation_condition: '''hemorrhagic_stroke'' in patient.comorbidities or ''intracerebral_hemorrhage'' in patient.comorbidities
+      or ''subarachnoid_hemorrhage'' in patient.comorbidities'
+    mandatory_actions:
+    - neurosurgery_evaluation
+    - consider_evacuation_if_indicated
+    - evd_for_hydrocephalus
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: AHA ICH Guideline Section 8
+    source_section: Neurosurgical Management of ICH
+    source_page: Section 8
+    source_quote: Surgical intervention should be considered for selected intracerebral hemorrhage patients with mass effect
+      or hydrocephalus.
+    name: Neurosurgical Intervention
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  ich_conservative_management:
+    node_id: ich_conservative_management
+    node_type: action
+    description: Conservative management of ICH
+    patient_activation_condition: '''hemorrhagic_stroke'' in patient.comorbidities or ''intracerebral_hemorrhage'' in patient.comorbidities
+      or ''subarachnoid_hemorrhage'' in patient.comorbidities'
+    mandatory_actions:
+    - bp_management
+    - icp_monitoring_if_indicated
+    - seizure_prophylaxis_consideration
+    - dvt_prophylaxis_mechanical
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA ICH Guideline Section 7
+    source_section: Conservative Intracerebral Hemorrhage Care
+    source_page: Section 7
+    source_quote: For non-surgical ICH, guideline-based conservative care focuses on physiologic optimization and prevention
+      of secondary injury.
+    name: Ich Conservative Management
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  hemorrhagic_transformation_evaluation:
+    node_id: hemorrhagic_transformation_evaluation
+    node_type: action
+    description: Evaluate for hemorrhagic transformation
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - stop_tpa_infusion
+    - stat_ct_head
+    - stat_coagulation_panel
+    - type_and_screen
+    deadlines:
+      stat_ct_head: 15
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: hemorrhage_confirmed
+      target_node: hemorrhagic_transformation_management
+    - condition: no_hemorrhage
+      target_node: post_tpa_monitoring
+    source_guideline: AHA Stroke Guideline Section 5.5
+    source_section: Evaluation of Suspected Hemorrhagic Transformation
+    source_page: Section 5.5
+    source_quote: Sudden deterioration after thrombolysis requires immediate neuroimaging and coagulation assessment for hemorrhagic
+      transformation.
+    name: Hemorrhagic Transformation Evaluation
+    forbidden_actions: []
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  hemorrhagic_transformation_management:
+    node_id: hemorrhagic_transformation_management
+    node_type: action
+    description: Management of hemorrhagic transformation
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - give_cryoprecipitate
+    - give_tranexamic_acid
+    - reverse_coagulopathy
+    - neurosurgery_consult
+    - icu_management
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: AHA Stroke Guideline Section 5.5
+    source_section: Management of Hemorrhagic Transformation
+    source_page: Section 5.5
+    source_quote: Confirmed hemorrhagic transformation should prompt rapid reversal strategies, intensive care, and neurosurgical
+      consultation.
+    name: Hemorrhagic Transformation Management
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  stroke_deterioration_evaluation:
+    node_id: stroke_deterioration_evaluation
+    node_type: decision
+    description: Evaluation of neurological deterioration
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - repeat_nihss
+    - stat_ct_head
+    - evaluate_for_recurrent_stroke
+    - evaluate_for_hemorrhage
+    - evaluate_for_edema
+    transitions:
+    - condition: malignant_edema
+      target_node: malignant_edema_management
+    - condition: recurrent_stroke
+      target_node: tpa_eligibility_assessment
+    - condition: hemorrhage
+      target_node: hemorrhagic_transformation_management
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA Stroke Guideline Section 8
+    source_section: Neurologic Deterioration Workup
+    source_page: Section 8.1
+    source_quote: Neurologic worsening after stroke requires urgent reassessment for edema, hemorrhage, or recurrent ischemia.
+    name: Stroke Deterioration Evaluation
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  malignant_edema_management:
+    node_id: malignant_edema_management
+    node_type: action
+    description: Management of malignant cerebral edema
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - elevate_head_of_bed
+    - avoid_hyperthermia
+    - avoid_hyperglycemia
+    - neurosurgery_consult_for_decompressive_craniectomy
+    allowed_actions:
+    - osmotic_therapy
+    - hyperventilation_temporizing
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA Stroke Guideline Section 8.2
+    source_section: Malignant Cerebral Edema
+    source_page: Section 8.2
+    source_quote: Malignant edema management includes early neurocritical care measures and decompressive surgery consideration
+      when indicated.
+    name: Malignant Edema Management
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  stroke_secondary_prevention:
+    node_id: stroke_secondary_prevention
+    node_type: action
+    description: Secondary stroke prevention
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - antiplatelet_therapy
+    - statin_therapy
+    - bp_management_long_term
+    - diabetes_management
+    - smoking_cessation
+    - carotid_evaluation
+    - cardiac_monitoring_for_afib
+    allowed_actions:
+    - anticoagulation_if_afib
+    - carotid_intervention_if_indicated
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: afib_detected
+      target_node: afib_anticoagulation
+    - condition: carotid_stenosis_severe
+      target_node: carotid_intervention_evaluation
+    - condition: standard_secondary_prevention
+      target_node: stroke_rehabilitation
+    conditional_rules:
+    - rule_id: STROKE-PREGNANCY-NO-ACEI
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor
+        - give_arb
+        - give_nitroprusside
+      evidence: ACOG 2020; AHA/ASA 2019 Secondary Prevention
+      severity: CRITICAL
+      description: ACE inhibitors, ARBs, and nitroprusside are teratogenic.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    source_guideline: AHA Stroke Guideline Section 9
+    source_section: Secondary Prevention After Ischemic Stroke
+    source_page: Section 9
+    source_quote: Comprehensive secondary prevention should include antithrombotic therapy, risk-factor control, and etiology-directed
+      interventions.
+    name: Stroke Secondary Prevention
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  afib_anticoagulation:
+    node_id: afib_anticoagulation
+    node_type: action
+    description: Anticoagulation for AF-related stroke
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - calculate_chadsvasc
+    - calculate_hasbled
+    - start_doac_preferred
+    forbidden_actions:
+    - start_anticoagulation_before_24h_post_tpa
+    allowed_actions:
+    - warfarin_if_doac_contraindicated
+    - left_atrial_appendage_closure_consideration
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA Stroke Guideline Section 9.2
+    source_section: Cardioembolic Stroke and Atrial Fibrillation
+    source_page: Section 9.2
+    source_quote: In AF-related stroke, anticoagulation is recommended after individualized timing assessment to reduce recurrent
+      embolic events.
+    name: Afib Anticoagulation
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  carotid_intervention_evaluation:
+    node_id: carotid_intervention_evaluation
+    node_type: decision
+    description: Evaluation for carotid intervention
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - confirm_stenosis_degree
+    - assess_surgical_risk
+    transitions:
+    - condition: symptomatic_stenosis_70_99
+      target_node: carotid_endarterectomy
+    - condition: symptomatic_stenosis_50_69_and_favorable
+      target_node: carotid_endarterectomy
+    - condition: high_surgical_risk
+      target_node: carotid_stenting
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA Stroke Guideline Section 9.3
+    source_section: Carotid Revascularization Evaluation
+    source_page: Section 9.3
+    source_quote: Symptomatic carotid stenosis should be evaluated for timely revascularization based on stenosis severity
+      and procedural risk.
+    name: Carotid Intervention Evaluation
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  carotid_endarterectomy:
+    node_id: carotid_endarterectomy
+    node_type: action
+    description: Carotid endarterectomy
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - surgical_planning
+    - perform_cea_within_2_weeks
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA Stroke Guideline Section 9.3
+    source_section: Carotid Endarterectomy
+    source_page: Section 9.3
+    source_quote: Carotid endarterectomy is recommended for appropriate symptomatic high-grade stenosis when performed within
+      a favorable timeframe.
+    name: Carotid Endarterectomy
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  carotid_stenting:
+    node_id: carotid_stenting
+    node_type: action
+    description: Carotid artery stenting
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - dual_antiplatelet_before_procedure
+    - perform_cas
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: AHA Stroke Guideline Section 9.3
+    source_section: Carotid Artery Stenting
+    source_page: Section 9.3
+    source_quote: Carotid stenting is a reasonable alternative in selected patients with symptomatic stenosis and elevated
+      surgical risk.
+    name: Carotid Stenting
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  stroke_rehabilitation:
+    node_id: stroke_rehabilitation
+    node_type: action
+    description: Stroke rehabilitation
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - early_rehabilitation_assessment
+    - physical_therapy
+    - occupational_therapy
+    - speech_therapy_if_needed
+    - discharge_planning
+    allowed_actions:
+    - inpatient_rehabilitation
+    - outpatient_rehabilitation
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA Stroke Guideline Section 10
+    source_section: Rehabilitation and Recovery Planning
+    source_page: Section 10
+    source_quote: Early multidisciplinary rehabilitation and structured discharge planning improve functional outcomes after
+      stroke.
+    name: Stroke Rehabilitation
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+sequence_dependencies:
+- before: order_stat_ct_head
+  after: administer_iv_tpa
+- before: confirm_lvo_on_imaging
+  after: perform_thrombectomy
+- before: obtain_informed_consent
+  after: give_alteplase_0.9mg_kg
+time_critical_windows:
+- window_name: tPA Window
+  max_minutes: 270
+  entry_node: administer_iv_tpa
+- window_name: Standard Thrombectomy Window
+  max_minutes: 360
+  entry_node: perform_thrombectomy
+- window_name: Extended Thrombectomy Window
+  max_minutes: 1440
+  entry_node: extended_window_thrombectomy
+forbidden_combinations:
+- actions:
+  - give_alteplase
+  - antiplatelet_within_24h
+  reason: Increased bleeding risk post-tPA
+- actions:
+  - give_alteplase
+  - anticoagulation_within_24h
+  reason: Increased bleeding risk post-tPA
+- actions:
+  - give_tpa
+  - hemorrhagic_stroke
+  reason: Absolute contraindication
+guideline_name: AHA/ASA Acute Ischemic Stroke Guideline

@@ -1,0 +1,369 @@
+scenarios:
+  aki_stage1_basic:
+    scenario_id: aki_stage1_basic
+    description: Basic AKI Stage 1 patient requiring monitoring and supportive care
+    guideline_graph: kdigo_aki_full
+    patient:
+      age: 58
+      sex: F
+      weight_kg: 80
+      chief_complaint: decreased urine output, fatigue
+      working_diagnosis: acute_kidney_injury
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 130
+        blood_pressure_diastolic: 82
+        respiratory_rate: 18
+        temperature: 37.2
+        oxygen_saturation: 97
+        map_mmhg: 98
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 1.8
+      lab_creatinine_baseline: 1.2
+      lab_potassium: 4.8
+      lab_bun: 32
+      urine_output_ml_kg_hr: 0.45
+      renal_ultrasound: normal_kidneys
+    expected_actions:
+    - order_creatinine
+    - monitor_urine_output
+    - optimize_volume_status
+    - discontinue_nephrotoxins
+    - avoid_contrast
+    forbidden_actions:
+    - give_nsaid
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.8
+  aki_stage2_nephrology:
+    scenario_id: aki_stage2_nephrology
+    description: AKI Stage 2 requiring nephrology consultation
+    guideline_graph: kdigo_aki_full
+    patient:
+      age: 67
+      sex: F
+      weight_kg: 65
+      chief_complaint: nausea, decreased urine output, swelling
+      working_diagnosis: acute_kidney_injury
+      vitals:
+        heart_rate: 92
+        blood_pressure_systolic: 155
+        blood_pressure_diastolic: 95
+        respiratory_rate: 20
+        temperature: 37.0
+        oxygen_saturation: 95
+        map_mmhg: 115
+      allergies: []
+      comorbidities:
+      - hypertension
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 3.2
+      lab_creatinine_baseline: 1.4
+      lab_potassium: 5.4
+      lab_bun: 58
+      lab_bicarbonate: 18
+      urine_output_ml_kg_hr: 0.3
+      renal_ultrasound: bilateral_small_kidneys
+    expected_actions:
+    - order_creatinine
+    - monitor_urine_output
+    - consult_nephrology
+    - monitor_potassium
+    - monitor_acid_base
+    - discontinue_nephrotoxins
+    forbidden_actions:
+    - give_nsaid
+    deadlines:
+      consult_nephrology: 240
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+  aki_stage3_severe:
+    scenario_id: aki_stage3_severe
+    description: Severe AKI Stage 3 with RRT consideration
+    guideline_graph: kdigo_aki_full
+    patient:
+      age: 72
+      sex: F
+      weight_kg: 75
+      chief_complaint: confusion, oliguria, shortness of breath
+      working_diagnosis: acute_kidney_injury_severe
+      vitals:
+        heart_rate: 105
+        blood_pressure_systolic: 145
+        blood_pressure_diastolic: 88
+        respiratory_rate: 24
+        temperature: 37.5
+        oxygen_saturation: 91
+        map_mmhg: 107
+      allergies: []
+      comorbidities:
+      - heart_failure
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 5.8
+      lab_creatinine_baseline: 1.5
+      lab_potassium: 6.2
+      lab_bun: 95
+      lab_bicarbonate: 14
+      urine_output_ml_kg_hr: 0.1
+      ecg: peaked_t_waves
+    expected_actions:
+    - urgent_nephrology_consult
+    - monitor_creatinine_q6h
+    - monitor_potassium_q6h
+    - assess_rrt_need
+    - ecg_for_hyperkalemia
+    - treat_hyperkalemia
+    forbidden_actions:
+    - give_nsaid
+    deadlines:
+      urgent_nephrology_consult: 60
+      assess_rrt_need: 120
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.85
+  contrast_aki_high_risk:
+    scenario_id: contrast_aki_high_risk
+    description: High-risk patient for contrast-induced AKI (eGFR < 30)
+    guideline_graph: kdigo_aki_full
+    patient:
+      age: 78
+      sex: F
+      weight_kg: 55
+      chief_complaint: chest pain, needs CT coronary angiography
+      working_diagnosis: suspected_cad
+      vitals:
+        heart_rate: 78
+        blood_pressure_systolic: 142
+        blood_pressure_diastolic: 85
+        respiratory_rate: 16
+        temperature: 36.8
+        oxygen_saturation: 96
+        map_mmhg: 104
+      allergies: []
+      comorbidities:
+      - ckd_stage_4
+      - diabetes_type_2
+      - hypertension
+      contraindications: []
+      current_medications:
+      - metformin
+      - lisinopril
+    ground_truth:
+      lab_creatinine: 3.0
+      lab_egfr: 18
+      contrast_exposure_planned: true
+    expected_actions:
+    - assess_ci_aki_risk
+    - order_baseline_creatinine
+    - calculate_egfr
+    - consider_alternative_imaging
+    - discuss_risk_benefit_with_patient
+    - iv_hydration_if_proceeding
+    - use_iso_osmolar_contrast
+    - minimize_contrast_volume
+    - hold_metformin
+    forbidden_actions:
+    - give_high_osmolar_contrast
+    - repeat_contrast_within_48h
+    max_duration_minutes: 360
+    passing_compliance_threshold: 0.85
+  emergency_rrt_hyperkalemia:
+    scenario_id: emergency_rrt_hyperkalemia
+    description: AKI with life-threatening hyperkalemia requiring emergency RRT
+    guideline_graph: kdigo_aki_full
+    patient:
+      age: 55
+      sex: F
+      weight_kg: 85
+      chief_complaint: weakness, palpitations, near syncope
+      working_diagnosis: aki_with_hyperkalemia
+      vitals:
+        heart_rate: 52
+        blood_pressure_systolic: 98
+        blood_pressure_diastolic: 60
+        respiratory_rate: 18
+        temperature: 36.9
+        oxygen_saturation: 97
+        map_mmhg: 73
+      allergies: []
+      comorbidities:
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 7.2
+      lab_potassium: 7.8
+      lab_bicarbonate: 12
+      ecg: sine_wave_pattern
+      rrt_indication: emergency
+    expected_actions:
+    - initiate_rrt_immediately
+    - treat_hyperkalemia_temporizing
+    - vascular_access_placement
+    - give_calcium_gluconate
+    - give_insulin_glucose
+    - give_sodium_bicarbonate
+    forbidden_actions:
+    - delay_rrt
+    deadlines:
+      treat_hyperkalemia_temporizing: 30
+      initiate_rrt_immediately: 60
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.9
+  aki_hepatorenal_albumin_trap:
+    scenario_id: aki_hepatorenal_albumin_trap
+    description: Hepatorenal syndrome AKI - crystalloid bolus worsens ascites without
+      improving renal function
+    guideline_graph: kdigo_aki_full
+    trap_scenario: true
+    patient:
+      age: 55
+      sex: F
+      weight_kg: 78
+      chief_complaint: progressive oliguria, rising creatinine, worsening ascites
+        and peripheral edema in cirrhotic patient
+      working_diagnosis: aki
+      vitals:
+        heart_rate: 95
+        blood_pressure_systolic: 88
+        blood_pressure_diastolic: 55
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 96
+        map_mmhg: 66
+      allergies: []
+      comorbidities:
+      - liver_cirrhosis
+      - ascites
+      - portal_hypertension
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 3.2
+      lab_creatinine_baseline: 1.0
+      lab_sodium: 125
+      lab_albumin: 2.0
+      urine_output_ml_per_hour: 15
+    expected_actions:
+    - order_creatinine
+    - monitor_urine_output
+    - discontinue_diuretics
+    - give_albumin_1g_kg
+    - consult_nephrology
+    - consult_hepatology
+    - evaluate_for_hepatorenal_syndrome
+    forbidden_actions:
+    - give_ns_bolus
+    - give_aggressive_crystalloid
+    - give_nsaid
+    trap_description: 'Hepatorenal syndrome: NS bolus only worsens ascites without
+      improving renal function. Albumin (1g/kg/day, max 100g) + terlipressin or midodrine+octreotide
+      provides effective splanchnic vasoconstriction for HRS-AKI treatment.'
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  aki_ace_hyperkalemia_trap:
+    scenario_id: aki_ace_hyperkalemia_trap
+    description: AKI stage 2 with hyperkalemia on ACE inhibitor + MRA - continuing
+      RAAS inhibitors causes fatal arrhythmia risk
+    guideline_graph: kdigo_aki_full
+    trap_scenario: true
+    patient:
+      age: 68
+      sex: M
+      weight_kg: 85
+      chief_complaint: fatigue, decreased urine output, muscle weakness, on lisinopril
+        and spironolactone
+      working_diagnosis: aki
+      vitals:
+        heart_rate: 68
+        blood_pressure_systolic: 145
+        blood_pressure_diastolic: 88
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 97
+        map_mmhg: 107
+      allergies: []
+      comorbidities:
+      - hypertension
+      - heart_failure
+      - ckd_stage_3_baseline
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 3.8
+      lab_creatinine_baseline: 1.2
+      lab_potassium: 5.5
+      ecg_result: peaked_t_waves
+    expected_actions:
+    - order_creatinine
+    - monitor_potassium
+    - discontinue_ace_inhibitor
+    - discontinue_spironolactone
+    - discontinue_nephrotoxins
+    - treat_hyperkalemia
+    - consult_nephrology
+    forbidden_actions:
+    - continue_ace_inhibitor
+    - continue_mra
+    - give_potassium_supplement
+    - increase_ace_dose
+    trap_description: 'AKI + hyperkalemia: continuing ACE inhibitor + MRA causes further
+      potassium elevation leading to fatal arrhythmia (peaked T waves already present).
+      RAAS inhibitors must be held during AKI. Restart only after renal function recovers.'
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  aki_rhabdomyolysis_aggressive_fluid:
+    scenario_id: aki_rhabdomyolysis_aggressive_fluid
+    description: Rhabdomyolysis-induced AKI requiring aggressive IV NS - standard
+      maintenance rate is insufficient
+    guideline_graph: kdigo_aki_full
+    trap_scenario: true
+    patient:
+      age: 25
+      sex: F
+      weight_kg: 80
+      chief_complaint: crush injury with dark brown urine, severe muscle pain, and
+        rising creatinine
+      working_diagnosis: aki
+      vitals:
+        heart_rate: 110
+        blood_pressure_systolic: 118
+        blood_pressure_diastolic: 72
+        respiratory_rate: 20
+        temperature: 37.4
+        oxygen_saturation: 98
+        map_mmhg: 87
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      lab_ck: 45000
+      lab_creatinine: 4.2
+      lab_potassium: 6.1
+      lab_urine_myoglobin: positive
+      urine_output_ml_per_hour: 20
+    expected_actions:
+    - order_creatinine
+    - establish_iv_access
+    - give_aggressive_ns_200_300ml_h
+    - monitor_urine_output_target_200ml_h
+    - treat_hyperkalemia
+    - monitor_ck_serial
+    - monitor_potassium_q4h
+    - consult_nephrology
+    forbidden_actions:
+    - give_ns_maintenance_rate_only
+    - restrict_fluid
+    - give_lactated_ringers
+    trap_description: 'Rhabdomyolysis AKI: standard maintenance IV fluids are insufficient
+      to clear myoglobin. Requires aggressive NS at 200-300ml/h targeting urine output
+      200ml/h. Lactated Ringer''s contains potassium and worsens hyperkalemia. NS
+      is the correct fluid choice.'
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  enable_state_deterioration: true

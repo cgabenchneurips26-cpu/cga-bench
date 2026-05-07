@@ -1,0 +1,147 @@
+# NeurIPS Mock Configuration (Full Test with Mock LLM)
+# =====================================================
+# Mock LLM을 사용한 전체 실험 테스트
+
+experiment:
+  experiment_id: "neurips_mock_full_test"
+  description: "Full NeurIPS experiment with Mock LLM"
+  version: "0.1.0"
+
+# 격리 설정
+isolation:
+  forbidden_imports:
+    - "cga_bench.cpg_engine"
+    - "cga_bench.assessor_core"
+    - "cga_bench.cpg_model.graphs"
+  allowed_imports:
+    - "cga_bench.agent_rules"
+    - "cga_bench.tool_api"
+    - "cga_bench.scenario_engine"
+  enforce_at_runtime: true
+  log_violations: true
+
+# Budget 설정
+budget:
+  enforce_budget_matching: true
+  budget_limit_tokens: 50000
+  budget_limit_calls: 100
+  on_budget_exceeded: "terminate"
+  allow_sampling: true
+  max_samples_per_decision: 3
+
+# 테스트 시나리오 (다양한 도메인)
+scenarios:
+  sepsis:
+    - septic_shock_basic
+  chest_pain:
+    - stemi_inferior_rv_trap
+  aki:
+    - contrast_aki_prevention_basic
+
+# 4종 베이스라인 (Mock LLM 사용)
+baselines:
+  # 1. Rule-based Oracle (LLM 미사용)
+  rule_based:
+    enabled: true
+    agent_type: "oracle"
+    description: "Rule-based oracle using independent decision tables"
+    config:
+      agent_id: "rule_based_oracle"
+      guideline_domain: "auto"
+      uses_cpg_engine: false
+      uses_assessor_core: false
+      budget_limit_tokens: 0
+      budget_limit_calls: 100
+
+  # 2. RAG-only (Mock LLM)
+  rag_only:
+    enabled: true
+    agent_type: "rag"
+    description: "RAG-only baseline with Mock LLM"
+    config:
+      agent_id: "rag_only_mock"
+      llm_backend: "mock"
+      llm_model: "mock"
+      temperature: 0.1
+      use_bm25: true
+      use_dense: false
+      use_hybrid: false
+      top_k: 5
+      use_planning: false
+      use_constraint_verification: false
+      single_step_decision: true
+      force_structured_output: true
+      output_format: "json"
+      budget_limit_tokens: 50000
+      budget_limit_calls: 100
+      max_actions_per_step: 3
+
+  # 3. Planner+Tool (Mock LLM)
+  planner_tool:
+    enabled: true
+    agent_type: "planner"
+    description: "ReAct-style planner with Mock LLM"
+    config:
+      agent_id: "planner_tool_mock"
+      llm_backend: "mock"
+      llm_model: "mock"
+      temperature: 0.1
+      use_planning: true
+      planning_strategy: "react"
+      max_planning_steps: 10
+      replan_on_failure: true
+      use_tools: true
+      use_constraint_verification: true
+      constraint_source: "agent_rules"
+      budget_limit_tokens: 50000
+      budget_limit_calls: 100
+      max_actions_per_step: 3
+
+  # 4. Self-Reflection (Mock LLM)
+  self_reflection:
+    enabled: true
+    agent_type: "reflection"
+    description: "Reflexion-style agent with Mock LLM"
+    config:
+      agent_id: "self_reflection_mock"
+      llm_backend: "mock"
+      llm_model: "mock"
+      temperature: 0.1
+      use_reflection: true
+      reflection_strategy: "reflexion"
+      max_reflection_rounds: 3
+      use_episodic_memory: true
+      memory_capacity: 10
+      reflect_on_failure: true
+      reflect_on_violation: true
+      use_constraint_verification: true
+      constraint_source: "agent_rules"
+      budget_limit_tokens: 50000
+      budget_limit_calls: 100
+      max_actions_per_step: 3
+      allow_sampling: true
+      max_samples: 3
+
+settings:
+  num_runs_per_scenario: 1
+  save_logs: true
+  save_scores: true
+  save_trajectories: true
+  output_dir: "results/neurips_mock"
+  random_seed: 42
+  deterministic_mode: false
+  parallel_scenarios: false
+  parallel_baselines: false
+
+metrics:
+  primary:
+    - compliance_score
+    - peak_risk
+    - aggregate_risk
+  secondary:
+    - total_violations
+    - timing_violations
+  efficiency:
+    - total_tokens
+    - total_llm_calls
+    - total_tool_calls

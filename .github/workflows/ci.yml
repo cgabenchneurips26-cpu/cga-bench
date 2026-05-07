@@ -1,0 +1,124 @@
+name: CGA-Bench CI
+
+on:
+  push:
+    branches: [main]
+    paths: ['cga_bench/**', 'tests/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies (strict lockfile)
+        run: |
+          pip install -r cga_bench/requirements.lock
+          pip install -e cga-bench[dev] || true
+
+      - name: Lint
+        run: |
+          pip install ruff
+          ruff check cga_bench/
+
+      - name: Type check
+        run: |
+          pip install mypy
+          cd cga_bench && mypy --config-file mypy.ini cpg_engine/ assessor_core/ eval_harness/ cpg_model/schemas/ || true
+
+      - name: Core tests (Schema + Engine + Assessor)
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_schemas/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_engine/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_assessor/ -q
+
+      - name: Golden + Isolation tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_golden/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_isolation/ -q
+
+      - name: Eval harness tests
+        run: PYTHONPATH=cga_bench pytest cga_bench/tests/test_eval_harness/ -q
+
+      - name: Agent tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_agents/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_agent_rules/ -q
+
+      - name: Export + Conformance tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_export/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_conformance/ -q
+
+      - name: External benchmark tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_external/ -q
+
+      - name: Correctness + Reproducibility tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_correctness/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_reproducibility/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_event_sourcing/ -q
+
+      - name: Ontology + Terminology + Mining tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_ontology/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_terminology/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_mining/ -q
+
+      - name: Integration + Comparison + Normalizer tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_integration/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_comparison/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_normalizer/ -q
+
+      - name: E2E + Scenario + Experiment tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_e2e/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_scenario/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_experiments/ -q
+
+      - name: Exit Criteria + Guards tests
+        run: |
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_exit_criteria/ -q
+          PYTHONPATH=cga_bench pytest cga_bench/tests/test_guards/ -q
+
+      - name: Stress test (small profile)
+        run: |
+          PYTHONPATH=cga_bench python cga_bench/scripts/bench/stress_eventlog_roundtrip.py --profile small --format xes
+          PYTHONPATH=cga_bench python cga_bench/scripts/bench/stress_eventlog_roundtrip.py --profile small --format ocel
+
+      - name: Source audit
+        run: PYTHONPATH=cga_bench python cga_bench/scripts/ci/audit_sources.py
+
+      - name: Paper macro consistency (verify-only)
+        # Guards against silent script-overwrite reversion of hand-tuned macro values.
+        # Re-derives all 113 registry-managed macros from verdict_matrix_v6.json and
+        # asserts byte-equality against paper/auto_numbers{,_v6,_v18}.tex. Exits non-zero
+        # if any macro disagrees. See docs/critical_review/macro_recompute_20260430*.md.
+        # Runs from cga_bench/ so script's REPO_ROOT-relative path-formatting works.
+        run: cd cga_bench && python scripts/experiments/refresh_paper_macros.py --verify-only
+
+  leakage-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: pip install pydantic pyyaml
+      - name: Leakage scan
+        run: python cga_bench/scripts/ci/leakage_scan.py --dir cga_bench/ --canaries 10

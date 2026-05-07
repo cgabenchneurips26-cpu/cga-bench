@@ -1,0 +1,95 @@
+graph_id: ssc_llm_smoke
+guideline_name: SEPSIS Guidelines
+version: '1.0'
+metadata:
+  source: SSC 2021
+  domain: sepsis
+  description: SEPSIS Guidelines
+  parse_confidence: 0.9222
+  generated_by: cpg_yaml_generator.CPGYAMLGenerator v1
+entry_node: diagnostic_workup
+nodes:
+  diagnostic_workup:
+    node_id: diagnostic_workup
+    node_type: enquiry
+    name: Diagnostic Workup
+    description: For adults suspected of having sepsis, we recommend measuring blood lactate level.
+    precondition: null
+    mandatory_actions:
+    - measure_serum_lactate
+    - obtain_blood_cultures
+    allowed_actions:
+    - measure_serum_lactate
+    - obtain_blood_cultures
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SSC 2021
+    source_section: SSC_R1
+    source_page: 1
+    source_quote: For adults suspected of having sepsis, we recommend measuring blood lactate level
+    next_nodes:
+    - treatment_plan
+    conditional_next: {}
+  treatment_plan:
+    node_id: treatment_plan
+    node_type: plan
+    name: Treatment Plan
+    description: For adults with possible septic shock or a high likelihood for sepsis, we recommend administering antimicrobials
+      immediately, ideally within 1 hour of recognition.
+    precondition: null
+    mandatory_actions:
+    - administer_antimicrobials
+    - administer_norepinephrine
+    - administer_iv_corticosteroids
+    allowed_actions:
+    - administer_antimicrobials
+    - administer_norepinephrine
+    - administer_iv_corticosteroids
+    - administer_iv_crystalloid
+    - select_balanced_crystalloid
+    forbidden_actions:
+    - avoid_albumin_initial_resuscitation
+    deadlines:
+      administer_antimicrobials: 60
+      administer_iv_crystalloid: 180
+    required_prior_actions:
+      administer_iv_corticosteroids:
+      - administer_iv_crystalloid
+      - administer_norepinephrine
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SSC 2021
+    source_section: SSC_R3
+    source_page: 2
+    source_quote: For adults with possible septic shock or a high likelihood for sepsis, we recommend administering antimicrobials
+      immediately, ideally within 1 hour of recognition
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Monitoring & Reassessment
+    description: Serial lactate measurements should be obtained to guide resuscitation.
+    precondition: null
+    mandatory_actions:
+    - monitor_serum_lactate
+    allowed_actions:
+    - monitor_serum_lactate
+    - measure_serum_lactate
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions:
+      monitor_serum_lactate:
+      - measure_serum_lactate
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: SSC 2021
+    source_section: SSC_R1
+    source_page: 1
+    source_quote: Serial lactate measurements should be obtained to guide resuscitation.
+    next_nodes: []
+    conditional_next: {}

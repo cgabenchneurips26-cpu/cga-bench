@@ -1,0 +1,127 @@
+name: D&B Submission Guards
+
+on:
+  push:
+    branches: [main, eval_science]
+    paths:
+      - 'croissant.json'
+      - 'DATASHEET.md'
+      - 'docs/RAI.md'
+      - 'docs/MAINTENANCE.md'
+      - 'docs/HARDWARE.md'
+      - 'docs/NEURIPS_DB_REPRO_CHECKLIST.md'
+      - 'docs/ANONYMIZATION_SCAN_REPORT.md'
+      - 'docs/CROISSANT_VALIDATION_REPORT.md'
+      - 'CITATION.cff'
+      - '.zenodo.json'
+      - 'CHANGELOG.md'
+      - 'README.md'
+      - 'LICENSE'
+      - 'scripts/ci/anonymization_scan.sh'
+      - 'scripts/prepare_anonymous_repo.py'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: db-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  anonymization-guard:
+    name: Anonymization scan (double-blind review)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run anonymization scan
+        run: bash scripts/ci/anonymization_scan.sh
+
+  croissant-validate:
+    name: Croissant metadata validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install mlcroissant
+        run: pip install mlcroissant
+      - name: Validate croissant.json
+        run: python -m mlcroissant.scripts.validate --jsonld croissant.json
+
+  artefacts-presence:
+    name: Required D&B artefacts present
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check required files
+        run: |
+          set -e
+          REQUIRED_FILES=(
+            LICENSE
+            README.md
+            DATASHEET.md
+            CHANGELOG.md
+            CITATION.cff
+            .zenodo.json
+            croissant.json
+            docs/RAI.md
+            docs/MAINTENANCE.md
+            docs/HARDWARE.md
+            docs/NEURIPS_DB_REPRO_CHECKLIST.md
+            docs/ANONYMIZATION_SCAN_REPORT.md
+            docs/CROISSANT_VALIDATION_REPORT.md
+            scripts/ci/anonymization_scan.sh
+            scripts/prepare_anonymous_repo.py
+          )
+          MISSING=0
+          for f in "${REQUIRED_FILES[@]}"; do
+            if [[ ! -e "$f" ]]; then
+              echo "MISSING: $f"
+              MISSING=1
+            fi
+          done
+          [[ $MISSING -eq 0 ]] && echo "All D&B artefacts present." || exit 1
+
+  citation-validate:
+    name: CITATION.cff validator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install cffconvert
+        run: pip install cffconvert
+      - name: Validate CITATION.cff
+        run: cffconvert --validate -i CITATION.cff
+
+  zenodo-json-parse:
+    name: .zenodo.json well-formed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse .zenodo.json
+        run: python -c "import json,sys; json.load(open('.zenodo.json')); print('ok')"
+
+  markdown-links:
+    name: Link-check NeurIPS artefact docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install markdown-link-check
+        run: npm install -g markdown-link-check
+      - name: Check internal links in D&B docs
+        run: |
+          set -e
+          for md in README.md DATASHEET.md docs/RAI.md docs/MAINTENANCE.md docs/HARDWARE.md docs/NEURIPS_DB_REPRO_CHECKLIST.md docs/ANONYMIZATION_SCAN_REPORT.md docs/CROISSANT_VALIDATION_REPORT.md CONTRIBUTING.md SECURITY.md CHANGELOG.md; do
+            echo "-- $md --"
+            markdown-link-check --quiet --config <(printf '{"ignorePatterns":[{"pattern":"^http"}]}') "$md" || exit 1
+          done

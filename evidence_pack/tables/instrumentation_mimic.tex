@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\caption{Instrumentation mimic ablation: unsafe-pass detection under progressively reduced evaluation instrumentation. Modes~1--4 use completion-passing episodes ($N{=}78$, C2${\geq}0.7$). Modes~5--7 use evaluator-specific pass criteria. Detection loss is relative to Mode~1 baseline.}
+\label{tab:instrumentation-mimic}
+\small
+\begin{tabular}{clcrrr}
+\toprule
+Mode & Evaluation Setting & Information Available & $N_\text{pass}$ & UP & Rate \\
+\midrule
+1 & Full CGA-Bench & timestamps + order + state + constraints & 78 & 16 & 20.5% \\
+2 & No timestamps & action set only (no timing, no ordering) & 78 & 12 & 15.4% \\
+2b & No timing deadlines & action set + ordering (no deadline en... & 78 & 12 & 15.4% \\
+3 & No ordering & timestamps but no precedence checking & 78 & 16 & 20.5% \\
+4 & No state-gating & timing + ordering but no conditional ... & 78 & 16 & 20.5% \\
+\midrule
+5 & Terminal-output only & final output only (= DxEM structural) & 180 & 36 & 20.0%$^*$ \\
+6 & AgentClinic-style & diagnosis + action coverage >= 0.5 & 102 & 20 & 19.6% \\
+7 & MedAgentBench-style & action F1 >= 0.5 & 16 & 0 & 0.0% \\
+\bottomrule
+\multicolumn{6}{l}{\footnotesize $^*$DxEM base: all 180 episodes pass by construction.} \\
+\end{tabular}
+\end{table}

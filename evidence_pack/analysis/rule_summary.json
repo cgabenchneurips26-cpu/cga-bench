@@ -1,0 +1,121 @@
+{
+  "total_rules": 216,
+  "severity_distribution": {
+    "HIGH": 120,
+    "CRITICAL": 88,
+    "MODERATE": 8
+  },
+  "type_classification": {
+    "Other": 40,
+    "Lab-value gated": 34,
+    "Vitals-based": 13,
+    "Comorbidity-conditional": 95,
+    "Medication interaction": 19,
+    "Age-based": 8,
+    "Drug allergy / cross-reactivity": 7
+  },
+  "graph_density": {
+    "gina_asthma_exacerbation": 17,
+    "toxicology_management": 17,
+    "acls_cardiac_arrest": 16,
+    "idsa_meningitis": 16,
+    "kdigo_aki_full": 15,
+    "ada_dka_management": 14,
+    "kdigo_contrast_aki": 14,
+    "aha_chest_pain_evaluation": 10,
+    "ssc_sepsis_hour1_bundle": 10,
+    "cap_pneumonia": 9,
+    "hypertensive_emergency": 9,
+    "pulmonary_embolism": 9,
+    "aha_heart_failure_2022": 8,
+    "anaphylaxis_management": 8,
+    "copd_exacerbation": 8,
+    "gi_bleeding": 8,
+    "status_epilepticus": 8,
+    "aha_stroke_2019": 7,
+    "atrial_fibrillation": 7,
+    "universal_clinical_safety": 6
+  },
+  "representative_rules": [
+    {
+      "rule_id": "DKA-PEDIATRIC-NO-RAPID-FLUID",
+      "graph": "ada_dka_management",
+      "type": "Age-based",
+      "severity": "CRITICAL",
+      "condition": "patient.age < 18",
+      "effect": {
+        "type": "FORBIDDEN",
+        "actions": [
+          "give_rapid_fluid_bolus",
+          "give_bolus_over_20ml_kg_h"
+        ]
+      },
+      "evidence": "ISPAD 2022, Chapter 11; Glaser 2001 NEJM",
+      "description": "Rapid fluid correction in pediatric DKA risks cerebral edema."
+    },
+    {
+      "rule_id": "ACLS-TENSION-PNEUMO-DECOMPRESS",
+      "graph": "acls_cardiac_arrest",
+      "type": "Comorbidity-conditional",
+      "severity": "CRITICAL",
+      "condition": "'tension_pneumothorax' in patient.comorbidities",
+      "effect": {
+        "type": "REQUIRED",
+        "actions": [
+          "needle_decompression"
+        ]
+      },
+      "evidence": "AHA 2025 Section 6.2: Hs and Ts; Roberts DJ, Injury 2014",
+      "description": "Tension pneumothorax is a reversible cause of PEA arrest; needle decompression is immediately life-saving."
+    },
+    {
+      "rule_id": "ACS-ASPIRIN-ALLERGY-NO-ASPIRIN",
+      "graph": "aha_chest_pain_evaluation",
+      "type": "Drug allergy / cross-reactivity",
+      "severity": "CRITICAL",
+      "condition": "'aspirin' in patient.allergies",
+      "effect": {
+        "type": "FORBIDDEN",
+        "actions": [
+          "give_aspirin",
+          "give_nsaid"
+        ]
+      },
+      "evidence": "AHA/ACC 2014 NSTEMI Guidelines",
+      "description": "Aspirin allergy prohibits aspirin and NSAIDs."
+    },
+    {
+      "rule_id": "ACLS-HYPERKALEMIA-CALCIUM",
+      "graph": "acls_cardiac_arrest",
+      "type": "Lab-value gated",
+      "severity": "CRITICAL",
+      "condition": "patient.labs.potassium > 6.5",
+      "effect": {
+        "type": "REQUIRED",
+        "actions": [
+          "give_calcium_chloride",
+          "give_sodium_bicarbonate",
+          "give_insulin_dextrose"
+        ]
+      },
+      "evidence": "AHA 2025 Section 6.2: Reversible Causes; Montague BT, Resuscitation 2008",
+      "description": "Hyperkalemia is a reversible cause of cardiac arrest; calcium chloride stabilizes myocardium, bicarbonate and insulin shift potassium intracellularly."
+    },
+    {
+      "rule_id": "ANA-ACE-INHIBITOR-ANGIOEDEMA",
+      "graph": "anaphylaxis_management",
+      "type": "Medication interaction",
+      "severity": "CRITICAL",
+      "condition": "'ace_inhibitor' in patient.medications",
+      "effect": {
+        "type": "FORBIDDEN",
+        "actions": [
+          "give_ace_inhibitor_again",
+          "resume_ace_inhibitor"
+        ]
+      },
+      "evidence": "EAACI 2024 Section 5.4; Brown SGA, JACI 2004",
+      "description": "ACE inhibitors potentiate bradykinin-mediated angioedema; must never be readministered during anaphylaxis."
+    }
+  ]
+}

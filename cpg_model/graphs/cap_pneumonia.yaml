@@ -1,0 +1,394 @@
+graph_id: cap_pneumonia
+guideline_name: IDSA/ATS Community-Acquired Pneumonia 2019
+version: '2019.1'
+metadata:
+  source: IDSA/ATS CAP Guidelines 2019
+  doi: 10.1164/rccm.201908-1581ST
+  description: Management of community-acquired pneumonia in adults
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: CAP Initial Assessment
+    description: Assess pneumonia severity using CURB-65 or PSI
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - assess_respiratory_status
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    allowed_actions:
+    - assess_vital_signs
+    - assess_respiratory_status
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_procalcitonin
+    - assess_curb65
+    forbidden_actions: []
+    deadlines:
+      order_imaging_chest_xray: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: IDSA/ATS 2019
+    source_section: Diagnosis
+    source_page: e45
+    source_quote: Chest radiography should be obtained to confirm diagnosis
+    conditional_rules:
+    - rule_id: CAP-PENICILLIN-ALLERGY-ALT
+      condition: '''penicillin_anaphylaxis'' in patient.allergies'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_amoxicillin
+        - give_ampicillin
+        - give_piperacillin
+      evidence: ATS/IDSA CAP 2019, Section 4.2
+      severity: CRITICAL
+      description: Penicillin anaphylaxis precludes all penicillin-class antibiotics.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: penicillin_anaphylaxis
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: penicillin_anaphylaxis
+          type: list_not_contains
+    - rule_id: CAP-QT-NO-FLUOROQUINOLONE
+      condition: '''long_qt'' in patient.comorbidities or ''qt_prolongation'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_levofloxacin
+        - give_moxifloxacin
+        - give_fluoroquinolone
+      evidence: ATS/IDSA CAP 2019; FDA Black Box Warning
+      severity: HIGH
+      description: Fluoroquinolones prolong QT interval, risking torsades de pointes.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: long_qt
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: long_qt
+          type: list_not_contains
+    - rule_id: CAP-SEVERE-ICU-DUAL-THERAPY
+      condition: patient.vitals.sbp < 90 or 'mechanical_ventilation' in patient.procedures
+      effect:
+        type: REQUIRED
+        actions:
+        - give_beta_lactam_plus_macrolide
+        - give_beta_lactam_plus_fluoroquinolone
+      evidence: ATS/IDSA CAP 2019, Section 5.1
+      severity: HIGH
+      description: Severe CAP requiring ICU needs combination antibiotic therapy.
+      condition_variables:
+      - patient.vitals.sbp
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+    - rule_id: CAP-MRSA-RISK-COVERAGE
+      condition: '''mrsa_risk'' in patient.comorbidities or ''prior_mrsa'' in patient.history'
+      effect:
+        type: REQUIRED
+        actions:
+        - add_vancomycin
+        - add_linezolid
+      evidence: ATS/IDSA CAP 2019, Section 5.3
+      severity: HIGH
+      description: MRSA risk factors require empiric MRSA coverage.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: mrsa_risk
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: mrsa_risk
+          type: list_not_contains
+    - rule_id: CAP-MRSA-RISK-COVERAGE-FORBIDDEN
+      condition: '''mrsa_risk'' in patient.comorbidities or ''prior_mrsa'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_standard_empiric_without_mrsa_in_risk
+        - omit_vancomycin_or_linezolid_in_mrsa_risk
+      evidence: ATS/IDSA CAP 2019; MRSA CAP has 30-40% mortality without appropriate coverage
+      severity: HIGH
+      description: MRSA-risk patients (prior MRSA, cavitary infiltrate) require vancomycin or linezolid; standard empiric
+        therapy is insufficient.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: mrsa_risk
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: mrsa_risk
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: CAP-PSEUDOMONAS-RISK-COVERAGE
+      condition: '''structural_lung_disease'' in patient.comorbidities or ''recent_hospitalization'' in patient.history'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_antipseudomonal_beta_lactam
+      evidence: ATS/IDSA CAP 2019, Section 5.2
+      severity: HIGH
+      description: Pseudomonas risk factors require antipseudomonal coverage.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: structural_lung_disease
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: structural_lung_disease
+          type: list_not_contains
+    - rule_id: CAP-PSEUDOMONAS-RISK-COVERAGE-FORBIDDEN
+      condition: '''structural_lung_disease'' in patient.comorbidities or ''recent_hospitalization'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_non_antipseudomonal_in_risk
+        - give_single_agent_for_pseudomonas_risk
+      evidence: ATS/IDSA CAP 2019; Pseudomonas CAP requires antipseudomonal agents; standard empiric monotherapy is inadequate
+      severity: HIGH
+      description: Pseudomonas-risk patients need antipseudomonal coverage; standard CAP empiric or single-agent therapy leads
+        to treatment failure.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: structural_lung_disease
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: structural_lung_disease
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: CAP-IMMUNOCOMPROMISED-BROAD
+      condition: '''hiv'' in patient.comorbidities or ''transplant_recipient'' in patient.comorbidities or ''immunosuppression''
+        in patient.comorbidities or ''chemotherapy_recent'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_standard_cap_antibiotics_only
+        - delay_empiric_coverage
+      evidence: ATS/IDSA CAP 2019, Section 6; IDSA Immunocompromised Host 2013
+      severity: HIGH
+      description: Immunocompromised patients need broader coverage including PJP, fungal, atypical.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: immunosuppression
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: immunosuppression
+          type: list_not_contains
+    - rule_id: CAP-ASPIRATION-ANAEROBE
+      condition: '''aspiration_risk'' in patient.comorbidities or ''dysphagia'' in patient.comorbidities or ''alcoholism''
+        in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - add_anaerobic_coverage
+      evidence: ATS/IDSA CAP 2019, Section 5.4
+      severity: MODERATE
+      description: Aspiration risk requires anaerobic coverage.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: aspiration_risk
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: aspiration_risk
+          type: list_not_contains
+    - rule_id: CAP-ASPIRATION-ANAEROBE-FORBIDDEN
+      condition: '''aspiration_risk'' in patient.comorbidities or ''dysphagia'' in patient.comorbidities or ''alcoholism''
+        in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_azithromycin_only_for_aspiration
+        - omit_anaerobic_coverage_in_aspiration
+      evidence: ATS/IDSA CAP 2019; aspiration pneumonia involves polymicrobial anaerobes requiring specific coverage
+      severity: HIGH
+      description: Aspiration pneumonia involves anaerobes that macrolides don't cover; omitting anaerobic coverage leads
+        to treatment failure.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: aspiration_risk
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: aspiration_risk
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: CAP-COVID-STEROID-TIMING
+      condition: '''covid_pneumonia'' in patient.comorbidities and ''supplemental_oxygen'' in patient.procedures'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_steroid_without_oxygen_requirement
+        - give_high_dose_steroid_early
+      evidence: RECOVERY Trial; WHO COVID-19 Therapeutics 2022
+      severity: HIGH
+      description: Steroids in COVID-CAP only if hypoxic. Steroids without O2 need increase mortality.
+      condition_variables:
+      - patient.comorbidities
+      - patient.procedures
+      trigger_range:
+        patient.comorbidities:
+          contains: covid_pneumonia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: covid_pneumonia
+          type: list_not_contains
+    - rule_id: CAP-SEVERE-ICU-ADMISSION
+      condition: patient.vitals.sbp < 90 or patient.vitals.respiratory_rate > 30
+      effect:
+        type: REQUIRED
+        actions:
+        - admit_to_icu
+        - give_iv_antibiotics_immediately
+      evidence: ATS/IDSA CAP 2019, Section 5.1
+      severity: CRITICAL
+      description: Severe CAP with hemodynamic instability or respiratory failure requires ICU.
+      condition_variables:
+      - patient.vitals.sbp
+      - patient.vitals.respiratory_rate
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+    - rule_id: CAP-SEVERE-ICU-ADMISSION-FORBIDDEN
+      condition: patient.vitals.sbp < 90 or patient.vitals.respiratory_rate > 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - treat_on_ward_if_severe_cap
+        - delay_icu_transfer_in_severe_cap
+      evidence: ATS/IDSA CAP 2019; severe CAP (PaO2/FiO2 < 250, multilobar, septic shock) requires ICU-level care
+      severity: HIGH
+      description: Severe CAP meeting ICU criteria (shock, respiratory failure) must not be managed on general ward; delays
+        worsen mortality.
+      condition_variables:
+      - patient.vitals.sbp
+      - patient.vitals.respiratory_rate
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+      skip_scenario_generation: true
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'severe_cap': severe_cap_icu
+      state.working_diagnosis == 'inpatient_cap': inpatient_cap
+  inpatient_cap:
+    node_id: inpatient_cap
+    node_type: plan
+    name: Inpatient CAP Management
+    description: Non-ICU inpatient pneumonia treatment
+    precondition: state.working_diagnosis == 'inpatient_cap'
+    mandatory_actions:
+    - order_lab_blood_culture
+    - give_beta_lactam_plus_macrolide
+    allowed_actions:
+    - order_lab_blood_culture
+    - order_lab_procalcitonin
+    - give_beta_lactam_plus_macrolide
+    - give_respiratory_fluoroquinolone
+    - give_iv_fluids
+    - order_lab_sputum_culture
+    forbidden_actions: []
+    deadlines:
+      give_beta_lactam_plus_macrolide: 240
+    required_prior_actions:
+      give_beta_lactam_plus_macrolide:
+      - order_lab_blood_culture
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: IDSA/ATS 2019
+    source_section: Treatment
+    source_page: e52
+    source_quote: Beta-lactam plus macrolide or respiratory fluoroquinolone for inpatient non-ICU CAP
+    next_nodes: []
+    conditional_next: {}
+  severe_cap_icu:
+    node_id: severe_cap_icu
+    node_type: plan
+    name: Severe CAP / ICU
+    description: ICU-level pneumonia management
+    precondition: state.working_diagnosis == 'severe_cap'
+    mandatory_actions:
+    - order_lab_blood_culture
+    - give_beta_lactam_plus_macrolide
+    - assess_icu_criteria
+    - give_iv_fluids
+    allowed_actions:
+    - order_lab_blood_culture
+    - give_beta_lactam_plus_macrolide
+    - give_respiratory_fluoroquinolone
+    - give_iv_fluids
+    - assess_icu_criteria
+    - order_lab_procalcitonin
+    - order_lab_sputum_culture
+    - order_lab_legionella_antigen
+    forbidden_actions:
+    - delay_antibiotics_for_cultures_beyond_1h
+    deadlines:
+      give_beta_lactam_plus_macrolide: 60
+    required_prior_actions:
+      give_beta_lactam_plus_macrolide:
+      - order_lab_blood_culture
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: IDSA/ATS 2019
+    source_section: Severe CAP
+    source_page: e57
+    source_quote: Administer antibiotics as soon as possible, ideally within 1 hour for severe CAP
+    next_nodes: []
+    conditional_next: {}

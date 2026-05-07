@@ -1,0 +1,427 @@
+{
+  "scenario_id": "cap_basic_penicillin_allergy_alt",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.5416666666666667,
+  "peak_risk": 0.0144,
+  "aggregate_risk": 0.15839999999999999,
+  "total_violations": 11,
+  "sub_scores": {
+    "C1_path_selection": 0.5416666666666667,
+    "C2_mandatory_completion": 1.0,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 1.0,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "deviation": 11
+  },
+  "actions_count": 24,
+  "actions": [
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory first step \u2014 establish baseline vital signs to assess severity and guide management of this patient presenting with fever, cough, and dyspnea."
+    },
+    {
+      "action_id": "assess_respiratory_status",
+      "timestamp_minutes": 5.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory assessment \u2014 evaluate respiratory function including oxygen saturation, breath sounds, and work of breathing to characterize the severity of the respiratory complaint."
+    },
+    {
+      "action_id": "order_imaging_chest_xray",
+      "timestamp_minutes": 10.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "xray"
+      },
+      "justification": "Mandatory \u2014 chest X-ray is essential to confirm pneumonia, assess infiltrate pattern and extent, and rule out alternative diagnoses (pneumothorax, effusion, etc.)."
+    },
+    {
+      "action_id": "order_lab_cbc",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "cbc"
+      },
+      "justification": "MANDATORY action \u2014 CBC is required within 60 minutes to assess white cell count, hemoglobin, and platelets, which are critical for evaluating infection severity in suspected pneumonia."
+    },
+    {
+      "action_id": "assess_curb65",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "CURB-65 scoring is a key step in CAP management per IDSA/ATS guidelines to stratify pneumonia severity and guide disposition (outpatient vs. inpatient vs. ICU) and treatment decisions."
+    },
+    {
+      "action_id": "order_lab_blood_culture",
+      "timestamp_minutes": 25.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "blood_culture"
+      },
+      "justification": "Blood cultures should be obtained BEFORE initiating antibiotic therapy in suspected CAP to identify causative organisms and guide targeted treatment, per IDSA guidelines."
+    },
+    {
+      "action_id": "assess_icu_criteria",
+      "timestamp_minutes": 30.0,
+      "type": "consult",
+      "args": {},
+      "justification": "IDSA/ATS CAP guidelines recommend assessing for severe CAP/ICU admission criteria (minor and major criteria) to determine appropriate level of care. This is a critical assessment step before finalizing treatment plan."
+    },
+    {
+      "action_id": "order_lab_procalcitonin",
+      "timestamp_minutes": 35.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Procalcitonin is recommended in CAP workup to help confirm bacterial etiology and guide antibiotic stewardship decisions (duration and de-escalation)."
+    },
+    {
+      "action_id": "order_lab_legionella_antigen",
+      "timestamp_minutes": 40.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "IDSA/ATS CAP guidelines recommend Legionella urinary antigen testing for hospitalized patients with CAP, as Legionella is a common atypical pathogen requiring specific antibiotic coverage."
+    },
+    {
+      "action_id": "order_lab_bmp",
+      "timestamp_minutes": 45.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "BMP provides electrolytes, renal function, and glucose which are important for CAP risk stratification and to guide fluid/antibiotic dosing. Not yet completed."
+    },
+    {
+      "action_id": "order_lab_sputum_culture",
+      "timestamp_minutes": 50.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Sputum culture is recommended in IDSA/ATS CAP guidelines for hospitalized patients to identify causative organism and guide targeted therapy. Not yet completed."
+    },
+    {
+      "action_id": "give_beta_lactam_plus_macrolide",
+      "timestamp_minutes": 55.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient presents with cough, fever, and dyspnea consistent with community-acquired pneumonia. Diagnostic workup (CBC, BMP, chest X-ray, cultures, procalcitonin, Legionella antigen, CURB-65) has been initiated. IDSA/ATS guidelines recommend empiric beta-lactam plus macrolide combination therapy for CAP. Vitals are currently stable but initiating appropriate antibiotic therapy promptly is indicated."
+    },
+    {
+      "action_id": "give_respiratory_fluoroquinolone",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient presents with cough, fever, and dyspnea consistent with community-acquired pneumonia. Beta-lactam plus macrolide therapy has already been initiated. Adding a respiratory fluoroquinolone provides broader coverage per CAP guidelines, particularly for atypical organisms. Patient is stable (SpO2 98%, HR 80, BP 120/80) and cultures are pending. This is an optional but clinically indicated step to ensure adequate antimicrobial coverage."
+    },
+    {
+      "action_id": "give_iv_fluids",
+      "timestamp_minutes": 65.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "fluid",
+        "dose": "standard"
+      },
+      "justification": "Patient presents with cough, fever, and dyspnea consistent with pneumonia. IV fluids provide supportive hydration while awaiting diagnostic results. This is the only available action in the current phase and is appropriate for maintaining hemodynamic stability during the assessment phase."
+    },
+    {
+      "action_id": "assess_clinical_presentation",
+      "timestamp_minutes": 70.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Reassess clinical presentation to monitor response to empiric antibiotic therapy and identify any clinical deterioration or new findings since initial assessment."
+    },
+    {
+      "action_id": "administer_oxygen_to_target_94_98",
+      "timestamp_minutes": 75.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Guideline-recommended oxygen therapy targeting SpO2 94-98% for patients with respiratory illness; ensure oxygen is being delivered appropriately even though current SpO2 is 98%."
+    },
+    {
+      "action_id": "order_lab_pneumococcal_antigen",
+      "timestamp_minutes": 80.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Pneumococcal urinary antigen testing is recommended in CAP workup per IDSA/ATS guidelines, particularly for moderate-severe disease, to guide de-escalation of therapy and identify Streptococcus pneumoniae."
+    },
+    {
+      "action_id": "review_pending_labs",
+      "timestamp_minutes": 85.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Pending CBC, blood culture, procalcitonin, pneumococcal antigen, and legionella antigen results should be reviewed as they become available to guide antibiotic de-escalation or escalation."
+    },
+    {
+      "action_id": "reassess_clinical_status",
+      "timestamp_minutes": 90.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has been treated with antibiotics (beta-lactam + macrolide and respiratory fluoroquinolone) and IV fluids. With stable vitals and pending labs, a reassessment of clinical status at 90 minutes is indicated to evaluate treatment response and identify any deterioration."
+    },
+    {
+      "action_id": "review_chest_xray_results",
+      "timestamp_minutes": 95.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "xray"
+      },
+      "justification": "Chest X-ray was ordered earlier; reviewing results is essential to confirm pneumonia diagnosis, assess severity, and rule out complications such as pleural effusion or empyema."
+    },
+    {
+      "action_id": "reassess_lab_results",
+      "timestamp_minutes": 100.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "CBC, BMP, procalcitonin, urinary antigens, and cultures were ordered and are pending. Reassessing lab results will help guide further management, antibiotic stewardship, and disposition decisions."
+    },
+    {
+      "action_id": "review_pending_lab_results",
+      "timestamp_minutes": 105.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "CBC, blood cultures, sputum culture, procalcitonin, legionella antigen, and pneumococcal antigen are all pending. Reviewing results will guide antibiotic de-escalation or escalation per CAP guidelines."
+    },
+    {
+      "action_id": "review_lab_results",
+      "timestamp_minutes": 110.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Multiple labs are pending (CBC, blood culture, sputum culture, procalcitonin, legionella antigen, pneumococcal antigen, BMP). Reviewing results as they become available guides antibiotic de-escalation or escalation and confirms diagnosis."
+    },
+    {
+      "action_id": "review_culture_results",
+      "timestamp_minutes": 115.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Blood culture and sputum culture results are pending. Reviewing these will guide antibiotic de-escalation or modification per CAP guidelines once sensitivities are available."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "f74a77bf-ecd8-403f-94b6-e28c61ff1342",
+      "violation_type": "deviation",
+      "timestamp_minutes": 65.0,
+      "action_involved": "give_crystalloid_fluid",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_crystalloid_fluid",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "257d5e35-51f5-4dfc-a050-4d17c346b89e",
+      "violation_type": "deviation",
+      "timestamp_minutes": 70.0,
+      "action_involved": "assess_clinical_presentation",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='assess_clinical_presentation'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "75b7149c-25f0-43d0-8422-96960464b619",
+      "violation_type": "deviation",
+      "timestamp_minutes": 75.0,
+      "action_involved": "give_oxygen_to_target_94_98",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='give_oxygen_to_target_94_98'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "999013e5-bca6-4b9b-9faf-5fca4827a4e2",
+      "violation_type": "deviation",
+      "timestamp_minutes": 80.0,
+      "action_involved": "order_lab_pneumococcal_antigen",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='order_lab_pneumococcal_antigen'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "72ffe9a8-6595-4d21-b3f5-30802b7a2123",
+      "violation_type": "deviation",
+      "timestamp_minutes": 85.0,
+      "action_involved": "review_pending_labs",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_pending_labs'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "b04a4810-0723-40a6-877a-e78b499501cf",
+      "violation_type": "deviation",
+      "timestamp_minutes": 90.0,
+      "action_involved": "reassess_clinical_status",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='reassess_clinical_status'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "4f732e14-b350-498b-b429-c184a9d27efc",
+      "violation_type": "deviation",
+      "timestamp_minutes": 95.0,
+      "action_involved": "review_chest_xray_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_chest_xray_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "2ebc05ce-3637-44b3-8d3d-fd37ad5bec86",
+      "violation_type": "deviation",
+      "timestamp_minutes": 100.0,
+      "action_involved": "reassess_lab_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='reassess_lab_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "384c4fa8-dc8c-4b2a-bafb-0449caea29f3",
+      "violation_type": "deviation",
+      "timestamp_minutes": 105.0,
+      "action_involved": "review_pending_lab_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_pending_lab_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "bfc48080-6ddf-41a2-94e2-075c1e93cb99",
+      "violation_type": "deviation",
+      "timestamp_minutes": 110.0,
+      "action_involved": "review_lab_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_lab_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    },
+    {
+      "violation_id": "24f41df5-c5bd-40a6-8ab6-8299c228edfb",
+      "violation_type": "deviation",
+      "timestamp_minutes": 115.0,
+      "action_involved": "review_culture_results",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_cap_basic_penicillin_allergy_alt",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Normaliser Tier 4 DEVIATION tag, id='review_culture_results'",
+      "guideline_reference": "CAP Initial Assessment"
+    }
+  ],
+  "expected_actions": [
+    "assess_icu_criteria",
+    "assess_respiratory_status",
+    "assess_vital_signs",
+    "give_beta_lactam_plus_macrolide",
+    "give_iv_fluids",
+    "order_imaging_chest_xray",
+    "order_lab_blood_culture",
+    "order_lab_cbc"
+  ],
+  "forbidden_actions": [
+    "delay_antibiotics_for_cultures_beyond_1h"
+  ],
+  "total_duration_minutes": 120.0,
+  "termination_reason": "timeout",
+  "total_llm_calls": 19,
+  "total_tokens": 50977,
+  "elapsed_seconds": 251.76
+}

@@ -1,0 +1,37 @@
+rule_id,graph,guideline,node,severity,effect_type,condition,actions,clinical_question,expected_answer,evidence_cited,clinician_agrees,clinician_notes
+CAP-ASPIRATION-ANAEROBE,cap_pneumonia,IDSA/ATS Community-Acquired Pneumonia 2019,initial_assessment,MODERATE,REQUIRED,'aspiration_risk' in patient.comorbidities or 'dysphagia' in patient.comorbidities or 'alcoholism' in patient.comorbidities,add_anaerobic_coverage,"Clinical scenario: patient has aspiration risk OR patient has dysphagia OR patient has alcoholism
+Context: Aspiration risk requires anaerobic coverage.
+Question: Should the clinician add anaerobic coverage?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","ATS/IDSA CAP 2019, Section 5.4",,
+COPD-THEOPHYLLINE-CAUTION,copd_exacerbation,GOLD 2024 COPD Exacerbation Management,initial_assessment,MODERATE,FORBIDDEN,'theophylline' in patient.medications,"add_macrolide_without_theophylline_check, give_ciprofloxacin","Clinical scenario: patient is on theophylline
+Context: Macrolides and ciprofloxacin increase theophylline levels causing toxicity.
+Question: Is it safe to add macrolide without theophylline check, give ciprofloxacin?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",GOLD COPD 2024; Drug interaction databases,,
+ASTHMA-SEVERE-NO-ROUTINE-ABX-SPECIFIC,gina_asthma_exacerbation,GINA Asthma Exacerbation Management,initial_assessment,MODERATE,FORBIDDEN,'severe_exacerbation' in patient.comorbidities,"give_routine_antibiotics_in_viral_asthma, give_empiric_azithromycin_without_infection_evidence","Clinical scenario: patient has severe exacerbation
+Context: Routine antibiotics in severe asthma without infection evidence promote resistance and delay appropriate treatment.
+Question: Is it safe to give routine antibiotics in viral asthma, give empiric azithromycin without infection evidence?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",GINA 2024 Section 4.3; antibiotics not indicated for asthma exacerbation without bacterial infection evidence,,
+ASTHMA-SEVERE-NO-ANTIBIOTICS-ROUTINE,gina_asthma_exacerbation,GINA Asthma Exacerbation Management,severe_treatment,MODERATE,FORBIDDEN,True,give_antibiotics_routine,"Clinical scenario: True
+Context: Converted from unconditional: routine antibiotics provide no benefit in asthma exacerbations unless concurrent bacterial infection confirmed
+Question: Is it safe to give antibiotics routine?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",GINA 2024 Section 4.3; antibiotics not routinely indicated for asthma exacerbations,,
+ASTHMA-CONCURRENT-INFECTION-ABX,gina_asthma_exacerbation,GINA Asthma Exacerbation Management,severe_treatment,MODERATE,REQUIRED,'concurrent_pneumonia' in patient.comorbidities or 'concurrent_bacterial_infection' in patient.comorbidities,give_antibiotics,"Clinical scenario: patient has concurrent pneumonia OR patient has concurrent bacterial infection
+Context: Antibiotics are only indicated for asthma exacerbations with confirmed bacterial coinfection (pneumonia, sinusitis); routine antibiotics are NOT recommended.
+Question: Should the clinician give antibiotics?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",GINA 2024 Section 4.3; NICE NG80 2017,,
+CAKI-DIALYSIS-NO-DELAY,kdigo_contrast_aki,KDIGO Contrast-Associated AKI Prevention,risk_assessment,MODERATE,REQUIRED,'hemodialysis' in patient.comorbidities and 'contrast_given' in patient.history,schedule_dialysis_post_contrast,"Clinical scenario: patient has hemodialysis AND 'contrast given' in patient.history
+Context: Dialysis patients may need post-contrast dialysis scheduling.
+Question: Should the clinician schedule dialysis post contrast?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required",KDIGO Contrast AKI 2012,,
+SEPSIS-CIRRHOSIS-NO-LACTATED-RINGER,ssc_sepsis_hour1_bundle,Surviving Sepsis Campaign Hour-1 Bundle,septic_shock_bundle,MODERATE,FORBIDDEN,'cirrhosis' in patient.comorbidities or 'liver_failure' in patient.comorbidities,give_lactated_ringer_in_liver_failure,"Clinical scenario: patient has cirrhosis OR patient has liver failure
+Context: Cirrhotic patients cannot metabolize lactate in LR efficiently.
+Question: Is it safe to give lactated ringer in liver failure?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated","SSC 2021; Myburgh JA, Finfer S, SAFE Study Investigators",,
+SE-KNOWN-EPILEPSY-CHECK-LEVELS,status_epilepticus,AES Status Epilepticus Management,initial_stabilization,MODERATE,REQUIRED,'known_epilepsy' in patient.comorbidities,check_antiepileptic_drug_levels,"Clinical scenario: patient has known epilepsy
+Context: Patients with known epilepsy may have subtherapeutic drug levels triggering SE; levels guide reload decisions.
+Question: Should the clinician check antiepileptic drug levels?
+[ ] Yes, required  [ ] No, not needed  [ ] Depends (explain)","Yes, required","AES 2024 Section 2.3; Trinka E, Epilepsia 2015",,
+SAFETY-ELDERLY-BEERS-CRITERIA,universal_clinical_safety,Universal Clinical Safety Principles,initial_encounter,MODERATE,FORBIDDEN,patient.age >= 65,"give_benzodiazepine_chronic, give_anticholinergic_high_dose, give_long_acting_sulfonylurea","Clinical scenario: patient age >= 65
+Context: Elderly patients should avoid Beers criteria medications.
+Question: Is it safe to give benzodiazepine chronic, give anticholinergic high dose, give long acting sulfonylurea?
+[ ] Yes, safe  [ ] No, contraindicated  [ ] Depends (explain)","No, contraindicated",AGS Beers Criteria 2023,,

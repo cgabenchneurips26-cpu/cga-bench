@@ -1,0 +1,358 @@
+{
+  "scenario_id": "asthma_basic_initial_no_mucolytics",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.3529411764705882,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.309,
+  "total_violations": 11,
+  "sub_scores": {
+    "C1_path_selection": 1.0,
+    "C2_mandatory_completion": 0.5294117647058824,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 0.8235294117647058,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 3,
+    "omission": 8
+  },
+  "actions_count": 14,
+  "actions": [
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory first step to establish baseline hemodynamic status in this asthma exacerbation patient presenting with severe wheezing and dyspnea."
+    },
+    {
+      "action_id": "measure_oxygen_saturation",
+      "timestamp_minutes": 5.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Mandatory assessment to quantify hypoxemia severity in this asthma patient, guiding oxygen therapy decisions."
+    },
+    {
+      "action_id": "assess_severity_classification",
+      "timestamp_minutes": 10.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory classification of asthma exacerbation severity (mild/moderate/severe/life-threatening) to direct appropriate treatment pathway."
+    },
+    {
+      "action_id": "measure_peak_expiratory_flow",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY: PEF measurement is required to objectively classify asthma exacerbation severity (mild/moderate/severe/life-threatening) per asthma guidelines. Must be completed within 60 minutes."
+    },
+    {
+      "action_id": "apply_continuous_monitoring",
+      "timestamp_minutes": 20.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Continuous monitoring of HR, SpO2, and RR is essential in a patient with acute severe wheezing and dyspnea to detect deterioration early."
+    },
+    {
+      "action_id": "administer_oxygen_to_target_94_98",
+      "timestamp_minutes": 25.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Targeted oxygen therapy to maintain SpO2 94-98% is recommended in acute asthma per guidelines; avoids hyperoxia-related harm."
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 30.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Establish IV access early in acute asthma exacerbation to allow rapid medication delivery if bronchodilators or systemic corticosteroids are needed urgently."
+    },
+    {
+      "action_id": "give_continuous_salbutamol_nebulized",
+      "timestamp_minutes": 35.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Nebulized salbutamol (albuterol) is the first-line bronchodilator for acute asthma exacerbation with wheezing and dyspnea, per asthma management guidelines."
+    },
+    {
+      "action_id": "assess_inhaler_technique",
+      "timestamp_minutes": 40.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Assessing inhaler technique is an important asthma-specific assessment step to identify contributing factors to exacerbation and guide patient education as part of the asthma action plan."
+    },
+    {
+      "action_id": "give_ipratropium_nebulized",
+      "timestamp_minutes": 45.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Ipratropium nebulized is a standard add-on bronchodilator for acute asthma exacerbation alongside salbutamol (already running). Combination therapy improves bronchodilation per asthma guidelines."
+    },
+    {
+      "action_id": "give_hydrocortisone_iv",
+      "timestamp_minutes": 50.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Systemic corticosteroids are recommended early in moderate-to-severe asthma exacerbation to reduce airway inflammation and speed resolution. IV hydrocortisone is appropriate given acute presentation."
+    },
+    {
+      "action_id": "determine_disposition",
+      "timestamp_minutes": 55.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "After 45 minutes of initial treatment including continuous salbutamol, oxygen, and now ipratropium/steroids, disposition planning (ICU vs ward vs discharge) should be initiated based on clinical response and peak flow measurements already obtained."
+    },
+    {
+      "action_id": "give_heliox",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Heliox (helium-oxygen mixture) is indicated as adjunctive therapy in severe asthma exacerbations to reduce airway resistance and improve bronchodilator delivery, particularly in patients with persistent wheezing despite initial standard therapy."
+    },
+    {
+      "action_id": "admit_to_ward",
+      "timestamp_minutes": 65.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Patient has responded to initial therapy (SpO2 98%, HR 80, RR 16) but presented with severe asthma exacerbation requiring nebulized salbutamol, ipratropium, and IV hydrocortisone. Admission to ward for continued monitoring and treatment is appropriate given the severity of presentation."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "b22c239d-cdcc-4950-ba02-54de7f2fa944",
+      "violation_type": "timing",
+      "timestamp_minutes": 5.0,
+      "action_involved": "measure_oxygen_saturation",
+      "expected_action": null,
+      "expected_deadline": 3.0,
+      "actual_time": 5.0,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action measure_oxygen_saturation performed 2 min after deadline",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "37423efd-80f1-4786-afa7-2109e8643a5e",
+      "violation_type": "timing",
+      "timestamp_minutes": 10.0,
+      "action_involved": "assess_severity_classification",
+      "expected_action": null,
+      "expected_deadline": 5.0,
+      "actual_time": 10.0,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action assess_severity_classification performed 5 min after deadline",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "8c82614e-ef1e-40a6-903c-16883b68f598",
+      "violation_type": "timing",
+      "timestamp_minutes": 15.0,
+      "action_involved": "measure_peak_expiratory_flow",
+      "expected_action": null,
+      "expected_deadline": 10.0,
+      "actual_time": 15.0,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action measure_peak_expiratory_flow performed 5 min after deadline",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "90ec4c1f-61a8-40a2-93f8-b96ce3105c51",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "administer_oxygen_high_flow",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: administer_oxygen_high_flow",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "20ad421b-b9df-4f05-b694-dc944cfd23b6",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "admit_to_icu",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: admit_to_icu",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "48794e67-097e-45f3-aca8-35a30360473e",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "give_epinephrine_im",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_epinephrine_im",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "6a4e0dd3-0801-4aa7-95a7-d3d63c28076d",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "give_magnesium_sulfate_iv",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_magnesium_sulfate_iv",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "cd1141a3-b9c3-49cb-a16d-edcf969e77fb",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "give_salbutamol_nebulized",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_salbutamol_nebulized",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "d32d5e4f-8a0f-402b-be28-0dd0b72e002b",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "give_systemic_corticosteroid_iv",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_systemic_corticosteroid_iv",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "b775ec95-7779-41a7-875d-c0c4527f296f",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "perform_endotracheal_intubation",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: perform_endotracheal_intubation",
+      "guideline_reference": "Initial Severity Assessment"
+    },
+    {
+      "violation_id": "29f46148-a513-4e3e-9d5d-dcb8ce179d6c",
+      "violation_type": "omission",
+      "timestamp_minutes": 70.0,
+      "action_involved": null,
+      "expected_action": "reassess_after_treatment",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_asthma_basic_initial_no_mucolytics",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: reassess_after_treatment",
+      "guideline_reference": "Initial Severity Assessment"
+    }
+  ],
+  "expected_actions": [
+    "administer_oxygen_high_flow",
+    "administer_oxygen_to_target_94_98",
+    "admit_to_icu",
+    "assess_severity_classification",
+    "assess_vital_signs",
+    "determine_disposition",
+    "give_continuous_salbutamol_nebulized",
+    "give_epinephrine_im",
+    "give_ipratropium_nebulized",
+    "give_magnesium_sulfate_iv",
+    "give_salbutamol_nebulized",
+    "give_systemic_corticosteroid",
+    "give_systemic_corticosteroid_iv",
+    "measure_oxygen_saturation",
+    "measure_peak_expiratory_flow",
+    "perform_endotracheal_intubation",
+    "reassess_after_treatment"
+  ],
+  "forbidden_actions": [
+    "delay_bronchodilator",
+    "delay_intubation",
+    "discharge_home",
+    "discharge_without_action_plan",
+    "discharge_without_corticosteroid_prescription",
+    "discharge_without_followup",
+    "give_benzodiazepine",
+    "give_beta_blocker",
+    "give_morphine",
+    "give_nonselective_beta_blocker",
+    "give_sedative"
+  ],
+  "total_duration_minutes": 70.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 5,
+  "total_tokens": 13661,
+  "elapsed_seconds": 141.33
+}

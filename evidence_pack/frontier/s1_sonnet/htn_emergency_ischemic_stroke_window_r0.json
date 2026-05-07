@@ -1,0 +1,212 @@
+{
+  "scenario_id": "htn_emergency_ischemic_stroke_window",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.33333333333333337,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.19440000000000002,
+  "total_violations": 6,
+  "sub_scores": {
+    "C1_path_selection": 0.8888888888888888,
+    "C2_mandatory_completion": 0.16666666666666663,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 1.0,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "deviation": 1,
+    "omission": 5
+  },
+  "actions_count": 9,
+  "actions": [
+    {
+      "action_id": "assess_neurological_status",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "MANDATORY: Patient presents with acute right hemiparesis - immediate neurological assessment is critical to establish baseline, assess stroke severity (NIHSS), and guide treatment decisions including tPA eligibility and BP management targets."
+    },
+    {
+      "action_id": "continuous_bp_monitoring",
+      "timestamp_minutes": 5.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY: Patient has severe hypertension (200/110 mmHg). Continuous BP monitoring is essential to guide antihypertensive therapy, ensure BP reduction does not exceed 25% in first hour per AHA guidelines, and monitor response to treatment."
+    },
+    {
+      "action_id": "give_iv_antihypertensive",
+      "timestamp_minutes": 10.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "MANDATORY: BP 200/110 mmHg requires immediate IV antihypertensive therapy within 30 minutes per AHA hypertensive emergency guidelines. Must reduce BP by no more than 25% in first hour to avoid end-organ hypoperfusion, especially with concurrent neurological symptoms."
+    },
+    {
+      "action_id": "order_lab_bmp",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY per AHA hypertensive emergency guidelines. BMP assesses renal function, electrolytes, and glucose \u2014 critical for evaluating end-organ damage and guiding treatment in hypertensive emergency."
+    },
+    {
+      "action_id": "order_lab_troponin",
+      "timestamp_minutes": 20.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "troponin"
+      },
+      "justification": "MANDATORY per AHA hypertensive emergency guidelines. Troponin is required to rule out cardiac end-organ damage (hypertensive emergency can cause myocardial injury)."
+    },
+    {
+      "action_id": "consult_neurology",
+      "timestamp_minutes": 25.0,
+      "type": "consult",
+      "args": {},
+      "justification": "Patient has acute right hemiparesis with onset 2 hours ago \u2014 this is a potential acute stroke within the tPA window. Urgent neurology consult is essential for stroke workup and tPA eligibility assessment given the neurological deficit."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 30.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory per AHA hypertensive crisis guidelines - reassess vital signs to monitor response to IV antihypertensive therapy already administered and ensure BP is being reduced appropriately (no more than 25% in first hour)."
+    },
+    {
+      "action_id": "assess_end_organ_damage",
+      "timestamp_minutes": 35.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory per AHA guidelines for hypertensive emergency - must assess for end-organ damage including neurological (active hemiparesis), cardiac, and renal involvement to guide ongoing management."
+    },
+    {
+      "action_id": "admit_to_icu",
+      "timestamp_minutes": 40.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Strong AHA recommendation: patients with hypertensive emergency should be admitted to ICU for continuous monitoring. Patient has acute neurological deficit and severe hypertension requiring intensive monitoring."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "2f001d01-41ef-4b84-a3a8-c0c17ca1dbf1",
+      "violation_type": "deviation",
+      "timestamp_minutes": 25.0,
+      "action_involved": "request_consultation",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_htn_emergency_ischemic_stroke_window",
+      "node_at_violation": "hypertensive_emergency_node",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: request_consultation",
+      "guideline_reference": "Hypertensive Emergency Treatment"
+    },
+    {
+      "violation_id": "96374bb1-c353-404c-b677-c96d799b5407",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "obtain_iv_access",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_htn_emergency_ischemic_stroke_window",
+      "node_at_violation": "hypertensive_emergency_node",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: obtain_iv_access",
+      "guideline_reference": "Hypertensive Emergency Treatment"
+    },
+    {
+      "violation_id": "d1c75d8e-9bca-42bc-b8cb-c274d79ee371",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "administer_iv_antihypertensive_to_target_185_110",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_htn_emergency_ischemic_stroke_window",
+      "node_at_violation": "hypertensive_emergency_node",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: administer_iv_antihypertensive_to_target_185_110",
+      "guideline_reference": "Hypertensive Emergency Treatment"
+    },
+    {
+      "violation_id": "0ec0218c-49f3-4b97-93b1-66de56cd55e5",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "order_stat_ct_head",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_htn_emergency_ischemic_stroke_window",
+      "node_at_violation": "hypertensive_emergency_node",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_stat_ct_head",
+      "guideline_reference": "Hypertensive Emergency Treatment"
+    },
+    {
+      "violation_id": "364f47cb-cd42-43c5-8686-19dd440c0b2e",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "activate_stroke_team",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_htn_emergency_ischemic_stroke_window",
+      "node_at_violation": "hypertensive_emergency_node",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: activate_stroke_team",
+      "guideline_reference": "Hypertensive Emergency Treatment"
+    },
+    {
+      "violation_id": "654f244e-867b-4641-9b08-9ff6cd7ab56e",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "reassess_bp_before_tpa",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_htn_emergency_ischemic_stroke_window",
+      "node_at_violation": "hypertensive_emergency_node",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: reassess_bp_before_tpa",
+      "guideline_reference": "Hypertensive Emergency Treatment"
+    }
+  ],
+  "expected_actions": [
+    "assess_vital_signs",
+    "obtain_iv_access",
+    "administer_iv_antihypertensive_to_target_185_110",
+    "order_stat_ct_head",
+    "activate_stroke_team",
+    "reassess_bp_before_tpa"
+  ],
+  "forbidden_actions": [
+    "reduce_bp_more_than_25pct_in_1h",
+    "reduce_bp_below_140_in_tpa_candidate",
+    "give_oral_antihypertensive_only"
+  ],
+  "total_duration_minutes": 45.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 3,
+  "total_tokens": 8806,
+  "elapsed_seconds": 152.06
+}

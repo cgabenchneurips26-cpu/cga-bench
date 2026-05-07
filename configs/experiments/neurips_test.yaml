@@ -1,0 +1,88 @@
+# NeurIPS Test Configuration (Quick Validation)
+# ===============================================
+# 빠른 검증을 위한 축소 테스트 설정
+
+experiment:
+  experiment_id: "neurips_test_validation"
+  description: "Quick validation test with available vLLM model"
+  version: "0.1.0"
+
+# 격리 설정
+isolation:
+  forbidden_imports:
+    - "cga_bench.cpg_engine"
+    - "cga_bench.assessor_core"
+    - "cga_bench.cpg_model.graphs"
+  allowed_imports:
+    - "cga_bench.agent_rules"
+    - "cga_bench.tool_api"
+    - "cga_bench.scenario_engine"
+  enforce_at_runtime: true
+  log_violations: true
+
+# Budget 설정
+budget:
+  enforce_budget_matching: true
+  budget_limit_tokens: 10000  # 테스트용 축소 예산
+  budget_limit_calls: 30
+  on_budget_exceeded: "terminate"
+  allow_sampling: false  # 테스트 시 샘플링 비활성화
+
+# 테스트 시나리오 (최소)
+scenarios:
+  sepsis:
+    - septic_shock_basic
+
+# 2종 베이스라인만 테스트
+baselines:
+  rule_based:
+    enabled: true
+    agent_type: "oracle"
+    description: "Rule-based oracle agent"
+    config:
+      agent_id: "rule_based_oracle"
+      guideline_domain: "sepsis"
+      uses_cpg_engine: false
+      uses_assessor_core: false
+      budget_limit_tokens: 0
+      budget_limit_calls: 100
+
+  rag_only:
+    enabled: true
+    agent_type: "rag"
+    description: "RAG-only baseline with Qwen3-4B"
+    config:
+      agent_id: "rag_only_test"
+      llm_backend: "vllm"
+      llm_model: "Qwen/Qwen3-4B-Instruct-2507"
+      base_url: "http://localhost:8013/v1"
+      temperature: 0.1
+      use_bm25: true
+      use_dense: false  # Dense 비활성화 (테스트)
+      use_hybrid: false
+      top_k: 3
+      use_planning: false
+      use_constraint_verification: false
+      single_step_decision: true
+      force_structured_output: true
+      output_format: "json"
+      budget_limit_tokens: 10000
+      budget_limit_calls: 30
+      max_actions_per_step: 3
+
+settings:
+  num_runs_per_scenario: 1  # 테스트용 1회만
+  save_logs: true
+  save_scores: true
+  save_trajectories: true
+  output_dir: "results/neurips_test"
+  random_seed: 42
+  deterministic_mode: false
+  parallel_scenarios: false
+  parallel_baselines: false
+
+metrics:
+  primary:
+    - compliance_score
+    - peak_risk
+    - aggregate_risk

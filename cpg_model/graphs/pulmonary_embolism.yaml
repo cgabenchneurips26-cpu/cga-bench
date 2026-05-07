@@ -1,0 +1,335 @@
+graph_id: pulmonary_embolism
+guideline_name: ESC 2019 Pulmonary Embolism
+version: '2019.1'
+metadata:
+  source: ESC PE Guidelines 2019
+  doi: 10.1093/eurheartj/ehz405
+  description: Diagnosis and management of acute pulmonary embolism
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: PE Assessment
+    description: Assess clinical probability and hemodynamic stability
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - assess_wells_score
+    - order_lab_d_dimer
+    allowed_actions:
+    - assess_vital_signs
+    - assess_wells_score
+    - consult_pulmonology
+    - give_supplemental_oxygen
+    - order_ecg
+    - order_echocardiogram
+    - order_imaging_chest_xray
+    - order_imaging_ct_pa
+    - order_imaging_ecg
+    - order_imaging_lower_extremity_doppler
+    - order_lab_abg
+    - order_lab_bmp
+    - order_lab_bnp
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_d_dimer
+    - order_lab_lactate
+    - order_lab_troponin
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ESC 2019
+    source_section: Diagnosis
+    source_page: '3799'
+    source_quote: Clinical probability assessment should guide diagnostic strategy
+    conditional_rules:
+    - rule_id: PE-MASSIVE-THROMBOLYSIS
+      condition: patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation
+      effect:
+        type: REQUIRED
+        actions:
+        - give_thrombolytic
+        - give_alteplase_pe
+      evidence: ESC PE 2019, Section 6.2
+      severity: CRITICAL
+      description: Massive PE with hemodynamic instability requires systemic thrombolysis.
+      condition_variables:
+      - patient.vitals.sbp
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+    - rule_id: PE-MASSIVE-THROMBOLYSIS-FORBIDDEN
+      condition: patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_anticoagulation_only_in_massive_pe
+        - delay_thrombolysis_in_massive_pe
+      evidence: ESC PE 2019; massive PE with hemodynamic collapse requires thrombolysis; anticoagulation alone has 25-65%
+        mortality
+      severity: CRITICAL
+      description: Massive PE with shock requires thrombolysis; anticoagulation alone has unacceptably high mortality (25-65%).
+      condition_variables:
+      - patient.vitals.sbp
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+      skip_scenario_generation: true
+    - rule_id: PE-HIT-NO-HEPARIN
+      condition: '''heparin_induced_thrombocytopenia'' in patient.comorbidities or ''hit'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_heparin
+        - give_enoxaparin
+        - give_ufh
+      evidence: ESC PE 2019; ASH HIT Guidelines 2018
+      severity: CRITICAL
+      description: Heparin in HIT causes catastrophic thrombosis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: heparin_induced_thrombocytopenia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: heparin_induced_thrombocytopenia
+          type: list_not_contains
+    - rule_id: PE-OBESITY-NO-STANDARD-DOAC
+      condition: patient.weight_kg > 120
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_standard_dose_doac
+        - give_rivaroxaban_standard
+      evidence: ISTH 2021; Martin KA, J Thromb Haemost 2021
+      severity: HIGH
+      description: Standard DOAC dosing in morbid obesity may be subtherapeutic.
+      condition_variables:
+      - patient.weight_kg
+      trigger_range:
+        patient.weight_kg:
+          min: 121
+          max: 250
+          type: float
+      normal_range:
+        patient.weight_kg:
+          min: 40
+          max: 120
+          type: float
+    - rule_id: PE-PREGNANCY-NO-WARFARIN
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_warfarin
+        - give_doac
+      evidence: ESC PE 2019; ACOG Practice Bulletin
+      severity: CRITICAL
+      description: Warfarin and DOACs are teratogenic. LMWH is safe in pregnancy.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: PE-RENAL-ENOXAPARIN-ADJUST
+      condition: patient.labs.egfr < 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_enoxaparin_full_dose
+      evidence: ESC PE 2019; Lim W, CHEST 2006
+      severity: HIGH
+      description: Enoxaparin accumulates in severe renal impairment. Dose adjustment required.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 30
+          max: 120
+          type: float
+    - rule_id: PE-ACTIVE-BLEED-NO-THROMBOLYSIS
+      condition: '''active_bleeding'' in patient.contraindications or ''active_hemorrhage'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_thrombolysis
+        - give_alteplase_pe
+        - give_full_dose_anticoagulation
+      evidence: ESC PE 2019, Section 6.2 Absolute Contraindications
+      severity: CRITICAL
+      description: Active bleeding is absolute contraindication to thrombolysis.
+      condition_variables:
+      - patient.contraindications
+      trigger_range:
+        patient.contraindications:
+          contains: active_bleeding
+          type: list_contains
+      normal_range:
+        patient.contraindications:
+          not_contains: active_bleeding
+          type: list_not_contains
+    - rule_id: PE-PREGNANCY-IMAGING
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - order_ct_pa_without_considering_vq
+        - give_warfarin
+        - give_doac
+      evidence: ESC PE 2019; ACOG Practice Bulletin 2018
+      severity: HIGH
+      description: 'Pregnancy PE: prefer V/Q scan over CT-PA; warfarin/DOACs teratogenic.'
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: PE-MORBID-OBESITY-DOAC-CAUTION
+      condition: patient.weight_kg > 150
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_standard_dose_doac
+        - give_apixaban_standard
+        - give_rivaroxaban_standard
+      evidence: ISTH 2021; Martin KA, J Thromb Haemost 2021
+      severity: HIGH
+      description: 'Morbid obesity >150kg: DOAC pharmacokinetics unreliable, use LMWH or UFH.'
+      condition_variables:
+      - patient.weight_kg
+      trigger_range:
+        patient.weight_kg:
+          min: 151
+          max: 300
+          type: float
+      normal_range:
+        patient.weight_kg:
+          min: 40
+          max: 120
+          type: float
+    - rule_id: PE-RECENT-SURGERY-NO-THROMBOLYSIS
+      condition: '''recent_surgery_3_weeks'' in patient.history or ''recent_major_surgery'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_thrombolysis
+        - give_alteplase_pe
+      evidence: ESC PE 2019, Section 6.2 Relative Contraindications
+      severity: HIGH
+      description: Recent surgery within 3 weeks is relative contraindication to thrombolysis.
+      condition_variables:
+      - patient.history
+      trigger_range:
+        patient.history:
+          contains: recent_surgery_3_weeks
+          type: list_contains
+      normal_range:
+        patient.history:
+          not_contains: recent_surgery_3_weeks
+          type: list_not_contains
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'massive_pe': massive_pe
+  confirmed_pe_stable:
+    node_id: confirmed_pe_stable
+    node_type: plan
+    name: Confirmed PE - Hemodynamically Stable
+    description: Anticoagulation and risk stratification
+    precondition: null
+    mandatory_actions:
+    - give_anticoagulation
+    - order_imaging_ct_pa
+    - order_lab_troponin
+    - order_lab_bnp
+    allowed_actions:
+    - give_anticoagulation
+    - give_heparin
+    - give_lmwh
+    - order_imaging_ct_pa
+    - order_lab_troponin
+    - order_lab_bnp
+    - order_imaging_echocardiogram
+    forbidden_actions:
+    - delay_anticoagulation_if_high_probability
+    deadlines:
+      give_anticoagulation: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ESC 2019
+    source_section: Treatment - Stable PE
+    source_page: '3833'
+    source_quote: Anticoagulation should be initiated without delay when clinical probability is high
+    next_nodes: []
+    conditional_next: {}
+  massive_pe:
+    node_id: massive_pe
+    node_type: plan
+    name: Massive PE - Hemodynamically Unstable
+    description: Thrombolysis or embolectomy for massive PE
+    precondition: state.working_diagnosis == 'massive_pe'
+    mandatory_actions:
+    - give_anticoagulation
+    - give_thrombolysis
+    allowed_actions:
+    - give_anticoagulation
+    - give_heparin
+    - give_thrombolysis
+    - consult_interventional_radiology
+    - give_iv_fluids
+    - give_vasopressor
+    forbidden_actions:
+    - delay_anticoagulation
+    deadlines:
+      give_anticoagulation: 30
+      give_thrombolysis: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESC 2019
+    source_section: Treatment - Massive PE
+    source_page: '3841'
+    source_quote: Systemic thrombolysis is recommended for patients with massive PE and hemodynamic instability
+    next_nodes: []
+    conditional_next: {}

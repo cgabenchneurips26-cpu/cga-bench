@@ -1,0 +1,786 @@
+graph_id: acls_cardiac_arrest
+guideline_name: AHA ACLS Cardiac Arrest Management
+version: '2025.1'
+metadata:
+  primary_source:
+    title: 2025 American Heart Association Guidelines for Cardiopulmonary Resuscitation and Emergency Cardiovascular Care
+    authors: Panchal AR, Bartos JA, Cabanas JG, et al.
+    journal: Circulation
+    year: 2025
+    doi: 10.1161/CIR.0000000000001097
+  source: AHA ACLS 2025
+  description: Advanced cardiac life support algorithm for adult cardiac arrest management
+  key_evidence: High-quality CPR with minimal interruptions and early defibrillation for VF/pVT improve survival to discharge
+    (Kudenchuk PJ, NEJM 2016)
+  recommendation_system: ACC/AHA Class/LOE
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_acls_cardiac_arrest.json
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: enquiry
+    name: Cardiac Arrest Initial Assessment
+    description: Confirm cardiac arrest, activate code team, begin high-quality CPR immediately
+    precondition: null
+    mandatory_actions:
+    - confirm_cardiac_arrest
+    - activate_code_team
+    - begin_high_quality_cpr
+    - attach_defibrillator_pads
+    allowed_actions:
+    - confirm_cardiac_arrest
+    - activate_code_team
+    - begin_high_quality_cpr
+    - attach_defibrillator_pads
+    - establish_iv_io_access
+    - perform_bag_mask_ventilation
+    - perform_endotracheal_intubation
+    - place_supraglottic_airway
+    - apply_end_tidal_co2_monitoring
+    forbidden_actions:
+    - delay_cpr
+    - delay_defibrillation
+    - interrupt_cpr_for_intubation_extended
+    deadlines:
+      confirm_cardiac_arrest: 1
+      begin_high_quality_cpr: 1
+      attach_defibrillator_pads: 3
+      activate_code_team: 2
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA ACLS 2025
+    source_section: 'Section 4: BLS/ACLS Integration'
+    source_page: Figure 1
+    source_quote: High-quality CPR with a compression rate of 100-120/min, depth of 5-6 cm, full recoil, and minimal interruptions
+      is the foundation of resuscitation.
+    next_nodes:
+    - rhythm_assessment
+    conditional_next: {}
+  rhythm_assessment:
+    node_id: rhythm_assessment
+    node_type: decision
+    name: Rhythm Assessment
+    description: Assess cardiac rhythm to determine shockable vs non-shockable pathway
+    precondition: null
+    mandatory_actions:
+    - analyze_rhythm
+    allowed_actions:
+    - analyze_rhythm
+    - continue_cpr
+    forbidden_actions:
+    - delay_cpr
+    - interrupt_cpr_prolonged
+    deadlines:
+      analyze_rhythm: 2
+    required_prior_actions:
+      analyze_rhythm:
+      - attach_defibrillator_pads
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA ACLS 2025
+    source_section: 'Section 5: ACLS Algorithm'
+    source_page: Figure 2
+    source_quote: After initial CPR, check rhythm. If VF/pVT, proceed to defibrillation. If asystole/PEA, continue CPR and
+      administer epinephrine.
+    next_nodes: []
+    conditional_next:
+      ? '''vf'' in state.cardiac_rhythm or ''pvt'' in state.cardiac_rhythm or ''ventricular_fibrillation'' in state.cardiac_rhythm
+        or ''pulseless_ventricular_tachycardia'' in state.cardiac_rhythm'
+      : shockable_pathway
+      'True': non_shockable_pathway
+  shockable_pathway:
+    node_id: shockable_pathway
+    node_type: plan
+    name: Shockable Rhythm Pathway (VF/pVT)
+    description: Defibrillation-first approach for ventricular fibrillation or pulseless ventricular tachycardia
+    precondition: '''vf'' in state.cardiac_rhythm or ''pvt'' in state.cardiac_rhythm'
+    mandatory_actions:
+    - deliver_defibrillation
+    - resume_cpr_immediately
+    - give_epinephrine_1mg_iv
+    - give_amiodarone_300mg
+    allowed_actions:
+    - deliver_defibrillation
+    - resume_cpr_immediately
+    - give_epinephrine_1mg_iv
+    - give_amiodarone_300mg
+    - give_amiodarone_150mg_repeat
+    - give_lidocaine_alternative
+    - establish_iv_io_access
+    - perform_endotracheal_intubation
+    - place_supraglottic_airway
+    - apply_end_tidal_co2_monitoring
+    - reassess_rhythm
+    - consider_double_sequential_defibrillation
+    - evaluate_reversible_causes
+    forbidden_actions:
+    - delay_cpr
+    - delay_defibrillation
+    deadlines:
+      deliver_defibrillation: 2
+      resume_cpr_immediately: 2
+      give_epinephrine_1mg_iv: 10
+      give_amiodarone_300mg: 10
+    required_prior_actions:
+      give_amiodarone_300mg:
+      - deliver_defibrillation
+      give_epinephrine_1mg_iv:
+      - deliver_defibrillation
+    sequence_rules:
+    - - deliver_defibrillation
+      - give_epinephrine_1mg_iv
+    - - deliver_defibrillation
+      - give_amiodarone_300mg
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA ACLS 2025
+    source_section: 'Section 5.1: Shockable Rhythms'
+    source_page: Figure 2
+    source_quote: For VF/pVT, defibrillate as soon as possible. Epinephrine should be given after the second shock. Amiodarone
+      or lidocaine may be considered for shock-refractory VF/pVT.
+    conditional_rules:
+    - rule_id: ACLS-SHOCKABLE-NO-ATROPINE
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_atropine_for_cardiac_arrest
+      evidence: AHA ACLS 2025 Section 5.1; AHA removed atropine from ACLS algorithm in 2010
+      severity: HIGH
+      description: 'Converted from unconditional: atropine removed from cardiac arrest algorithm post-2010 ACLS update; no
+        evidence of benefit in VF/pVT'
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: vf
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: vf
+          type: list_not_contains
+    - rule_id: ACLS-SHOCKABLE-NO-CALCIUM-WITHOUT-INDICATION
+      condition: patient.labs.get('potassium', 4.0) <= 6.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_calcium_without_indication
+      evidence: AHA ACLS 2025 Section 6.2; calcium indicated only for hyperkalemia or calcium channel blocker toxicity
+      severity: HIGH
+      description: 'Converted from unconditional: calcium is not routinely indicated in cardiac arrest unless hyperkalemia
+        (K>6.5) or calcium channel blocker toxicity is present'
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 0.0
+          max: 6.5
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 6.6
+          max: 12.0
+          type: float
+    - rule_id: ACLS-SHOCKABLE-NO-BICARB-ROUTINE
+      condition: patient.labs.get('ph', 7.35) > 7.1
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_sodium_bicarbonate_routine
+      evidence: AHA ACLS 2025 Section 6.2; bicarbonate only for severe acidosis (pH <7.1) or hyperkalemia
+      severity: HIGH
+      description: 'Converted from unconditional: routine bicarbonate not recommended unless severe acidosis (pH <7.1) or
+        known hyperkalemia'
+      condition_variables:
+      - patient.labs.ph
+      trigger_range:
+        patient.labs.ph:
+          min: 7.11
+          max: 7.6
+          type: float
+      normal_range:
+        patient.labs.ph:
+          min: 6.8
+          max: 7.1
+          type: float
+    - rule_id: ACLS-SHOCKABLE-DEFIB-FIRST
+      condition: '''vf'' in patient.cardiac_rhythm or ''pvt'' in patient.cardiac_rhythm'
+      effect:
+        type: BEFORE
+        actions:
+        - deliver_defibrillation
+        - give_epinephrine_1mg_iv
+      evidence: AHA 2025 Section 5.1; Kudenchuk PJ, NEJM 2016
+      severity: CRITICAL
+      description: In shockable rhythms, defibrillation takes priority over drug administration; epinephrine given after 2nd
+        shock.
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: vf
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: vf
+          type: list_not_contains
+    - rule_id: ACLS-SHOCKABLE-DEFIB-FIRST-FORBIDDEN
+      condition: '''vf'' in patient.cardiac_rhythm or ''pvt'' in patient.cardiac_rhythm'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_amiodarone_before_first_shock
+        - delay_defibrillation_for_intubation
+      evidence: AHA ACLS 2020; defibrillation is the definitive treatment for VF/pVT; each minute delay reduces survival by
+        7-10%
+      severity: CRITICAL
+      description: In shockable rhythm, defibrillation takes absolute priority; amiodarone before first shock and intubation
+        delays worsen outcomes.
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: vf
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: vf
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ACLS-HYPERKALEMIA-CALCIUM
+      condition: patient.labs.potassium > 6.5
+      effect:
+        type: REQUIRED
+        actions:
+        - give_calcium_chloride
+        - give_sodium_bicarbonate
+        - give_insulin_dextrose
+      evidence: 'AHA 2025 Section 6.2: Reversible Causes; Montague BT, Resuscitation 2008'
+      severity: CRITICAL
+      description: Hyperkalemia is a reversible cause of cardiac arrest; calcium chloride stabilizes myocardium, bicarbonate
+        and insulin shift potassium intracellularly.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 6.6
+          max: 12.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.0
+          type: float
+    - rule_id: ACLS-HYPERKALEMIA-CALCIUM-FORBIDDEN
+      condition: patient.labs.potassium > 6.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_succinylcholine_in_hyperkalemic_arrest
+        - delay_calcium_in_hyperkalemic_arrest
+      evidence: AHA ACLS 2020; succinylcholine releases K+ from muscle; calcium delay prolongs cardiac toxicity window
+      severity: CRITICAL
+      description: Succinylcholine worsens hyperkalemia via K+ release from muscle; calcium gluconate delay prolongs fatal
+        cardiac toxicity.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 6.6
+          max: 12.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.0
+          type: float
+      skip_scenario_generation: true
+    - rule_id: ACLS-HYPOTHERMIA-NO-DRUGS
+      condition: patient.vitals.temperature < 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_epinephrine_1mg_iv
+        - give_amiodarone_300mg
+        - give_lidocaine_alternative
+      evidence: 'AHA 2025 Section 6.4: Hypothermic Arrest; Brown DJA, NEJM 2012'
+      severity: HIGH
+      description: Below 30C, cardiac drugs are ineffective and may accumulate to toxic levels; focus on rewarming and CPR.
+      condition_variables:
+      - patient.vitals.temperature
+      trigger_range:
+        patient.vitals.temperature:
+          min: 15.0
+          max: 29.9
+          type: float
+      normal_range:
+        patient.vitals.temperature:
+          min: 36.0
+          max: 38.0
+          type: float
+    - rule_id: ACLS-TENSION-PNEUMO-DECOMPRESS
+      condition: '''tension_pneumothorax'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - needle_decompression
+      evidence: 'AHA 2025 Section 6.2: Hs and Ts; Roberts DJ, Injury 2014'
+      severity: CRITICAL
+      description: Tension pneumothorax is a reversible cause of PEA arrest; needle decompression is immediately life-saving.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: tension_pneumothorax
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: tension_pneumothorax
+          type: list_not_contains
+    - rule_id: ACLS-TENSION-PNEUMO-DECOMPRESS-FORBIDDEN
+      condition: '''tension_pneumothorax'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_needle_decompression_for_xray_in_arrest
+        - give_only_epinephrine_in_tension_pneumo_arrest
+      evidence: AHA ACLS 2020; tension pneumothorax in arrest requires immediate needle decompression; medications alone cannot
+        resolve obstruction
+      severity: CRITICAL
+      description: Tension pneumothorax in arrest needs immediate needle decompression; waiting for imaging or medication-only
+        approach is fatal.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: tension_pneumothorax
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: tension_pneumothorax
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ACLS-SHOCKABLE-NO-BICARB-ADDITIONAL
+      condition: '''shockable_rhythm'' in patient.comorbidities or ''vfib'' in patient.comorbidities or ''vtach'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_routine_bicarbonate_in_shockable_arrest
+        - delay_defibrillation_for_bicarbonate_push
+      evidence: AHA ACLS 2020; routine sodium bicarbonate is not recommended in shockable arrest; it delays defibrillation
+        and worsens intracellular acidosis
+      severity: HIGH
+      description: Routine bicarbonate in VF/pVT is not recommended; it delays defibrillation and may worsen intracellular
+        acidosis via CO2 generation.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: shockable_rhythm
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: shockable_rhythm
+          type: list_not_contains
+    - rule_id: ACLS-NONSHOCKABLE-NO-BICARB-ADDITIONAL
+      condition: '''nonshockable_rhythm'' in patient.comorbidities or ''pea'' in patient.comorbidities or ''asystole'' in
+        patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_routine_bicarbonate_in_nonshockable_arrest
+        - substitute_bicarbonate_for_epinephrine_in_pea
+      evidence: AHA ACLS 2020; routine bicarbonate not indicated in PEA/asystole
+      severity: HIGH
+      description: Routine bicarbonate in PEA/asystole is not recommended and should not replace epinephrine as first-line
+        treatment.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: nonshockable_rhythm
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: nonshockable_rhythm
+          type: list_not_contains
+    next_nodes:
+    - reversible_causes
+    conditional_next: {}
+  non_shockable_pathway:
+    node_id: non_shockable_pathway
+    node_type: plan
+    name: Non-Shockable Rhythm Pathway (Asystole/PEA)
+    description: Epinephrine-first approach for asystole or pulseless electrical activity
+    precondition: '''asystole'' in state.cardiac_rhythm or ''pea'' in state.cardiac_rhythm'
+    mandatory_actions:
+    - continue_high_quality_cpr
+    - give_epinephrine_1mg_iv_immediately
+    - evaluate_reversible_causes
+    allowed_actions:
+    - continue_high_quality_cpr
+    - give_epinephrine_1mg_iv_immediately
+    - evaluate_reversible_causes
+    - establish_iv_io_access
+    - perform_endotracheal_intubation
+    - place_supraglottic_airway
+    - apply_end_tidal_co2_monitoring
+    - give_epinephrine_repeat_3_5min
+    - reassess_rhythm
+    - order_point_of_care_ultrasound
+    forbidden_actions:
+    - delay_cpr
+    deadlines:
+      give_epinephrine_1mg_iv_immediately: 3
+      evaluate_reversible_causes: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA ACLS 2025
+    source_section: 'Section 5.2: Non-Shockable Rhythms'
+    source_page: Figure 2
+    source_quote: For asystole/PEA, epinephrine should be given as soon as feasible. Atropine is no longer recommended for
+      asystole (removed 2010). Focus on identifying and treating reversible causes.
+    conditional_rules:
+    - rule_id: ACLS-NONSHOCKABLE-NO-ATROPINE
+      condition: '''asystole'' in patient.cardiac_rhythm or ''pea'' in patient.cardiac_rhythm'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_atropine_for_asystole
+      evidence: AHA ACLS 2025 Section 5.2; atropine removed from asystole/PEA algorithm in 2010
+      severity: HIGH
+      description: 'Converted from unconditional: atropine no longer recommended for asystole/PEA; removed from ACLS algorithm
+        in 2010 due to lack of evidence'
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: asystole
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: asystole
+          type: list_not_contains
+    - rule_id: ACLS-NONSHOCKABLE-NO-DEFIB-ASYSTOLE
+      condition: '''asystole'' in patient.cardiac_rhythm'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - deliver_defibrillation_asystole
+      evidence: AHA ACLS 2025 Section 5.2; defibrillation has no role in asystole
+      severity: HIGH
+      description: 'Converted from unconditional: defibrillation is only for shockable rhythms (VF/pVT); delivering shock
+        in asystole delays CPR without benefit'
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: asystole
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: asystole
+          type: list_not_contains
+    - rule_id: ACLS-NONSHOCKABLE-NO-AMIODARONE-ASYSTOLE
+      condition: '''asystole'' in patient.cardiac_rhythm or ''pea'' in patient.cardiac_rhythm'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_amiodarone_for_asystole
+      evidence: AHA ACLS 2025 Section 5.2; amiodarone is an antiarrhythmic for refractory VF/pVT only
+      severity: HIGH
+      description: 'Converted from unconditional: amiodarone is indicated only for refractory VF/pVT; no role in asystole
+        or PEA'
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: asystole
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: asystole
+          type: list_not_contains
+    - rule_id: ACLS-NONSHOCKABLE-NO-BICARB-ROUTINE
+      condition: patient.labs.get('ph', 7.35) > 7.1
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_sodium_bicarbonate_routine
+      evidence: AHA ACLS 2025 Section 6.2; bicarbonate only for severe acidosis (pH <7.1) or hyperkalemia
+      severity: HIGH
+      description: 'Converted from unconditional: routine bicarbonate not recommended unless severe acidosis (pH <7.1) or
+        known hyperkalemia'
+      condition_variables:
+      - patient.labs.ph
+      trigger_range:
+        patient.labs.ph:
+          min: 7.11
+          max: 7.6
+          type: float
+      normal_range:
+        patient.labs.ph:
+          min: 6.8
+          max: 7.1
+          type: float
+    - rule_id: ACLS-NONSHOCKABLE-EPI-IMMEDIATE
+      condition: '''asystole'' in patient.cardiac_rhythm or ''pea'' in patient.cardiac_rhythm'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_epinephrine_1mg_iv_immediately
+      evidence: AHA 2025 Section 5.2; Perkins GD, NEJM 2018 (PARAMEDIC2)
+      severity: CRITICAL
+      description: In non-shockable rhythms, epinephrine is given immediately (not delayed until after 2nd cycle as in shockable
+        rhythms).
+      condition_variables:
+      - patient.cardiac_rhythm
+      trigger_range:
+        patient.cardiac_rhythm:
+          contains: asystole
+          type: list_contains
+      normal_range:
+        patient.cardiac_rhythm:
+          not_contains: asystole
+          type: list_not_contains
+    - rule_id: ACLS-TAMPONADE-PERICARDIOCENTESIS
+      condition: '''cardiac_tamponade'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - pericardiocentesis
+      evidence: 'AHA 2025 Section 6.2: Hs and Ts; Budhram GR, Acad Emerg Med 2019'
+      severity: CRITICAL
+      description: Cardiac tamponade is a reversible cause of PEA arrest; pericardiocentesis is life-saving.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: cardiac_tamponade
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: cardiac_tamponade
+          type: list_not_contains
+    - rule_id: ACLS-TAMPONADE-PERICARDIOCENTESIS-FORBIDDEN
+      condition: '''cardiac_tamponade'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_pericardiocentesis_for_imaging_in_arrest
+        - give_vasopressors_only_in_tamponade_arrest
+      evidence: AHA ACLS 2020; cardiac tamponade in arrest requires immediate pericardiocentesis; vasopressors alone cannot
+        overcome obstruction
+      severity: CRITICAL
+      description: Cardiac tamponade in arrest needs immediate pericardiocentesis; vasopressors without drainage cannot restore
+        circulation.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: cardiac_tamponade
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: cardiac_tamponade
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ACLS-OPIOID-NALOXONE
+      condition: '''opioid_suspected'' in patient.comorbidities or ''opioid_overdose'' in patient.history'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_naloxone
+      evidence: 'AHA 2025 Section 6.5: Opioid-Related Arrest; Panchal AR, Circulation 2020'
+      severity: HIGH
+      description: For suspected opioid-related cardiac arrest, naloxone should be administered alongside standard ACLS.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: opioid_suspected
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: opioid_suspected
+          type: list_not_contains
+    - rule_id: ACLS-OPIOID-NALOXONE-FORBIDDEN
+      condition: '''opioid_suspected'' in patient.comorbidities or ''opioid_overdose'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_additional_opioid_during_arrest
+        - give_long_acting_sedative_during_arrest
+      evidence: AHA ACLS 2020; additional CNS depressants worsen arrest prognosis
+      severity: CRITICAL
+      description: Additional opioids or sedatives during opioid-associated cardiac arrest worsen respiratory and cardiac
+        depression.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: opioid_suspected
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: opioid_suspected
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: ACLS-PREGNANCY-PERIMORTEM-CSECTION
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - prepare_perimortem_cesarean
+        - perform_left_uterine_displacement
+      evidence: 'AHA 2025 Section 6.6: Cardiac Arrest in Pregnancy; Jeejeebhoy FM, Circulation 2015'
+      severity: CRITICAL
+      description: In pregnant patients >20 weeks, perimortem cesarean delivery should begin within 4 minutes if no ROSC;
+        left uterine displacement improves venous return.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: ACLS-PREGNANCY-PERIMORTEM-FORBIDDEN
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_perimortem_csection_beyond_4min
+        - place_pregnant_arrest_patient_supine
+      evidence: AHA ACLS 2020; perimortem C-section within 4 min of arrest; aortocaval compression reduces CPR efficacy
+      severity: CRITICAL
+      description: Perimortem C-section must begin within 4 minutes of maternal arrest; supine positioning compresses IVC
+        reducing CPR blood flow.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - reversible_causes
+    conditional_next: {}
+  reversible_causes:
+    node_id: reversible_causes
+    node_type: enquiry
+    name: Reversible Causes (Hs and Ts)
+    description: 'Systematic evaluation of reversible causes: Hypovolemia, Hypoxia, Hydrogen ion, Hypo/hyperkalemia, Hypothermia,
+      Tension pneumothorax, Tamponade, Toxins, Thrombosis (pulmonary/coronary)'
+    precondition: null
+    mandatory_actions:
+    - evaluate_reversible_causes
+    allowed_actions:
+    - evaluate_reversible_causes
+    - order_point_of_care_ultrasound
+    - order_lab_blood_gas
+    - order_lab_electrolytes
+    - order_lab_glucose
+    - give_normal_saline_bolus
+    - give_calcium_chloride
+    - give_sodium_bicarbonate
+    - give_insulin_dextrose
+    - needle_decompression
+    - pericardiocentesis
+    - give_naloxone
+    - give_fibrinolytic_for_pe
+    - activate_cath_lab_for_stemi
+    - initiate_rewarming
+    - give_dextrose_for_hypoglycemia
+    forbidden_actions:
+    - delay_cpr
+    - terminate_resuscitation_prematurely
+    deadlines:
+      evaluate_reversible_causes: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: AHA ACLS 2025
+    source_section: 'Section 6: Reversible Causes'
+    source_page: Table 3
+    source_quote: 'During CPR, systematically consider and treat the Hs and Ts: Hypovolemia, Hypoxia, Hydrogen ion (acidosis),
+      Hypo-/hyperkalemia, Hypothermia, Tension pneumothorax, Tamponade, Toxins, Thrombosis (PE or MI).'
+    next_nodes:
+    - post_cardiac_arrest_care
+    conditional_next: {}
+  post_cardiac_arrest_care:
+    node_id: post_cardiac_arrest_care
+    node_type: plan
+    name: Post-Cardiac Arrest Care
+    description: Targeted temperature management, hemodynamic optimization, and neuroprognostication after ROSC
+    precondition: null
+    mandatory_actions:
+    - initiate_targeted_temperature_management
+    - obtain_12_lead_ecg
+    - optimize_hemodynamics
+    - admit_to_icu
+    allowed_actions:
+    - initiate_targeted_temperature_management
+    - obtain_12_lead_ecg
+    - optimize_hemodynamics
+    - admit_to_icu
+    - order_lab_blood_gas
+    - order_lab_electrolytes
+    - order_lab_lactate
+    - order_lab_troponin
+    - order_imaging_ct_head
+    - order_imaging_chest_xray
+    - start_vasopressor_norepinephrine
+    - activate_cath_lab_if_stemi
+    - initiate_mechanical_ventilation
+    - continuous_eeg_monitoring
+    - neuroprognostication_72h
+    forbidden_actions:
+    - discharge_home
+    - terminate_care_prematurely
+    deadlines:
+      initiate_targeted_temperature_management: 60
+      obtain_12_lead_ecg: 60
+      optimize_hemodynamics: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA ACLS 2025
+    source_section: 'Section 7: Post-Cardiac Arrest Care'
+    source_page: Figure 4
+    source_quote: Targeted temperature management between 32-36C for at least 24 hours is recommended. Neuroprognostication
+      should not be performed before 72 hours after ROSC.
+    conditional_rules:
+    - rule_id: ACLS-POST-NO-EARLY-NEUROPROG
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - neuroprognosticate_before_72h
+      evidence: AHA ACLS 2025 Section 7; Sandroni C, Intensive Care Med 2014
+      severity: HIGH
+      description: 'Converted from unconditional: neuroprognostication before 72h after ROSC is unreliable due to effects
+        of sedation, hypothermia, and early brain injury evolution'
+      condition_variables:
+      - patient.vitals.time_since_rosc
+      trigger_range:
+        patient.vitals.time_since_rosc:
+          min: 0
+          max: 71
+          type: float
+      normal_range:
+        patient.vitals.time_since_rosc:
+          min: 72
+          max: 999
+          type: float
+    next_nodes: []
+    conditional_next: {}

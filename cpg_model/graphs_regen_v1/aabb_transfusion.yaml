@@ -1,0 +1,342 @@
+graph_id: aabb_transfusion
+guideline_name: AABB 2024 RBC Transfusion Guidelines
+version: '2024.1'
+metadata:
+  primary_source:
+    title: AABB Clinical Practice Guidelines for Red Cell Transfusion
+    authors: Carson JL, Stanworth SJ, Dennis JA, et al.
+    journal: JAMA
+    year: 2024
+  secondary_source:
+    title: ASA 2024 Blood Management Practice Guidelines
+    authors: American Society of Anesthesiologists
+    year: 2024
+  source: AABB 2024 + ASA 2024
+  description: Evidence-based RBC transfusion thresholds and massive transfusion protocol
+  key_evidence: 'TRICC trial: restrictive (Hb<7) non-inferior to liberal (Hb<10) in critically ill; MINT trial: liberal (Hb<8)
+    better in ACS'
+  recommendation_system: GRADE
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_aabb_transfusion.json
+entry_node: transfusion_assessment
+nodes:
+  transfusion_assessment:
+    node_id: transfusion_assessment
+    node_type: enquiry
+    name: Transfusion Assessment
+    description: Initial assessment for transfusion indication
+    precondition: null
+    mandatory_actions:
+    - order_cbc
+    - order_type_and_screen
+    - assess_hemodynamic_status
+    - assess_active_bleeding
+    - review_transfusion_history
+    allowed_actions:
+    - order_cbc
+    - order_type_and_screen
+    - assess_hemodynamic_status
+    - assess_active_bleeding
+    - review_transfusion_history
+    - assess_symptoms_of_anemia
+    - order_reticulocyte_count
+    - order_iron_studies
+    forbidden_actions:
+    - transfuse_without_consent
+    - transfuse_without_type_and_screen
+    deadlines:
+      order_cbc: 15
+      order_type_and_screen: 15
+      assess_hemodynamic_status: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AABB 2024
+    source_section: 'Section 1: Pre-Transfusion Assessment'
+    source_quote: All patients must have CBC and type/screen before non-emergent transfusion.
+    next_nodes:
+    - restrictive_threshold
+    - massive_transfusion
+    conditional_next: {}
+  restrictive_threshold:
+    node_id: restrictive_threshold
+    node_type: decision
+    name: Restrictive Transfusion Threshold
+    description: 'Restrictive transfusion: Hb < 7 g/dL for hemodynamically stable'
+    precondition: null
+    mandatory_actions:
+    - apply_restrictive_threshold
+    allowed_actions:
+    - apply_restrictive_threshold
+    - transfuse_prbc_if_hb_below_7
+    - apply_liberal_threshold_hb_8
+    - transfuse_if_hb_below_8
+    - reassess_hemoglobin
+    forbidden_actions:
+    - transfuse_for_hb_above_10
+    - transfuse_without_indication
+    deadlines:
+      apply_restrictive_threshold: 60
+    required_prior_actions:
+      apply_restrictive_threshold:
+      - order_cbc
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AABB 2024
+    source_section: 'Section 2: Transfusion Thresholds'
+    source_quote: A restrictive transfusion threshold of Hb < 7 g/dL is recommended for hemodynamically stable hospitalized
+      adults.
+    patient_activation_condition: 'patient.labs.get(''hemoglobin'', 99) < 10 and ''hemodynamically_stable'' in patient.get(''presentation'',
+      {})
+
+      '
+    conditional_rules:
+    - rule_id: TRANS-CARDIAC-LIBERAL-THRESHOLD
+      condition: '''acute_coronary_syndrome'' in patient.comorbidities or ''symptomatic_cad'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - apply_liberal_threshold_hb_8
+        - transfuse_if_hb_below_8
+      evidence: AABB 2024; MINT Trial, NEJM 2023
+      severity: HIGH
+      description: 'ACS/symptomatic CAD patients benefit from liberal threshold (Hb < 8 vs < 7). MINT trial showed worse outcomes
+        with restrictive strategy in cardiac patients.
+
+        '
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: acute_coronary_syndrome
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: acute_coronary_syndrome
+          type: list_not_contains
+    - rule_id: TRANS-CARDIAC-LIBERAL-THRESHOLD-FORBIDDEN
+      condition: '''acute_coronary_syndrome'' in patient.comorbidities or ''symptomatic_cad'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - use_liberal_transfusion_threshold_cardiac
+        - transfuse_for_hb_above_8_in_cardiac
+      evidence: AABB 2024; TRICC trial; restrictive threshold (Hb < 8) is preferred in cardiac patients to reduce TACO/fluid
+        overload
+      severity: HIGH
+      description: Cardiac patients benefit from restrictive transfusion (Hb < 8); liberal thresholds increase TACO and pulmonary
+        edema risk.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: acute_coronary_syndrome
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: acute_coronary_syndrome
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: TRANS-STABLE-NO-TRANSFUSE-ABOVE-7
+      condition: patient.labs.get('hemoglobin', 99) >= 7 and 'hemodynamically_stable' in patient.get('presentation', {})
+      effect:
+        type: FORBIDDEN
+        actions:
+        - transfuse_prbc
+        - order_transfusion
+      evidence: AABB 2024; TRICC Trial, Hebert 1999 NEJM
+      severity: HIGH
+      description: 'In hemodynamically stable non-cardiac patients, Hb >= 7 does not require transfusion. Transfusing above
+        threshold increases TACO, TRALI, infection risk without benefit.
+
+        '
+      condition_variables:
+      - patient.labs.hemoglobin
+      - patient.presentation
+      trigger_range:
+        patient.labs.hemoglobin:
+          min: 7.0
+          max: 9.9
+          type: float
+      normal_range:
+        patient.labs.hemoglobin:
+          min: 4.0
+          max: 6.9
+          type: float
+    next_nodes:
+    - transfusion_reaction
+    conditional_next: {}
+  massive_transfusion:
+    node_id: massive_transfusion
+    node_type: action
+    name: Massive Transfusion Protocol
+    description: Massive transfusion protocol for hemorrhagic shock
+    precondition: null
+    mandatory_actions:
+    - activate_massive_transfusion_protocol
+    - give_prbc_ffp_platelets_1_1_1
+    - give_tranexamic_acid
+    - monitor_coagulation
+    - maintain_temperature
+    allowed_actions:
+    - activate_massive_transfusion_protocol
+    - give_prbc_ffp_platelets_1_1_1
+    - give_tranexamic_acid
+    - monitor_coagulation
+    - maintain_temperature
+    - give_calcium_gluconate
+    - order_thromboelastography
+    - give_uncrossmatched_o_neg
+    - reassess_hemodynamic_status
+    forbidden_actions:
+    - delay_blood_products_for_crossmatch
+    - give_crystalloid_as_sole_resuscitation
+    deadlines:
+      activate_massive_transfusion_protocol: 10
+      give_tranexamic_acid: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AABB 2024
+    source_section: 'Section 3: Massive Transfusion'
+    source_quote: 1:1:1 ratio of PRBC:FFP:Platelets. TXA within 3h of injury onset.
+    patient_activation_condition: '''hemorrhagic_shock'' in patient.get(''presentation'', {}) or patient.vitals.get(''sbp'',
+      120) < 70
+
+      '
+    conditional_rules:
+    - rule_id: TRANS-TXA-WITHIN-3H
+      condition: patient.presentation.get('time_since_injury_hours', 0) > 3
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_tranexamic_acid
+      evidence: CRASH-2 Trial, Lancet 2010 - TXA >3h increases mortality
+      severity: CRITICAL
+      description: 'TXA >3h after injury onset increases mortality (CRASH-2 subgroup analysis). Do NOT give TXA if >3h since
+        injury.
+
+        '
+      condition_variables:
+      - patient.presentation.time_since_injury_hours
+      trigger_range:
+        patient.presentation.time_since_injury_hours:
+          min: 3.1
+          max: 24.0
+          type: float
+      normal_range:
+        patient.presentation.time_since_injury_hours:
+          min: 0.0
+          max: 3.0
+          type: float
+    - rule_id: TRANS-JEHOVAH-NO-BLOOD
+      condition: '''jehovah_witness'' in patient.get(''preferences'', []) or ''refuses_blood_products'' in patient.get(''preferences'',
+        [])'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_prbc
+        - give_ffp
+        - give_platelets
+        - give_whole_blood
+      evidence: Patient autonomy; AABB ethical guidelines
+      severity: CRITICAL
+      description: 'Jehovah''s Witness or patients refusing blood products: transfusion is forbidden regardless of clinical
+        indication. Use alternative strategies (cell saver, erythropoietin, TXA).
+
+        '
+      condition_variables:
+      - patient.preferences
+      trigger_range:
+        patient.preferences:
+          contains: jehovah_witness
+          type: list_contains
+      normal_range:
+        patient.preferences:
+          not_contains: jehovah_witness
+          type: list_not_contains
+    next_nodes:
+    - transfusion_reaction
+    conditional_next: {}
+  transfusion_reaction:
+    node_id: transfusion_reaction
+    node_type: action
+    name: Transfusion Reaction Management
+    description: Recognition and management of acute transfusion reactions
+    precondition: null
+    mandatory_actions:
+    - stop_transfusion_immediately
+    - maintain_iv_access
+    - send_blood_bank_workup
+    - monitor_vitals_q15min
+    allowed_actions:
+    - stop_transfusion_immediately
+    - maintain_iv_access
+    - send_blood_bank_workup
+    - monitor_vitals_q15min
+    - give_epinephrine_im
+    - give_diphenhydramine
+    - give_acetaminophen
+    - give_furosemide_if_taco
+    - order_lab_dat
+    forbidden_actions:
+    - continue_transfusion_during_reaction
+    - restart_same_unit
+    deadlines:
+      stop_transfusion_immediately: 2
+      send_blood_bank_workup: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AABB 2024
+    source_section: 'Section 4: Transfusion Reaction Management'
+    source_quote: Stop transfusion immediately. Maintain IV access. Send blood bank workup.
+    patient_activation_condition: '''transfusion_reaction'' in patient.get(''presentation'', {})'
+    conditional_rules:
+    - rule_id: TRANS-ANAPHYLAXIS-EPI
+      condition: '''anaphylactic_transfusion_reaction'' in patient.get(''presentation'', {})'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_epinephrine_im
+        - stop_transfusion_immediately
+      evidence: AABB 2024 Transfusion Reaction Management
+      severity: CRITICAL
+      description: 'Anaphylactic transfusion reaction requires immediate epinephrine IM and cessation of transfusion. IgA
+        deficiency is the most common cause.
+
+        '
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: anaphylactic_transfusion_reaction
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: anaphylactic_transfusion_reaction
+          type: list_not_contains
+    - rule_id: TRANS-ANAPHYLAXIS-EPI-FORBIDDEN
+      condition: '''anaphylactic_transfusion_reaction'' in patient.get(''presentation'', {})'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_transfusion_during_anaphylaxis
+        - give_only_antihistamine_for_transfusion_anaphylaxis
+      evidence: AABB 2024; transfusion anaphylaxis requires immediate stop and epinephrine; antihistamines alone are insufficient
+      severity: CRITICAL
+      description: Transfusion anaphylaxis requires immediate transfusion stop and epinephrine; antihistamine monotherapy
+        is inadequate.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: anaphylactic_transfusion_reaction
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: anaphylactic_transfusion_reaction
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes: []
+    conditional_next: {}

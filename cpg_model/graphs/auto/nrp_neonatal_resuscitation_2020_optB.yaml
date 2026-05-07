@@ -1,0 +1,130 @@
+graph_id: nrp_neonatal_resuscitation_2020
+guideline_name: nrp_neonatal_resuscitation_2020
+version: '2024.1'
+metadata:
+  source: Neonatal Resuscitation Program (NRP)
+  doi: ''
+  recommendation_system: GRADE
+  description: Clinical workflow for neonatal resuscitation focusing on heart rate assessment and chest compression management.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Neonatal Assessment
+    description: Assess newborn heart rate and respiratory effort immediately after birth.
+    mandatory_actions:
+    - assess_heart_rate
+    allowed_actions:
+    - assess_heart_rate
+    - provide_stimulation
+    forbidden_actions: []
+    deadlines:
+      assess_heart_rate: 1
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: NRP 2020
+    source_section: Initial Steps
+    source_page: null
+    source_quote: "A rise in heart rate is the most important indicator of effective ventilation and \nresponse to resuscitative\
+      \ interventions."
+    next_nodes: []
+    conditional_next:
+      state.hr_below_60: chest_compression_bundle
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.4
+  chest_compression_bundle:
+    node_id: chest_compression_bundle
+    node_type: plan
+    name: Chest Compression Management
+    description: Initiate chest compressions and implement accurate heart rate monitoring.
+    mandatory_actions:
+    - use_ecg_for_heart_rate_assessment
+    - initiate_compressions
+    allowed_actions:
+    - use_ecg_for_heart_rate_assessment
+    - initiate_compressions
+    - administer_epinephrine
+    forbidden_actions: []
+    deadlines:
+      use_ecg_for_heart_rate_assessment: 1
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: NRP 2020
+    source_section: Chest Compressions
+    source_page: null
+    source_quote: "During chest compressions, an ECG \nshould be used for the rapid and accurate \nassessment of heart rate."
+    next_nodes:
+    - monitoring_phase
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  monitoring_phase:
+    node_id: monitoring_phase
+    node_type: action
+    name: Continuous Monitoring
+    description: Monitor response to compressions and ventilation.
+    mandatory_actions:
+    - monitor_heart_rate_ecg
+    allowed_actions:
+    - monitor_heart_rate_ecg
+    - adjust_oxygen_saturation
+    forbidden_actions: []
+    deadlines:
+      monitor_heart_rate_ecg: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: NRP 2020
+    source_section: Monitoring
+    source_page: null
+    source_quote: "Electrocardiogram provides a continuous \nheart rate faster than oximetry during neonatal resuscitation."
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.714
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Post-Resuscitation Disposition
+    description: Determine the next level of care based on patient stability.
+    mandatory_actions:
+    - transfer_to_nicu
+    allowed_actions:
+    - transfer_to_nicu
+    - continue_stabilization
+    forbidden_actions: []
+    deadlines:
+      transfer_to_nicu: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: NRP 2020
+    source_section: Post-Resuscitation Care
+    source_page: null
+    source_quote: "DOI: 10.1161/CIR.0000000000000902\nS524\nKey Words:  AHA Scientific Statements \n◼ cardiopulmonary resuscitation\
+      \  \n◼ neonatal resuscitation ◼ neonate\nKhalid Aziz, MBBS, MA, \nMEd(IT), Chair\nHenry C."
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.429
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 3
+  actionable_count: 1
+  validation_errors: 3
+  generated_at: '2026-04-29T17:10:25.208453+00:00'

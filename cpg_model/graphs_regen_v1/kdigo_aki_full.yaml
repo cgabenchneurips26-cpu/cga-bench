@@ -1,0 +1,951 @@
+graph_id: kdigo_aki_full
+guideline_name: KDIGO AKI 2012 Full
+version: '2012.1'
+description: KDIGO Clinical Practice Guidelines for Acute Kidney Injury
+metadata:
+  source: KDIGO 2012 Clinical Practice Guidelines for AKI
+  doi: 10.1038/kisup.2012.1
+  publication_year: 2012
+  key_recommendations:
+  - AKI staging based on creatinine and urine output criteria
+  - Risk assessment before contrast exposure
+  - Prevention strategies for contrast-induced AKI
+  - Dialysis initiation criteria
+  level_of_evidence_mapping:
+    A: High quality evidence
+    B: Moderate quality evidence
+    C: Low quality evidence
+    D: Very low quality evidence
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_kdigo_aki_full.json
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: action
+    name: Initial AKI Assessment
+    description: Initial AKI risk assessment and staging
+    mandatory_actions:
+    - order_creatinine
+    - monitor_urine_output
+    - assess_aki_risk_factors
+    forbidden_actions: []
+    allowed_actions:
+    - order_creatinine
+    - monitor_urine_output
+    - assess_aki_risk_factors
+    - order_cystatin_c
+    - order_urinalysis
+    - order_renal_ultrasound
+    - order_lab_bmp
+    - order_lab_cbc
+    - order_lab_blood_gas
+    - order_lab_urinalysis
+    - order_lab_urine_culture
+    - order_imaging_chest_xray
+    - assess_vital_signs
+    - assess_hydration_status
+    - give_crystalloid_fluid
+    - discontinue_nephrotoxic_agents
+    - consult_nephrology
+    - request_consultation
+    - check_current_medications
+    - order_lab_lactate
+    - order_lab_fena
+    - order_lab_autoimmune_panel
+    - order_lab_coagulation
+    - order_lab_liver_function_tests
+    - order_imaging_ct_abdomen
+    - order_renal_biopsy
+    - give_medication_furosemide
+    - give_supplemental_oxygen
+    - monitor_potassium
+    - monitor_fluid_balance_hourly
+    deadlines:
+      order_creatinine: 60
+    recommendation_class: I
+    evidence_level: B
+    conditional_rules:
+    - rule_id: AKI-NSAID-STOP
+      condition: '''nsaid'' in patient.medications or ''ibuprofen'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - discontinue_nsaid
+        - discontinue_nephrotoxins
+      evidence: KDIGO AKI 2012, Section 3.1.1
+      severity: HIGH
+      description: NSAIDs cause afferent arteriole vasoconstriction worsening AKI.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: nsaid
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid
+          type: list_not_contains
+    - rule_id: AKI-NSAID-STOP-FORBIDDEN
+      condition: '''nsaid'' in patient.medications or ''ibuprofen'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid_in_aki
+        - give_cox2_inhibitor_in_aki
+      evidence: KDIGO AKI 2012, Section 3.1.1; NSAIDs/COX-2 inhibitors cause afferent arteriole vasoconstriction worsening
+        AKI
+      severity: HIGH
+      description: NSAIDs and COX-2 inhibitors reduce renal blood flow via prostaglandin inhibition; contraindicated in active
+        AKI.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: nsaid
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: AKI-ACEI-HOLD
+      condition: '''ace_inhibitor'' in patient.medications or ''arb'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - hold_ace_inhibitor
+        - hold_arb
+      evidence: KDIGO AKI 2012, Section 3.1.2
+      severity: HIGH
+      description: RAAS inhibitors reduce GFR further in acute kidney injury.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: ace_inhibitor
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: ace_inhibitor
+          type: list_not_contains
+    - rule_id: AKI-ACEI-HOLD-FORBIDDEN
+      condition: '''ace_inhibitor'' in patient.medications or ''arb'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ace_inhibitor_in_aki
+        - give_arb_in_aki
+        - start_new_raas_inhibitor_in_aki
+      evidence: KDIGO AKI 2012, Section 3.1.2; RAAS inhibitors reduce efferent arteriole tone lowering GFR further in AKI
+      severity: HIGH
+      description: ACE inhibitors and ARBs reduce efferent arteriolar tone; initiating or continuing RAAS blockade in AKI
+        worsens injury.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: ace_inhibitor
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: ace_inhibitor
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: AKI-HYPERKALEMIA-URGENT
+      condition: patient.labs.potassium > 6.0
+      effect:
+        type: REQUIRED
+        actions:
+        - give_calcium_gluconate
+        - give_insulin_dextrose
+        - order_ecg_stat
+      evidence: KDIGO AKI 2012; AHA Hyperkalemia Guidelines
+      severity: CRITICAL
+      description: Severe hyperkalemia in AKI requires immediate cardiac membrane stabilization.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 6.1
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    - rule_id: AKI-HYPERKALEMIA-URGENT-FORBIDDEN
+      condition: patient.labs.potassium > 6.0
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_potassium_in_hyperkalemic_aki
+        - give_succinylcholine_in_hyperkalemic_aki
+        - give_spironolactone_in_hyperkalemic_aki
+      evidence: KDIGO AKI 2012; AHA Hyperkalemia Guidelines; potassium-sparing agents and exogenous K+ are contraindicated
+        in K+ > 6.0
+      severity: CRITICAL
+      description: Potassium supplementation, succinylcholine (releases K+ from muscle), and spironolactone worsen fatal hyperkalemia
+        in AKI.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 6.1
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+      skip_scenario_generation: true
+    - rule_id: AKI-METFORMIN-HOLD
+      condition: '''metformin'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - hold_metformin
+      evidence: KDIGO AKI 2012; FDA Label
+      severity: HIGH
+      description: Metformin accumulation in AKI causes fatal lactic acidosis.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: metformin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: metformin
+          type: list_not_contains
+    - rule_id: AKI-METFORMIN-HOLD-FORBIDDEN
+      condition: '''metformin'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_metformin_in_aki
+        - give_metformin_in_renal_failure
+      evidence: KDIGO AKI 2012; FDA Black Box Warning; metformin accumulation in AKI causes fatal lactic acidosis (mortality
+        30-50%)
+      severity: HIGH
+      description: Metformin is renally cleared; accumulation in AKI causes severe lactic acidosis with high mortality.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: metformin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: metformin
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: AKI-RHABDO-BICARB-FLUID
+      condition: '''rhabdomyolysis'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_aggressive_iv_fluid
+        - give_sodium_bicarbonate_drip
+      evidence: KDIGO AKI 2012; Bosch X, NEJM 2009
+      severity: HIGH
+      description: Rhabdomyolysis requires aggressive volume expansion and alkalinization.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: rhabdomyolysis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: rhabdomyolysis
+          type: list_not_contains
+    - rule_id: AKI-HEPATORENAL-ALBUMIN
+      condition: '''hepatorenal_syndrome'' in patient.comorbidities or (''cirrhosis'' in patient.comorbidities and ''aki''
+        in str(patient.comorbidities))'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_albumin_infusion
+        - consult_hepatology
+      evidence: KDIGO AKI 2012; EASL Hepatorenal 2018
+      severity: HIGH
+      description: Hepatorenal syndrome requires albumin expansion and hepatology consult.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: hepatorenal_syndrome
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hepatorenal_syndrome
+          type: list_not_contains
+    - rule_id: AKI-HEPATORENAL-ALBUMIN-FORBIDDEN
+      condition: '''hepatorenal_syndrome'' in patient.comorbidities or (''cirrhosis'' in patient.comorbidities and ''aki''
+        in str(patient.comorbidities))'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid_in_hepatorenal
+        - give_aminoglycoside_in_hepatorenal
+      evidence: KDIGO AKI 2012; EASL Hepatorenal 2018; nephrotoxins compound renal injury in hepatorenal syndrome
+      severity: HIGH
+      description: NSAIDs and aminoglycosides are nephrotoxic; in hepatorenal syndrome they accelerate renal failure progression.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: hepatorenal_syndrome
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hepatorenal_syndrome
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: AKI-RHABDO-NO-LR
+      condition: '''rhabdomyolysis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_lactated_ringer
+        - give_potassium_containing_fluid
+      evidence: KDIGO AKI 2012; Bosch X, NEJM 2009
+      severity: HIGH
+      description: Rhabdomyolysis causes hyperkalemia; avoid potassium-containing fluids like LR.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: rhabdomyolysis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: rhabdomyolysis
+          type: list_not_contains
+    - rule_id: AKI-HYPERKALEMIA-NO-ACE-MRA
+      condition: patient.labs.potassium > 5.5 and ('ace_inhibitor' in patient.medications or 'mra' in patient.medications)
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_ace_inhibitor
+        - continue_mra
+        - give_potassium_supplement
+      evidence: KDIGO AKI 2012; AHA Hyperkalemia Guidelines
+      severity: CRITICAL
+      description: ACE/MRA must be held in AKI with hyperkalemia to prevent fatal arrhythmia.
+      condition_variables:
+      - patient.labs.potassium
+      - patient.medications
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.6
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    - rule_id: AKI-HYPERKALEMIA-NO-SUCCINYLCHOLINE
+      condition: patient.labs.potassium > 5.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_succinylcholine
+      evidence: KDIGO AKI 2012; ASA Anesthesia Guidelines
+      severity: CRITICAL
+      description: Succinylcholine releases potassium from muscle; contraindicated in hyperkalemia.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.6
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    - rule_id: AKI-STAGE1-AMINOGLYCOSIDE-SPECIFIC
+      condition: patient.labs.get('creatinine', 0.8) > 1.2
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_aminoglycoside_without_tdm_in_stage1_aki
+        - give_gentamicin_empiric_without_renal_dosing
+      evidence: KDIGO AKI 2012 Section 3.1; aminoglycosides without TDM in AKI compound nephrotoxicity
+      severity: HIGH
+      description: Aminoglycosides in Stage 1 AKI require therapeutic drug monitoring; empiric dosing without renal adjustment
+        causes further injury.
+      condition_variables:
+      - patient.labs.creatinine
+      trigger_range:
+        patient.labs.creatinine:
+          min: 1.3
+          max: 15.0
+          type: float
+      normal_range:
+        patient.labs.creatinine:
+          min: 0.5
+          max: 1.2
+          type: float
+    - rule_id: AKI-STAGE2-CONTRAST-SPECIFIC
+      condition: patient.labs.get('egfr', 90) < 45
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_iodinated_contrast_without_prep_in_aki_stage2
+        - order_ct_with_contrast_without_nephrology_consult_in_aki
+      evidence: KDIGO AKI 2012 Section 3.2; contrast in AKI Stage 2 without preparation causes further renal injury
+      severity: HIGH
+      description: Contrast administration in AKI Stage 2 without hydration and preparation significantly worsens renal injury.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 44
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: AKI-STAGE2-K-SUPPLEMENT-SPECIFIC
+      condition: patient.labs.get('potassium', 4.0) > 5.0
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_potassium_supplement_in_hyperkalemic_aki_stage2
+        - give_oral_potassium_in_aki_with_elevated_k
+      evidence: KDIGO AKI 2012 Section 3.2; potassium supplementation with K+ > 5.0 in AKI is dangerous
+      severity: CRITICAL
+      description: Potassium supplementation when K+ > 5.0 in AKI Stage 2 risks fatal cardiac arrhythmia.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.1
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.0
+          type: float
+    - rule_id: AKI-HYPERKALEMIA-NO-SUCCINYLCHOLINE-SPECIFIC
+      condition: patient.labs.get('potassium', 4.0) > 5.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_succinylcholine_for_rsi_in_hyperkalemic_aki
+        - use_depolarizing_agent_in_aki_hyperkalemia
+      evidence: KDIGO AKI 2012; ASA Guidelines; succinylcholine releases 0.5-1.0 mEq/L K+ from muscle in hyperkalemia
+      severity: CRITICAL
+      description: Succinylcholine releases potassium from muscle; in hyperkalemic AKI this causes fatal arrhythmia. Use rocuronium
+        instead.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.6
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    transitions:
+    - condition: creatinine >= 1.5 * baseline or creatinine_increase >= 0.3
+      target_node: aki_staging
+    - condition: urine_output < 0.5 ml/kg/hr for 6 hours
+      target_node: aki_staging
+    - condition: contrast_exposure_planned
+      target_node: contrast_aki_prevention
+    source_guideline: KDIGO AKI Guideline Section 2.1
+    source_section: Section 2.1 - AKI Definition and Initial Assessment
+    source_page: Section 2.1
+    source_quote: Initial AKI risk assessment includes creatinine and urine output evaluation.
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  aki_staging:
+    node_id: aki_staging
+    node_type: decision
+    name: AKI Staging
+    description: AKI stage determination based on KDIGO criteria
+    mandatory_actions:
+    - calculate_aki_stage
+    - identify_aki_etiology
+    transitions:
+    - condition: aki_stage == 1
+      target_node: aki_stage_1_management
+    - condition: aki_stage == 2
+      target_node: aki_stage_2_management
+    - condition: aki_stage == 3
+      target_node: aki_stage_3_management
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO AKI Guideline Section 2.1
+    source_section: Section 2.1 - AKI Staging Criteria
+    source_page: Section 2.1
+    source_quote: Determine AKI stage using creatinine change and urine output criteria.
+    source_figure: Table 2 - KDIGO AKI Staging
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  aki_stage_1_management:
+    node_id: aki_stage_1_management
+    node_type: action
+    name: AKI Stage 1 Management
+    description: Management of AKI Stage 1
+    mandatory_actions:
+    - optimize_volume_status
+    - discontinue_nephrotoxins
+    - avoid_contrast
+    - monitor_creatinine_daily
+    forbidden_actions:
+    - give_nsaid
+    allowed_actions:
+    - consult_nephrology_if_needed
+    - adjust_drug_doses
+    conditional_rules:
+    - rule_id: AKI-STAGE1-NO-AMINOGLYCOSIDE-UNMONITORED
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_aminoglycoside_without_monitoring
+      evidence: KDIGO AKI 2012 Section 3.1; aminoglycosides are nephrotoxic and require TDM in AKI
+      severity: HIGH
+      description: 'Converted from unconditional: aminoglycosides without therapeutic drug monitoring compound nephrotoxicity
+        in AKI'
+      condition_variables:
+      - patient.labs.creatinine
+      trigger_range:
+        patient.labs.creatinine:
+          min: 1.0
+          max: 15.0
+          type: float
+      normal_range:
+        patient.labs.creatinine:
+          min: 0.5
+          max: 1.2
+          type: float
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: creatinine_improving
+      target_node: aki_recovery
+    - condition: aki_stage >= 2
+      target_node: aki_staging
+    source_guideline: KDIGO AKI Guideline Section 3.1
+    source_section: Section 3.1 - Management of AKI Stage 1
+    source_page: Section 3.1
+    source_quote: For stage 1 AKI, optimize volume and avoid nephrotoxins and contrast.
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  aki_stage_2_management:
+    node_id: aki_stage_2_management
+    node_type: action
+    name: AKI Stage 2 Management
+    description: Management of AKI Stage 2
+    patient_activation_condition: patient.labs.get('creatinine', 0) > 2.0 or 'aki_stage_2' in patient.comorbidities or 'aki_stage_3'
+      in patient.comorbidities
+    mandatory_actions:
+    - optimize_volume_status
+    - discontinue_nephrotoxins
+    - monitor_creatinine_q12h
+    - consult_nephrology
+    - monitor_potassium
+    - monitor_acid_base
+    forbidden_actions: []
+    allowed_actions:
+    - consider_rrt_planning
+    - order_renal_ultrasound
+    conditional_rules:
+    - rule_id: AKI-STAGE2-NO-CONTRAST-UNPREPPED
+      condition: patient.labs.get('egfr', 90) < 45
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_contrast_without_preparation
+      evidence: KDIGO AKI 2012 Section 3.2; contrast without preparation in AKI worsens renal injury
+      severity: HIGH
+      description: 'Converted from unconditional: contrast administration without preparation (hydration, low-osmolar agent)
+        is harmful when eGFR <45 in AKI Stage 2'
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 5
+          max: 44
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: AKI-STAGE2-NO-POTASSIUM-IF-HYPERKALEMIA
+      condition: patient.labs.get('potassium', 4.0) > 5.0
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_potassium_supplements_if_hyperkalemia
+      evidence: KDIGO AKI 2012 Section 3.2; potassium supplementation in hyperkalemia causes fatal arrhythmia
+      severity: CRITICAL
+      description: 'Converted from unconditional: potassium supplementation is only forbidden when serum potassium >5.0; in
+        hypokalemic AKI patients, potassium may be needed'
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.1
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.0
+          type: float
+    deadlines:
+      consult_nephrology: 240
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: creatinine_improving
+      target_node: aki_stage_1_management
+    - condition: aki_stage == 3
+      target_node: aki_stage_3_management
+    - condition: rrt_indication_present
+      target_node: rrt_decision
+    source_guideline: KDIGO AKI Guideline Section 3.2
+    source_section: Section 3.2 - Management of AKI Stage 2
+    source_page: Section 3.2
+    source_quote: Stage 2 AKI requires nephrology consultation and closer biochemical monitoring.
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  aki_stage_3_management:
+    node_id: aki_stage_3_management
+    node_type: action
+    name: AKI Stage 3 Management
+    description: Management of AKI Stage 3 - Severe
+    patient_activation_condition: patient.labs.get('creatinine', 0) > 4.0 or 'aki_stage_3' in patient.comorbidities or 'rrt_needed'
+      in patient.comorbidities
+    mandatory_actions:
+    - urgent_nephrology_consult
+    - monitor_creatinine_q6h
+    - monitor_potassium_q6h
+    - monitor_fluid_balance_hourly
+    - assess_rrt_need
+    - ecg_for_hyperkalemia
+    forbidden_actions: []
+    conditional_rules:
+    - rule_id: AKI-STAGE3-NO-CONTRAST
+      condition: patient.labs.get('creatinine', 1.0) > 4.0
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_contrast
+      evidence: KDIGO AKI 2012 Section 3.3; contrast is nephrotoxic in severe AKI
+      severity: CRITICAL
+      description: 'Converted from unconditional: contrast administration in severe AKI (creatinine >4.0) causes further renal
+        injury and may precipitate dialysis need'
+      condition_variables:
+      - patient.labs.creatinine
+      trigger_range:
+        patient.labs.creatinine:
+          min: 4.1
+          max: 20.0
+          type: float
+      normal_range:
+        patient.labs.creatinine:
+          min: 0.5
+          max: 1.2
+          type: float
+    - rule_id: AKI-STAGE3-NO-POTASSIUM
+      condition: patient.labs.get('potassium', 4.0) > 5.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_potassium
+      evidence: KDIGO AKI 2012 Section 3.3; potassium supplementation in hyperkalemic severe AKI is lethal
+      severity: CRITICAL
+      description: 'Converted from unconditional: potassium supplementation in severe AKI with hyperkalemia (K>5.5) causes
+        fatal cardiac arrhythmia'
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.6
+          max: 9.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.5
+          type: float
+    - rule_id: AKI-STAGE3-NO-MAGNESIUM-ANTACIDS
+      condition: 'True'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_magnesium_containing_antacids
+      evidence: KDIGO AKI 2012 Section 3.3; magnesium accumulates in severe AKI causing toxicity
+      severity: HIGH
+      description: 'Converted from unconditional: magnesium-containing antacids accumulate in severe AKI with reduced clearance,
+        causing hypermagnesemia'
+      condition_variables:
+      - patient.labs.creatinine
+      trigger_range:
+        patient.labs.creatinine:
+          min: 3.0
+          max: 20.0
+          type: float
+      normal_range:
+        patient.labs.creatinine:
+          min: 0.5
+          max: 1.2
+          type: float
+    deadlines:
+      urgent_nephrology_consult: 60
+      assess_rrt_need: 120
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: rrt_indication_present
+      target_node: rrt_decision
+    - condition: creatinine_improving
+      target_node: aki_stage_2_management
+    source_guideline: KDIGO AKI Guideline Section 3.3
+    source_section: Section 3.3 - Management of AKI Stage 3
+    source_page: Section 3.3
+    source_quote: Severe AKI requires urgent specialist input and renal replacement planning.
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  contrast_aki_prevention:
+    node_id: contrast_aki_prevention
+    node_type: action
+    name: Contrast AKI Prevention
+    description: Prevention of contrast-induced AKI
+    precondition: contrast_exposure_planned == true
+    patient_activation_condition: '''contrast_exposure'' in patient.comorbidities or ''contrast_planned'' in patient.comorbidities'
+    mandatory_actions:
+    - assess_ci_aki_risk
+    - order_baseline_creatinine
+    - calculate_egfr
+    forbidden_actions:
+    - give_contrast_without_assessment
+    allowed_actions:
+    - consider_alternative_imaging
+    deadlines:
+      order_baseline_creatinine: 60
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: egfr < 30
+      target_node: high_risk_contrast
+    - condition: egfr >= 30 and egfr < 60
+      target_node: moderate_risk_contrast
+    - condition: egfr >= 60
+      target_node: low_risk_contrast
+    source_guideline: KDIGO AKI Guideline Section 4.1
+    source_section: Section 4.1 - Contrast-AKI Prevention Strategy
+    source_page: Section 4.1
+    source_quote: Before contrast exposure, assess risk and establish baseline renal function.
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  high_risk_contrast:
+    node_id: high_risk_contrast
+    node_type: action
+    name: High-Risk Contrast Management
+    description: High-risk contrast management (eGFR < 30)
+    patient_activation_condition: '''contrast_exposure'' in patient.comorbidities or ''contrast_planned'' in patient.comorbidities'
+    mandatory_actions:
+    - consider_alternative_imaging
+    - discuss_risk_benefit_with_patient
+    - iv_hydration_if_proceeding
+    - use_iso_osmolar_contrast
+    - minimize_contrast_volume
+    - hold_metformin
+    - hold_nsaids
+    - post_procedure_creatinine_48_72h
+    forbidden_actions:
+    - give_high_osmolar_contrast
+    - repeat_contrast_within_48h
+    deadlines:
+      iv_hydration_if_proceeding: 360
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: KDIGO AKI Guideline Section 4.4
+    source_section: Section 4.4 - High-Risk Contrast Exposure
+    source_page: Section 4.4
+    source_quote: For eGFR under 30, minimize contrast exposure and provide preventive hydration.
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  moderate_risk_contrast:
+    node_id: moderate_risk_contrast
+    node_type: action
+    name: Moderate-Risk Contrast Management
+    description: Moderate-risk contrast management (eGFR 30-59)
+    patient_activation_condition: '''contrast_exposure'' in patient.comorbidities or ''contrast_planned'' in patient.comorbidities'
+    mandatory_actions:
+    - iv_hydration_periprocedure
+    - use_low_or_iso_osmolar_contrast
+    - minimize_contrast_volume
+    - hold_metformin
+    - post_procedure_creatinine_48h
+    forbidden_actions:
+    - give_high_osmolar_contrast
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO AKI Guideline Section 4.3
+    source_section: Section 4.3 - Moderate-Risk Contrast Exposure
+    source_page: Section 4.3
+    source_quote: Use low- or iso-osmolar contrast with periprocedural hydration in moderate risk.
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  low_risk_contrast:
+    node_id: low_risk_contrast
+    node_type: action
+    name: Low-Risk Contrast Management
+    description: Low-risk contrast management (eGFR >= 60)
+    patient_activation_condition: '''contrast_exposure'' in patient.comorbidities or ''contrast_planned'' in patient.comorbidities'
+    mandatory_actions:
+    - standard_contrast_protocol
+    allowed_actions:
+    - oral_hydration
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: KDIGO AKI Guideline Section 4.2
+    source_section: Section 4.2 - Low-Risk Contrast Exposure
+    source_page: Section 4.2
+    source_quote: Standard contrast protocol is acceptable in low-risk renal function.
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  rrt_decision:
+    node_id: rrt_decision
+    node_type: decision
+    name: RRT Decision
+    description: Renal Replacement Therapy Decision
+    patient_activation_condition: patient.labs.get('creatinine', 0) > 4.0 or 'aki_stage_3' in patient.comorbidities or 'rrt_needed'
+      in patient.comorbidities
+    mandatory_actions:
+    - evaluate_rrt_indications
+    - assess_vascular_access
+    transitions:
+    - condition: emergency_rrt_indication
+      target_node: emergency_rrt
+    - condition: urgent_rrt_indication
+      target_node: urgent_rrt
+    - condition: no_rrt_indication
+      target_node: aki_stage_3_management
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO AKI Guideline Section 5.1
+    source_section: Section 5.1 - RRT Indications
+    source_page: Section 5.1
+    source_quote: Evaluate emergent and urgent indications when considering renal replacement therapy.
+    source_figure: Table 5 - RRT Indications
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+  emergency_rrt:
+    node_id: emergency_rrt
+    node_type: action
+    name: Emergency RRT
+    description: Emergency RRT for life-threatening indications
+    patient_activation_condition: patient.labs.get('creatinine', 0) > 4.0 or 'aki_stage_3' in patient.comorbidities or 'rrt_needed'
+      in patient.comorbidities
+    mandatory_actions:
+    - initiate_rrt_immediately
+    - treat_hyperkalemia_temporizing
+    - vascular_access_placement
+    deadlines:
+      initiate_rrt_immediately: 60
+      treat_hyperkalemia_temporizing: 30
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: KDIGO AKI Guideline Section 5.2
+    source_section: Section 5.2 - Emergency RRT
+    source_page: Section 5.2
+    source_quote: Life-threatening AKI complications warrant immediate renal replacement therapy.
+    forbidden_actions: []
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  urgent_rrt:
+    node_id: urgent_rrt
+    node_type: action
+    name: Urgent RRT
+    description: Urgent RRT initiation
+    patient_activation_condition: patient.labs.get('creatinine', 0) > 4.0 or 'aki_stage_3' in patient.comorbidities or 'rrt_needed'
+      in patient.comorbidities
+    mandatory_actions:
+    - plan_rrt_modality
+    - vascular_access_placement
+    - initiate_rrt_within_24h
+    allowed_actions:
+    - optimize_timing_based_on_trajectory
+    deadlines:
+      initiate_rrt_within_24h: 1440
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO AKI Guideline Section 5.3
+    source_section: Section 5.3 - Urgent RRT
+    source_page: Section 5.3
+    source_quote: Urgent RRT should be initiated within clinically appropriate timing windows.
+    forbidden_actions: []
+    next_nodes: []
+    required_prior_actions: {}
+    conditional_next: {}
+  aki_recovery:
+    node_id: aki_recovery
+    node_type: action
+    name: AKI Recovery Monitoring
+    description: AKI recovery monitoring
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - monitor_recovery
+    - plan_follow_up_creatinine
+    - assess_for_ckd_development
+    allowed_actions:
+    - nephrology_follow_up
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: KDIGO AKI Guideline Section 6
+    source_section: Section 6 - Recovery and Follow-up
+    source_page: Section 6
+    source_quote: After AKI, monitor recovery and evaluate for chronic kidney disease progression.
+    forbidden_actions: []
+    next_nodes: []
+    deadlines: {}
+    required_prior_actions: {}
+    conditional_next: {}
+sequence_dependencies:
+- before: order_baseline_creatinine
+  after: give_contrast
+- before: assess_ci_aki_risk
+  after: give_contrast
+- before: iv_hydration_periprocedure
+  after: give_contrast

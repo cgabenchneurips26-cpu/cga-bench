@@ -1,0 +1,311 @@
+{
+  "scenario_id": "acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.5,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.201,
+  "total_violations": 8,
+  "sub_scores": {
+    "C1_path_selection": 1.0,
+    "C2_mandatory_completion": 0.6875,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 0.8125,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 3,
+    "omission": 5
+  },
+  "actions_count": 15,
+  "actions": [
+    {
+      "action_id": "confirm_cardiac_arrest",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "First step is to confirm cardiac arrest by checking responsiveness and pulse, as the patient is reported unresponsive and pulseless."
+    },
+    {
+      "action_id": "activate_code_team",
+      "timestamp_minutes": 5.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Immediately activate the code team to ensure adequate personnel for resuscitation."
+    },
+    {
+      "action_id": "begin_high_quality_cpr",
+      "timestamp_minutes": 10.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Begin high-quality CPR immediately per AHA ACLS guidelines \u2014 minimizing interruptions is critical for survival in cardiac arrest."
+    },
+    {
+      "action_id": "attach_defibrillator_pads",
+      "timestamp_minutes": 15.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "MANDATORY action - Attaching defibrillator pads is required immediately to analyze cardiac rhythm. This determines whether the arrest is a shockable rhythm (VF/pVT requiring immediate defibrillation) or non-shockable (asystole/PEA requiring epinephrine and reversible cause evaluation). Cannot proceed with targeted ACLS treatment without rhythm analysis."
+    },
+    {
+      "action_id": "analyze_rhythm",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Once pads are attached, rhythm analysis is the critical next step to differentiate shockable (VF/pVT) from non-shockable (asystole/PEA) rhythms. This directly determines the treatment pathway per AHA ACLS guidelines."
+    },
+    {
+      "action_id": "apply_end_tidal_co2_monitoring",
+      "timestamp_minutes": 25.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "End-tidal CO2 monitoring during CPR provides real-time feedback on CPR quality and can serve as an early indicator of ROSC (return of spontaneous circulation). ETCO2 >10 mmHg suggests adequate CPR; sudden rise to >40 mmHg indicates ROSC."
+    },
+    {
+      "action_id": "continue_high_quality_cpr",
+      "timestamp_minutes": 30.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "High-quality CPR is the cornerstone of cardiac arrest management and must be maintained continuously per AHA ACLS guidelines."
+    },
+    {
+      "action_id": "establish_iv_io_access",
+      "timestamp_minutes": 35.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "IV/IO access is needed immediately to administer epinephrine as soon as feasible, which is the first-line pharmacologic intervention for asystole/PEA per AHA ACLS guidelines."
+    },
+    {
+      "action_id": "evaluate_reversible_causes",
+      "timestamp_minutes": 40.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Identifying and treating reversible causes (Hs and Ts) is a mandatory component of cardiac arrest management per AHA ACLS guidelines and may identify a treatable etiology."
+    },
+    {
+      "action_id": "continue_cpr",
+      "timestamp_minutes": 45.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "High-quality CPR must be maintained continuously during cardiac arrest resuscitation per AHA ACLS guidelines. This is a core ongoing intervention."
+    },
+    {
+      "action_id": "give_calcium_chloride",
+      "timestamp_minutes": 50.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Calcium chloride is indicated if reversible causes include hyperkalemia or hypocalcemia as identified during evaluate_reversible_causes phase. It addresses the H's and T's of cardiac arrest reversible causes."
+    },
+    {
+      "action_id": "deliver_defibrillation",
+      "timestamp_minutes": 55.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "If rhythm analysis revealed a shockable rhythm (VF/pVT), defibrillation should be delivered as soon as possible per AHA ACLS guidelines. This addresses the defibrillation-first approach for shockable rhythms."
+    },
+    {
+      "action_id": "give_epinephrine_1mg_iv_immediately",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Epinephrine is a cornerstone of ACLS for cardiac arrest (both PEA/asystole and VF/pVT). It has not been administered yet and should be given as soon as feasible per AHA ACLS guidelines."
+    },
+    {
+      "action_id": "give_amiodarone_300mg",
+      "timestamp_minutes": 65.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Amiodarone 300mg IV is indicated for shock-refractory VF/pVT per ACLS guidelines. Defibrillation was already delivered and amiodarone should be considered to prevent recurrence of shockable rhythm."
+    },
+    {
+      "action_id": "admit_to_icu",
+      "timestamp_minutes": 70.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Vitals show HR 80, BP 120/80, SpO2 98%, suggesting possible ROSC. Post-cardiac arrest care in the ICU is essential for targeted temperature management, hemodynamic monitoring, and further workup."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "b43104bb-b1d2-4c5d-9502-6cab1b7ecdf5",
+      "violation_type": "timing",
+      "timestamp_minutes": 5.0,
+      "action_involved": "activate_code_team",
+      "expected_action": null,
+      "expected_deadline": 2.0,
+      "actual_time": 5.0,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action activate_code_team performed 3 min after deadline",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "30d44fc6-a968-4d1c-9311-39fd4c3f3309",
+      "violation_type": "timing",
+      "timestamp_minutes": 10.0,
+      "action_involved": "begin_high_quality_cpr",
+      "expected_action": null,
+      "expected_deadline": 1.0,
+      "actual_time": 10.0,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action begin_high_quality_cpr performed 9 min after deadline",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "89fbd451-1734-4dd0-9a18-b2e6ba15a2c5",
+      "violation_type": "timing",
+      "timestamp_minutes": 15.0,
+      "action_involved": "attach_defibrillator_pads",
+      "expected_action": null,
+      "expected_deadline": 3.0,
+      "actual_time": 15.0,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action attach_defibrillator_pads performed 12 min after deadline",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "03376b75-ed64-458f-b8da-d77fd6272d8f",
+      "violation_type": "omission",
+      "timestamp_minutes": 75.0,
+      "action_involved": null,
+      "expected_action": "give_epinephrine_1mg_iv",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_epinephrine_1mg_iv",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "815e2bbf-f672-4359-8c51-dc171f7fb8f0",
+      "violation_type": "omission",
+      "timestamp_minutes": 75.0,
+      "action_involved": null,
+      "expected_action": "initiate_targeted_temperature_management",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: initiate_targeted_temperature_management",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "964adc6e-c3a1-4767-982a-759d7d6043c6",
+      "violation_type": "omission",
+      "timestamp_minutes": 75.0,
+      "action_involved": null,
+      "expected_action": "obtain_12_lead_ecg",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: obtain_12_lead_ecg",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "ec2f3f7c-3c35-4b30-9dac-bf6b4680d459",
+      "violation_type": "omission",
+      "timestamp_minutes": 75.0,
+      "action_involved": null,
+      "expected_action": "optimize_hemodynamics",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: optimize_hemodynamics",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    },
+    {
+      "violation_id": "688c569a-603c-4daf-a72b-93de9f9907a6",
+      "violation_type": "omission",
+      "timestamp_minutes": 75.0,
+      "action_involved": null,
+      "expected_action": "resume_cpr_immediately",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_acls_combo_nonshockable_epi_immediate_post_no_early_neuroprog",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: resume_cpr_immediately",
+      "guideline_reference": "Cardiac Arrest Initial Assessment"
+    }
+  ],
+  "expected_actions": [
+    "activate_code_team",
+    "admit_to_icu",
+    "analyze_rhythm",
+    "attach_defibrillator_pads",
+    "begin_high_quality_cpr",
+    "confirm_cardiac_arrest",
+    "continue_high_quality_cpr",
+    "deliver_defibrillation",
+    "evaluate_reversible_causes",
+    "give_amiodarone_300mg",
+    "give_epinephrine_1mg_iv",
+    "give_epinephrine_1mg_iv_immediately",
+    "initiate_targeted_temperature_management",
+    "obtain_12_lead_ecg",
+    "optimize_hemodynamics",
+    "resume_cpr_immediately"
+  ],
+  "forbidden_actions": [
+    "delay_cpr",
+    "delay_defibrillation",
+    "deliver_defibrillation_asystole",
+    "discharge_home",
+    "give_amiodarone_for_asystole",
+    "give_atropine_for_asystole",
+    "give_atropine_for_cardiac_arrest",
+    "give_calcium_without_indication",
+    "give_sodium_bicarbonate_routine",
+    "interrupt_cpr_for_intubation_extended",
+    "interrupt_cpr_prolonged",
+    "neuroprognosticate_before_72h",
+    "terminate_care_prematurely",
+    "terminate_resuscitation_prematurely"
+  ],
+  "total_duration_minutes": 75.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 5,
+  "total_tokens": 13201,
+  "elapsed_seconds": 171.63
+}

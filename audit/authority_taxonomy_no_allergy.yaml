@@ -1,0 +1,50 @@
+# E9-F1 Sweep S3 — No Drug-Allergy Injection
+#
+# Identical to the default high-authority taxonomy except the drug_allergy
+# rule is removed. Defends against the reviewer attack "you're padding the
+# high-authority count with allergy-map injections that aren't 'real'
+# guideline rules."
+#
+# Used by: scripts/experiments/exp_e39b_threshold_sweep.py (sweep S3)
+# Spec: docs/attack_gap_exp_exp/260430_add_contribution_exp.md (§5.1 S3)
+
+version: 1
+generator: docs/attack_gap_exp_exp/260430_add_contribution_exp.md
+
+high_authority_rules:
+  - id: aha_class_i_loe_ab
+    description: "AHA Class I + LOE A or B"
+    match:
+      recommendation_class_in: ["I", "1"]
+      evidence_level_in: ["A", "B"]
+
+  - id: aha_class_iia_loe_ab
+    description: "AHA Class IIa + LOE A or B"
+    match:
+      recommendation_class_in: ["IIa", "1a", "1A"]
+      evidence_level_in: ["A", "B"]
+
+  - id: grade_strong
+    description: "GRADE 1A or 1B"
+    match:
+      recommendation_class_in: ["1A", "1B"]
+
+  - id: source_guideline_strong
+    description: "Source guideline embeds a strong-recommendation label"
+    match:
+      source_guideline_contains_any:
+        - "IDSA"
+        - "KDIGO"
+        - "AABB"
+        - "Strong recommendation"
+        - "GRADE 1A"
+        - "GRADE 1B"
+
+  # NOTE: drug_allergy rule deliberately omitted in this S3 sweep.
+
+low_authority_examples:
+  - "AHA Class IIb + LOE C"
+  - "Drug-allergy contraindications (excluded under no-allergy sweep)"
+
+unknown_handling:
+  policy: report_separately

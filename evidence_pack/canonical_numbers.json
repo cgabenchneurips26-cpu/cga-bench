@@ -1,0 +1,128 @@
+{
+  "graphs": {
+    "total": 25,
+    "core": 20,
+    "held_out": 5,
+    "held_out_ids": [
+      "aabb_transfusion",
+      "aba_burn_resuscitation",
+      "acog_obstetric_hemorrhage",
+      "apa_agitation_management",
+      "pals_pediatric_emergency"
+    ],
+    "provenance": "glob(${CGA_BENCH_ROOT}/cga_bench/cpg_model/graphs/*.yaml)"
+  },
+  "conditional_rules": {
+    "total": 312,
+    "per_graph": {
+      "aabb_transfusion": 7,
+      "aba_burn_resuscitation": 7,
+      "acls_cardiac_arrest": 24,
+      "acog_obstetric_hemorrhage": 4,
+      "ada_dka_management": 17,
+      "aha_chest_pain_evaluation": 10,
+      "aha_heart_failure_2022": 9,
+      "aha_stroke_2019": 7,
+      "anaphylaxis_management": 13,
+      "apa_agitation_management": 8,
+      "atrial_fibrillation": 7,
+      "cap_pneumonia": 13,
+      "copd_exacerbation": 8,
+      "gi_bleeding": 10,
+      "gina_asthma_exacerbation": 24,
+      "hypertensive_emergency": 10,
+      "idsa_meningitis": 20,
+      "kdigo_aki_full": 24,
+      "kdigo_contrast_aki": 19,
+      "pals_pediatric_emergency": 5,
+      "pulmonary_embolism": 10,
+      "ssc_sepsis_hour1_bundle": 11,
+      "status_epilepticus": 11,
+      "toxicology_management": 25,
+      "universal_clinical_safety": 9
+    },
+    "provenance": "cpg_model/graphs/*.yaml → nodes[].conditional_rules[]"
+  },
+  "scenarios": {
+    "total": 690,
+    "manual": 107,
+    "auto": 583,
+    "provenance": "configs/scenarios/*.yaml (manual) + auto_generated_scenarios.yaml (auto)"
+  },
+  "constraints": {
+    "hard_total": 230,
+    "soft_total": 1128,
+    "total": 1358,
+    "forbidden": 109,
+    "within": 92,
+    "before": 29,
+    "must": 380,
+    "n_nodes": 113,
+    "provenance": "evidence_pack/analysis/v3_constraint_audit.json → constraint_census.totals"
+  },
+  "evaluator_agreement": {
+    "fleiss_kappa_all6": 0.145,
+    "fleiss_kappa_4ind": 0.1693,
+    "degenerate_evaluators": [
+      "DxEM"
+    ],
+    "redundant_pairs": [
+      [
+        "AC-Proxy",
+        "ACov"
+      ]
+    ],
+    "provenance": "evidence_pack/analysis/kappa_precision_debug.json → issue_1"
+  },
+  "stratified_precision": {
+    "n_evaluated": 105,
+    "overall_engine_actions": 2406,
+    "overall_manual_actions": 930,
+    "forbidden_precision": 0.128,
+    "forbidden_recall": 0.545,
+    "forbidden_expansion": 4.2,
+    "nonforbidden_precision": 0.219,
+    "nonforbidden_recall": 0.445,
+    "nonforbidden_expansion": 2.0,
+    "provenance": "evidence_pack/analysis/constraint_type_precision.json → cross_type"
+  },
+  "violation_crosstab": {
+    "n_episodes": 180,
+    "violation_types": [
+      "BEFORE",
+      "FORBIDDEN",
+      "WITHIN"
+    ],
+    "miscertification": {
+      "AC-Proxy": {
+        "miscert_rate": 0.743,
+        "n_miscertified": 52
+      },
+      "MAB-Proxy": {
+        "miscert_rate": 0.029,
+        "n_miscertified": 2
+      },
+      "C2": {
+        "miscert_rate": 0.686,
+        "n_miscertified": 48
+      },
+      "CGA-Bench": {
+        "miscert_rate": 0.0,
+        "n_miscertified": 0
+      }
+    },
+    "provenance": "evidence_pack/analysis/evaluator_violation_crosstab.json"
+  },
+  "verdict_matrix": {
+    "n_episodes": 180,
+    "n_models": 4,
+    "n_scenarios": 15,
+    "models": [
+      "120B",
+      "27B",
+      "35B",
+      "4B"
+    ],
+    "provenance": "evidence_pack/analysis/verdict_matrix_v4.json → per_episode"
+  }
+}

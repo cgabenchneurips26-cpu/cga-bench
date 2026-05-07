@@ -1,0 +1,222 @@
+graph_id: idsa_cdi_2021
+guideline_name: 'IDSA/SHEA 2021 Focused Update: C. difficile Infection in Adults'
+version: '2021.1'
+metadata:
+  source: IDSA/SHEA 2021 Focused Update Guidelines on Management of CDI in Adults
+  doi: 10.1093/cid/ciab549
+  journal: Clinical Infectious Diseases
+  recommendation_system: GRADE
+  description: Updated guideline for C. difficile infection management emphasizing fidaxomicin preference, fulminant CDI bundle,
+    and recurrence prevention strategies
+  key_evidence: Fidaxomicin reduces CDI recurrence vs vancomycin (13% vs 27%, Louie et al. NEJM 2011). Fulminant CDI mortality
+    is 30-50% without surgery. Bezlotoxumab reduces recurrence by 38% (MODIFY trials).
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: diagnostic_assessment
+nodes:
+  diagnostic_assessment:
+    node_id: diagnostic_assessment
+    node_type: decision
+    name: CDI Diagnostic Testing
+    description: 'Stool testing for C. difficile: preferred two-step algorithm (GDH + toxin EIA), or NAAT alone. Test only
+      diarrheal stool (>=3 unformed stools in 24h).'
+    precondition: null
+    mandatory_actions:
+    - order_stool_cdi_testing
+    - assess_diarrhea_severity
+    - review_antibiotic_exposure
+    allowed_actions:
+    - order_stool_cdi_testing
+    - order_lab_albumin
+    - assess_vital_signs
+    - order_stool_gdh_plus_toxin
+    - order_lab_cbc
+    - order_stool_naat
+    - order_lab_creatinine
+    - assess_diarrhea_severity
+    - order_lab_lactate
+    - review_antibiotic_exposure
+    forbidden_actions:
+    - order_stool_test_on_formed_stool
+    - order_test_of_cure
+    deadlines:
+      order_stool_cdi_testing: 60
+      assess_diarrhea_severity: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'IDSA/SHEA 2021 Focused Update: CDI in Adults'
+    source_section: 'Recommendation 1: Diagnosis'
+    source_page: null
+    source_quote: 'Test only patients with unexplained, new-onset >=3 unformed stools in 24 hours. Preferred: multi-step algorithm
+      (GDH + toxin EIA, NAAT arbitration). Do NOT test formed stool or perform test-of-cure.'
+    next_nodes: []
+    conditional_next:
+      state.cdi_severity == 'fulminant': fulminant_cdi_management
+      state.cdi_severity == 'severe': non_severe_cdi_treatment
+      state.cdi_severity == 'non_severe': non_severe_cdi_treatment
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.091
+  non_severe_cdi_treatment:
+    node_id: non_severe_cdi_treatment
+    node_type: action
+    name: Initial CDI Treatment (Non-Severe & Severe)
+    description: '2021 update: fidaxomicin is preferred over vancomycin for initial non-severe and severe CDI. Oral vancomycin
+      125 mg QID x10 days is an acceptable alternative.'
+    precondition: null
+    mandatory_actions:
+    - discontinue_offending_antibiotic
+    - give_fidaxomicin_or_oral_vancomycin
+    allowed_actions:
+    - give_iv_fluids_if_dehydrated
+    - give_fidaxomicin_200mg_bid
+    - give_fidaxomicin_or_oral_vancomycin
+    - discontinue_offending_antibiotic
+    - give_oral_vancomycin_125mg_qid
+    - order_lab_bmp
+    - initiate_contact_precautions
+    forbidden_actions:
+    - give_metronidazole_for_initial_episode
+    - give_antidiarrheal_loperamide
+    deadlines:
+      discontinue_offending_antibiotic: 60
+      give_fidaxomicin_or_oral_vancomycin: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: 'IDSA/SHEA 2021 Focused Update: CDI in Adults'
+    source_section: 'Recommendation 2-3: Initial Episode Treatment'
+    source_page: null
+    source_quote: For patients with an initial Clostridioides difficile infection (CDI) episode, we suggest using fidaxomicin
+      rather than a standard course of vancomycin (conditional recommendation, moderate certainty of evidence).
+    next_nodes:
+    - monitoring_response
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.421
+  fulminant_cdi_management:
+    node_id: fulminant_cdi_management
+    node_type: plan
+    name: Fulminant CDI Management
+    description: 'Fulminant CDI (hypotension, ileus, megacolon, or organ failure): high-dose oral vancomycin + IV metronidazole.
+      Surgical consult mandatory.'
+    precondition: state.cdi_severity == 'fulminant'
+    mandatory_actions:
+    - give_oral_vancomycin_500mg_qid
+    - give_iv_metronidazole_500mg_q8h
+    - consult_surgery
+    allowed_actions:
+    - consult_gastroenterology
+    - give_iv_metronidazole_500mg_q8h
+    - give_oral_vancomycin_500mg_qid
+    - order_imaging_ct_abdomen
+    - give_iv_fluids_resuscitation
+    - order_lab_cbc
+    - give_rectal_vancomycin_enema_if_ileus
+    - continuous_hemodynamic_monitoring
+    - consult_surgery
+    - order_lab_lactate
+    forbidden_actions:
+    - give_antidiarrheal_loperamide
+    - delay_surgical_consult
+    deadlines:
+      give_oral_vancomycin_500mg_qid: 60
+      give_iv_metronidazole_500mg_q8h: 60
+      consult_surgery: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'IDSA/SHEA 2021 Focused Update: CDI in Adults'
+    source_section: 'Recommendation 4: Fulminant CDI'
+    source_page: null
+    source_quote: 'Fulminant CDI: oral vancomycin 500 mg QID (consider rectal vancomycin if ileus) + IV metronidazole 500
+      mg q8h. Early surgical consultation is recommended — subtotal colectomy for toxic megacolon or perforation.'
+    next_nodes:
+    - monitoring_response
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: CDI-TOXIC-MEGACOLON
+      condition: state.toxic_megacolon == True or state.perforation == True
+      effect:
+        type: REQUIRED
+        actions:
+        - perform_emergency_colectomy
+        deadline_minutes: 120
+      severity: CRITICAL
+      description: Toxic megacolon or perforation requires emergent subtotal colectomy. Mortality increases with surgical
+        delay.
+      evidence: Class I, Level B
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.35
+  monitoring_response:
+    node_id: monitoring_response
+    node_type: enquiry
+    name: Treatment Response Monitoring
+    description: Monitor clinical response (stool frequency, WBC, creatinine). Expect improvement within 3-5 days.
+    precondition: null
+    mandatory_actions:
+    - monitor_diarrhea_frequency
+    - reassess_clinical_status
+    allowed_actions:
+    - assess_vital_signs
+    - order_lab_cbc
+    - monitor_diarrhea_frequency
+    - assess_for_recurrence_risk
+    - reassess_clinical_status
+    - order_lab_creatinine
+    forbidden_actions:
+    - repeat_cdi_testing_during_treatment
+    deadlines:
+      monitor_diarrhea_frequency: 4320
+      reassess_clinical_status: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'IDSA/SHEA 2021 Focused Update: CDI in Adults'
+    source_section: Monitoring
+    source_page: null
+    source_quote: Do NOT repeat C. difficile testing during or shortly after treatment. Clinical response (not microbiological
+      cure) defines treatment success.
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.154
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Recurrence Prevention
+    description: Assess for recurrence risk factors, consider bezlotoxumab for high-risk recurrence, plan antimicrobial stewardship.
+    precondition: null
+    mandatory_actions:
+    - assess_recurrence_risk
+    allowed_actions:
+    - initiate_antimicrobial_stewardship
+    - consider_fecal_microbiota_transplant
+    - arrange_followup
+    - assess_recurrence_risk
+    - give_bezlotoxumab_if_high_recurrence_risk
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'IDSA/SHEA 2021 Focused Update: CDI in Adults'
+    source_section: 'Recommendation 5-6: Recurrence Prevention'
+    source_page: null
+    source_quote: Bezlotoxumab (monoclonal antibody to toxin B) reduces CDI recurrence (MODIFY I/II trials, Wilcox et al.
+      NEJM 2017). FMT recommended after 2+ recurrences of CDI.
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.25

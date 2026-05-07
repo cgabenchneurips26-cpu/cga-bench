@@ -1,0 +1,923 @@
+{
+  "eval_scenarios": {
+    "septic_shock_basic": {
+      "scenario_id": "septic_shock_basic",
+      "graph_ref": "ssc_sepsis_hour1",
+      "source_file": "sepsis_scenarios.yaml",
+      "expected_actions_count": 5,
+      "expected_actions": [
+        "order_lab_lactate",
+        "order_lab_blood_culture",
+        "give_broad_spectrum_antibiotics",
+        "give_crystalloid_30ml_kg",
+        "start_vasopressor_if_hypotensive"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 8,
+      "active_deadline_details": {
+        "assess_infection_source": 10,
+        "assess_organ_dysfunction": 10,
+        "order_lab_lactate": 60,
+        "order_lab_blood_culture": 60,
+        "give_broad_spectrum_antibiotics": 60,
+        "give_crystalloid_30ml_kg": 180,
+        "start_vasopressor_if_hypotensive": 60,
+        "remeasure_lactate_if_elevated": 360
+      },
+      "active_sequence_deps": 4,
+      "active_sequence_details": [
+        {
+          "action": "give_broad_spectrum_antibiotics",
+          "requires": "order_lab_blood_culture",
+          "node": "sepsis_bundle"
+        },
+        {
+          "action": "give_broad_spectrum_antibiotics",
+          "requires": "order_lab_blood_culture",
+          "node": "septic_shock_bundle"
+        },
+        {
+          "action": "start_vasopressor_if_hypotensive",
+          "requires": "give_crystalloid_30ml_kg",
+          "node": "septic_shock_bundle"
+        },
+        {
+          "action": "remeasure_lactate_if_elevated",
+          "requires": "order_lab_lactate",
+          "node": "reassessment"
+        }
+      ],
+      "graph_total_forbidden": 5,
+      "graph_total_mandatory": 12,
+      "graph_total_nodes": 7,
+      "graph_conditional_branches": 4,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "septic_shock_penicillin_allergy": {
+      "scenario_id": "septic_shock_penicillin_allergy",
+      "graph_ref": "ssc_sepsis_hour1",
+      "source_file": "sepsis_scenarios.yaml",
+      "expected_actions_count": 5,
+      "expected_actions": [
+        "order_lab_lactate",
+        "order_lab_blood_culture",
+        "give_broad_spectrum_antibiotics",
+        "give_crystalloid_30ml_kg",
+        "start_vasopressor_if_hypotensive"
+      ],
+      "scenario_forbidden_actions": [
+        "give_ampicillin",
+        "give_amoxicillin",
+        "give_penicillin"
+      ],
+      "scenario_forbidden_count": 3,
+      "is_trap_scenario": false,
+      "active_deadlines": 8,
+      "active_deadline_details": {
+        "assess_infection_source": 10,
+        "assess_organ_dysfunction": 10,
+        "order_lab_lactate": 60,
+        "order_lab_blood_culture": 60,
+        "give_broad_spectrum_antibiotics": 60,
+        "give_crystalloid_30ml_kg": 180,
+        "start_vasopressor_if_hypotensive": 60,
+        "remeasure_lactate_if_elevated": 360
+      },
+      "active_sequence_deps": 4,
+      "active_sequence_details": [
+        {
+          "action": "give_broad_spectrum_antibiotics",
+          "requires": "order_lab_blood_culture",
+          "node": "sepsis_bundle"
+        },
+        {
+          "action": "give_broad_spectrum_antibiotics",
+          "requires": "order_lab_blood_culture",
+          "node": "septic_shock_bundle"
+        },
+        {
+          "action": "start_vasopressor_if_hypotensive",
+          "requires": "give_crystalloid_30ml_kg",
+          "node": "septic_shock_bundle"
+        },
+        {
+          "action": "remeasure_lactate_if_elevated",
+          "requires": "order_lab_lactate",
+          "node": "reassessment"
+        }
+      ],
+      "graph_total_forbidden": 5,
+      "graph_total_mandatory": 12,
+      "graph_total_nodes": 7,
+      "graph_conditional_branches": 4,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "stemi_inferior_rv_trap": {
+      "scenario_id": "stemi_inferior_rv_trap",
+      "graph_ref": "aha_chest_pain",
+      "source_file": "aha_chest_pain_scenarios.yaml",
+      "expected_actions_count": 6,
+      "expected_actions": [
+        "obtain_12_lead_ecg",
+        "obtain_right_sided_ecg_v4r",
+        "order_lab_troponin",
+        "give_aspirin",
+        "start_iv_fluid_bolus",
+        "activate_cath_lab"
+      ],
+      "scenario_forbidden_actions": [
+        "give_nitroglycerin",
+        "give_nitrates",
+        "give_morphine"
+      ],
+      "scenario_forbidden_count": 3,
+      "is_trap_scenario": true,
+      "active_deadlines": 13,
+      "active_deadline_details": {
+        "obtain_12_lead_ecg": 10,
+        "assess_vital_signs": 5,
+        "interpret_ecg": 15,
+        "activate_cath_lab": 10,
+        "give_aspirin_loading": 30,
+        "give_p2y12_inhibitor": 30,
+        "arrange_pci": 90,
+        "order_lab_troponin": 60,
+        "give_anticoagulation": 60,
+        "calculate_risk_score": 120,
+        "serial_troponin": 180,
+        "stress_testing_or_cta": 1440,
+        "assess_for_early_invasive": 120
+      },
+      "active_sequence_deps": 10,
+      "active_sequence_details": [
+        {
+          "action": "interpret_ecg",
+          "requires": "obtain_12_lead_ecg",
+          "node": "ecg_interpretation"
+        },
+        {
+          "action": "activate_cath_lab",
+          "requires": "obtain_12_lead_ecg",
+          "node": "stemi_pathway"
+        },
+        {
+          "action": "activate_cath_lab",
+          "requires": "interpret_ecg",
+          "node": "stemi_pathway"
+        },
+        {
+          "action": "give_nitrates_if_indicated",
+          "requires": "assess_vital_signs",
+          "node": "stemi_pathway"
+        },
+        {
+          "action": "give_nitrates_if_indicated",
+          "requires": "assess_vital_signs",
+          "node": "nste_acs_pathway"
+        },
+        {
+          "action": "give_p2y12_inhibitor",
+          "requires": "calculate_risk_score",
+          "node": "nste_acs_pathway"
+        },
+        {
+          "action": "calculate_risk_score",
+          "requires": "order_lab_troponin",
+          "node": "risk_stratification"
+        },
+        {
+          "action": "stress_testing_or_cta",
+          "requires": "serial_troponin",
+          "node": "observation_pathway"
+        },
+        {
+          "action": "stress_testing_or_cta",
+          "requires": "serial_ecg",
+          "node": "observation_pathway"
+        },
+        {
+          "action": "provide_discharge_instructions",
+          "requires": "document_risk_assessment",
+          "node": "low_risk_pathway"
+        }
+      ],
+      "graph_total_forbidden": 9,
+      "graph_total_mandatory": 23,
+      "graph_total_nodes": 11,
+      "graph_conditional_branches": 8,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "dka_moderate_basic": {
+      "scenario_id": "dka_moderate_basic",
+      "graph_ref": "ada_dka_management",
+      "source_file": "dka_scenarios.yaml",
+      "expected_actions_count": 10,
+      "expected_actions": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_glucose",
+        "order_lab_bmp",
+        "order_lab_ketones",
+        "order_lab_abg",
+        "start_iv_fluid_ns",
+        "start_insulin_infusion",
+        "monitor_glucose_hourly",
+        "monitor_potassium_q2h"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 18,
+      "active_deadline_details": {
+        "assess_vital_signs": 5,
+        "establish_iv_access": 10,
+        "start_iv_fluid_ns": 15,
+        "order_lab_glucose": 15,
+        "order_lab_bmp": 15,
+        "order_lab_ketones": 30,
+        "order_lab_abg": 30,
+        "classify_dka_severity": 45,
+        "give_potassium_iv": 30,
+        "recheck_potassium_in_1h": 90,
+        "start_insulin_infusion": 60,
+        "monitor_glucose_hourly": 60,
+        "monitor_potassium_q2h": 120,
+        "admit_to_icu": 30,
+        "continuous_cardiac_monitoring": 15,
+        "place_arterial_line": 60,
+        "monitor_bmp_q2_4h": 240,
+        "assess_anion_gap_closure": 240
+      },
+      "active_sequence_deps": 12,
+      "active_sequence_details": [
+        {
+          "action": "start_iv_fluid_ns",
+          "requires": "establish_iv_access",
+          "node": "initial_assessment"
+        },
+        {
+          "action": "classify_dka_severity",
+          "requires": "order_lab_abg",
+          "node": "severity_classification"
+        },
+        {
+          "action": "classify_dka_severity",
+          "requires": "order_lab_bmp",
+          "node": "severity_classification"
+        },
+        {
+          "action": "give_potassium_iv",
+          "requires": "order_lab_bmp",
+          "node": "potassium_replacement_first"
+        },
+        {
+          "action": "give_potassium_iv",
+          "requires": "establish_iv_access",
+          "node": "potassium_replacement_first"
+        },
+        {
+          "action": "start_insulin_infusion",
+          "requires": "order_lab_bmp",
+          "node": "insulin_therapy"
+        },
+        {
+          "action": "start_insulin_infusion",
+          "requires": "start_iv_fluid_ns",
+          "node": "insulin_therapy"
+        },
+        {
+          "action": "consider_bicarbonate_if_ph_below_6.9",
+          "requires": "order_lab_abg",
+          "node": "severe_dka_pathway"
+        },
+        {
+          "action": "transition_to_subq_insulin",
+          "requires": "assess_anion_gap_closure",
+          "node": "ongoing_monitoring"
+        },
+        {
+          "action": "start_subcutaneous_insulin",
+          "requires": "verify_resolution_criteria",
+          "node": "transition_to_maintenance"
+        },
+        {
+          "action": "start_subcutaneous_insulin",
+          "requires": "assess_anion_gap_closure",
+          "node": "transition_to_maintenance"
+        },
+        {
+          "action": "resume_oral_intake",
+          "requires": "assess_mental_status",
+          "node": "transition_to_maintenance"
+        }
+      ],
+      "graph_total_forbidden": 18,
+      "graph_total_mandatory": 30,
+      "graph_total_nodes": 8,
+      "graph_conditional_branches": 3,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "dka_hypokalemia_trap": {
+      "scenario_id": "dka_hypokalemia_trap",
+      "graph_ref": "ada_dka_management",
+      "source_file": "dka_scenarios.yaml",
+      "expected_actions_count": 10,
+      "expected_actions": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_bmp",
+        "order_lab_abg",
+        "start_iv_fluid_ns",
+        "order_ecg",
+        "give_potassium_iv",
+        "hold_insulin_until_k_above_3.3",
+        "recheck_potassium_in_1h",
+        "continuous_cardiac_monitoring"
+      ],
+      "scenario_forbidden_actions": [
+        "start_insulin_infusion",
+        "give_insulin_bolus",
+        "start_insulin_before_k_check"
+      ],
+      "scenario_forbidden_count": 3,
+      "is_trap_scenario": true,
+      "active_deadlines": 18,
+      "active_deadline_details": {
+        "assess_vital_signs": 5,
+        "establish_iv_access": 10,
+        "start_iv_fluid_ns": 15,
+        "order_lab_glucose": 15,
+        "order_lab_bmp": 15,
+        "order_lab_ketones": 30,
+        "order_lab_abg": 30,
+        "classify_dka_severity": 45,
+        "give_potassium_iv": 30,
+        "recheck_potassium_in_1h": 90,
+        "start_insulin_infusion": 60,
+        "monitor_glucose_hourly": 60,
+        "monitor_potassium_q2h": 120,
+        "admit_to_icu": 30,
+        "continuous_cardiac_monitoring": 15,
+        "place_arterial_line": 60,
+        "monitor_bmp_q2_4h": 240,
+        "assess_anion_gap_closure": 240
+      },
+      "active_sequence_deps": 12,
+      "active_sequence_details": [
+        {
+          "action": "start_iv_fluid_ns",
+          "requires": "establish_iv_access",
+          "node": "initial_assessment"
+        },
+        {
+          "action": "classify_dka_severity",
+          "requires": "order_lab_abg",
+          "node": "severity_classification"
+        },
+        {
+          "action": "classify_dka_severity",
+          "requires": "order_lab_bmp",
+          "node": "severity_classification"
+        },
+        {
+          "action": "give_potassium_iv",
+          "requires": "order_lab_bmp",
+          "node": "potassium_replacement_first"
+        },
+        {
+          "action": "give_potassium_iv",
+          "requires": "establish_iv_access",
+          "node": "potassium_replacement_first"
+        },
+        {
+          "action": "start_insulin_infusion",
+          "requires": "order_lab_bmp",
+          "node": "insulin_therapy"
+        },
+        {
+          "action": "start_insulin_infusion",
+          "requires": "start_iv_fluid_ns",
+          "node": "insulin_therapy"
+        },
+        {
+          "action": "consider_bicarbonate_if_ph_below_6.9",
+          "requires": "order_lab_abg",
+          "node": "severe_dka_pathway"
+        },
+        {
+          "action": "transition_to_subq_insulin",
+          "requires": "assess_anion_gap_closure",
+          "node": "ongoing_monitoring"
+        },
+        {
+          "action": "start_subcutaneous_insulin",
+          "requires": "verify_resolution_criteria",
+          "node": "transition_to_maintenance"
+        },
+        {
+          "action": "start_subcutaneous_insulin",
+          "requires": "assess_anion_gap_closure",
+          "node": "transition_to_maintenance"
+        },
+        {
+          "action": "resume_oral_intake",
+          "requires": "assess_mental_status",
+          "node": "transition_to_maintenance"
+        }
+      ],
+      "graph_total_forbidden": 18,
+      "graph_total_mandatory": 30,
+      "graph_total_nodes": 8,
+      "graph_conditional_branches": 3,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "stroke_tpa_eligible": {
+      "scenario_id": "stroke_tpa_eligible",
+      "graph_ref": "aha_stroke",
+      "source_file": "aha_stroke_scenarios.yaml",
+      "expected_actions_count": 9,
+      "expected_actions": [
+        "activate_stroke_team",
+        "obtain_last_known_well_time",
+        "perform_nihss",
+        "check_glucose",
+        "order_stat_ct_head",
+        "review_inclusion_criteria",
+        "review_exclusion_criteria",
+        "obtain_informed_consent",
+        "give_alteplase_0.9mg_kg"
+      ],
+      "scenario_forbidden_actions": [
+        "give_antiplatelet_within_24h",
+        "give_anticoagulation_within_24h",
+        "delay_ct_for_labs"
+      ],
+      "scenario_forbidden_count": 3,
+      "is_trap_scenario": false,
+      "active_deadlines": 6,
+      "active_deadline_details": {
+        "check_glucose": 10,
+        "order_stat_ct_head": 25,
+        "give_alteplase_0.9mg_kg": 60,
+        "perform_thrombectomy_procedure": 60,
+        "reverse_anticoagulation_if_applicable": 60,
+        "stat_ct_head": 15
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 15,
+      "graph_total_mandatory": 91,
+      "graph_total_nodes": 25,
+      "graph_conditional_branches": 0,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "contrast_aki_prevention_basic": {
+      "scenario_id": "contrast_aki_prevention_basic",
+      "graph_ref": "kdigo_contrast_aki",
+      "source_file": "kdigo_aki_scenarios.yaml",
+      "expected_actions_count": 5,
+      "expected_actions": [
+        "order_lab_creatinine",
+        "assess_aki_risk",
+        "start_iv_hydration",
+        "hold_nephrotoxic_medications",
+        "use_lowest_contrast_dose"
+      ],
+      "scenario_forbidden_actions": [
+        "give_contrast_without_assessment",
+        "give_nsaid"
+      ],
+      "scenario_forbidden_count": 2,
+      "is_trap_scenario": false,
+      "active_deadlines": 6,
+      "active_deadline_details": {
+        "check_baseline_egfr": 60,
+        "review_risk_factors": 60,
+        "iv_hydration_pre_contrast": 60,
+        "monitor_scr_48_72h": 4320,
+        "check_scr_at_48h": 2880,
+        "nephrology_consult": 120
+      },
+      "active_sequence_deps": 7,
+      "active_sequence_details": [
+        {
+          "action": "use_minimum_contrast_volume",
+          "requires": "check_baseline_egfr",
+          "node": "high_risk_pathway"
+        },
+        {
+          "action": "use_minimum_contrast_volume",
+          "requires": "iv_hydration_pre_contrast",
+          "node": "high_risk_pathway"
+        },
+        {
+          "action": "iv_hydration_post_contrast",
+          "requires": "iv_hydration_pre_contrast",
+          "node": "high_risk_pathway"
+        },
+        {
+          "action": "use_minimum_contrast_volume",
+          "requires": "check_baseline_egfr",
+          "node": "moderate_risk_pathway"
+        },
+        {
+          "action": "iv_hydration_post_contrast",
+          "requires": "iv_hydration_pre_contrast",
+          "node": "moderate_risk_pathway"
+        },
+        {
+          "action": "resume_metformin_if_egfr_stable",
+          "requires": "check_scr_at_48h",
+          "node": "post_contrast_monitoring"
+        },
+        {
+          "action": "provide_discharge_instructions",
+          "requires": "document_stable_egfr",
+          "node": "safe_discharge"
+        }
+      ],
+      "graph_total_forbidden": 13,
+      "graph_total_mandatory": 21,
+      "graph_total_nodes": 7,
+      "graph_conditional_branches": 5,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "aki_stage1_basic": {
+      "scenario_id": "aki_stage1_basic",
+      "graph_ref": "kdigo_aki_full",
+      "source_file": "kdigo_aki_full_scenarios.yaml",
+      "expected_actions_count": 5,
+      "expected_actions": [
+        "order_creatinine",
+        "monitor_urine_output",
+        "optimize_volume_status",
+        "discontinue_nephrotoxins",
+        "avoid_contrast"
+      ],
+      "scenario_forbidden_actions": [
+        "give_nsaid",
+        "give_aminoglycoside_without_monitoring"
+      ],
+      "scenario_forbidden_count": 2,
+      "is_trap_scenario": false,
+      "active_deadlines": 9,
+      "active_deadline_details": {
+        "order_creatinine": 60,
+        "consult_nephrology": 240,
+        "urgent_nephrology_consult": 60,
+        "assess_rrt_need": 120,
+        "order_baseline_creatinine": 60,
+        "iv_hydration_if_proceeding": 360,
+        "initiate_rrt_immediately": 60,
+        "treat_hyperkalemia_temporizing": 30,
+        "initiate_rrt_within_24h": 1440
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 10,
+      "graph_total_mandatory": 44,
+      "graph_total_nodes": 13,
+      "graph_conditional_branches": 0,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "af_new_onset_basic": {
+      "scenario_id": "af_new_onset_basic",
+      "graph_ref": "atrial_fibrillation",
+      "source_file": "atrial_fibrillation_scenarios.yaml",
+      "expected_actions_count": 5,
+      "expected_actions": [
+        "assess_vital_signs",
+        "obtain_12_lead_ecg",
+        "order_lab_tsh",
+        "order_lab_bmp",
+        "assess_chadsvasc_score"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 2,
+      "active_deadline_details": {
+        "obtain_12_lead_ecg": 10,
+        "perform_cardioversion": 30
+      },
+      "active_sequence_deps": 1,
+      "active_sequence_details": [
+        {
+          "action": "give_rate_control",
+          "requires": "obtain_12_lead_ecg",
+          "node": "stable_af_rate_control"
+        }
+      ],
+      "graph_total_forbidden": 1,
+      "graph_total_mandatory": 9,
+      "graph_total_nodes": 3,
+      "graph_conditional_branches": 1,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "SEQUENCE",
+        "DEVIATION"
+      ],
+      "violation_type_count": 5
+    },
+    "gi_bleeding_upper_basic": {
+      "scenario_id": "gi_bleeding_upper_basic",
+      "graph_ref": "gi_bleeding",
+      "source_file": "gi_bleeding_scenarios.yaml",
+      "expected_actions_count": 6,
+      "expected_actions": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_cbc",
+        "order_lab_bmp",
+        "order_lab_coagulation",
+        "calculate_glasgow_blatchford_score"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 2,
+      "active_deadline_details": {
+        "establish_iv_access": 15,
+        "give_iv_crystalloid_bolus": 15
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 1,
+      "graph_total_mandatory": 10,
+      "graph_total_nodes": 2,
+      "graph_conditional_branches": 1,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "htn_emergency_basic": {
+      "scenario_id": "htn_emergency_basic",
+      "graph_ref": "hypertensive_emergency",
+      "source_file": "hypertensive_emergency_scenarios.yaml",
+      "expected_actions_count": 6,
+      "expected_actions": [
+        "assess_vital_signs",
+        "obtain_iv_access",
+        "order_lab_bmp",
+        "order_lab_cbc",
+        "order_lab_urinalysis",
+        "order_imaging_ct_head"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 2,
+      "active_deadline_details": {
+        "assess_vital_signs": 5,
+        "give_iv_antihypertensive": 30
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 2,
+      "graph_total_mandatory": 8,
+      "graph_total_nodes": 2,
+      "graph_conditional_branches": 1,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "pe_submassive_basic": {
+      "scenario_id": "pe_submassive_basic",
+      "graph_ref": "pulmonary_embolism",
+      "source_file": "pulmonary_embolism_scenarios.yaml",
+      "expected_actions_count": 4,
+      "expected_actions": [
+        "assess_vital_signs",
+        "assess_wells_score",
+        "order_lab_d_dimer",
+        "order_imaging_ct_pulmonary_angiography"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 3,
+      "active_deadline_details": {
+        "assess_vital_signs": 10,
+        "give_anticoagulation": 30,
+        "give_thrombolysis": 60
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 2,
+      "graph_total_mandatory": 8,
+      "graph_total_nodes": 3,
+      "graph_conditional_branches": 1,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "copd_moderate_exacerbation": {
+      "scenario_id": "copd_moderate_exacerbation",
+      "graph_ref": "copd_exacerbation",
+      "source_file": "copd_exacerbation_scenarios.yaml",
+      "expected_actions_count": 5,
+      "expected_actions": [
+        "assess_vital_signs",
+        "order_lab_blood_gas",
+        "order_imaging_chest_xray",
+        "give_short_acting_bronchodilator",
+        "give_systemic_corticosteroid"
+      ],
+      "scenario_forbidden_actions": [],
+      "scenario_forbidden_count": 0,
+      "is_trap_scenario": false,
+      "active_deadlines": 2,
+      "active_deadline_details": {
+        "assess_vital_signs": 10,
+        "give_bronchodilator": 30
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 2,
+      "graph_total_mandatory": 8,
+      "graph_total_nodes": 2,
+      "graph_conditional_branches": 1,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "adhf_warm_wet": {
+      "scenario_id": "adhf_warm_wet",
+      "graph_ref": "aha_heart_failure",
+      "source_file": "aha_heart_failure_scenarios.yaml",
+      "expected_actions_count": 6,
+      "expected_actions": [
+        "assess_hemodynamic_profile",
+        "iv_diuretics",
+        "fluid_restrict",
+        "daily_weights",
+        "monitor_urine_output",
+        "monitor_electrolytes"
+      ],
+      "scenario_forbidden_actions": [
+        "give_iv_inotropes"
+      ],
+      "scenario_forbidden_count": 1,
+      "is_trap_scenario": false,
+      "active_deadlines": 7,
+      "active_deadline_details": {
+        "order_bnp_or_ntprobnp": 60,
+        "order_ecg": 60,
+        "order_echocardiogram": 1440,
+        "iv_diuretics": 30,
+        "consider_inotropes": 60,
+        "icu_admission": 30,
+        "vasopressor_support": 30
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 9,
+      "graph_total_mandatory": 68,
+      "graph_total_nodes": 24,
+      "graph_conditional_branches": 0,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    },
+    "hemorrhagic_stroke": {
+      "scenario_id": "hemorrhagic_stroke",
+      "graph_ref": "aha_stroke",
+      "source_file": "aha_stroke_scenarios.yaml",
+      "expected_actions_count": 6,
+      "expected_actions": [
+        "activate_stroke_team",
+        "order_stat_ct_head",
+        "icu_admission",
+        "bp_reduction_target_140",
+        "reverse_anticoagulation_if_applicable",
+        "neurosurgery_consult"
+      ],
+      "scenario_forbidden_actions": [
+        "give_tpa",
+        "give_antiplatelet",
+        "give_anticoagulation"
+      ],
+      "scenario_forbidden_count": 3,
+      "is_trap_scenario": false,
+      "active_deadlines": 6,
+      "active_deadline_details": {
+        "check_glucose": 10,
+        "order_stat_ct_head": 25,
+        "give_alteplase_0.9mg_kg": 60,
+        "perform_thrombectomy_procedure": 60,
+        "reverse_anticoagulation_if_applicable": 60,
+        "stat_ct_head": 15
+      },
+      "active_sequence_deps": 0,
+      "active_sequence_details": [],
+      "graph_total_forbidden": 15,
+      "graph_total_mandatory": 91,
+      "graph_total_nodes": 25,
+      "graph_conditional_branches": 0,
+      "possible_violation_types": [
+        "OMISSION",
+        "COMMISSION",
+        "TIMING",
+        "DEVIATION"
+      ],
+      "violation_type_count": 4
+    }
+  },
+  "all_scenarios_count": 54,
+  "aggregate": {
+    "graphs": {
+      "count": 14,
+      "total_nodes": 113,
+      "total_mandatory_actions": 341,
+      "total_forbidden_actions": 93,
+      "total_timing_constraints": 92,
+      "total_sequence_dependencies": 36,
+      "total_conditional_branches": 27,
+      "domains_with_forbidden": 14
+    },
+    "eval_scenarios": {
+      "count": 15,
+      "total_active_deadlines": 110,
+      "total_active_sequence_deps": 50,
+      "avg_violation_types": 4.47
+    }
+  }
+}

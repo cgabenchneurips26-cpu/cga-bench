@@ -1,0 +1,118 @@
+graph_id: eacts_aortic_valve_2021
+guideline_name: EACTS/ESC Valvular Heart Disease Guidelines 2021
+version: '2021.1'
+metadata:
+  source: EACTS/ESC Valvular Heart Disease Guidelines 2021
+  doi: 10.1093/eurheartj/ehab395
+  journal: European Heart Journal
+  recommendation_system: ESC/EACTS
+  description: Aortic valve disease management.
+  key_evidence: 'PARTNER-3 and Evolut Low Risk: TAVR non-inferior to SAVR in low-risk patients.'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Aortic Stenosis Severity Assessment
+    description: Confirm severe AS by echocardiography and assess symptoms.
+    precondition: null
+    mandatory_actions:
+    - perform_transthoracic_echocardiogram
+    - assess_vital_signs
+    - assess_functional_status_nyha
+    allowed_actions:
+    - order_lab_bmp
+    - order_lab_cbc
+    - perform_coronary_angiography
+    - assess_functional_status_nyha
+    - perform_transthoracic_echocardiogram
+    - consult_heart_team
+    - order_lab_bnp
+    - order_imaging_ct_aorta_if_tavr_planned
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      perform_transthoracic_echocardiogram: 10080
+      assess_functional_status_nyha: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EACTS/ESC Valvular Heart Disease Guidelines 2021
+    source_section: Diagnosis of AS
+    source_page: null
+    source_quote: Severe aortic stenosis is defined by AVA <1.0 cm2 or mean gradient >=40 mmHg on echocardiography.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Heart Team Evaluation and Intervention Planning
+    description: Heart Team decides SAVR vs TAVR based on age, risk, anatomy.
+    precondition: null
+    mandatory_actions:
+    - consult_heart_team
+    - assess_surgical_risk_sts_score
+    - plan_aortic_valve_intervention
+    allowed_actions:
+    - plan_aortic_valve_intervention
+    - initiate_guideline_directed_hf_therapy
+    - perform_coronary_angiography
+    - assess_surgical_risk_sts_score
+    - plan_savr_if_low_risk_young
+    - consult_heart_team
+    - plan_tavr_if_intermediate_high_risk
+    - consult_cardiac_anesthesia
+    - order_imaging_ct_aorta_if_tavr_planned
+    forbidden_actions:
+    - defer_intervention_in_symptomatic_severe_as
+    deadlines:
+      consult_heart_team: 10080
+      plan_aortic_valve_intervention: 20160
+    required_prior_actions:
+      plan_aortic_valve_intervention:
+      - consult_heart_team
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EACTS/ESC Valvular Heart Disease Guidelines 2021
+    source_section: Intervention Selection
+    source_page: null
+    source_quote: Heart Team evaluation is recommended for all patients considered for aortic valve intervention.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-intervention Follow-up
+    description: Serial TTE, antithrombotic therapy, endocarditis prophylaxis education.
+    precondition: null
+    mandatory_actions:
+    - schedule_follow_up_echocardiogram
+    - initiate_post_procedure_antithrombotic
+    allowed_actions:
+    - monitor_valve_function
+    - order_lab_cbc_repeat
+    - initiate_post_procedure_antithrombotic
+    - educate_endocarditis_prophylaxis
+    - reassess_symptoms
+    - schedule_follow_up_echocardiogram
+    forbidden_actions: []
+    deadlines:
+      initiate_post_procedure_antithrombotic: 1440
+      schedule_follow_up_echocardiogram: 43200
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EACTS/ESC Valvular Heart Disease Guidelines 2021
+    source_section: Follow-up after Valve Intervention
+    source_page: null
+    source_quote: Lifelong follow-up with periodic echocardiography is recommended after valve intervention.
+    next_nodes: []
+    conditional_next: {}

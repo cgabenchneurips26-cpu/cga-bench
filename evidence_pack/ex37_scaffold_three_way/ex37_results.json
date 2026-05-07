@@ -1,0 +1,156 @@
+{
+  "experiment": "EX-37",
+  "description": "Scaffold three-way comparison: ReAct, Checklist, Direct. Primary ablation: qwen27b ReAct vs qwen27b Direct (same model).",
+  "status": "partial",
+  "scaffolds": {
+    "react": {
+      "label": "Qwen3.5-27B (ReAct)",
+      "model_dir": "qwen27b",
+      "metrics": {
+        "n_episodes": 2118,
+        "n_hard_violations": 1172,
+        "pct_hard": 55.3,
+        "pass_rates": {
+          "AC-Proxy": 79.1,
+          "MAB-Proxy": 56.8,
+          "C2": 39.9,
+          "CGA-Bench": 44.7
+        },
+        "verdict_flip_rate": 81.0,
+        "verdict_flip_ci_95": [
+          79.3,
+          82.6
+        ],
+        "ao_fa_rate": 12.8,
+        "ao_fa_ci_95": [
+          11.4,
+          14.3
+        ],
+        "per_evaluator_fa": {
+          "AC-Proxy": 79.1,
+          "MAB-Proxy": 67.3,
+          "C2": 28.5,
+          "CGA-Bench": 0.0
+        }
+      }
+    },
+    "checklist": {
+      "label": "Gemma4-31B (Checklist)",
+      "model_dir": "gemma31b_checklist",
+      "metrics": {
+        "n_episodes": 0,
+        "status": "no_data"
+      }
+    },
+    "direct": {
+      "label": "Qwen3.5-27B (Direct)",
+      "model_dir": "qwen27b_direct",
+      "metrics": {
+        "n_episodes": 2118,
+        "n_hard_violations": 1203,
+        "pct_hard": 56.8,
+        "pass_rates": {
+          "AC-Proxy": 74.7,
+          "MAB-Proxy": 49.7,
+          "C2": 33.1,
+          "CGA-Bench": 43.2
+        },
+        "verdict_flip_rate": 78.7,
+        "verdict_flip_ci_95": [
+          77.0,
+          80.5
+        ],
+        "ao_fa_rate": 16.1,
+        "ao_fa_ci_95": [
+          14.5,
+          17.7
+        ],
+        "per_evaluator_fa": {
+          "AC-Proxy": 72.4,
+          "MAB-Proxy": 51.5,
+          "C2": 29.6,
+          "CGA-Bench": 0.0
+        }
+      }
+    }
+  },
+  "pairwise": {
+    "react_vs_checklist": {
+      "status": "pending",
+      "reason": "Missing data: react=2118, checklist=0"
+    },
+    "react_vs_direct": {
+      "status": "complete",
+      "n_paired": 2118,
+      "mcnemar": {
+        "AC-Proxy": {
+          "b": 165,
+          "c": 71,
+          "chi2": 36.6483,
+          "p_value": 0.0,
+          "n_discordant": 236
+        },
+        "MAB-Proxy": {
+          "b": 239,
+          "c": 88,
+          "chi2": 68.8073,
+          "p_value": 0.0,
+          "n_discordant": 327
+        },
+        "C2": {
+          "b": 359,
+          "c": 216,
+          "chi2": 35.0678,
+          "p_value": 0.0,
+          "n_discordant": 575
+        },
+        "CGA-Bench": {
+          "b": 113,
+          "c": 82,
+          "chi2": 4.6154,
+          "p_value": 0.031686,
+          "n_discordant": 195
+        }
+      },
+      "react_flip_rate": 81.0,
+      "direct_flip_rate": 78.7,
+      "flip_delta_pp": 2.3,
+      "react_aofa_rate": 12.8,
+      "direct_aofa_rate": 16.1,
+      "aofa_delta_pp": 3.3
+    },
+    "checklist_vs_direct": {
+      "status": "pending",
+      "reason": "Missing data: checklist=0, direct=2118"
+    }
+  },
+  "cochran_q": {
+    "status": "pending",
+    "reason": "Not all scaffolds have data"
+  },
+  "blind_spot_jaccard": {
+    "react_vs_checklist": {
+      "status": "pending"
+    },
+    "react_vs_direct": {
+      "status": "complete",
+      "n_overlap": 2118,
+      "blind_spots_a": 272,
+      "blind_spots_b": 341,
+      "intersection": 156,
+      "union": 457,
+      "jaccard": 0.3414
+    },
+    "checklist_vs_direct": {
+      "status": "pending"
+    }
+  },
+  "summary": {
+    "primary_comparison": "react_vs_direct",
+    "primary_mcnemar_cga_p": 0.031686,
+    "cochran_q_flip": "N/A",
+    "cochran_q_flip_p": "N/A",
+    "jaccard_react_direct": 0.3414,
+    "conclusion": "ReAct-vs-Direct flip delta = 2.3pp; blind-spot Jaccard = 0.3414 -- blind spots are scaffold-independent"
+  }
+}

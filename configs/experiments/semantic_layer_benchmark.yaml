@@ -1,0 +1,49 @@
+# Semantic Layer (LLM-Assist) Benchmark Experiment
+# Evaluates LLM-Assist against Oracle and RAG baselines using vLLM (Qwen3-30B)
+
+experiment:
+  experiment_id: "semantic_layer_v1"
+  description: |
+    Benchmark LLM-Assist Semantic Layer performance.
+    Compares against Oracle (rule-based upper bound) and RAG (retrieval baseline).
+    Uses vLLM server with Qwen/Qwen3-30B-A3B-Instruct-2507.
+
+# Scenarios across multiple domains for comprehensive evaluation
+scenarios:
+  sepsis:
+    - "septic_shock_basic"
+    - "septic_shock_penicillin_allergy"
+  chest_pain:
+    - "stemi_anterior_basic"
+    - "stemi_inferior_rv_trap"
+    - "nstemi_high_risk"
+  stroke:
+    - "stroke_tpa_eligible"
+    - "stroke_thrombectomy"
+  aki:
+    - "contrast_aki_prevention_basic"
+    - "aki_stage1_basic"
+
+# Agents to compare
+agents:
+  - agent_id: "llm_assist"
+    config_path: "configs/agents/llm_assist.yaml"
+
+  - agent_id: "oracle"
+    config_path: "configs/agents/oracle.yaml"
+
+  - agent_id: "rag_dense"
+    config_path: "configs/agents/rag_dense.yaml"
+
+# Budget constraints (for fair comparison)
+budget:
+  enforce_budget_matching: true
+  budget_limit_tokens: 50000
+  budget_limit_tool_calls: 100
+
+# Experiment settings
+settings:
+  num_runs_per_scenario: 1
+  save_logs: true
+  save_scores: true
+  output_dir: "results/semantic_layer_benchmark"

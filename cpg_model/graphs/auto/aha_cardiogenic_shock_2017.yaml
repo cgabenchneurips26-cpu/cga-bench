@@ -1,0 +1,266 @@
+graph_id: aha_cardiogenic_shock_2017
+guideline_name: AHA/ACC 2017 Clinical Expert Consensus on Cardiogenic Shock
+version: '2017.1'
+metadata:
+  source: AHA/ACC Cardiogenic Shock Scientific Statement 2017
+  doi: 10.1161/CIR.0000000000000525
+  journal: Circulation
+  recommendation_system: AHA Class/Level
+  description: Expert consensus on cardiogenic shock management including pharmacologic support, mechanical circulatory support,
+    and revascularization
+  key_evidence: 'SHOCK trial: early revascularization reduces 6-month mortality (50% vs 63%). Dobutamine first-line inotrope.
+    Norepinephrine preferred over dopamine (SOAP II trial).'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Cardiogenic Shock Recognition
+    description: 'Identify cardiogenic shock: hypotension (SBP<90), signs of end-organ hypoperfusion, assess etiology'
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - assess_perfusion_status
+    - order_ecg
+    allowed_actions:
+    - order_lab_troponin
+    - assess_perfusion_status
+    - order_lab_bnp
+    - order_ecg
+    - order_lab_cbc
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_lactate
+    - place_arterial_line
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 5
+      assess_perfusion_status: 10
+      order_ecg: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Cardiogenic Shock 2017
+    source_section: Initial Evaluation
+    source_page: null
+    source_quote: "DOI: 10.1161/CIR.0000000000000525\ne232\nABSTRACT: Cardiogenic shock is a high-acuity, potentially complex,\
+      \ \nand hemodynamically diverse state of end-organ hypoperfusion that is \nfrequently associated with multisystem organ\
+      \ failure. Despite improving \nsurvival in recent years, patient morbidity and mo"
+    next_nodes: []
+    conditional_next:
+      state.etiology == 'acs': acs_cardiogenic_shock
+      state.etiology == 'non_acs': hemodynamic_stabilization
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.467
+  hemodynamic_stabilization:
+    node_id: hemodynamic_stabilization
+    node_type: plan
+    name: Hemodynamic Stabilization
+    description: Cautious fluid challenge, inotrope initiation (dobutamine first-line), vasopressor if persistent hypotension
+    precondition: null
+    mandatory_actions:
+    - give_cautious_fluid_challenge_250ml
+    - start_inotrope_dobutamine
+    - order_echocardiography_bedside
+    allowed_actions:
+    - start_inotrope_dobutamine
+    - give_cautious_fluid_challenge_250ml
+    - order_lab_blood_gas
+    - assess_fluid_responsiveness
+    - place_central_line
+    - order_lab_lactate
+    - order_echocardiography_bedside
+    - monitor_urine_output
+    - place_arterial_line
+    - start_vasopressor_norepinephrine
+    forbidden_actions:
+    - give_aggressive_fluid_bolus_over_500ml
+    - start_vasopressor_without_volume_assessment
+    deadlines:
+      give_cautious_fluid_challenge_250ml: 15
+      start_inotrope_dobutamine: 30
+      order_echocardiography_bedside: 60
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: AHA/ACC Cardiogenic Shock 2017
+    source_section: 'Recommendation 2: Hemodynamic Stabilization'
+    source_page: null
+    source_quote: Inotropic support with dobutamine is reasonable as first-line therapy (Class IIa). Norepinephrine preferred
+      over dopamine for persistent hypotension (Class IIb)
+    next_nodes:
+    - mechanical_support_assessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.25
+  acs_cardiogenic_shock:
+    node_id: acs_cardiogenic_shock
+    node_type: plan
+    name: ACS-Related Cardiogenic Shock
+    description: Urgent revascularization for ACS etiology, hemodynamic support in parallel
+    precondition: state.etiology == 'acs'
+    mandatory_actions:
+    - start_inotrope_dobutamine
+    - activate_cath_lab_emergent
+    - give_aspirin_loading
+    - give_heparin_anticoagulation
+    allowed_actions:
+    - order_lab_troponin
+    - start_inotrope_dobutamine
+    - give_cautious_fluid_challenge_250ml
+    - give_aspirin_loading
+    - place_central_line
+    - order_lab_lactate
+    - order_echocardiography_bedside
+    - place_arterial_line
+    - start_vasopressor_norepinephrine
+    - activate_cath_lab_emergent
+    - give_heparin_anticoagulation
+    forbidden_actions:
+    - delay_revascularization_beyond_120min
+    - give_aggressive_fluid_bolus_over_500ml
+    deadlines:
+      start_inotrope_dobutamine: 30
+      activate_cath_lab_emergent: 60
+      give_aspirin_loading: 30
+      give_heparin_anticoagulation: 60
+    required_prior_actions:
+      activate_cath_lab_emergent:
+      - order_ecg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Cardiogenic Shock 2017
+    source_section: 'Recommendation 3: Revascularization in ACS'
+    source_page: null
+    source_quote: Emergency revascularization is recommended for ACS-related cardiogenic shock (Class I, Level B). SHOCK trial
+      demonstrated survival benefit with early revascularization
+    next_nodes:
+    - mechanical_support_assessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.286
+  mechanical_support_assessment:
+    node_id: mechanical_support_assessment
+    node_type: decision
+    name: Mechanical Circulatory Support Assessment
+    description: Assess need for IABP, Impella, or ECMO based on hemodynamic response
+    precondition: null
+    mandatory_actions:
+    - assess_hemodynamic_response
+    - assess_mcs_candidacy
+    allowed_actions:
+    - place_impella
+    - place_iabp
+    - order_lab_lactate
+    - initiate_va_ecmo
+    - assess_hemodynamic_response
+    - consult_cardiac_surgery
+    - order_echocardiography_bedside
+    - assess_mcs_candidacy
+    forbidden_actions: []
+    deadlines:
+      assess_hemodynamic_response: 120
+      assess_mcs_candidacy: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Cardiogenic Shock 2017
+    source_section: 'Recommendation 4: Mechanical Circulatory Support'
+    source_page: null
+    source_quote: Mechanical circulatory support is reasonable for patients with refractory cardiogenic shock (Class IIa,
+      Level B). IABP for selected ACS patients, Impella/ECMO for refractory cases
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: CS-REFRACTORY-MCS
+      condition: state.refractory_to_inotropes == True
+      effect:
+        type: REQUIRED
+        actions:
+        - initiate_va_ecmo
+        deadline_minutes: 180
+      severity: CRITICAL
+      description: Refractory cardiogenic shock despite inotropes/vasopressors warrants VA-ECMO consideration
+      evidence: Class I, Level B
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.353
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Monitoring & Reassessment
+    description: Serial hemodynamic monitoring, lactate clearance, organ perfusion assessment
+    precondition: null
+    mandatory_actions:
+    - monitor_hemodynamics_continuous
+    - remeasure_lactate_q2h
+    allowed_actions:
+    - remeasure_lactate_q2h
+    - monitor_hemodynamics_continuous
+    - assess_mental_status
+    - titrate_inotrope_vasopressor
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - monitor_urine_output
+    - order_echocardiography_follow_up
+    forbidden_actions: []
+    deadlines:
+      monitor_hemodynamics_continuous: 15
+      remeasure_lactate_q2h: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Cardiogenic Shock 2017
+    source_section: Monitoring
+    source_page: null
+    source_quote: Serial lactate monitoring to assess response to therapy. Target MAP >65 mmHg, urine output >0.5 mL/kg/h
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.182
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Escalation
+    description: Assess for ICU step-down, MCS weaning, or transplant evaluation
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - arrange_cardiac_rehabilitation
+    - assess_discharge_readiness
+    - wean_mcs
+    - continue_icu_care
+    - evaluate_transplant_candidacy
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Cardiogenic Shock 2017
+    source_section: Disposition
+    source_page: null
+    source_quote: "More complete descriptions of commonly \nused percutaneous MCS devices can be found in Sup-\nplemental\
+      \ Table 6. Extracorporeal Membrane Oxygenation\nPatients may require ECMO because of cardiac failure, \nrespiratory\
+      \ failure, or a combination thereof."
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.455

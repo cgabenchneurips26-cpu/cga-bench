@@ -1,0 +1,20 @@
+{
+  "experiment": "D_actionability",
+  "status": "prompt_patches_generated",
+  "instructions": "Run 8 scenarios with each patched prompt using rag_vllm agent. Save results to results/actionability_patch_{T,S,O}/ directories. Then re-run this experiment to analyze.",
+  "patches": {
+    "patch_T": "\n\nCRITICAL TIMING REQUIREMENT:\nAll mandatory actions must be completed within the guideline-specified time window. For sepsis, this means completing the Hour-1 Bundle (blood cultures, antibiotics, lactate, fluid resuscitation) within 60 minutes of presentation. For DKA, IV fluids must start within 15 minutes. For STEMI, cath lab activation within 10 minutes of ECG diagnosis. Delays in time-critical interventions are associated with increased mortality. Prioritize mandatory actions by deadline urgency.",
+    "patch_S": "\n\nCRITICAL SEQUENCE REQUIREMENT:\nActions must be performed in the correct clinical order. Always obtain blood cultures BEFORE administering antibiotics. In DKA, always check and correct potassium BEFORE starting insulin. In stroke, always obtain CT head BEFORE administering tPA. In chest pain, always obtain 12-lead ECG BEFORE giving aspirin. Violating these sequences can cause direct patient harm or mask important diagnostic information.",
+    "patch_O": "\n\nACTION SCOPE REQUIREMENT:\nOnly perform actions that are explicitly recommended in the clinical guideline for this specific condition. Do not order additional tests or treatments that are not part of the standard protocol, even if they seem clinically reasonable. Off-protocol actions waste resources, delay critical interventions, and may cause unnecessary harm. Stick strictly to the guideline-recommended action set."
+  },
+  "scenarios": [
+    "septic_shock_basic",
+    "septic_shock_penicillin_allergy",
+    "stemi_inferior_rv_trap",
+    "dka_moderate_basic",
+    "dka_hypokalemia_trap",
+    "stroke_tpa_eligible",
+    "contrast_aki_prevention_basic",
+    "aki_stage1_basic"
+  ]
+}

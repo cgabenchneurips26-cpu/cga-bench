@@ -1,0 +1,183 @@
+graph_id: aha_acc_aortic_dissection_2022
+guideline_name: aha_acc_aortic_dissection_2022
+version: '2024.1'
+metadata:
+  source: AHA/ACC Guideline for the Diagnosis and Management of Aortic Disease
+  doi: ''
+  recommendation_system: GRADE
+  description: Clinical workflow for the initial diagnosis and acute management of acute aortic syndromes (AAS) and aortic
+    pathology.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Diagnostic Assessment
+    description: Initial imaging for suspected acute aortic syndrome (AAS).
+    mandatory_actions:
+    - order_ct_scan
+    allowed_actions:
+    - order_ct_scan
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: aha_acc_aortic_dissection_2022
+    source_section: Diagnosis
+    source_page: null
+    source_quote: "In patients with a suspected AAS, CT is rec-\nommended for initial diagnostic imaging, given \nits wide\
+      \ availability, accuracy, and speed, as \nwell as the extent of anatomic detail it pro-\nvides.1-5\n2a\nC-LD\n2."
+    next_nodes: []
+    conditional_next:
+      state.aas_confirmed: acute_stabilization
+      state.bttai_confirmed: trauma_transfer
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.923
+  trauma_transfer:
+    node_id: trauma_transfer
+    node_type: action
+    name: Specialized Trauma Transfer
+    description: Transfer of blunt thoracic traumatic aortic injury (BTTAI) patients to expert centers.
+    mandatory_actions:
+    - transfer_to_specialized_trauma_center
+    allowed_actions:
+    - transfer_to_specialized_trauma_center
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: aha_acc_aortic_dissection_2022
+    source_section: BTTAI Management
+    source_page: null
+    source_quote: "In patients with BTTAI, management and \ntreatment at a trauma center with the facili-\nties and expertise\
+      \ to treat aortic pathology is \nrecommended."
+    next_nodes:
+    - acute_stabilization
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.917
+  acute_stabilization:
+    node_id: acute_stabilization
+    node_type: plan
+    name: Acute Hemodynamic Stabilization
+    description: Anti-impulse therapy and invasive monitoring for AAS.
+    mandatory_actions:
+    - initiate_anti_impulse_therapy
+    - place_arterial_line
+    - admit_to_icu
+    allowed_actions:
+    - initiate_anti_impulse_therapy
+    - place_arterial_line
+    - admit_to_icu
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: aha_acc_aortic_dissection_2022
+    source_section: Acute Management
+    source_page: null
+    source_quote: In patients presenting to the hospital with AAS, prompt treatment with anti-impulse therapy with invasive
+      monitoring of BP with an arterial line in an
+    next_nodes: []
+    conditional_next:
+      state.type_a_or_complicated: urgent_surgical_intervention
+      state.uncomplicated_type_a: prompt_surgical_repair
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  urgent_surgical_intervention:
+    node_id: urgent_surgical_intervention
+    node_type: action
+    name: Urgent Aortic Repair
+    description: Urgent repair for complicated IMH, ruptured PAU, or pregnancy-related type A dissection.
+    mandatory_actions:
+    - perform_urgent_aortic_repair
+    allowed_actions:
+    - perform_urgent_aortic_repair
+    - perform_urgent_cesarean_delivery
+    - initiate_fetal_monitoring
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: aha_acc_aortic_dissection_2022
+    source_section: Surgical Management
+    source_page: null
+    source_quote: In patients with complicated (Table 29) acute type A or type B aortic IMH, urgent repair is recommended.
+    next_nodes:
+    - post_op_monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  prompt_surgical_repair:
+    node_id: prompt_surgical_repair
+    node_type: action
+    name: Prompt Open Surgical Repair
+    description: Surgical repair for uncomplicated acute type A IMH.
+    mandatory_actions:
+    - perform_prompt_open_surgical_repair
+    allowed_actions:
+    - perform_prompt_open_surgical_repair
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: aha_acc_aortic_dissection_2022
+    source_section: Surgical Management
+    source_page: null
+    source_quote: "In patients with complicated (Table 29) acute \ntype A or type B aortic IMH, urgent repair is \nrecommended.1-3\n\
+      1\nB-NR\n2. In patients with uncomplicated acute type A \nIMH, prompt open surgical repair is recom-\nmended.1,4-6\n\
+      2b\nC-LD\nIn selected patients with uncomplicated acute \ntype A IMH who are at in"
+    next_nodes:
+    - post_op_monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 1.0
+  post_op_monitoring:
+    node_id: post_op_monitoring
+    node_type: plan
+    name: Long-term BP Control and Monitoring
+    description: Post-intervention blood pressure management for TAA patients.
+    mandatory_actions:
+    - prescribe_antihypertensive_medication
+    allowed_actions:
+    - prescribe_antihypertensive_medication
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: aha_acc_aortic_dissection_2022
+    source_section: Medical Management
+    source_page: null
+    source_quote: In patients with TAA and an average systolic BP (SBP) of ≥130 mm Hg or an average diastolic BP (DBP) of
+      ≥80 mm Hg, the use of antihypertensive medicat
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 87
+  actionable_count: 78
+  validation_errors: 3
+  generated_at: '2026-04-29T18:05:24.892645+00:00'

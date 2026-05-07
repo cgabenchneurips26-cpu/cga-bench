@@ -1,0 +1,241 @@
+{
+  "scenario_id": "ssc_se_trap_adrenal_insufficiency_steroids",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.41666666666666663,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.23040000000000002,
+  "total_violations": 7,
+  "sub_scores": {
+    "C1_path_selection": 0.9166666666666666,
+    "C2_mandatory_completion": 0.5,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 1.0,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "deviation": 1,
+    "omission": 6
+  },
+  "actions_count": 9,
+  "actions": [
+    {
+      "action_id": "assess_infection_source",
+      "timestamp_minutes": 0.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Mandatory action: Identify potential source of infection, especially critical in a patient with adrenal insufficiency who is at risk for adrenal crisis and sepsis. Must be completed within 60-minute deadline."
+    },
+    {
+      "action_id": "assess_organ_dysfunction",
+      "timestamp_minutes": 5.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Mandatory action: Evaluate for signs of organ dysfunction to identify severity of illness and guide management. Essential in adrenal insufficiency where hemodynamic instability and multi-organ dysfunction can develop rapidly."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 10.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Optional but clinically indicated: Establish a thorough baseline vital signs assessment at time zero to monitor for early deterioration, particularly important in a patient with adrenal insufficiency who may decompensate."
+    },
+    {
+      "action_id": "arterial_line_monitoring",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Patient has adrenal insufficiency which puts them at risk for hemodynamic instability. Arterial line provides continuous blood pressure monitoring and facilitates repeated blood sampling for trending labs."
+    },
+    {
+      "action_id": "central_line_access",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Central line access is indicated for a patient with adrenal insufficiency to facilitate vasopressor administration if needed, CVP monitoring, and reliable IV access for stress-dose steroids and other medications."
+    },
+    {
+      "action_id": "determine_disposition",
+      "timestamp_minutes": 25.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient with adrenal insufficiency requires determination of appropriate level of care (ICU vs ward) based on clinical trajectory and response to initial interventions."
+    },
+    {
+      "action_id": "give_crystalloid_fluid",
+      "timestamp_minutes": 30.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "crystalloid",
+        "dose": "standard"
+      },
+      "justification": "Patient with adrenal insufficiency may have relative volume depletion; IV fluid support is appropriate during initial assessment and stabilization."
+    },
+    {
+      "action_id": "give_broad_spectrum_antibiotics",
+      "timestamp_minutes": 35.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "antibiotic",
+        "dose": "standard"
+      },
+      "justification": "Adrenal insufficiency patients are at risk for adrenal crisis triggered by infection; empiric broad-spectrum antibiotics are indicated if infection is suspected as a precipitant."
+    },
+    {
+      "action_id": "admit_to_icu",
+      "timestamp_minutes": 40.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Patient with adrenal insufficiency requires close monitoring for adrenal crisis, hemodynamic instability, and stress response; ICU admission is warranted for observation and management."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "2428b5cb-c0d9-4e93-a4e5-96f974fbd1d4",
+      "violation_type": "deviation",
+      "timestamp_minutes": 15.0,
+      "action_involved": "order_lab_unknown",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: order_lab_unknown",
+      "guideline_reference": "Sepsis Recognition"
+    },
+    {
+      "violation_id": "27e900d9-bfd1-45f4-9884-849337805e0e",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "give_crystalloid_30ml_kg",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_crystalloid_30ml_kg",
+      "guideline_reference": "Sepsis Recognition"
+    },
+    {
+      "violation_id": "dd67149b-8507-4164-9c65-e1e0820f084f",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "give_stress_dose_steroids",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_stress_dose_steroids",
+      "guideline_reference": "Sepsis Recognition"
+    },
+    {
+      "violation_id": "a01f2214-05c9-47ce-a5e6-09f10272446f",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "order_lab_blood_culture",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_lab_blood_culture",
+      "guideline_reference": "Sepsis Recognition"
+    },
+    {
+      "violation_id": "7ac1d7e8-0529-4e12-b149-16e9f4e8f7fc",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "order_lab_lactate",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_lab_lactate",
+      "guideline_reference": "Sepsis Recognition"
+    },
+    {
+      "violation_id": "23dd3872-d97b-4e31-aa19-85bfdeb79064",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "remeasure_lactate_if_elevated",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: remeasure_lactate_if_elevated",
+      "guideline_reference": "Sepsis Recognition"
+    },
+    {
+      "violation_id": "5ce903a8-0c68-4154-af94-26de92b6557f",
+      "violation_type": "omission",
+      "timestamp_minutes": 45.0,
+      "action_involved": null,
+      "expected_action": "start_vasopressor_if_hypotensive",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_ssc_se_trap_adrenal_insufficiency_steroids",
+      "node_at_violation": "initial_recognition",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: start_vasopressor_if_hypotensive",
+      "guideline_reference": "Sepsis Recognition"
+    }
+  ],
+  "expected_actions": [
+    "admit_to_icu",
+    "assess_infection_source",
+    "assess_organ_dysfunction",
+    "determine_disposition",
+    "give_broad_spectrum_antibiotics",
+    "give_crystalloid_30ml_kg",
+    "give_stress_dose_steroids",
+    "order_lab_blood_culture",
+    "order_lab_lactate",
+    "reassess_perfusion",
+    "remeasure_lactate_if_elevated",
+    "start_vasopressor_if_hypotensive"
+  ],
+  "forbidden_actions": [
+    "admit_to_ward",
+    "delay_antibiotics",
+    "discharge_home",
+    "give_high_dose_dexamethasone_in_septic_shock",
+    "give_vasopressor_without_fluid",
+    "withhold_fluid_in_hypotension",
+    "withhold_steroids_in_refractory_shock"
+  ],
+  "total_duration_minutes": 45.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 3,
+  "total_tokens": 6435,
+  "elapsed_seconds": 113.72
+}

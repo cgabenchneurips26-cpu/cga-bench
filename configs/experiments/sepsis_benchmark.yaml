@@ -1,0 +1,70 @@
+# Sepsis Scenario Benchmark Experiment
+# Focused evaluation on SSC 2021 Sepsis Guidelines
+
+experiment:
+  experiment_id: "sepsis_benchmark_v1"
+  description: |
+    Comprehensive evaluation of agent performance on sepsis scenarios.
+    Based on Surviving Sepsis Campaign 2021 Hour-1 Bundle.
+
+# Scenarios from sepsis_scenarios.yaml
+scenarios:
+  - "septic_shock_basic"
+  - "septic_shock_penicillin_allergy"
+  - "sepsis_without_shock"
+  - "septic_shock_ckd"
+
+# Agents to evaluate
+agents:
+  - agent_id: "rag_gpt4"
+    config_path: "configs/agents/rag_gpt4.yaml"
+
+  - agent_id: "planner_gpt4"
+    config_path: "configs/agents/planner_gpt4.yaml"
+    cpg_graph_path: "cga_bench/cpg_model/graphs/ssc_sepsis_hour1_bundle.yaml"
+
+  - agent_id: "reflection_gpt4"
+    config_path: "configs/agents/reflection_gpt4.yaml"
+    cpg_graph_path: "cga_bench/cpg_model/graphs/ssc_sepsis_hour1_bundle.yaml"
+
+  - agent_id: "oracle"
+    config_path: "configs/agents/oracle.yaml"
+    cpg_graph_path: "cga_bench/cpg_model/graphs/ssc_sepsis_hour1_bundle.yaml"
+
+# Budget constraints
+budget:
+  enforce_budget_matching: true
+  budget_limit_tokens: 100000
+  budget_limit_tool_calls: 50
+
+# Experiment settings
+settings:
+  num_runs_per_scenario: 5
+  save_logs: true
+  save_scores: true
+  output_dir: "results/sepsis_benchmark"
+
+# Key performance indicators for sepsis
+kpi:
+  critical_actions:
+    - action: "order_lab_lactate"
+      deadline_minutes: 60
+      weight: 1.5
+
+    - action: "order_blood_culture"
+      deadline_minutes: 60
+      weight: 1.5
+      must_precede: "give_antibiotics"
+
+    - action: "give_broad_spectrum_antibiotics"
+      deadline_minutes: 60
+      weight: 2.0
+
+    - action: "give_crystalloid_30ml_kg"
+      condition: "hypotension_or_lactate_gte_4"
+      deadline_minutes: 60
+      weight: 1.5
+
+    - action: "start_vasopressor"
+      condition: "map_lt_65_after_fluids"
+      weight: 1.5

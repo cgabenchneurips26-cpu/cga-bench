@@ -1,0 +1,251 @@
+graph_id: bts_pleural_disease_2023
+guideline_name: BTS 2023 Guideline for Pleural Disease
+version: '2023.1'
+metadata:
+  source: British Thoracic Society Pleural Disease Guideline 2023
+  doi: 10.1136/thorax-2022-219784
+  journal: Thorax
+  recommendation_system: SIGN Grading
+  description: Evidence-based guideline for diagnosis and management of pleural effusions including parapneumonic, empyema,
+    and malignant effusions
+  key_evidence: 'Light''s criteria: sensitivity 98% for exudates. pH<7.2 predicts need for drainage. MIST2 trial: intrapleural
+    tPA/DNase reduces surgical referral. TIME2 trial: IPC non-inferior to pleurodesis.'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: clinical_assessment
+nodes:
+  clinical_assessment:
+    node_id: clinical_assessment
+    node_type: decision
+    name: Pleural Effusion Clinical Assessment
+    description: History, physical exam, imaging to confirm effusion and assess size
+    precondition: null
+    mandatory_actions:
+    - assess_respiratory_status
+    - order_imaging_chest_xray
+    - assess_vital_signs
+    allowed_actions:
+    - order_imaging_chest_ultrasound
+    - order_lab_total_protein_serum
+    - order_lab_cbc
+    - assess_vital_signs
+    - assess_respiratory_status
+    - order_lab_bmp
+    - order_imaging_chest_xray
+    - order_lab_ldh_serum
+    - order_lab_albumin
+    - assess_clinical_context
+    forbidden_actions: []
+    deadlines:
+      assess_respiratory_status: 30
+      order_imaging_chest_xray: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS Pleural Disease Guidelines 2023
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: Chest radiograph should be performed in all patients with suspected pleural effusion. Thoracic ultrasound
+      is recommended to guide intervention
+    next_nodes:
+    - diagnostic_thoracentesis
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.231
+  diagnostic_thoracentesis:
+    node_id: diagnostic_thoracentesis
+    node_type: plan
+    name: Diagnostic Thoracentesis & Light's Criteria
+    description: Ultrasound-guided thoracentesis for fluid analysis; classify via Light's criteria
+    precondition: null
+    mandatory_actions:
+    - perform_ultrasound_guided_thoracentesis
+    - send_fluid_protein_ldh_ph
+    - send_fluid_cell_count_differential
+    allowed_actions:
+    - send_fluid_protein_ldh_ph
+    - order_lab_total_protein_serum
+    - send_fluid_cell_count_differential
+    - send_fluid_cytology
+    - perform_ultrasound_guided_thoracentesis
+    - send_fluid_culture_gram_stain
+    - order_lab_ldh_serum
+    - send_fluid_amylase
+    - send_fluid_glucose
+    forbidden_actions:
+    - thoracentesis_without_ultrasound_guidance
+    deadlines:
+      perform_ultrasound_guided_thoracentesis: 240
+      send_fluid_protein_ldh_ph: 240
+    required_prior_actions:
+      send_fluid_protein_ldh_ph:
+      - perform_ultrasound_guided_thoracentesis
+      send_fluid_cell_count_differential:
+      - perform_ultrasound_guided_thoracentesis
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: BTS Pleural Disease Guidelines 2023
+    source_section: 'Recommendation 1-2: Diagnostic Thoracentesis'
+    source_page: null
+    source_quote: 'Thoracic ultrasound should be used to guide pleural intervention (Grade A). Light''s criteria: exudate
+      if protein ratio >0.5 OR LDH ratio >0.6 OR LDH >2/3 upper limit'
+    next_nodes: []
+    conditional_next:
+      state.fluid_ph < 7.2: complicated_parapneumonic_empyema
+      state.effusion_type == 'malignant': malignant_effusion_management
+      state.effusion_type == 'transudative': transudative_management
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.133
+  transudative_management:
+    node_id: transudative_management
+    node_type: plan
+    name: Transudative Effusion Management
+    description: Treat underlying cause (heart failure, cirrhosis); no chest drain unless symptomatic
+    precondition: state.effusion_type == 'transudative'
+    mandatory_actions:
+    - treat_underlying_cause
+    - reassess_respiratory_status
+    allowed_actions:
+    - order_imaging_chest_xray_follow_up
+    - treat_underlying_cause
+    - therapeutic_thoracentesis_if_symptomatic
+    - give_diuretics_if_heart_failure
+    - reassess_respiratory_status
+    forbidden_actions: []
+    deadlines:
+      treat_underlying_cause: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS Pleural Disease Guidelines 2023
+    source_section: 'Recommendation 3: Transudative Effusion'
+    source_page: null
+    source_quote: Transudative effusions should be managed by treating the underlying condition. Therapeutic aspiration for
+      symptomatic relief when needed
+    next_nodes:
+    - follow_up
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0
+  complicated_parapneumonic_empyema:
+    node_id: complicated_parapneumonic_empyema
+    node_type: plan
+    name: Complicated Parapneumonic Effusion / Empyema
+    description: pH<7.2 or frank pus requires urgent chest drain + antibiotics + intrapleural fibrinolytics
+    precondition: state.fluid_ph < 7.2
+    mandatory_actions:
+    - insert_chest_drain_urgent
+    - give_broad_spectrum_antibiotics
+    - send_fluid_culture_gram_stain
+    allowed_actions:
+    - monitor_drain_output
+    - insert_chest_drain_urgent
+    - order_imaging_ct_chest_contrast
+    - order_lab_cbc
+    - give_intrapleural_tpa_dnase
+    - give_broad_spectrum_antibiotics
+    - order_lab_crp
+    - send_fluid_culture_gram_stain
+    - request_thoracic_surgery_consultation
+    forbidden_actions: []
+    deadlines:
+      insert_chest_drain_urgent: 60
+      give_broad_spectrum_antibiotics: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS Pleural Disease Guidelines 2023
+    source_section: 'Recommendation 4-5: Parapneumonic / Empyema'
+    source_page: null
+    source_quote: Pleural fluid pH <7.2 indicates complicated parapneumonic effusion requiring chest drain (Grade B). Intrapleural
+      tPA/DNase reduces surgical referral (MIST2 trial)
+    next_nodes:
+    - follow_up
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: PLEURAL-FIBRINOLYTICS
+      condition: state.multiloculated == True
+      effect:
+        type: REQUIRED
+        actions:
+        - give_intrapleural_tpa_dnase
+        deadline_minutes: 1440
+      severity: HIGH
+      description: Multiloculated empyema benefits from intrapleural tPA/DNase (MIST2 trial)
+      evidence: Class I, Level B
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.056
+  malignant_effusion_management:
+    node_id: malignant_effusion_management
+    node_type: plan
+    name: Malignant Pleural Effusion Management
+    description: Symptom relief via IPC or talc pleurodesis for recurrent malignant effusion
+    precondition: state.effusion_type == 'malignant'
+    mandatory_actions:
+    - discuss_management_options_with_patient
+    - therapeutic_thoracentesis_if_symptomatic
+    allowed_actions:
+    - order_imaging_ct_chest_contrast
+    - perform_talc_pleurodesis
+    - insert_indwelling_pleural_catheter
+    - request_oncology_consultation
+    - assess_performance_status
+    - send_fluid_cytology
+    - discuss_management_options_with_patient
+    - therapeutic_thoracentesis_if_symptomatic
+    forbidden_actions: []
+    deadlines:
+      therapeutic_thoracentesis_if_symptomatic: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS Pleural Disease Guidelines 2023
+    source_section: 'Recommendation 6: Malignant Effusion'
+    source_page: null
+    source_quote: IPC and talc pleurodesis are both effective for recurrent malignant effusion (TIME2 trial). Patient preference
+      should guide choice
+    next_nodes:
+    - follow_up
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.071
+  follow_up:
+    node_id: follow_up
+    node_type: enquiry
+    name: Follow-Up & Reassessment
+    description: Serial imaging, drain assessment, treatment response evaluation
+    precondition: null
+    mandatory_actions:
+    - order_imaging_chest_xray_follow_up
+    - reassess_respiratory_status
+    allowed_actions:
+    - monitor_drain_output
+    - order_imaging_chest_xray_follow_up
+    - order_lab_cbc
+    - order_lab_crp
+    - assess_drain_removal_criteria
+    - reassess_respiratory_status
+    forbidden_actions: []
+    deadlines:
+      order_imaging_chest_xray_follow_up: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: BTS Pleural Disease Guidelines 2023
+    source_section: Follow-Up
+    source_page: null
+    source_quote: Follow-up CXR recommended after intervention. Drain removal when output <200 mL/day and lung re-expanded
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0

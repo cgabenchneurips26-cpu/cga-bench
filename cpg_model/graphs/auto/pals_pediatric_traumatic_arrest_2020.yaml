@@ -1,0 +1,232 @@
+graph_id: pals_pediatric_traumatic_arrest_2020
+guideline_name: 2020 AHA PALS Guidelines - Pediatric Traumatic Arrest
+version: '2020.1'
+metadata:
+  source: AHA PALS 2020 Guidelines
+  doi: 10.1161/CIR.0000000000000901
+  journal: Circulation
+  recommendation_system: AHA Class/Level
+  description: 'Evidence-based guideline for pediatric traumatic arrest focusing on reversible causes: hemorrhage, tension
+    pneumo, tamponade'
+  key_evidence: Limit crystalloid to 20 mL/kg. TXA within 3h reduces mortality (CRASH-2). Bilateral needle decompression for
+    suspected tension pneumo. Atropine NOT recommended.
+  target_population:
+    age_group: pediatric
+    max_age: 17
+    min_age: 0
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Pediatric Traumatic Arrest Recognition
+    description: 'Identify reversible causes: hypovolemia, tension pneumothorax, cardiac tamponade'
+    precondition: null
+    mandatory_actions:
+    - assess_airway_breathing
+    - assess_circulation
+    - identify_reversible_causes
+    allowed_actions:
+    - assess_breath_sounds_bilateral
+    - establish_iv_access
+    - assess_airway_breathing
+    - assess_external_hemorrhage
+    - assess_circulation
+    - assess_jugular_venous_distension
+    - establish_io_access
+    - identify_reversible_causes
+    forbidden_actions: []
+    deadlines:
+      assess_airway_breathing: 5
+      assess_circulation: 5
+      identify_reversible_causes: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS Pediatric Trauma 2020
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: 'Traumatic arrest survival depends on rapid identification and treatment of reversible causes: airway obstruction,
+      tension pneumo, tamponade, hemorrhage'
+    next_nodes:
+    - hemorrhage_control
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.2
+  hemorrhage_control:
+    node_id: hemorrhage_control
+    node_type: plan
+    name: Hemorrhage Control & Massive Transfusion
+    description: Direct pressure, tourniquets, pelvic binder, massive transfusion protocol
+    precondition: null
+    mandatory_actions:
+    - apply_direct_pressure_external_bleeding
+    - apply_pelvic_binder_if_pelvic_fracture
+    - activate_massive_transfusion_protocol
+    allowed_actions:
+    - apply_direct_pressure_external_bleeding
+    - give_txa_tranexamic_acid_15mg_kg
+    - give_prbc_o_negative_emergency
+    - activate_massive_transfusion_protocol
+    - apply_pelvic_binder_if_pelvic_fracture
+    - order_lab_type_and_crossmatch
+    - apply_tourniquet_if_extremity_hemorrhage
+    - establish_io_access
+    - order_bedside_fast_exam
+    forbidden_actions:
+    - excessive_crystalloid_beyond_20ml_kg
+    deadlines:
+      apply_direct_pressure_external_bleeding: 5
+      activate_massive_transfusion_protocol: 15
+      give_txa_tranexamic_acid_15mg_kg: 20
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS Pediatric Trauma 2020
+    source_section: 'Recommendation 1-2: Hemorrhage Control'
+    source_page: null
+    source_quote: Limit crystalloid to 20 mL/kg. Massive transfusion protocol (1:1:1 PRBC:FFP:platelets) for ongoing hemorrhage.
+      TXA within 3h reduces mortality
+    next_nodes:
+    - airway_breathing
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.071
+  airway_breathing:
+    node_id: airway_breathing
+    node_type: plan
+    name: Airway Management & Needle Decompression
+    description: Secure airway, bilateral needle decompression if tension pneumo suspected
+    precondition: null
+    mandatory_actions:
+    - secure_airway_intubation
+    - bilateral_needle_decompression_if_suspected_pneumo
+    allowed_actions:
+    - bilateral_needle_decompression_if_suspected_pneumo
+    - ventilate_100_percent_o2
+    - place_chest_tube_if_pneumothorax
+    - assess_breath_sounds_bilateral
+    - order_imaging_chest_xray
+    - secure_airway_intubation
+    forbidden_actions: []
+    deadlines:
+      secure_airway_intubation: 10
+      bilateral_needle_decompression_if_suspected_pneumo: 5
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: AHA PALS Pediatric Trauma 2020
+    source_section: 'Recommendation 3: Airway & Breathing'
+    source_page: null
+    source_quote: Bilateral needle decompression recommended if tension pneumothorax suspected in traumatic arrest (Class
+      IIa, Level C). Do not delay for imaging
+    next_nodes:
+    - circulation
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.143
+  circulation:
+    node_id: circulation
+    node_type: plan
+    name: Circulation & Cardiac Tamponade
+    description: Assess for tamponade via FAST, resuscitative thoracotomy consideration
+    precondition: null
+    mandatory_actions:
+    - order_bedside_fast_exam
+    - give_prbc_o_negative_emergency
+    allowed_actions:
+    - give_platelets
+    - assess_for_pericardial_effusion
+    - give_calcium_chloride
+    - consider_resuscitative_thoracotomy
+    - correct_hypothermia
+    - give_ffp
+    - give_prbc_o_negative_emergency
+    - correct_acidosis
+    - order_bedside_fast_exam
+    forbidden_actions:
+    - routine_atropine_traumatic_arrest
+    deadlines:
+      order_bedside_fast_exam: 10
+      give_prbc_o_negative_emergency: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS Pediatric Trauma 2020
+    source_section: 'Recommendation 4-5: Circulation'
+    source_page: null
+    source_quote: FAST exam to identify cardiac tamponade or intra-abdominal bleeding. Resuscitative thoracotomy reasonable
+      in select cases (penetrating trauma, short transport time)
+    next_nodes:
+    - surgical_decision
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.111
+  surgical_decision:
+    node_id: surgical_decision
+    node_type: decision
+    name: Surgical Intervention Decision
+    description: Assess need for emergent OR, resuscitative thoracotomy, or continued resuscitation
+    precondition: null
+    mandatory_actions:
+    - assess_need_for_emergent_or
+    allowed_actions:
+    - continue_resuscitation
+    - assess_need_for_emergent_or
+    - perform_resuscitative_thoracotomy
+    - consult_trauma_surgery
+    - proceed_to_or_emergent
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS Pediatric Trauma 2020
+    source_section: Surgical Decision
+    source_page: null
+    source_quote: Resuscitative thoracotomy survival <5% in blunt trauma, up to 10-15% in penetrating with short arrest time
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.333
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Post-Resuscitation Monitoring
+    description: Monitor for secondary brain injury, coagulopathy, hypothermia, ongoing bleeding
+    precondition: null
+    mandatory_actions:
+    - monitor_vital_signs_continuous
+    - assess_neurological_status
+    allowed_actions:
+    - rewarm_if_hypothermic
+    - order_imaging_ct_head
+    - order_lab_blood_gas
+    - assess_neurological_status
+    - order_lab_coagulation
+    - order_imaging_ct_chest_abdomen_pelvis
+    - order_lab_lactate
+    - monitor_vital_signs_continuous
+    forbidden_actions: []
+    deadlines:
+      monitor_vital_signs_continuous: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS Pediatric Trauma 2020
+    source_section: Post-Resuscitation Care
+    source_page: null
+    source_quote: Prevent secondary brain injury (hypoxia, hypotension, hypoglycemia). Maintain normothermia. Correct coagulopathy
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.091

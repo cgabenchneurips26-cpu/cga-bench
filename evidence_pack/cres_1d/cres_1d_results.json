@@ -1,0 +1,505 @@
+{
+  "meta": {
+    "experiment": "CRES-1D: Structural Feature Classifier (leakage-clean v3)",
+    "n_episodes": 14826,
+    "n_features_original": 59,
+    "n_features_clean": 49,
+    "n_features_covfree": 33,
+    "n_violation_features_removed": 10,
+    "n_covfree_features_removed": 26,
+    "feature_names_clean": [
+      "n_actions",
+      "n_expected",
+      "n_performed_not_expected",
+      "n_expected_not_performed",
+      "coverage_ratio",
+      "time_mean",
+      "time_std",
+      "time_min",
+      "time_max",
+      "time_span",
+      "mean_inter_action_gap",
+      "std_inter_action_gap",
+      "time_first_action",
+      "time_last_action",
+      "frac_actions_q1",
+      "frac_actions_q2",
+      "frac_actions_q3",
+      "frac_actions_q4",
+      "n_timing_jumps",
+      "n_out_of_order_pairs",
+      "out_of_order_ratio",
+      "kendall_tau",
+      "lis_ratio",
+      "lis_length",
+      "n_ordered_pairs",
+      "n_ordering_pairs_total",
+      "ordering_concordance",
+      "ordering_discordance",
+      "expected_rank_coverage",
+      "action_type_diversity",
+      "n_unique_action_types",
+      "repeated_action_fraction",
+      "early_action_bias",
+      "late_action_fraction",
+      "med_before_lab_score",
+      "burst_density",
+      "n_med_actions",
+      "n_lab_actions",
+      "n_mandatory_performed",
+      "coverage",
+      "f1",
+      "precision",
+      "recall",
+      "jaccard",
+      "asc_coverage",
+      "asc_n_actions",
+      "asc_n_expected",
+      "asc_precision",
+      "asc_recall"
+    ],
+    "feature_names_covfree": [
+      "n_actions",
+      "time_mean",
+      "time_std",
+      "time_min",
+      "time_max",
+      "time_span",
+      "mean_inter_action_gap",
+      "std_inter_action_gap",
+      "time_first_action",
+      "time_last_action",
+      "frac_actions_q1",
+      "frac_actions_q2",
+      "frac_actions_q3",
+      "frac_actions_q4",
+      "n_timing_jumps",
+      "n_out_of_order_pairs",
+      "out_of_order_ratio",
+      "kendall_tau",
+      "lis_ratio",
+      "lis_length",
+      "n_ordered_pairs",
+      "n_ordering_pairs_total",
+      "ordering_concordance",
+      "ordering_discordance",
+      "action_type_diversity",
+      "n_unique_action_types",
+      "repeated_action_fraction",
+      "early_action_bias",
+      "late_action_fraction",
+      "med_before_lab_score",
+      "burst_density",
+      "n_med_actions",
+      "n_lab_actions"
+    ],
+    "violation_features_removed": [
+      "n_violations_total",
+      "n_omission",
+      "n_commission",
+      "n_timing_viol",
+      "n_sequence",
+      "n_deviation",
+      "n_hard_violations",
+      "frac_hard_violations",
+      "max_violation_severity",
+      "mean_violation_severity"
+    ],
+    "coverage_features_removed": [
+      "coverage_ratio",
+      "coverage",
+      "f1",
+      "precision",
+      "recall",
+      "jaccard",
+      "asc_coverage",
+      "asc_n_actions",
+      "asc_n_expected",
+      "asc_precision",
+      "asc_recall",
+      "n_expected_not_performed",
+      "n_performed_not_expected",
+      "expected_rank_coverage",
+      "n_mandatory_performed",
+      "n_expected"
+    ],
+    "asc_feature_names": [
+      "asc_coverage",
+      "asc_n_actions",
+      "asc_n_expected",
+      "asc_precision",
+      "asc_recall"
+    ],
+    "classifier": "GradientBoostingClassifier(n_estimators=200, max_depth=5)",
+    "cv": "StratifiedKFold(n_splits=5, shuffle=True, random_state=42)",
+    "label": "TCC verdict: 1=no hard violations (pass), 0=has hard violations (fail)",
+    "leakage_fix": "v1 included 10 violation-count features derived from the assessor's post-hoc scoring output.  Since the label IS the violation verdict, these features mechanically encoded the label (AUC=1.0).  v2 removes all 10 violation features so only agent-observable trace features (actions, timing, ordering, coverage) remain.  v3 adds a coverage_free_model that also removes 16 coverage-adjacent features to isolate the contribution of pure temporal/ordering structure."
+  },
+  "label_distribution": {
+    "n_pass": 7651,
+    "n_fail": 7175,
+    "pass_rate": 0.516052880075543
+  },
+  "clean_model": {
+    "auc_mean": 0.995272,
+    "auc_std": 0.000468,
+    "fold_aucs": [
+      0.995078,
+      0.994576,
+      0.995274,
+      0.995418,
+      0.996015
+    ],
+    "n_features": 49,
+    "feature_names_used": [
+      "n_actions",
+      "n_expected",
+      "n_performed_not_expected",
+      "n_expected_not_performed",
+      "coverage_ratio",
+      "time_mean",
+      "time_std",
+      "time_min",
+      "time_max",
+      "time_span",
+      "mean_inter_action_gap",
+      "std_inter_action_gap",
+      "time_first_action",
+      "time_last_action",
+      "frac_actions_q1",
+      "frac_actions_q2",
+      "frac_actions_q3",
+      "frac_actions_q4",
+      "n_timing_jumps",
+      "n_out_of_order_pairs",
+      "out_of_order_ratio",
+      "kendall_tau",
+      "lis_ratio",
+      "lis_length",
+      "n_ordered_pairs",
+      "n_ordering_pairs_total",
+      "ordering_concordance",
+      "ordering_discordance",
+      "expected_rank_coverage",
+      "action_type_diversity",
+      "n_unique_action_types",
+      "repeated_action_fraction",
+      "early_action_bias",
+      "late_action_fraction",
+      "med_before_lab_score",
+      "burst_density",
+      "n_med_actions",
+      "n_lab_actions",
+      "n_mandatory_performed",
+      "coverage",
+      "f1",
+      "precision",
+      "recall",
+      "jaccard",
+      "asc_coverage",
+      "asc_n_actions",
+      "asc_n_expected",
+      "asc_precision",
+      "asc_recall"
+    ]
+  },
+  "asc_only_model": {
+    "auc_mean": 0.946831,
+    "auc_std": 0.001896,
+    "fold_aucs": [
+      0.944377,
+      0.949605,
+      0.946959,
+      0.948045,
+      0.945169
+    ],
+    "feature_names_used": [
+      "asc_coverage",
+      "asc_n_actions",
+      "asc_n_expected",
+      "asc_precision",
+      "asc_recall"
+    ]
+  },
+  "coverage_free_model": {
+    "description": "Clean model with additional removal of 16 coverage-adjacent features (coverage_ratio, coverage, f1, precision, recall, jaccard, asc_*, n_expected_not_performed, n_performed_not_expected, expected_rank_coverage, n_mandatory_performed, n_expected). Tests whether pure temporal/ordering structure drives AUC.",
+    "auc_mean": 0.99422,
+    "auc_std": 0.000759,
+    "fold_aucs": [
+      0.993622,
+      0.993399,
+      0.993928,
+      0.994692,
+      0.995461
+    ],
+    "n_features": 33,
+    "feature_names_used": [
+      "n_actions",
+      "time_mean",
+      "time_std",
+      "time_min",
+      "time_max",
+      "time_span",
+      "mean_inter_action_gap",
+      "std_inter_action_gap",
+      "time_first_action",
+      "time_last_action",
+      "frac_actions_q1",
+      "frac_actions_q2",
+      "frac_actions_q3",
+      "frac_actions_q4",
+      "n_timing_jumps",
+      "n_out_of_order_pairs",
+      "out_of_order_ratio",
+      "kendall_tau",
+      "lis_ratio",
+      "lis_length",
+      "n_ordered_pairs",
+      "n_ordering_pairs_total",
+      "ordering_concordance",
+      "ordering_discordance",
+      "action_type_diversity",
+      "n_unique_action_types",
+      "repeated_action_fraction",
+      "early_action_bias",
+      "late_action_fraction",
+      "med_before_lab_score",
+      "burst_density",
+      "n_med_actions",
+      "n_lab_actions"
+    ],
+    "delta_vs_asc": {
+      "point_estimate": 0.047389,
+      "ci_95_lo": 0.038923,
+      "ci_95_hi": 0.044026,
+      "bootstrap_n": 1000
+    },
+    "gbm_feature_importance": [
+      {
+        "rank": 1,
+        "feature": "n_med_actions",
+        "importance": 0.1778933855614702
+      },
+      {
+        "rank": 2,
+        "feature": "n_unique_action_types",
+        "importance": 0.1678710829233161
+      },
+      {
+        "rank": 3,
+        "feature": "action_type_diversity",
+        "importance": 0.12326785113972898
+      },
+      {
+        "rank": 4,
+        "feature": "n_lab_actions",
+        "importance": 0.08533752671072597
+      },
+      {
+        "rank": 5,
+        "feature": "burst_density",
+        "importance": 0.06876142984505813
+      },
+      {
+        "rank": 6,
+        "feature": "lis_ratio",
+        "importance": 0.05560076523308404
+      },
+      {
+        "rank": 7,
+        "feature": "early_action_bias",
+        "importance": 0.05111615696090878
+      },
+      {
+        "rank": 8,
+        "feature": "kendall_tau",
+        "importance": 0.05030539917601787
+      },
+      {
+        "rank": 9,
+        "feature": "med_before_lab_score",
+        "importance": 0.03377481144506594
+      },
+      {
+        "rank": 10,
+        "feature": "out_of_order_ratio",
+        "importance": 0.02884045286097376
+      },
+      {
+        "rank": 11,
+        "feature": "lis_length",
+        "importance": 0.028448423140179764
+      },
+      {
+        "rank": 12,
+        "feature": "ordering_concordance",
+        "importance": 0.026030165414978636
+      },
+      {
+        "rank": 13,
+        "feature": "n_out_of_order_pairs",
+        "importance": 0.02462111365514497
+      },
+      {
+        "rank": 14,
+        "feature": "time_mean",
+        "importance": 0.018475048282843166
+      },
+      {
+        "rank": 15,
+        "feature": "n_ordering_pairs_total",
+        "importance": 0.014789694768769377
+      },
+      {
+        "rank": 16,
+        "feature": "n_ordered_pairs",
+        "importance": 0.008845095996987634
+      },
+      {
+        "rank": 17,
+        "feature": "frac_actions_q1",
+        "importance": 0.005984126505005839
+      },
+      {
+        "rank": 18,
+        "feature": "n_actions",
+        "importance": 0.005138709945812077
+      },
+      {
+        "rank": 19,
+        "feature": "ordering_discordance",
+        "importance": 0.0042204381611413025
+      },
+      {
+        "rank": 20,
+        "feature": "time_std",
+        "importance": 0.0030798566050837363
+      }
+    ]
+  },
+  "delta_auc": {
+    "description": "clean_model AUC minus asc_only_model AUC",
+    "point_estimate": 0.048441,
+    "ci_95_lo": 0.039233,
+    "ci_95_hi": 0.044354,
+    "bootstrap_n": 1000
+  },
+  "leaky_audit": {
+    "description": "AUDIT ONLY — original model with violation features (AUC=1.0 expected)",
+    "auc_mean": 1.0,
+    "auc_std": 0.0,
+    "fold_aucs": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "n_features": 59
+  },
+  "shap_top_features": [],
+  "shap_available": false,
+  "gbm_feature_importance": [
+    {
+      "rank": 1,
+      "feature": "n_med_actions",
+      "importance": 0.16291780960473706
+    },
+    {
+      "rank": 2,
+      "feature": "n_unique_action_types",
+      "importance": 0.15470454776783835
+    },
+    {
+      "rank": 3,
+      "feature": "action_type_diversity",
+      "importance": 0.084404918121389
+    },
+    {
+      "rank": 4,
+      "feature": "n_lab_actions",
+      "importance": 0.07809480371509342
+    },
+    {
+      "rank": 5,
+      "feature": "burst_density",
+      "importance": 0.06993538708275034
+    },
+    {
+      "rank": 6,
+      "feature": "n_expected_not_performed",
+      "importance": 0.058258698815271535
+    },
+    {
+      "rank": 7,
+      "feature": "lis_ratio",
+      "importance": 0.05403882787628128
+    },
+    {
+      "rank": 8,
+      "feature": "f1",
+      "importance": 0.038390008810758616
+    },
+    {
+      "rank": 9,
+      "feature": "kendall_tau",
+      "importance": 0.027973113420532176
+    },
+    {
+      "rank": 10,
+      "feature": "early_action_bias",
+      "importance": 0.02554149334818123
+    },
+    {
+      "rank": 11,
+      "feature": "asc_n_expected",
+      "importance": 0.0239754183943376
+    },
+    {
+      "rank": 12,
+      "feature": "med_before_lab_score",
+      "importance": 0.022966046815232934
+    },
+    {
+      "rank": 13,
+      "feature": "jaccard",
+      "importance": 0.022183018609550253
+    },
+    {
+      "rank": 14,
+      "feature": "lis_length",
+      "importance": 0.022026953518196918
+    },
+    {
+      "rank": 15,
+      "feature": "out_of_order_ratio",
+      "importance": 0.020877378262435832
+    },
+    {
+      "rank": 16,
+      "feature": "asc_precision",
+      "importance": 0.020208209466567734
+    },
+    {
+      "rank": 17,
+      "feature": "n_expected",
+      "importance": 0.018521069213811105
+    },
+    {
+      "rank": 18,
+      "feature": "ordering_concordance",
+      "importance": 0.016486672410099313
+    },
+    {
+      "rank": 19,
+      "feature": "n_out_of_order_pairs",
+      "importance": 0.014384949374874216
+    },
+    {
+      "rank": 20,
+      "feature": "n_performed_not_expected",
+      "importance": 0.008761090123149335
+    }
+  ],
+  "top_feature": "n_med_actions"
+}

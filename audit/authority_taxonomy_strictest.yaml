@@ -1,0 +1,42 @@
+# E9-F1 Sweep S2 — Strictest Authority Taxonomy
+#
+# Scope: AHA Class I + LOE A only, GRADE 1A only, IDSA / KDIGO / AABB strong
+# only. **Drops** the AHA Class IIa branch and the drug-allergy injection.
+# This is the most defensive cut against "your IIa+B is too permissive" and
+# "drug-allergy is auto-promoted" reviewer attacks.
+#
+# Used by: scripts/experiments/exp_e39b_threshold_sweep.py (sweep S2)
+# Spec: docs/attack_gap_exp_exp/260430_add_contribution_exp.md (§5.1 S2)
+
+version: 1
+generator: docs/attack_gap_exp_exp/260430_add_contribution_exp.md
+
+high_authority_rules:
+  - id: aha_class_i_loe_a_only
+    description: "AHA Class I + LOE A only (strictest)"
+    match:
+      recommendation_class_in: ["I", "1"]
+      evidence_level_in: ["A"]
+
+  - id: grade_strong_high_evidence_only
+    description: "GRADE 1A only (drops 1B)"
+    match:
+      recommendation_class_in: ["1A"]
+
+  - id: source_guideline_strong
+    description: "Source guideline embeds a strong-recommendation label"
+    match:
+      source_guideline_contains_any:
+        - "IDSA"
+        - "KDIGO"
+        - "AABB"
+        - "Strong recommendation"
+        - "GRADE 1A"
+
+low_authority_examples:
+  - "AHA Class IIa + LOE A or B (excluded under strictest)"
+  - "AHA Class I + LOE B or C (excluded under strictest)"
+  - "Drug-allergy contraindications (excluded under strictest)"
+
+unknown_handling:
+  policy: report_separately

@@ -1,0 +1,440 @@
+{
+  "aggregate": {
+    "n_scenarios": 6,
+    "total_gold": 365,
+    "total_llm": 66,
+    "total_matched": 30,
+    "action_precision": 0.455,
+    "action_recall": 0.082,
+    "action_f1": 0.139,
+    "type_agreement_pct": 0.4,
+    "type_kappa": 0.294,
+    "hard_soft_agreement_pct": 0.8,
+    "deadline_agreement_pct": 0.25,
+    "n_timing_pairs": 16,
+    "type_breakdown": {
+      "FORBIDDEN": {
+        "total": 11,
+        "agree": 6,
+        "pct": 0.545
+      },
+      "WITHIN": {
+        "total": 16,
+        "agree": 4,
+        "pct": 0.25
+      },
+      "MUST": {
+        "total": 3,
+        "agree": 3,
+        "pct": 1.0
+      }
+    },
+    "matching_config": {
+      "method": "semantic_jaccard_with_content_gate",
+      "threshold": 0.3,
+      "n_synonym_groups": 36
+    }
+  },
+  "interpretation": "moderate",
+  "conclusion": "encoding is partially reproducible; timing dimensions need expert review",
+  "per_scenario": {
+    "septic_shock_basic": {
+      "n_gold": 20,
+      "n_llm": 8,
+      "n_matched": 5,
+      "action_precision": 0.625,
+      "action_recall": 0.25,
+      "action_f1": 0.357,
+      "type_agreement_pct": 0.0,
+      "type_kappa": 0.0,
+      "hard_soft_agreement_pct": 0.6,
+      "hard_soft_kappa": 0.0,
+      "deadline_agreement_pct": 0.25,
+      "n_timing_pairs": 4,
+      "unmatched_gold": 15,
+      "unmatched_llm": 3,
+      "matched_details": [
+        {
+          "gold_action": "give_vasopressor_without_fluid",
+          "llm_action": "use_norepinephrine",
+          "jaccard": 0.5,
+          "type_match": false,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "order_lab_lactate",
+          "llm_action": "measure_blood_lactate_level",
+          "jaccard": 0.4,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "order_lab_blood_culture",
+          "llm_action": "obtain_blood_cultures",
+          "jaccard": 0.75,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "BEFORE",
+          "hs_match": false
+        },
+        {
+          "gold_action": "give_broad_spectrum_antibiotics",
+          "llm_action": "administer_antimicrobials",
+          "jaccard": 0.5,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_crystalloid_30ml_kg",
+          "llm_action": "use_balanced_crystalloid",
+          "jaccard": 0.4,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": false
+        }
+      ],
+      "scenario_id": "septic_shock_basic",
+      "domain": "sepsis",
+      "elapsed_s": 0.0
+    },
+    "stemi_inferior_rv_trap": {
+      "n_gold": 44,
+      "n_llm": 9,
+      "n_matched": 7,
+      "action_precision": 0.778,
+      "action_recall": 0.159,
+      "action_f1": 0.264,
+      "type_agreement_pct": 0.429,
+      "type_kappa": 0.263,
+      "hard_soft_agreement_pct": 0.857,
+      "hard_soft_kappa": 0.0,
+      "deadline_agreement_pct": 0.2,
+      "n_timing_pairs": 5,
+      "unmatched_gold": 37,
+      "unmatched_llm": 2,
+      "matched_details": [
+        {
+          "gold_action": "obtain_12_lead_ecg",
+          "llm_action": "obtain_12_lead_ecg",
+          "jaccard": 1.0,
+          "type_match": true,
+          "gold_type": "WITHIN",
+          "llm_type": "WITHIN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_nitrates_if_rv_infarct",
+          "llm_action": "administer_nitrates",
+          "jaccard": 0.4,
+          "type_match": true,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "FORBIDDEN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "activate_cath_lab",
+          "llm_action": "perform_primary_pci",
+          "jaccard": 0.5,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_aspirin_loading",
+          "llm_action": "administer_aspirin",
+          "jaccard": 0.667,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_p2y12_inhibitor",
+          "llm_action": "initiate_p2y12_inhibitor",
+          "jaccard": 1.0,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_anticoagulation",
+          "llm_action": "administer_anticoagulation",
+          "jaccard": 1.0,
+          "type_match": true,
+          "gold_type": "MUST",
+          "llm_type": "MUST",
+          "hs_match": false
+        },
+        {
+          "gold_action": "order_lab_troponin",
+          "llm_action": "measure_hs_ctn",
+          "jaccard": 0.5,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        }
+      ],
+      "scenario_id": "stemi_inferior_rv_trap",
+      "domain": "chest_pain",
+      "elapsed_s": 0.0
+    },
+    "aki_stage1_basic": {
+      "n_gold": 54,
+      "n_llm": 9,
+      "n_matched": 3,
+      "action_precision": 0.333,
+      "action_recall": 0.056,
+      "action_f1": 0.095,
+      "type_agreement_pct": 0.333,
+      "type_kappa": 0.0,
+      "hard_soft_agreement_pct": 0.667,
+      "hard_soft_kappa": 0.0,
+      "deadline_agreement_pct": 0.0,
+      "n_timing_pairs": 1,
+      "unmatched_gold": 51,
+      "unmatched_llm": 6,
+      "matched_details": [
+        {
+          "gold_action": "give_nsaid",
+          "llm_action": "hold_nsaids",
+          "jaccard": 0.333,
+          "type_match": false,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "consult_nephrology",
+          "llm_action": "consult_nephrology",
+          "jaccard": 1.0,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "monitor_potassium",
+          "llm_action": "monitor_potassium",
+          "jaccard": 1.0,
+          "type_match": true,
+          "gold_type": "MUST",
+          "llm_type": "MUST",
+          "hs_match": false
+        }
+      ],
+      "scenario_id": "aki_stage1_basic",
+      "domain": "aki",
+      "elapsed_s": 0.0
+    },
+    "dka_moderate_basic": {
+      "n_gold": 61,
+      "n_llm": 14,
+      "n_matched": 9,
+      "action_precision": 0.643,
+      "action_recall": 0.148,
+      "action_f1": 0.24,
+      "type_agreement_pct": 0.556,
+      "type_kappa": 0.379,
+      "hard_soft_agreement_pct": 1.0,
+      "hard_soft_kappa": 1.0,
+      "deadline_agreement_pct": 0.5,
+      "n_timing_pairs": 4,
+      "unmatched_gold": 52,
+      "unmatched_llm": 5,
+      "matched_details": [
+        {
+          "gold_action": "give_oral_fluids_if_altered",
+          "llm_action": "administer_fluid",
+          "jaccard": 0.4,
+          "type_match": false,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "start_iv_fluid_ns",
+          "llm_action": "administer_fluid",
+          "jaccard": 0.5,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "BEFORE",
+          "hs_match": true
+        },
+        {
+          "gold_action": "start_insulin_infusion",
+          "llm_action": "administer_insulin",
+          "jaccard": 0.667,
+          "type_match": true,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "FORBIDDEN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_insulin_bolus",
+          "llm_action": "administer_insulin",
+          "jaccard": 0.667,
+          "type_match": true,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "FORBIDDEN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "recheck_potassium_in_1h",
+          "llm_action": "monitor_potassium",
+          "jaccard": 0.5,
+          "type_match": true,
+          "gold_type": "WITHIN",
+          "llm_type": "WITHIN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_subcutaneous_insulin_initially",
+          "llm_action": "initiate_insulin_therapy",
+          "jaccard": 0.4,
+          "type_match": false,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "MUST",
+          "hs_match": true
+        },
+        {
+          "gold_action": "start_insulin_infusion",
+          "llm_action": "initiate_insulin_therapy",
+          "jaccard": 0.5,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "BEFORE",
+          "hs_match": true
+        },
+        {
+          "gold_action": "monitor_glucose_hourly",
+          "llm_action": "monitor_glucose",
+          "jaccard": 0.667,
+          "type_match": true,
+          "gold_type": "WITHIN",
+          "llm_type": "WITHIN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_bicarbonate_if_ph_above_7.0",
+          "llm_action": "administer_bicarbonate",
+          "jaccard": 0.333,
+          "type_match": true,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "FORBIDDEN",
+          "hs_match": true
+        }
+      ],
+      "scenario_id": "dka_moderate_basic",
+      "domain": "dka",
+      "elapsed_s": 0.0
+    },
+    "stroke_tpa_eligible": {
+      "n_gold": 108,
+      "n_llm": 13,
+      "n_matched": 3,
+      "action_precision": 0.231,
+      "action_recall": 0.028,
+      "action_f1": 0.05,
+      "type_agreement_pct": 0.667,
+      "type_kappa": 0.5,
+      "hard_soft_agreement_pct": 1.0,
+      "hard_soft_kappa": 1.0,
+      "deadline_agreement_pct": 0.0,
+      "n_timing_pairs": 1,
+      "unmatched_gold": 105,
+      "unmatched_llm": 10,
+      "matched_details": [
+        {
+          "gold_action": "give_alteplase_0.9mg_kg",
+          "llm_action": "administer_iv_tpa",
+          "jaccard": 0.4,
+          "type_match": true,
+          "gold_type": "WITHIN",
+          "llm_type": "WITHIN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_tpa_if_bp_uncontrolled",
+          "llm_action": "administer_iv_tpa",
+          "jaccard": 0.333,
+          "type_match": false,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "BEFORE",
+          "hs_match": true
+        },
+        {
+          "gold_action": "give_tpa",
+          "llm_action": "administer_iv_tpa",
+          "jaccard": 0.667,
+          "type_match": true,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "FORBIDDEN",
+          "hs_match": true
+        }
+      ],
+      "scenario_id": "stroke_tpa_eligible",
+      "domain": "stroke",
+      "elapsed_s": 0.0
+    },
+    "adhf_warm_wet": {
+      "n_gold": 78,
+      "n_llm": 13,
+      "n_matched": 3,
+      "action_precision": 0.231,
+      "action_recall": 0.038,
+      "action_f1": 0.066,
+      "type_agreement_pct": 0.667,
+      "type_kappa": 0.5,
+      "hard_soft_agreement_pct": 0.667,
+      "hard_soft_kappa": 0.0,
+      "deadline_agreement_pct": 0.0,
+      "n_timing_pairs": 1,
+      "unmatched_gold": 75,
+      "unmatched_llm": 10,
+      "matched_details": [
+        {
+          "gold_action": "give_nsaid",
+          "llm_action": "avoid_nsaids",
+          "jaccard": 0.333,
+          "type_match": true,
+          "gold_type": "FORBIDDEN",
+          "llm_type": "FORBIDDEN",
+          "hs_match": true
+        },
+        {
+          "gold_action": "initiate_beta_blocker",
+          "llm_action": "initiate_beta_blocker",
+          "jaccard": 1.0,
+          "type_match": true,
+          "gold_type": "MUST",
+          "llm_type": "MUST",
+          "hs_match": false
+        },
+        {
+          "gold_action": "iv_diuretics",
+          "llm_action": "initiate_iv_diuretics",
+          "jaccard": 0.667,
+          "type_match": false,
+          "gold_type": "WITHIN",
+          "llm_type": "MUST",
+          "hs_match": true
+        }
+      ],
+      "scenario_id": "adhf_warm_wet",
+      "domain": "heart_failure",
+      "elapsed_s": 0.0
+    }
+  },
+  "model": "Qwen/Qwen3.5-35B-A3B-FP8",
+  "endpoint": "http://localhost:8013/v1/chat/completions"
+}

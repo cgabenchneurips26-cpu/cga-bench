@@ -1,0 +1,45 @@
+# Oracle Agent for DKA (Rule-based Upper Bound)
+# Uses DKADecisionTable from agent_rules/dka_rules.py
+
+agent:
+  type: "oracle"
+  agent_id: "oracle_dka"
+
+  # Oracle is rule-based, no LLM
+  use_llm: false
+
+  # Decision Table (from agent_rules, NOT cpg_engine)
+  decision_table: "DKADecisionTable"
+  guideline_id: "ada_dka"
+
+  # CPG Graph Path (for reference, NOT used by oracle)
+  cpg_graph_path: "cga_bench/cpg_model/graphs/ada_dka_management.yaml"
+
+  # Budget Settings (minimal as no LLM)
+  max_actions_per_step: 5
+  budget_limit_tokens: 0
+  budget_limit_tool_calls: 100
+
+  # DKA-specific settings
+  dka_settings:
+    # Hypokalemia threshold (K+ below this = insulin contraindicated)
+    hypokalemia_threshold: 3.3
+
+    # Hyperkalemia threshold (K+ above this = potassium contraindicated)
+    hyperkalemia_threshold: 5.5
+
+    # Severe DKA threshold (pH below this = ICU required)
+    severe_dka_ph_threshold: 7.0
+
+    # DKA resolution criteria
+    resolution_criteria:
+      anion_gap_threshold: 12
+      ph_threshold: 7.3
+      bicarbonate_threshold: 15
+
+  # Trap scenario awareness
+  trap_awareness:
+    check_potassium_before_insulin: true
+    check_potassium_before_replacement: true
+    check_sglt2_history: true
+    check_ckd_status: true

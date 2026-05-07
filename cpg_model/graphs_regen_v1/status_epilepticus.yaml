@@ -1,0 +1,487 @@
+graph_id: status_epilepticus
+guideline_name: AES Status Epilepticus Management
+version: '2024.1'
+metadata:
+  primary_source:
+    title: 'American Epilepsy Society Evidence-Based Guideline: Treatment of Convulsive Status Epilepticus in Adults and Children
+      - 2024 Update'
+    authors: Glauser T, Shinnar S, Gloss D, et al.
+    journal: Epilepsia
+    year: 2024
+    doi: 10.1111/epi.17781
+  source: AES 2024
+  description: Time-phased management of convulsive status epilepticus from initial stabilization through refractory treatment
+  key_evidence: Each minute of untreated SE reduces probability of seizure termination by 5%; benzodiazepines effective in
+    60-80% if given within first 5 minutes (Treiman DM, NEJM 1998)
+  recommendation_system: GRADE
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_status_epilepticus.json
+entry_node: initial_stabilization
+nodes:
+  initial_stabilization:
+    node_id: initial_stabilization
+    node_type: enquiry
+    name: Initial Stabilization (T=0-5 min)
+    description: Stabilize airway/breathing/circulation, check glucose, establish access, confirm ongoing seizure activity
+    precondition: null
+    mandatory_actions:
+    - assess_airway_breathing_circulation
+    - check_point_of_care_glucose
+    - establish_iv_access
+    - assess_seizure_semiology
+    allowed_actions:
+    - assess_airway_breathing_circulation
+    - check_point_of_care_glucose
+    - establish_iv_access
+    - assess_seizure_semiology
+    - assess_vital_signs
+    - administer_oxygen
+    - position_recovery
+    - obtain_fingerstick_glucose
+    - give_dextrose_if_hypoglycemic
+    - give_thiamine_if_suspected_deficiency
+    - apply_continuous_monitoring
+    forbidden_actions:
+    - give_phenytoin_as_first_line
+    - give_valproate_as_first_line
+    - restrain_patient_forcefully
+    - place_oral_airway_during_seizure
+    deadlines:
+      assess_airway_breathing_circulation: 2
+      check_point_of_care_glucose: 5
+      establish_iv_access: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AES 2024
+    source_section: 'Section 2: Initial Assessment'
+    source_page: Figure 1
+    source_quote: In the first 5 minutes, stabilize the patient, check glucose, and prepare for benzodiazepine administration.
+      Time is critical - status epilepticus becomes progressively harder to treat.
+    conditional_rules:
+    - rule_id: SE-HYPOGLYCEMIA-GLUCOSE-FIRST
+      condition: patient.labs.glucose < 60
+      effect:
+        type: BEFORE
+        actions:
+        - give_dextrose_50_percent
+        - give_benzodiazepine
+      evidence: AES 2024 Section 2.2; Alldredge BK, NEJM 2001
+      severity: CRITICAL
+      description: Hypoglycemia can cause seizures and must be corrected before or simultaneously with antiepileptic therapy;
+        dextrose 50% IV push.
+      condition_variables:
+      - patient.labs.glucose
+      trigger_range:
+        patient.labs.glucose:
+          min: 10
+          max: 59
+          type: float
+      normal_range:
+        patient.labs.glucose:
+          min: 70
+          max: 140
+          type: float
+    - rule_id: SE-HYPOGLYCEMIA-GLUCOSE-FIRST-FORBIDDEN
+      condition: patient.labs.glucose < 60
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_antiepileptic_before_glucose_correction
+        - delay_glucose_correction_for_eeg
+      evidence: NCS Status Epilepticus 2012; hypoglycemic seizures resolve with glucose correction, not antiepileptics
+      severity: CRITICAL
+      description: Hypoglycemic seizures resolve with glucose correction; antiepileptics are ineffective and delay definitive
+        treatment.
+      condition_variables:
+      - patient.labs.glucose
+      trigger_range:
+        patient.labs.glucose:
+          min: 10
+          max: 59
+          type: float
+      normal_range:
+        patient.labs.glucose:
+          min: 70
+          max: 140
+          type: float
+      skip_scenario_generation: true
+    - rule_id: SE-KNOWN-EPILEPSY-CHECK-LEVELS
+      condition: '''known_epilepsy'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - check_antiepileptic_drug_levels
+      evidence: AES 2024 Section 2.3; Trinka E, Epilepsia 2015
+      severity: MODERATE
+      description: Patients with known epilepsy may have subtherapeutic drug levels triggering SE; levels guide reload decisions.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: known_epilepsy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: known_epilepsy
+          type: list_not_contains
+    - rule_id: SE-KNOWN-EPILEPSY-CHECK-LEVELS-FORBIDDEN
+      condition: '''known_epilepsy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - add_new_aed_without_checking_levels
+        - give_loading_dose_without_level_check
+      evidence: NCS Status Epilepticus 2012; subtherapeutic levels require optimization before adding new agents
+      severity: HIGH
+      description: Loading a new AED without checking existing levels risks toxicity if existing drug is therapeutic or over-therapeutic.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: known_epilepsy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: known_epilepsy
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - first_line_therapy
+    conditional_next: {}
+  first_line_therapy:
+    node_id: first_line_therapy
+    node_type: plan
+    name: First-Line Benzodiazepine Therapy (T=5-20 min)
+    description: Benzodiazepines are the ONLY first-line therapy - IV lorazepam, IM midazolam, or IV diazepam
+    precondition: null
+    mandatory_actions:
+    - give_benzodiazepine_first_line
+    - monitor_respiratory_status
+    allowed_actions:
+    - give_benzodiazepine_first_line
+    - give_lorazepam_4mg_iv
+    - give_midazolam_10mg_im
+    - give_diazepam_10mg_iv
+    - repeat_benzodiazepine_once
+    - monitor_respiratory_status
+    - reassess_seizure_activity
+    - prepare_second_line_agent
+    - order_lab_antiepileptic_levels
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_blood_gas
+    - order_lab_toxicology_screen
+    forbidden_actions:
+    - give_phenytoin_as_first_line
+    - give_valproate_as_first_line
+    - give_levetiracetam_as_first_line
+    - delay_benzodiazepine
+    - give_propofol_as_first_line
+    deadlines:
+      give_benzodiazepine_first_line: 10
+      monitor_respiratory_status: 5
+    required_prior_actions: {}
+    sequence_rules:
+    - - give_benzodiazepine_first_line
+      - give_second_line_antiepileptic
+    - - give_benzodiazepine_first_line
+      - give_propofol_infusion
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AES 2024
+    source_section: 'Section 3: First-Line Therapy'
+    source_page: Figure 1, Table 2
+    source_quote: 'Benzodiazepines are the initial therapy of choice: IV lorazepam 0.1 mg/kg (max 4 mg), IM midazolam 10 mg
+      for >40 kg, or IV diazepam 0.15 mg/kg (max 10 mg). A single repeat dose may be given if seizures persist after 5 minutes.'
+    conditional_rules:
+    - rule_id: SE-ALCOHOL-WITHDRAWAL-BENZO
+      condition: '''alcohol_withdrawal'' in patient.comorbidities or ''alcohol_withdrawal'' in patient.history'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_benzodiazepine_high_dose
+      evidence: AES 2024 Section 3.3; Schuckit MA, NEJM 2014
+      severity: HIGH
+      description: Alcohol withdrawal SE requires higher benzodiazepine doses due to GABA receptor downregulation; standard
+        doses are often insufficient.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: alcohol_withdrawal
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: alcohol_withdrawal
+          type: list_not_contains
+    - rule_id: SE-ALCOHOL-WITHDRAWAL-BENZO-FORBIDDEN
+      condition: '''alcohol_withdrawal'' in patient.comorbidities or ''alcohol_withdrawal'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_phenytoin_in_alcohol_withdrawal_seizure
+        - give_haloperidol_in_withdrawal_seizure
+      evidence: NCS Status Epilepticus 2012; phenytoin is ineffective for alcohol withdrawal seizures; haloperidol lowers
+        seizure threshold
+      severity: HIGH
+      description: Phenytoin is ineffective for alcohol withdrawal seizures (mechanism is GABA not sodium channel); haloperidol
+        lowers seizure threshold.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: alcohol_withdrawal
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: alcohol_withdrawal
+          type: list_not_contains
+      skip_scenario_generation: true
+    next_nodes:
+    - second_line_therapy
+    conditional_next: {}
+  second_line_therapy:
+    node_id: second_line_therapy
+    node_type: plan
+    name: Second-Line AED Therapy (T=20-40 min)
+    description: 'IV antiepileptic drugs for benzodiazepine-refractory SE: fosphenytoin, valproate, or levetiracetam'
+    precondition: null
+    mandatory_actions:
+    - give_second_line_antiepileptic
+    - continuous_eeg_monitoring
+    allowed_actions:
+    - give_second_line_antiepileptic
+    - give_fosphenytoin_20mg_pe_kg
+    - give_valproate_40mg_kg
+    - give_levetiracetam_60mg_kg
+    - give_phenobarbital_15mg_kg
+    - continuous_eeg_monitoring
+    - reassess_seizure_activity
+    - monitor_cardiac_rhythm
+    - monitor_blood_pressure
+    - prepare_for_intubation
+    - order_imaging_ct_head
+    - order_lab_antiepileptic_levels
+    forbidden_actions:
+    - give_benzodiazepine_as_second_line
+    - delay_second_line_agent
+    - give_oral_antiepileptic
+    deadlines:
+      give_second_line_antiepileptic: 30
+      continuous_eeg_monitoring: 30
+    required_prior_actions:
+      give_second_line_antiepileptic:
+      - give_benzodiazepine_first_line
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AES 2024
+    source_section: 'Section 4: Second-Line Therapy'
+    source_page: Figure 1, Table 3
+    source_quote: 'If seizures persist after adequate benzodiazepine dosing, give one of: fosphenytoin 20 mg PE/kg IV, valproate
+      40 mg/kg IV, or levetiracetam 60 mg/kg IV. The ESETT trial showed equivalent efficacy among these three agents.'
+    conditional_rules:
+    - rule_id: SE-PREGNANCY-NO-VALPROATE
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_valproate
+        - give_valproate_40mg_kg
+        - give_valproic_acid
+      evidence: AES 2024 Section 4.3; FDA Black Box Warning; Meador KJ, NEJM 2009
+      severity: CRITICAL
+      description: Valproate is teratogenic (Category X) causing neural tube defects in 6-9% of exposed pregnancies; absolutely
+        contraindicated.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: SE-HEPATIC-NO-VALPROATE
+      condition: '''liver_disease'' in patient.comorbidities or ''hepatic_failure'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_valproate
+        - give_valproate_40mg_kg
+        - give_valproic_acid
+      evidence: AES 2024 Section 4.3; FDA Black Box Warning
+      severity: CRITICAL
+      description: Valproate is hepatotoxic and contraindicated in significant liver disease; can cause fatal hepatic failure.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: liver_disease
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: liver_disease
+          type: list_not_contains
+    - rule_id: SE-ELDERLY-DOSE-REDUCE
+      condition: patient.age > 65
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_full_dose_phenytoin
+        - give_fosphenytoin_20mg_pe_kg
+      evidence: AES 2024 Section 4.4; Treiman DM, NEJM 1998
+      severity: HIGH
+      description: Elderly patients require reduced phenytoin/fosphenytoin loading (15 mg PE/kg instead of 20) due to altered
+        pharmacokinetics and increased cardiovascular risk.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 66
+          max: 120
+          type: float
+      normal_range:
+        patient.age:
+          min: 18
+          max: 65
+          type: float
+    - rule_id: SE-CARDIAC-HISTORY-NO-PHENYTOIN
+      condition: '''cardiac_arrhythmia'' in patient.comorbidities or ''heart_block'' in patient.comorbidities or ''long_qt''
+        in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_phenytoin
+        - give_fosphenytoin_20mg_pe_kg
+      evidence: AES 2024 Section 4.5; Cranford RE, Neurology 1979
+      severity: CRITICAL
+      description: Phenytoin/fosphenytoin causes cardiac arrhythmias and hypotension via sodium channel blockade; contraindicated
+        in pre-existing cardiac conduction disease.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: cardiac_arrhythmia
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: cardiac_arrhythmia
+          type: list_not_contains
+    - rule_id: SE-PORPHYRIA-NO-PHENYTOIN
+      condition: '''porphyria'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_phenytoin
+        - give_fosphenytoin_20mg_pe_kg
+        - give_valproate
+        - give_valproate_40mg_kg
+        - give_phenobarbital_15mg_kg
+      evidence: AES 2024 Section 4.6; Anderson KE, Ann Intern Med 2005
+      severity: CRITICAL
+      description: Phenytoin, valproate, and phenobarbital are porphyrinogenic; they induce hepatic ALA synthase and can trigger
+        fatal acute porphyria attacks.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: porphyria
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: porphyria
+          type: list_not_contains
+    next_nodes:
+    - refractory_se
+    conditional_next: {}
+  refractory_se:
+    node_id: refractory_se
+    node_type: plan
+    name: Refractory Status Epilepticus (T>40 min)
+    description: Continuous IV anesthetic infusion with EEG monitoring for seizures persisting despite first and second-line
+      therapy
+    precondition: null
+    mandatory_actions:
+    - perform_endotracheal_intubation
+    - initiate_continuous_iv_anesthetic
+    - continuous_eeg_monitoring
+    - admit_to_icu
+    allowed_actions:
+    - perform_endotracheal_intubation
+    - initiate_continuous_iv_anesthetic
+    - give_midazolam_infusion
+    - give_propofol_infusion
+    - give_pentobarbital_infusion
+    - give_ketamine_infusion
+    - continuous_eeg_monitoring
+    - admit_to_icu
+    - titrate_to_burst_suppression
+    - start_vasopressor_norepinephrine
+    - order_imaging_mri_brain
+    - order_lab_antiepileptic_levels
+    - order_lumbar_puncture
+    - request_neurology_consult
+    forbidden_actions:
+    - discharge_home
+    - give_oral_antiepileptic_only
+    - discontinue_eeg_monitoring
+    - extubate_during_active_se
+    deadlines:
+      perform_endotracheal_intubation: 45
+      initiate_continuous_iv_anesthetic: 50
+      admit_to_icu: 50
+    required_prior_actions:
+      initiate_continuous_iv_anesthetic:
+      - give_benzodiazepine_first_line
+      - give_second_line_antiepileptic
+      give_propofol_infusion:
+      - perform_endotracheal_intubation
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AES 2024
+    source_section: 'Section 5: Refractory SE'
+    source_page: Figure 1, Table 4
+    source_quote: Refractory SE requires intubation, ICU admission, and continuous IV anesthetic (midazolam, propofol, or
+      pentobarbital) titrated to EEG burst suppression. Ketamine is an emerging option for super-refractory SE.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: plan
+    name: Ongoing Monitoring and AED Transition
+    description: Continuous EEG monitoring, maintenance AED initiation, and gradual anesthetic wean
+    precondition: null
+    mandatory_actions:
+    - continuous_eeg_monitoring
+    - initiate_maintenance_antiepileptic
+    - reassess_neurological_status
+    allowed_actions:
+    - continuous_eeg_monitoring
+    - initiate_maintenance_antiepileptic
+    - reassess_neurological_status
+    - wean_anesthetic_infusion
+    - order_imaging_mri_brain
+    - order_lumbar_puncture
+    - order_lab_antiepileptic_levels
+    - request_neurology_consult
+    - assess_etiology
+    - plan_long_term_antiepileptic
+    forbidden_actions:
+    - discontinue_eeg_prematurely
+    - rapid_anesthetic_wean
+    - discharge_without_neurology_followup
+    deadlines:
+      initiate_maintenance_antiepileptic: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AES 2024
+    source_section: 'Section 6: Monitoring and Transition'
+    source_page: Table 5
+    source_quote: Continuous EEG monitoring should be maintained for at least 24 hours after seizure cessation. Maintenance
+      AED should be started before weaning the continuous infusion.
+    next_nodes: []
+    conditional_next: {}

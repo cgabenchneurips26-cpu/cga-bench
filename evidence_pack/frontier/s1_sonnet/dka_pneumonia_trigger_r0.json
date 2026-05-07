@@ -1,0 +1,428 @@
+{
+  "scenario_id": "dka_pneumonia_trigger",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.4545454545454546,
+  "peak_risk": 0.5057499999999999,
+  "aggregate_risk": 2.01565,
+  "total_violations": 12,
+  "sub_scores": {
+    "C1_path_selection": 0.9545454545454546,
+    "C2_mandatory_completion": 0.5454545454545454,
+    "C3_forbidden_avoidance": 0.0,
+    "C4_timing_compliance": 0.5454545454545454,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 5,
+    "commission": 1,
+    "deviation": 1,
+    "omission": 5
+  },
+  "actions_count": 22,
+  "actions": [
+    {
+      "action_id": "assess_mental_status",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "\u2605 MANDATORY: Patient is confused - must assess mental status immediately to establish baseline neurological function and severity of DKA-related CNS involvement."
+    },
+    {
+      "action_id": "order_lab_bmp",
+      "timestamp_minutes": 5.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "\u2605 MANDATORY: Must check potassium level before starting insulin (contraindicated if K+ <3.3 mEq/L). Also needed to assess bicarbonate, BUN/Cr, and classify DKA severity. Deadline 15 min per guideline."
+    },
+    {
+      "action_id": "order_lab_glucose",
+      "timestamp_minutes": 10.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "\u2605 MANDATORY: Immediate glucose measurement required within 15 minutes per ADA DKA guideline to confirm hyperglycemia and establish baseline for monitoring."
+    },
+    {
+      "action_id": "order_lab_ketones",
+      "timestamp_minutes": 15.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY action required within 60 minutes. Confirms ketoacidosis and helps classify DKA severity per ADA guidelines."
+    },
+    {
+      "action_id": "give_iv_fluid_bolus",
+      "timestamp_minutes": 20.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "fluid",
+        "dose": "standard"
+      },
+      "justification": "Patient is hypotensive (BP 100/60, MAP 73) and tachycardic (HR 112). ADA guideline requires isotonic saline 15-20 mL/kg/hr within first hour. Fluid resuscitation must precede insulin initiation."
+    },
+    {
+      "action_id": "order_lab_blood_gas",
+      "timestamp_minutes": 25.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Required to assess pH and bicarbonate levels for DKA severity classification. Tachypnea (RR 30) and SpO2 91% indicate need for urgent blood gas analysis. Also guides decision on bicarbonate therapy if pH < 6.9."
+    },
+    {
+      "action_id": "assess_hydration_status",
+      "timestamp_minutes": 30.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has tachycardia (HR 112), hypotension (BP 100/60), and SpO2 91% - assessing hydration status is critical to guide ongoing fluid resuscitation rate and type per ADA DKA guidelines."
+    },
+    {
+      "action_id": "order_lab_anion_gap",
+      "timestamp_minutes": 35.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Anion gap calculation is essential to confirm DKA severity and monitor resolution. Per ADA guidelines, anion gap should be tracked to guide management."
+    },
+    {
+      "action_id": "give_potassium_replacement",
+      "timestamp_minutes": 40.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "ADA DKA protocol requires potassium replacement if K+ < 5.3 mEq/L before initiating insulin. With DKA, total body potassium depletion is expected. Potassium replacement should be initiated (if K+ confirmed between 3.3-5.3 mEq/L) to allow safe insulin initiation."
+    },
+    {
+      "action_id": "monitor_glucose_hourly",
+      "timestamp_minutes": 45.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Glucose monitoring every 1 hour is required per ADA DKA protocol to guide insulin infusion rate adjustments and detect hypoglycemia. Initial labs have been ordered but ongoing hourly monitoring is essential."
+    },
+    {
+      "action_id": "monitor_potassium",
+      "timestamp_minutes": 50.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Potassium must be monitored every 2-4 hours during DKA management. Potassium replacement has been given but levels must be trended to ensure K+ remains >3.3 mEq/L before/during insulin infusion and to avoid hypokalemia."
+    },
+    {
+      "action_id": "start_insulin_infusion",
+      "timestamp_minutes": 55.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Potassium replacement has already been administered (K+ assumed >3.3 mEq/L after replacement), fluid resuscitation is underway, and it is now appropriate per ADA guidelines to initiate regular insulin infusion at 0.1 units/kg/hr to correct hyperglycemia and ketoacidosis. DO NOT start if K+ confirmed <3.3 mEq/L."
+    },
+    {
+      "action_id": "reassess_anion_gap",
+      "timestamp_minutes": 60.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Reassessing the anion gap is clinically indicated to trend DKA resolution. With fluids and insulin already started, monitoring the anion gap closure helps confirm treatment efficacy and guides ongoing management."
+    },
+    {
+      "action_id": "give_bicarbonate_if_severe",
+      "timestamp_minutes": 65.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "bicarbonate",
+        "dose": "standard"
+      },
+      "justification": "Patient has pH concern given RR of 30 and SpO2 of 91% with confusion, suggesting possible severe acidosis. Bicarbonate may be indicated if pH < 6.9 per ADA guidelines. This should be evaluated now that blood gas results are pending/available."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 70.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action - patient has tachycardia (HR 112), hypotension (BP 100/60), tachypnea (RR 30), fever (39.2\u00b0C), and low SpO2 (91%). Serial vital sign assessment is critical to monitor response to fluid resuscitation and guide ongoing management."
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 75.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action - IV access is required for fluid resuscitation, insulin infusion, and electrolyte replacement per ADA DKA guidelines. Must be confirmed/established before continuing IV therapies."
+    },
+    {
+      "action_id": "order_lab_abg",
+      "timestamp_minutes": 80.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Mandatory action - ABG is needed to assess pH and bicarbonate to classify DKA severity and monitor response to treatment. Patient has RR of 30 suggesting significant acidosis with Kussmaul breathing."
+    },
+    {
+      "action_id": "start_iv_fluid_ns",
+      "timestamp_minutes": 85.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "fluid",
+        "dose": "standard"
+      },
+      "justification": "MANDATORY action: Normal saline IV fluid resuscitation is required per ADA DKA guidelines. Although give_iv_fluid_bolus was completed, start_iv_fluid_ns is specifically listed as the mandatory action for this phase and must be initiated to ensure ongoing isotonic fluid replacement at 15-20 mL/kg/hr."
+    },
+    {
+      "action_id": "calculate_anion_gap",
+      "timestamp_minutes": 90.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Calculating the anion gap helps assess severity and monitor response to DKA treatment. Labs are pending and this calculation will be needed once BMP results return to guide ongoing management."
+    },
+    {
+      "action_id": "assess_anion_gap_closure",
+      "timestamp_minutes": 95.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Assessing anion gap closure is a key endpoint for DKA resolution. This monitors treatment efficacy and helps determine when insulin infusion can be transitioned to subcutaneous insulin."
+    },
+    {
+      "action_id": "classify_dka_severity",
+      "timestamp_minutes": 100.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "DKA severity classification is required per ADA guidelines to guide management intensity. Patient has confusion, tachycardia, hypotension, and hypoxia suggesting moderate-to-severe DKA requiring formal classification."
+    },
+    {
+      "action_id": "admit_to_icu",
+      "timestamp_minutes": 105.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Patient has altered mental status, SpO2 91%, RR 30, HR 112, BP 100/60 with MAP 73, and fever \u2014 these indicate hemodynamic instability and risk of deterioration requiring ICU-level monitoring and care per DKA management protocols."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "be0fec9a-b97e-417b-a21b-b203f017c50c",
+      "violation_type": "timing",
+      "timestamp_minutes": 20.0,
+      "action_involved": "start_iv_fluid_normal_saline",
+      "expected_action": null,
+      "expected_deadline": 15.0,
+      "actual_time": 20.0,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action start_iv_fluid_normal_saline performed 5 min after deadline",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "78e53560-07af-4345-8cf1-d1d8bb6f790b",
+      "violation_type": "commission",
+      "timestamp_minutes": 55.0,
+      "action_involved": "start_insulin_infusion",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Forbidden action performed: start_insulin_infusion",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "6b6652a0-842d-420c-a277-5bd939602138",
+      "violation_type": "deviation",
+      "timestamp_minutes": 65.0,
+      "action_involved": "give_bicarbonate_if_severe",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_bicarbonate_if_severe",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "99c22f9e-c265-4abf-8eda-8092e80403f6",
+      "violation_type": "timing",
+      "timestamp_minutes": 70.0,
+      "action_involved": "assess_vital_signs",
+      "expected_action": null,
+      "expected_deadline": 5.0,
+      "actual_time": 70.0,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "severe",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action assess_vital_signs performed 65 min after deadline",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "fdb81d26-043d-441a-80d9-d221148f2e3e",
+      "violation_type": "timing",
+      "timestamp_minutes": 75.0,
+      "action_involved": "establish_iv_access",
+      "expected_action": null,
+      "expected_deadline": 10.0,
+      "actual_time": 75.0,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "severe",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action establish_iv_access performed 65 min after deadline",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "2ec70737-6fda-48ef-9e7c-7d4bd5d16d2f",
+      "violation_type": "timing",
+      "timestamp_minutes": 80.0,
+      "action_involved": "order_lab_abg",
+      "expected_action": null,
+      "expected_deadline": 30.0,
+      "actual_time": 80.0,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "major",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action order_lab_abg performed 50 min after deadline",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "2e4ba016-3305-4c27-8573-faebcd5f5bae",
+      "violation_type": "timing",
+      "timestamp_minutes": 85.0,
+      "action_involved": "start_iv_fluid_normal_saline",
+      "expected_action": null,
+      "expected_deadline": 15.0,
+      "actual_time": 85.0,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "severe",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action start_iv_fluid_normal_saline performed 70 min after deadline",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "070afa89-e86d-4f0b-8522-09f567f9a4ff",
+      "violation_type": "omission",
+      "timestamp_minutes": 110.0,
+      "action_involved": null,
+      "expected_action": "order_lab_cbc",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_lab_cbc",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "b8022611-b6e8-4e83-bcc4-97139664d7e8",
+      "violation_type": "omission",
+      "timestamp_minutes": 110.0,
+      "action_involved": null,
+      "expected_action": "order_imaging_chest_xray",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_imaging_chest_xray",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "e4f78596-3fe7-4353-a052-3e566da83e62",
+      "violation_type": "omission",
+      "timestamp_minutes": 110.0,
+      "action_involved": null,
+      "expected_action": "give_antibiotics",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_antibiotics",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "fe310daf-abf5-418d-8f5c-0ce9903a85d4",
+      "violation_type": "omission",
+      "timestamp_minutes": 110.0,
+      "action_involved": null,
+      "expected_action": "order_blood_cultures",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: order_blood_cultures",
+      "guideline_reference": "DKA Initial Assessment"
+    },
+    {
+      "violation_id": "154a9f53-201a-4981-bbe3-daa07a560474",
+      "violation_type": "omission",
+      "timestamp_minutes": 110.0,
+      "action_involved": null,
+      "expected_action": "give_supplemental_oxygen",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_dka_pneumonia_trigger",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_supplemental_oxygen",
+      "guideline_reference": "DKA Initial Assessment"
+    }
+  ],
+  "expected_actions": [
+    "assess_vital_signs",
+    "establish_iv_access",
+    "order_lab_bmp",
+    "order_lab_abg",
+    "order_lab_cbc",
+    "start_iv_fluid_ns",
+    "order_imaging_chest_xray",
+    "start_insulin_infusion",
+    "give_antibiotics",
+    "order_blood_cultures",
+    "give_supplemental_oxygen"
+  ],
+  "forbidden_actions": [],
+  "total_duration_minutes": 110.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 8,
+  "total_tokens": 26794,
+  "elapsed_seconds": 186.09
+}

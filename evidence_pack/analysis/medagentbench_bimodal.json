@@ -1,0 +1,225 @@
+{
+  "analysis_id": "medagentbench_bimodal_diagnosis",
+  "timestamp": "2026-03-31T01:11:48.529759",
+  "data_source": "results/medagentbench_full_300.json",
+  "total_cases": 300,
+  "task_1_score_separation": {
+    "score_1_0_count": 226,
+    "score_1_0_pct": 75.3,
+    "score_0_0_count": 60,
+    "score_0_0_pct": 20.0,
+    "score_in_between_count": 14,
+    "score_in_between_pct": 4.7,
+    "score_in_between_values": [
+      0.9333,
+      0.9375,
+      0.9412
+    ],
+    "bimodal_confirmed": true,
+    "bimodal_description": "95.3% of cases cluster at exactly 0.0 or 1.0; only 4.7% (14 cases) fall in between",
+    "score_formula_identified": "final_score = cpg_compliance_score * action_coverage (multiplicative, exact match for all 300 cases)",
+    "group_profiles": {
+      "score_1_0": {
+        "n": 226,
+        "detected_domain": {
+          "general": 226
+        },
+        "divergence_type": {
+          "ALIGNED": 226
+        },
+        "mean_steps": 8.5,
+        "mean_actions_taken": 14.5,
+        "mean_action_coverage": 1.0,
+        "mean_cpg_compliance": 1.0,
+        "mean_modular_overall": 0.9696,
+        "top_actions": {
+          "assess_vital_signs": 226,
+          "assess_chief_complaint": 226,
+          "assess_general_status": 226,
+          "assess_mental_status": 226,
+          "assess_organ_dysfunction": 226,
+          "assess_patient": 225,
+          "assess_infection_source": 216,
+          "assess_cardiovascular_status": 212,
+          "assess_respiratory_status": 207,
+          "assess_hydration_status": 202
+        }
+      },
+      "score_0_0": {
+        "n": 60,
+        "detected_domain": {
+          "general": 60
+        },
+        "divergence_type": {
+          "CPG_OVERSPECIFIC": 60
+        },
+        "mean_steps": 8.3,
+        "mean_actions_taken": 15.4,
+        "mean_action_coverage": 0.0,
+        "mean_cpg_compliance": 1.0,
+        "mean_modular_overall": 0.9542,
+        "top_actions": {
+          "assess_vital_signs": 60,
+          "assess_chief_complaint": 60,
+          "assess_general_status": 60,
+          "assess_mental_status": 60,
+          "assess_cardiovascular_status": 60,
+          "assess_pain_level": 60,
+          "assess_respiratory_status": 60,
+          "assess_patient": 60,
+          "assess_neurological_status": 60,
+          "obtain_history": 57
+        },
+        "scenario_id_blocks": [
+          "medagentbench_60 to medagentbench_89 (30 cases)",
+          "medagentbench_210 to medagentbench_239 (30 cases)"
+        ]
+      },
+      "score_in_between": {
+        "n": 14,
+        "detected_domain": {
+          "general": 14
+        },
+        "divergence_type": {
+          "ALIGNED": 14
+        },
+        "mean_cpg_compliance": 0.9367,
+        "mean_action_coverage": 1.0,
+        "note": "These 14 cases have coverage=1.0 but cpg_compliance<1.0 (minor violations), so final = cpg * 1.0 < 1.0"
+      }
+    }
+  },
+  "task_2_inflation_analysis": {
+    "all_300_cases_general_domain": true,
+    "specific_cpg_domain_count": 0,
+    "general_universal_fallback_count": 300,
+    "inflation_mechanism": {
+      "step_1": "Domain detection fails for all MedAgentBench scenarios -> detected_domain='general'",
+      "step_2": "universal_clinical_safety.yaml used as fallback -> only checks basic assessment actions",
+      "step_3": "Agent floods with assess_* actions (14-17 per case) -> passes all modular checks",
+      "step_4": "CPG compliance = 1.0 (universal graph has no mandatory domain-specific actions)",
+      "step_5": "action_coverage depends on whether expected_actions from MedAgentBench match agent output",
+      "step_6": "If match -> coverage=1.0 -> final=1.0; if no match -> coverage=0.0 -> final=0.0"
+    },
+    "action_pattern": {
+      "dominant_action_type": "assess_* (assessment actions)",
+      "mean_assessment_actions": 13.14,
+      "mean_workup_actions": 0.95,
+      "mean_treatment_actions": 0.09,
+      "interpretation": "Agent performs comprehensive assessments but almost no treatment actions"
+    }
+  },
+  "task_3_zero_score_root_cause": {
+    "n_zero_score": 60,
+    "action_coverage_all_zero": true,
+    "safety_gate_triggered": 0,
+    "cpg_compliance_perfect": true,
+    "agent_was_active": true,
+    "mean_actions_taken": 15.4,
+    "root_cause": "SCORING_ARTIFACT",
+    "explanation": "The 60 zero-score cases are NOT agent failures. The agent performed 15.4 actions on average (similar to the 1.0 group at 14.5). CPG compliance is 1.0 and modular safety is 1.0. The zero score comes entirely from action_coverage=0.0, meaning the agent's performed actions did not match any of the 'expected_actions' generated from MedAgentBench ground truth. The multiplicative formula (final = cpg * coverage) then forces the score to exactly 0.0.",
+    "scenario_id_pattern": "Two consecutive blocks: indices 60-89 and 210-239",
+    "block_hypothesis": "These MedAgentBench task indices likely represent specific task categories (e.g., medication ordering, procedure tasks) where the expected_actions vocabulary does not overlap with CGA-Bench's assess_* action vocabulary",
+    "sampled_cases": [
+      {
+        "scenario_id": "medagentbench_60",
+        "action_coverage": 0.0,
+        "actions_count": 15,
+        "cpg_compliance": 1.0,
+        "modular_overall": 1.0,
+        "divergence_type": "CPG_OVERSPECIFIC"
+      },
+      {
+        "scenario_id": "medagentbench_61",
+        "action_coverage": 0.0,
+        "actions_count": 15,
+        "cpg_compliance": 1.0,
+        "modular_overall": 1.0,
+        "divergence_type": "CPG_OVERSPECIFIC"
+      },
+      {
+        "scenario_id": "medagentbench_62",
+        "action_coverage": 0.0,
+        "actions_count": 15,
+        "cpg_compliance": 1.0,
+        "modular_overall": 1.0,
+        "divergence_type": "CPG_OVERSPECIFIC"
+      },
+      {
+        "scenario_id": "medagentbench_63",
+        "action_coverage": 0.0,
+        "actions_count": 15,
+        "cpg_compliance": 1.0,
+        "modular_overall": 1.0,
+        "divergence_type": "CPG_OVERSPECIFIC"
+      },
+      {
+        "scenario_id": "medagentbench_64",
+        "action_coverage": 0.0,
+        "actions_count": 16,
+        "cpg_compliance": 1.0,
+        "modular_overall": 1.0,
+        "divergence_type": "CPG_OVERSPECIFIC"
+      }
+    ]
+  },
+  "task_4_exclude_general_fallback": {
+    "non_general_count": 0,
+    "conclusion": "ALL 300 cases have detected_domain='general'. There are ZERO cases with domain-specific CPG evaluation. Excluding general fallback cases leaves N=0, making subset analysis impossible. The entire MedAgentBench evaluation is conducted under universal_clinical_safety.yaml, which provides no clinical domain specificity.",
+    "implication": "The MedAgentBench CGA scores do NOT reflect domain-specific clinical guideline adherence. They reflect only: (a) whether the agent's generic assessment actions happened to match expected_actions from the benchmark, and (b) whether the universal safety checks passed."
+  },
+  "task_5_honest_reporting_recommendation": {
+    "recommendation": "REPORT_WITH_MAJOR_CAVEATS",
+    "reasoning": [
+      "1. The bimodal distribution (75.3% at 1.0, 20.0% at 0.0) is a scoring artifact, not a meaningful clinical signal.",
+      "2. The score formula final = cpg_compliance * action_coverage creates a binary outcome when coverage is {0, 1}.",
+      "3. ALL 300 cases fell to 'general' domain fallback -> no domain-specific CPG evaluation occurred.",
+      "4. The 1.0 scores are INFLATED: universal_clinical_safety.yaml only checks basic assessments, which the agent trivially satisfies.",
+      "5. The 0.0 scores are DEFLATED: they represent vocabulary mismatch between MedAgentBench expected_actions and CGA-Bench action space, not clinical failures.",
+      "6. The agent performs ~15 actions per case regardless of score group, suggesting equivalent clinical effort."
+    ],
+    "reporting_options": {
+      "option_A_full_N300": {
+        "description": "Report N=300, mean=0.797, but prominently caveat the bimodal artifact",
+        "pros": "Transparent about full dataset",
+        "cons": "Mean of 0.797 is misleading (bimodal, not unimodal)",
+        "recommended": false
+      },
+      "option_B_exclude_fallback": {
+        "description": "Only report cases with domain-specific CPG matching",
+        "pros": "Would be honest about what CGA-Bench actually evaluates",
+        "cons": "N=0 cases remain; not feasible",
+        "recommended": false
+      },
+      "option_C_decomposed_reporting": {
+        "description": "Report the three components separately: cpg_compliance (mean=0.999), action_coverage (mean=0.80, bimodal), modular_score (mean=0.966)",
+        "pros": "Shows where the variance actually comes from (action_coverage vocabulary mismatch)",
+        "cons": "More complex to present",
+        "recommended": true
+      },
+      "option_D_caveat_table": {
+        "description": "Report N=300 with a decomposition table showing the bimodal split and its cause",
+        "pros": "Comprehensive, transparent, satisfies NeurIPS reviewer scrutiny",
+        "cons": "Requires more space in the paper",
+        "recommended": true
+      }
+    },
+    "suggested_paper_language": "MedAgentBench evaluation (N=300) produced a bimodal score distribution (75.3% at 1.0, 20.0% at 0.0) due to domain mismatch: all 300 scenarios fell to the universal safety fallback (detected_domain='general'). The bimodality arises from the multiplicative score formula (final = cpg_compliance x action_coverage), where action_coverage is binary-valued due to vocabulary mismatch between MedAgentBench expected actions and CGA-Bench's action space. We report component scores separately: CPG compliance=0.999, modular safety=0.966, action coverage=0.80 (bimodal). These results demonstrate CGA-Bench's scoring framework limitations when applied to out-of-domain benchmarks without CPG-matched scenarios."
+  },
+  "statistical_summary": {
+    "overall_mean": 0.797,
+    "overall_std": 0.3994,
+    "overall_median": 1.0,
+    "ci_95_lower": 0.7518,
+    "ci_95_upper": 0.8422,
+    "sem": 0.0231,
+    "n": 300,
+    "bimodality_coefficient": 0.6876,
+    "entropy_note": "Shannon entropy of discretized distribution would be low due to extreme concentration at two modes"
+  },
+  "figures": [
+    ".omc/scientist/figures/medagentbench_bimodal_distribution.png",
+    ".omc/scientist/figures/medagentbench_bimodal_mechanism.png",
+    ".omc/scientist/figures/medagentbench_score_heatmap.png"
+  ]
+}

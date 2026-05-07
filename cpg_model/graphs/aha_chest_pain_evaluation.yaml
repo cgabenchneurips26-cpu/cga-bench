@@ -1,0 +1,665 @@
+# AHA Chest Pain Evaluation 가이드라인 그래프
+# Source: 2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain
+# DOI: 10.1161/CIR.0000000000001029 (Circulation)
+# DOI: 10.1016/j.jacc.2021.07.053 (JACC)
+# 핵심: 도착 후 10분 내 12-lead ECG 획득 (Class I, LOE B-NR)
+
+graph_id: "aha_chest_pain_evaluation"
+guideline_name: "AHA Chest Pain Evaluation"
+version: "2021.1"
+
+metadata:
+  source: "AHA/ACC Chest Pain Guidelines 2021"
+  doi: "10.1161/CIR.0000000000001029"
+  doi_jacc: "10.1016/j.jacc.2021.07.053"
+  source_url: "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001029"
+  journal: "Circulation"
+  citation: "Circulation. 2021;144(22):e368-e454"
+  key_recommendation: "12-lead ECG within 10 minutes of ED arrival"
+  recommendation_system: "ACC/AHA Class/LOE"
+  description: "Guideline for evaluation and diagnosis of chest pain"
+  key_quote: "The 12-lead ECG, which should be acquired and interpreted within 10 minutes of arrival to a medical facility, is pivotal in the evaluation because of its capacity to identify and triage patients with STEMI to urgent coronary reperfusion."
+
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: "initial_assessment"
+
+nodes:
+  # ========================================
+  # 1. 초기 평가 노드
+  # ========================================
+  initial_assessment:
+    node_id: "initial_assessment"
+    node_type: "enquiry"
+    name: "Initial Chest Pain Assessment"
+    description: "Rapid initial assessment - ECG within 10 minutes is pivotal for STEMI detection"
+    precondition: null
+
+    mandatory_actions:
+      - "obtain_12_lead_ecg"
+      - "assess_vital_signs"
+      - "obtain_chest_pain_history"
+
+    allowed_actions:
+      - "obtain_12_lead_ecg"
+      - "assess_vital_signs"
+      - "obtain_chest_pain_history"
+      - "establish_iv_access"
+      - "order_lab_troponin"
+      - "administer_oxygen_if_hypoxic"
+
+    forbidden_actions:
+      - "discharge_without_ecg"
+      - "delay_ecg_for_registration"
+
+    # 핵심: 10분 내 ECG (AHA Class I, Level B-NR)
+    deadlines:
+      obtain_12_lead_ecg: 10
+      assess_vital_signs: 5
+
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 2.3.2"
+    source_page: "e219"
+    source_figure: "Figure 4"
+    source_quote: "The 12-lead ECG, which should be acquired and interpreted within 10 minutes of arrival to a medical facility, is pivotal in the evaluation because of its capacity to identify and triage patients with STEMI to urgent coronary reperfusion."
+    source_loe: "B-NR"
+
+    next_nodes:
+      - "ecg_interpretation"
+    conditional_next: {}
+
+  # ========================================
+  # 2. ECG 해석 노드
+  # ========================================
+  ecg_interpretation:
+    node_id: "ecg_interpretation"
+    node_type: "decision"
+    name: "ECG Interpretation"
+    description: "Interpret 12-lead ECG for ischemic changes - Figure 4 algorithm"
+    precondition: null
+
+    mandatory_actions:
+      - "interpret_ecg"
+
+    allowed_actions:
+      - "interpret_ecg"
+      - "obtain_prior_ecg_comparison"
+      - "request_cardiology_consult"
+
+    forbidden_actions: []
+
+    deadlines:
+      interpret_ecg: 15
+
+    required_prior_actions:
+      interpret_ecg:
+        - "obtain_12_lead_ecg"
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 2.3.2"
+    source_page: "e219"
+    source_figure: "Figure 4 - Electrocardiographic-Directed Management"
+    source_quote: "Early recognition of STEMI improves outcomes. Therefore, regardless of the setting, an ECG should be obtained and interpreted within 10 minutes of arrival."
+
+    next_nodes: []
+    conditional_next:
+      "state.ecg_finding == 'STEMI'": "stemi_pathway"
+      "state.ecg_finding == 'NSTEMI' or state.ecg_finding == 'ischemic_changes'": "nste_acs_pathway"
+      "True": "risk_stratification"
+
+  # ========================================
+  # 3. STEMI 경로
+  # ========================================
+  stemi_pathway:
+    node_id: "stemi_pathway"
+    node_type: "plan"
+    name: "STEMI Management"
+    description: "Immediate management of ST-elevation myocardial infarction - Door-to-balloon ≤90 min"
+    precondition: "state.ecg_finding == 'STEMI'"
+
+    mandatory_actions:
+      - "activate_cath_lab"
+      - "give_aspirin_loading"
+      - "give_p2y12_inhibitor"
+      - "give_anticoagulation"
+      - "arrange_pci"
+
+    allowed_actions:
+      - "activate_cath_lab"
+      - "give_aspirin_loading"
+      - "give_p2y12_inhibitor"
+      - "give_anticoagulation"
+      - "give_nitrates_if_indicated"
+      - "give_morphine_if_needed"
+      - "give_beta_blocker_if_stable"
+      - "arrange_pci"
+      - "consider_fibrinolysis_if_pci_delayed"
+      # RV infarct scenario 관련 action 추가
+      - "obtain_right_sided_ecg_v4r"  # V4R ECG for RV involvement assessment
+      - "give_crystalloid_30ml_kg"     # IV fluid bolus for RV infarct (preload optimization)
+      - "give_crystalloid_fluid"       # Fluid resuscitation alternative
+      - "order_lab_troponin"           # Troponin for risk stratification
+
+    forbidden_actions:
+      - "give_nitrates_if_rv_infarct"
+      - "give_nitrates_if_indicated"    # RV infarct: ALL nitrate forms contraindicated
+      - "give_nitroglycerin"            # Alias — agents may output this form
+      - "discharge_home"
+      - "delay_reperfusion"
+
+    # Door-to-balloon time target: 90 minutes (Class I, LOE A)
+    deadlines:
+      activate_cath_lab: 10
+      give_aspirin_loading: 15
+      give_p2y12_inhibitor: 30
+      arrange_pci: 90
+
+    # 순서 의존성: 카테터실 활성화 전 ECG 확인 필요
+    required_prior_actions:
+      activate_cath_lab:
+        - "obtain_12_lead_ecg"
+        - "interpret_ecg"
+      give_nitrates_if_indicated:
+        - "assess_vital_signs"
+
+    recommendation_class: "I"
+    evidence_level: "A"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 5.1 STEMI Management"
+    source_page: "e238"
+    source_quote: "Primary PCI is the recommended method of reperfusion when it can be performed in a timely fashion by experienced operators."
+    source_loe: "A"
+    door_to_balloon_target: 90
+
+    conditional_rules:
+      - rule_id: "ACS-COCAINE-NO-BB"
+        condition: "'cocaine_use' in patient.comorbidities or 'cocaine' in patient.history"
+        effect:
+          type: FORBIDDEN
+          actions: [give_beta_blocker, give_metoprolol, give_atenolol, give_propranolol]
+        evidence: "AHA/ACC 2014 NSTEMI Guidelines, Section 5.3.1"
+        severity: CRITICAL
+        description: "Beta-blockers in cocaine-associated ACS cause unopposed alpha stimulation."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "cocaine_use", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "cocaine_use", type: list_not_contains}
+
+      - rule_id: "ACS-LATE-NO-FIBRINOLYTIC"
+        condition: "patient.presentation.symptom_onset_hours > 12"
+        effect:
+          type: FORBIDDEN
+          actions: [give_fibrinolytic, give_tenecteplase, give_alteplase]
+        evidence: "ESC 2023 ACS Guidelines; FTT Collaborative, Lancet 1994"
+        severity: HIGH
+        description: "Fibrinolytics after 12 hours provide no benefit and increase bleeding risk."
+        condition_variables: [patient.presentation.symptom_onset_hours]
+        trigger_range:
+          patient.presentation.symptom_onset_hours: {min: 13, max: 72, type: float}
+        normal_range:
+          patient.presentation.symptom_onset_hours: {min: 0, max: 12, type: float}
+
+      - rule_id: "ACS-DISSECTION-NO-ANTICOAG"
+        condition: "'aortic_dissection_suspected' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_heparin, give_antiplatelet, give_aspirin, give_thrombolytic, give_anticoagulation]
+        evidence: "AHA/ACC 2022 Aortic Disease Guidelines, Section 7.2"
+        severity: CRITICAL
+        description: "Anticoagulation in aortic dissection causes fatal hemorrhage."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "aortic_dissection_suspected", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "aortic_dissection_suspected", type: list_not_contains}
+
+      - rule_id: "ACS-RV-INFARCT-NO-NITRATE"
+        condition: "'rv_infarct' in patient.comorbidities or 'inferior_stemi' in patient.ecg_findings"
+        effect:
+          type: FORBIDDEN
+          actions: [give_nitroglycerin, give_nitrates, give_morphine]
+        evidence: "AHA/ACC 2013 STEMI Guidelines, Section 5.1"
+        severity: CRITICAL
+        description: "Nitrates/morphine in RV infarct cause preload-dependent cardiovascular collapse."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "rv_infarct", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "rv_infarct", type: list_not_contains}
+
+      - rule_id: "ACS-ACTIVE-BLEED-NO-ANTICOAG"
+        condition: "'active_hemorrhage' in patient.contraindications or 'active_upper_gi_bleed' in patient.comorbidities or 'active_lower_gi_bleed' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_thrombolysis, give_full_dose_heparin_with_active_bleed, give_dual_antiplatelet_without_gi_protection, delay_pci_for_endoscopy]
+        evidence: "AHA/ACC 2013 STEMI Guidelines, Section 4.4 Bleeding Risk"
+        severity: CRITICAL
+        description: "Active hemorrhage is absolute contraindication to thrombolysis and full anticoagulation."
+        condition_variables: [patient.contraindications]
+        trigger_range:
+          patient.contraindications: {contains: "active_hemorrhage", type: list_contains}
+        normal_range:
+          patient.contraindications: {not_contains: "active_hemorrhage", type: list_not_contains}
+
+      - rule_id: "ACS-ICH-NO-ANTICOAG"
+        condition: "'active_intracranial_hemorrhage' in patient.contraindications or 'hemorrhagic_stroke' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [give_heparin_bolus, give_full_dose_anticoagulation, give_dual_antiplatelet, give_thrombolysis]
+        evidence: "AHA/ACC 2013 STEMI Guidelines, Section 4.3 Absolute Contraindications"
+        severity: CRITICAL
+        description: "Active intracranial hemorrhage is absolute contraindication."
+        condition_variables: [patient.contraindications]
+        trigger_range:
+          patient.contraindications: {contains: "active_intracranial_hemorrhage", type: list_contains}
+        normal_range:
+          patient.contraindications: {not_contains: "active_intracranial_hemorrhage", type: list_not_contains}
+
+      - rule_id: "ACS-SILENT-MI-NO-DISCHARGE"
+        condition: "'diabetic_neuropathy' in patient.comorbidities"
+        effect:
+          type: FORBIDDEN
+          actions: [discharge_with_vague_complaints]
+        evidence: "AHA/ACC 2014; Zellweger MJ, Eur Heart J 2004"
+        severity: HIGH
+        description: "Diabetic neuropathy masks MI symptoms. Never dismiss vague complaints."
+        condition_variables: [patient.comorbidities]
+        trigger_range:
+          patient.comorbidities: {contains: "diabetic_neuropathy", type: list_contains}
+        normal_range:
+          patient.comorbidities: {not_contains: "diabetic_neuropathy", type: list_not_contains}
+
+    next_nodes:
+      - "post_pci_care"
+    conditional_next: {}
+
+  # ========================================
+  # 4. NSTE-ACS 경로
+  # ========================================
+  nste_acs_pathway:
+    node_id: "nste_acs_pathway"
+    node_type: "plan"
+    name: "NSTE-ACS Management"
+    description: "Management of non-ST-elevation acute coronary syndrome"
+    precondition: "state.ecg_finding == 'NSTEMI' or state.ecg_finding == 'ischemic_changes'"
+
+    mandatory_actions:
+      - "order_lab_troponin"
+      - "give_aspirin_loading"
+      - "give_anticoagulation"
+      - "calculate_risk_score"
+
+    allowed_actions:
+      - "order_lab_troponin"
+      - "give_aspirin_loading"
+      - "give_p2y12_inhibitor"
+      - "give_anticoagulation"
+      - "give_nitrates_if_indicated"
+      - "give_beta_blocker_if_stable"
+      - "request_cardiology_consult"
+      - "calculate_risk_score"
+      - "order_echocardiogram"
+
+    forbidden_actions:
+      - "discharge_home"
+      - "delay_anticoagulation"
+
+    deadlines:
+      order_lab_troponin: 30
+      give_aspirin_loading: 30
+      give_anticoagulation: 60
+      calculate_risk_score: 60
+
+    required_prior_actions:
+      give_nitrates_if_indicated:
+        - "assess_vital_signs"
+      give_p2y12_inhibitor:
+        - "calculate_risk_score"
+
+    recommendation_class: "I"
+    evidence_level: "A"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 5.2 NSTE-ACS Management"
+    source_page: "e239"
+    source_figure: "Figure 4"
+    source_quote: "In patients with NSTE-ACS, guideline-directed antiplatelet and anticoagulant therapy with risk stratification should be initiated early to guide invasive versus conservative strategy."
+    source_loe: "A"
+
+    conditional_rules:
+      - rule_id: "ACS-CKD-ENOXAPARIN-ADJUST"
+        condition: "patient.labs.egfr < 30"
+        effect:
+          type: FORBIDDEN
+          actions: [give_enoxaparin_full_dose, give_enoxaparin_1mg_kg_bid]
+        evidence: "AHA/ACC 2014; Spinler SA, Pharmacotherapy 2003"
+        severity: HIGH
+        description: "Full-dose enoxaparin in severe CKD causes hemorrhage."
+        condition_variables: [patient.labs.egfr]
+        trigger_range:
+          patient.labs.egfr: {min: 5, max: 29, type: float}
+        normal_range:
+          patient.labs.egfr: {min: 30, max: 120, type: float}
+
+      - rule_id: "ACS-ASPIRIN-ALLERGY-NO-ASPIRIN"
+        condition: "'aspirin' in patient.allergies"
+        effect:
+          type: FORBIDDEN
+          actions: [give_aspirin, give_nsaid]
+        evidence: "AHA/ACC 2014 NSTEMI Guidelines"
+        severity: CRITICAL
+        description: "Aspirin allergy prohibits aspirin and NSAIDs."
+        condition_variables: [patient.allergies]
+        trigger_range:
+          patient.allergies: {contains: "aspirin", type: list_contains}
+        normal_range:
+          patient.allergies: {not_contains: "aspirin", type: list_not_contains}
+
+      - rule_id: "ACS-TICAGRELOR-CABG-WASHOUT"
+        condition: "'ticagrelor_recent' in patient.medications"
+        effect:
+          type: FORBIDDEN
+          actions: [proceed_to_cabg_within_5_days]
+        evidence: "ACC/AHA 2016 Dual Antiplatelet Therapy; PLATO Trial"
+        severity: HIGH
+        description: "Ticagrelor requires 5-day washout before CABG."
+        condition_variables: [patient.medications]
+        trigger_range:
+          patient.medications: {contains: "ticagrelor_recent", type: list_contains}
+        normal_range:
+          patient.medications: {not_contains: "ticagrelor_recent", type: list_not_contains}
+
+    next_nodes:
+      - "invasive_strategy_decision"
+    conditional_next: {}
+
+  # ========================================
+  # 5. 위험도 층화 (저위험군)
+  # ========================================
+  risk_stratification:
+    node_id: "risk_stratification"
+    node_type: "decision"
+    name: "Risk Stratification"
+    description: "Risk stratification for non-STEMI/NSTEMI chest pain using HEART score"
+    precondition: null
+
+    mandatory_actions:
+      - "order_lab_troponin"
+      - "calculate_risk_score"
+
+    allowed_actions:
+      - "order_lab_troponin"
+      - "calculate_risk_score"
+      - "order_serial_ecg"
+      - "order_chest_xray"
+      - "obtain_detailed_history"
+
+    forbidden_actions: []
+
+    deadlines:
+      order_lab_troponin: 60
+      calculate_risk_score: 120
+
+    required_prior_actions:
+      calculate_risk_score:
+        - "order_lab_troponin"
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 4.4 Risk Stratification"
+    source_page: "e223"
+    source_quote: "High-sensitivity cardiac troponin should be used for the evaluation of patients with suspected ACS"
+
+    next_nodes: []
+    conditional_next:
+      "state.risk_score == 'high'": "nste_acs_pathway"
+      "state.risk_score == 'intermediate'": "observation_pathway"
+      "True": "low_risk_pathway"
+
+  # ========================================
+  # 6. 관찰 경로 (중간 위험군)
+  # ========================================
+  observation_pathway:
+    node_id: "observation_pathway"
+    node_type: "plan"
+    name: "Observation Pathway"
+    description: "Observation and serial testing for intermediate risk patients"
+    precondition: "state.risk_score == 'intermediate'"
+
+    mandatory_actions:
+      - "serial_troponin"
+      - "serial_ecg"
+      - "stress_testing_or_cta"
+
+    allowed_actions:
+      - "serial_troponin"
+      - "serial_ecg"
+      - "stress_testing_or_cta"
+      - "admit_to_observation"
+      - "request_cardiology_consult"
+
+    forbidden_actions:
+      - "discharge_without_serial_testing"
+
+    deadlines:
+      serial_troponin: 180  # 3시간 후 재검
+      stress_testing_or_cta: 1440  # 24시간 내
+
+    required_prior_actions:
+      stress_testing_or_cta:
+        - "serial_troponin"
+        - "serial_ecg"
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 4.5 Observation Protocol"
+    source_page: "e224"
+    source_quote: "Serial high-sensitivity troponin testing at 0 and 3 hours can effectively rule out AMI"
+
+    next_nodes:
+      - "disposition_decision"
+    conditional_next: {}
+
+  # ========================================
+  # 7. 저위험 경로
+  # ========================================
+  low_risk_pathway:
+    node_id: "low_risk_pathway"
+    node_type: "action"
+    name: "Low Risk Pathway"
+    description: "Management of low risk chest pain - safe for discharge with follow-up"
+    precondition: "state.risk_score == 'low'"
+
+    mandatory_actions:
+      - "document_risk_assessment"
+      - "provide_discharge_instructions"
+
+    allowed_actions:
+      - "document_risk_assessment"
+      - "provide_discharge_instructions"
+      - "schedule_outpatient_followup"
+      - "consider_outpatient_stress_test"
+
+    forbidden_actions:
+      - "discharge_without_documentation"
+
+    deadlines: {}
+
+    required_prior_actions:
+      provide_discharge_instructions:
+        - "document_risk_assessment"
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 4.6 Low Risk Discharge"
+    source_page: "e226"
+    source_quote: "For patients with acute chest pain and low clinical suspicion for ACS, negative serial troponin, and nonischemic ECG, stress testing or anatomic testing may be deferred"
+
+    next_nodes: []
+    conditional_next: {}
+
+  # ========================================
+  # 8. 침습적 전략 결정
+  # ========================================
+  invasive_strategy_decision:
+    node_id: "invasive_strategy_decision"
+    node_type: "decision"
+    name: "Invasive Strategy Decision"
+    description: "Decision on timing of invasive strategy for NSTE-ACS"
+    precondition: null
+
+    mandatory_actions:
+      - "assess_for_early_invasive"
+
+    allowed_actions:
+      - "assess_for_early_invasive"
+      - "request_cardiology_consult"
+
+    forbidden_actions: []
+
+    deadlines:
+      assess_for_early_invasive: 120
+
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "A"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 5.3 Invasive Strategy"
+    source_page: "e241"
+    source_quote: "An early invasive strategy (within 24 hours) is indicated for NSTE-ACS patients with high-risk features"
+
+    next_nodes: []
+    conditional_next:
+      "state.requires_urgent_pci": "stemi_pathway"
+      "True": "admit_to_cardiology"
+
+  # ========================================
+  # 9. PCI 후 관리
+  # ========================================
+  post_pci_care:
+    node_id: "post_pci_care"
+    node_type: "action"
+    name: "Post-PCI Care"
+    description: "Care after percutaneous coronary intervention"
+    precondition: null
+
+    mandatory_actions:
+      - "admit_to_ccu"
+      - "continue_dual_antiplatelet"
+      - "initiate_secondary_prevention"
+
+    allowed_actions:
+      - "admit_to_ccu"
+      - "continue_dual_antiplatelet"
+      - "initiate_secondary_prevention"
+      - "echocardiogram_post_mi"
+      - "cardiac_rehabilitation_referral"
+
+    forbidden_actions:
+      - "discontinue_antiplatelet_early"
+
+    deadlines: {}
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "A"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 6.1 Post-PCI Management"
+    source_page: "e248"
+    source_quote: "DAPT with aspirin and a P2Y12 inhibitor is recommended for at least 12 months after PCI"
+
+    next_nodes: []
+    conditional_next: {}
+
+  # ========================================
+  # 10. 심장내과 입원
+  # ========================================
+  admit_to_cardiology:
+    node_id: "admit_to_cardiology"
+    node_type: "action"
+    name: "Admit to Cardiology"
+    description: "Admission to cardiology service for NSTE-ACS management"
+    precondition: null
+
+    mandatory_actions:
+      - "admit_to_cardiology_service"
+      - "continue_medical_therapy"
+
+    allowed_actions:
+      - "admit_to_cardiology_service"
+      - "continue_medical_therapy"
+      - "schedule_catheterization"
+
+    forbidden_actions:
+      - "discharge_home"
+
+    deadlines: {}
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "B"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 5.4 Admission Criteria"
+    source_page: "e242"
+    source_quote: "Patients with NSTE-ACS and ongoing ischemic risk should be admitted for continuous monitoring and guideline-directed inpatient management."
+
+    next_nodes: []
+    conditional_next: {}
+
+  # ========================================
+  # 11. 배치 결정
+  # ========================================
+  disposition_decision:
+    node_id: "disposition_decision"
+    node_type: "decision"
+    name: "Disposition Decision"
+    description: "Final disposition decision after observation"
+    precondition: null
+
+    mandatory_actions:
+      - "determine_disposition"
+
+    allowed_actions:
+      - "admit_to_hospital"
+      - "discharge_with_followup"
+      - "transfer_to_higher_care"
+
+    forbidden_actions: []
+
+    deadlines: {}
+    required_prior_actions: {}
+
+    recommendation_class: "I"
+    evidence_level: "C"
+
+    source_guideline: "AHA/ACC 2021"
+    source_section: "Section 4.7 Disposition"
+    source_page: "e227"
+    source_quote: "Disposition should be based on structured risk assessment and objective testing, with discharge reserved for low-risk patients who have safe follow-up."
+
+    next_nodes: []
+    conditional_next: {}

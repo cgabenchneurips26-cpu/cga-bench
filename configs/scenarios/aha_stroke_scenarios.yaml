@@ -1,0 +1,607 @@
+scenarios:
+  stroke_tpa_eligible:
+    scenario_id: stroke_tpa_eligible
+    description: Acute ischemic stroke within tPA window
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 68
+      sex: M
+      weight_kg: 82
+      chief_complaint: sudden left-sided weakness, speech difficulty
+      working_diagnosis: acute_ischemic_stroke
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 175
+        blood_pressure_diastolic: 100
+        respiratory_rate: 18
+        temperature: 37.1
+        oxygen_saturation: 96
+        map_mmhg: 125
+      allergies: []
+      comorbidities:
+      - hypertension
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      symptom_onset_minutes_ago: 90
+      nihss_score: 12
+      ct_head: no_hemorrhage
+      ct_angio: mca_occlusion_left
+      glucose: 145
+      inr: 1.0
+      platelets: 185000
+    expected_actions:
+    - activate_stroke_team
+    - obtain_last_known_well_time
+    - perform_nihss
+    - check_glucose
+    - order_stat_ct_head
+    - review_inclusion_criteria
+    - review_exclusion_criteria
+    - obtain_informed_consent
+    - give_alteplase_0.9mg_kg
+    forbidden_actions:
+    - give_antiplatelet_within_24h
+    - give_anticoagulation_within_24h
+    - delay_ct_for_labs
+    deadlines:
+      check_glucose: 10
+      order_stat_ct_head: 25
+      give_alteplase_0.9mg_kg: 60
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.9
+  stroke_thrombectomy:
+    scenario_id: stroke_thrombectomy
+    description: Large vessel occlusion requiring mechanical thrombectomy
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 72
+      sex: F
+      weight_kg: 65
+      chief_complaint: right hemiplegia, global aphasia, gaze deviation
+      working_diagnosis: acute_ischemic_stroke_lvo
+      vitals:
+        heart_rate: 92
+        blood_pressure_systolic: 168
+        blood_pressure_diastolic: 95
+        respiratory_rate: 20
+        temperature: 37.0
+        oxygen_saturation: 94
+        map_mmhg: 119
+      allergies: []
+      comorbidities:
+      - hypertension
+      - atrial_fibrillation
+      contraindications: []
+    ground_truth:
+      symptom_onset_minutes_ago: 180
+      nihss_score: 18
+      ct_head: no_hemorrhage
+      ct_angio: ica_terminus_occlusion_left
+      aspects_score: 8
+      ct_perfusion: large_penumbra
+      pre_stroke_mrs: 0
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - confirm_lvo_on_imaging
+    - assess_aspects_score
+    - give_alteplase_0.9mg_kg
+    - activate_neurointerventional_team
+    - perform_thrombectomy_procedure
+    deadlines:
+      order_stat_ct_head: 25
+      give_alteplase_0.9mg_kg: 60
+      perform_thrombectomy_procedure: 90
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.85
+  stroke_extended_window:
+    scenario_id: stroke_extended_window
+    description: Stroke in extended time window with favorable perfusion imaging
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 65
+      sex: F
+      weight_kg: 78
+      chief_complaint: woke up with left-sided weakness
+      working_diagnosis: wake_up_stroke
+      vitals:
+        heart_rate: 85
+        blood_pressure_systolic: 162
+        blood_pressure_diastolic: 88
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 97
+        map_mmhg: 113
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      last_known_well_hours_ago: 10
+      nihss_score: 14
+      ct_head: no_hemorrhage
+      ct_angio: m1_occlusion_right
+      ct_perfusion: mismatch_ratio_greater_than_1.8
+      aspects_score: 7
+      core_infarct_ml: 15
+      penumbra_ml: 95
+      pre_stroke_mrs: 1
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - confirm_lvo_on_imaging
+    - confirm_favorable_perfusion_imaging
+    - activate_neurointerventional_team
+    - perform_thrombectomy_procedure
+    forbidden_actions:
+    - give_alteplase
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.85
+  hemorrhagic_stroke:
+    scenario_id: hemorrhagic_stroke
+    description: Intracerebral hemorrhage requiring urgent management
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 75
+      sex: M
+      weight_kg: 72
+      chief_complaint: sudden severe headache, vomiting, right-sided weakness
+      working_diagnosis: intracerebral_hemorrhage
+      vitals:
+        heart_rate: 62
+        blood_pressure_systolic: 210
+        blood_pressure_diastolic: 115
+        respiratory_rate: 16
+        temperature: 37.2
+        oxygen_saturation: 95
+        map_mmhg: 147
+      allergies: []
+      comorbidities:
+      - hypertension
+      contraindications: []
+      current_medications:
+      - warfarin
+    ground_truth:
+      ct_head: left_basal_ganglia_hemorrhage_30ml
+      inr: 2.8
+      nihss_score: 16
+      gcs: 12
+    expected_actions:
+    - order_imaging_ct_head
+    - bp_reduction_target_140
+    - reverse_anticoagulation_if_applicable
+    - neurosurgery_consult
+    optional_actions:
+    - admit_to_icu
+    - repeat_ct_6h_or_if_deterioration
+    - activate_stroke_team
+    - assess_neurological_status
+    forbidden_actions:
+    - give_tpa
+    - give_antiplatelet
+    - give_anticoagulation
+    deadlines:
+      reverse_anticoagulation_if_applicable: 60
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.9
+  stroke_relative_contraindication:
+    scenario_id: stroke_relative_contraindication
+    description: Acute stroke with relative tPA contraindication requiring shared decision
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 82
+      sex: F
+      weight_kg: 55
+      chief_complaint: sudden right-sided weakness, slurred speech
+      working_diagnosis: acute_ischemic_stroke
+      vitals:
+        heart_rate: 78
+        blood_pressure_systolic: 182
+        blood_pressure_diastolic: 102
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 95
+        map_mmhg: 129
+      allergies: []
+      comorbidities:
+      - hypertension
+      - diabetes_type_2
+      contraindications:
+      - recent_gi_bleed_3_weeks_ago
+    ground_truth:
+      symptom_onset_minutes_ago: 120
+      nihss_score: 8
+      ct_head: no_hemorrhage
+      glucose: 165
+      inr: 1.1
+      recent_gi_bleed: true
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - review_exclusion_criteria
+    - discuss_with_patient_family
+    - document_shared_decision
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  stroke_hemorrhagic_transformation:
+    scenario_id: stroke_hemorrhagic_transformation
+    description: Neurological deterioration post-tPA requiring hemorrhage evaluation
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 70
+      sex: M
+      weight_kg: 80
+      chief_complaint: worsening neurological status after tPA
+      working_diagnosis: post_tpa_hemorrhagic_transformation
+      vitals:
+        heart_rate: 55
+        blood_pressure_systolic: 195
+        blood_pressure_diastolic: 108
+        respiratory_rate: 14
+        temperature: 37.0
+        oxygen_saturation: 92
+        map_mmhg: 137
+      allergies: []
+      comorbidities: []
+      contraindications: []
+      tpa_administered: true
+      tpa_time_minutes_ago: 45
+    ground_truth:
+      nihss_change: '+8'
+      gcs: 10
+      pupils: anisocoria
+    expected_actions:
+    - stop_tpa_infusion
+    - stat_ct_head
+    - stat_coagulation_panel
+    - type_and_screen
+    deadlines:
+      stat_ct_head: 15
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.95
+  stroke_secondary_prevention:
+    scenario_id: stroke_secondary_prevention
+    description: Post-stroke secondary prevention with newly detected Afib
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 68
+      sex: F
+      weight_kg: 65
+      chief_complaint: follow-up after ischemic stroke
+      working_diagnosis: ischemic_stroke_cryptogenic
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 145
+        blood_pressure_diastolic: 88
+        respiratory_rate: 16
+        temperature: 36.9
+        oxygen_saturation: 97
+        map_mmhg: 107
+      allergies: []
+      comorbidities:
+      - hypertension
+      contraindications: []
+    ground_truth:
+      cardiac_monitoring: paroxysmal_afib_detected
+      carotid_duplex: mild_stenosis_40_percent
+      chadsvasc_score: 5
+      hasbled_score: 2
+    expected_actions:
+    - antiplatelet_therapy
+    - statin_therapy
+    - cardiac_monitoring_for_afib
+    - calculate_chadsvasc
+    - calculate_hasbled
+    - start_doac_preferred
+    forbidden_actions:
+    - dual_antiplatelet_long_term_with_anticoagulation
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  af_stroke_thrombolysis_conflict:
+    scenario_id: af_stroke_thrombolysis_conflict
+    description: 'Cross-domain conflict: Acute ischemic stroke eligible for tPA in a patient with newly discovered AF. After
+      tPA, anticoagulation is contraindicated for 24 hours, but AF creates ongoing stroke risk.
+
+      '
+    guideline_graph: aha_stroke_2019
+    patient:
+      age: 74
+      sex: F
+      weight_kg: 78
+      chief_complaint: sudden onset left-sided weakness and facial droop, irregularly irregular pulse
+      working_diagnosis: acute_ischemic_stroke
+      vitals:
+        heart_rate: 98
+        blood_pressure_systolic: 172
+        blood_pressure_diastolic: 96
+        respiratory_rate: 20
+        temperature: 37.1
+        oxygen_saturation: 95
+        map_mmhg: 121
+      allergies: []
+      comorbidities:
+      - hypertension
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      symptom_onset_minutes_ago: 100
+      nihss_score: 10
+      ct_head: no_hemorrhage
+      ct_angio: m2_occlusion_right
+      glucose: 155
+      inr: 1.0
+      platelets: 195000
+      ecg_result: atrial_fibrillation_new_onset
+      chadsvasc_score: 5
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - check_glucose
+    - obtain_12_lead_ecg
+    - review_inclusion_criteria
+    - give_alteplase_0.9mg_kg
+    - plan_anticoagulation_after_24h
+    forbidden_actions:
+    - give_anticoagulation_within_24h
+    - give_antiplatelet_within_24h
+    - start_doac_immediately
+    - give_heparin_within_24h_of_tpa
+    special_considerations:
+    - tPA first — new AF does NOT change acute stroke management
+    - 'After tPA: NO anticoagulation for 24 hours'
+    - 'At 24h: repeat CT, then start DOAC for AF stroke prevention'
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+    trap_scenario: true
+    trap_description: 'CROSS-DOMAIN TRAP: AF + Acute Stroke + tPA Timing Conflict.
+
+      Stroke protocol says give tPA. AF management says start anticoagulation.
+
+      But anticoagulation within 24h of tPA causes intracranial hemorrhage.
+
+      Correct: give tPA, hold ALL antithrombotics for 24h, then start DOAC.
+
+      '
+  stroke_posterior_circulation_trap:
+    scenario_id: stroke_posterior_circulation_trap
+    description: Posterior circulation stroke with low NIHSS - undertriage trap due to NIHSS anterior circulation bias
+    guideline_graph: aha_stroke_2019
+    trap_scenario: true
+    patient:
+      age: 52
+      sex: M
+      weight_kg: 78
+      chief_complaint: sudden onset vertigo, diplopia, dysarthria, and gait ataxia
+      working_diagnosis: acute_ischemic_stroke
+      vitals:
+        heart_rate: 82
+        blood_pressure_systolic: 165
+        blood_pressure_diastolic: 95
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 97
+        map_mmhg: 118
+      allergies: []
+      comorbidities:
+      - hypertension
+      - hyperlipidemia
+      contraindications: []
+    ground_truth:
+      nihss_score: 4
+      ct_head: no_hemorrhage
+      ct_angio: basilar_artery_occlusion
+      symptom_onset_minutes_ago: 150
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - order_ct_angiography_head_neck
+    - confirm_lvo_on_imaging
+    - activate_neurointerventional_team
+    forbidden_actions:
+    - withhold_treatment_based_on_low_nihss
+    - discharge_with_low_nihss
+    trap_description: 'Posterior circulation stroke (basilar artery) is underestimated by NIHSS
+
+      (anterior circulation bias). NIHSS 4 with basilar occlusion has >85% mortality.
+
+      CTA is essential to detect LVO despite low NIHSS. Thrombectomy is required.
+
+      '
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  stroke_tpa_bp_uncontrolled_trap:
+    scenario_id: stroke_tpa_bp_uncontrolled_trap
+    description: Acute ischemic stroke tPA-eligible but persistent uncontrolled hypertension (SBP >185) - tPA contraindicated
+      until BP controlled
+    guideline_graph: aha_stroke_2019
+    trap_scenario: true
+    patient:
+      age: 66
+      sex: F
+      weight_kg: 70
+      chief_complaint: acute onset right hemiparesis and aphasia, persistent severe hypertension
+      working_diagnosis: acute_ischemic_stroke
+      vitals:
+        heart_rate: 90
+        blood_pressure_systolic: 210
+        blood_pressure_diastolic: 120
+        respiratory_rate: 20
+        temperature: 37.1
+        oxygen_saturation: 96
+        map_mmhg: 150
+      allergies: []
+      comorbidities:
+      - hypertension_poorly_controlled
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      nihss_score: 14
+      ct_head: no_hemorrhage
+      symptom_onset_minutes_ago: 120
+      glucose: 165
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - attempt_bp_reduction
+    - administer_iv_labetalol_or_nicardipine
+    - reassess_bp_after_treatment
+    forbidden_actions:
+    - give_tpa_if_bp_uncontrolled
+    - give_alteplase_with_sbp_above_185
+    trap_description: 'tPA indication exists but SBP >185 or DBP >110 is a contraindication. Must
+
+      attempt BP reduction first. If BP reaches <185/110, administer tPA. If
+
+      uncontrollable, consider thrombectomy only.
+
+      '
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  stroke_mimicker_seizure:
+    scenario_id: stroke_mimicker_seizure
+    description: Todd's paralysis post-seizure mimicking acute stroke - tPA administration without ruling out mimic is harmful
+    guideline_graph: aha_stroke_2019
+    trap_scenario: true
+    patient:
+      age: 45
+      sex: M
+      weight_kg: 82
+      chief_complaint: witnessed seizure 20 minutes ago followed by right hemiparesis and confusion
+      working_diagnosis: suspected_stroke
+      vitals:
+        heart_rate: 95
+        blood_pressure_systolic: 155
+        blood_pressure_diastolic: 88
+        respiratory_rate: 18
+        temperature: 37.2
+        oxygen_saturation: 96
+        map_mmhg: 110
+      allergies: []
+      comorbidities:
+      - epilepsy
+      contraindications: []
+    ground_truth:
+      nihss_score: 8
+      ct_head: no_hemorrhage
+      seizure_witnessed: true
+      glucose: 110
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - obtain_history_of_seizure
+    - order_lab_glucose
+    - order_lab_bmp
+    - observe_for_improvement
+    - order_eeg_if_available
+    forbidden_actions:
+    - give_alteplase_without_ruling_out_mimic
+    - give_tpa_for_todds_paralysis
+    trap_description: 'Todd''s paralysis (postictal focal deficit) mimics acute stroke. tPA
+
+      administration causes unnecessary bleeding risk. Witness history + seizure +
+
+      gradual improvement over minutes/hours differentiates from stroke.
+
+      '
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  stroke_warfarin_reversal_choice_trap:
+    scenario_id: stroke_warfarin_reversal_choice_trap
+    description: Warfarin-associated ICH requiring urgent reversal - FFP alone is insufficient, 4-factor PCC is preferred
+    guideline_graph: aha_stroke_2019
+    trap_scenario: true
+    patient:
+      age: 75
+      sex: F
+      weight_kg: 80
+      chief_complaint: sudden severe headache, vomiting, and left-sided weakness on warfarin
+      working_diagnosis: intracerebral_hemorrhage
+      vitals:
+        heart_rate: 58
+        blood_pressure_systolic: 205
+        blood_pressure_diastolic: 112
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 95
+        map_mmhg: 143
+      allergies: []
+      comorbidities:
+      - atrial_fibrillation
+      - hypertension
+      contraindications: []
+    ground_truth:
+      ct_head: right_basal_ganglia_hemorrhage_45ml
+      inr: 3.8
+      gcs: 12
+    expected_actions:
+    - activate_stroke_team
+    - order_stat_ct_head
+    - order_lab_coagulation
+    - give_4_factor_pcc
+    - give_vitamin_k_iv
+    - neurosurgery_consult
+    - admit_to_icu
+    forbidden_actions:
+    - give_ffp_as_sole_reversal
+    - delay_reversal_for_inr_result
+    - give_tpa
+    trap_description: 'Warfarin-related ICH: FFP alone requires large volume (15ml/kg, 4-6 units)
+
+      taking hours with volume overload risk. 4-factor PCC reverses INR in 15-30
+
+      minutes with minimal volume. AHA/ASA guideline: PCC preferred over FFP.
+
+      '
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.9
+  stroke_cervical_dissection_young:
+    scenario_id: stroke_cervical_dissection_young
+    description: Young patient with cervical artery dissection post-chiropractic manipulation causing acute stroke
+    guideline_graph: aha_stroke_2019
+    trap_scenario: false
+    patient:
+      age: 32
+      sex: M
+      weight_kg: 75
+      chief_complaint: sudden neck pain and left hemiparesis after chiropractic manipulation
+      working_diagnosis: acute_ischemic_stroke
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 145
+        blood_pressure_diastolic: 85
+        respiratory_rate: 18
+        temperature: 37.0
+        oxygen_saturation: 98
+        map_mmhg: 105
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      nihss_score: 8
+      ct_head: no_hemorrhage
+      ct_angio: right_vertebral_artery_dissection
+      symptom_onset_minutes_ago: 90
+    expected_actions:
+    - activate_stroke_team
+    - perform_nihss
+    - order_stat_ct_head
+    - order_ct_angiography_head_neck
+    - identify_cervical_artery_dissection
+    - start_anticoagulation_or_antiplatelet
+    - consult_neurology
+    forbidden_actions:
+    - delay_vascular_imaging
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 15
+  imaging_result_delay_minutes: 30
+  enable_state_deterioration: true

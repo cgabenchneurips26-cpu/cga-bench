@@ -1,0 +1,109 @@
+graph_id: esc_hcm_2024
+guideline_name: ESC HCM 2024
+version: '2024.1'
+metadata:
+  source: ESC HCM 2024
+  doi: 10.1093/eurheartj/ehae457
+  journal: European Heart Journal
+  recommendation_system: ESC Class/Level
+  description: Hypertrophic cardiomyopathy diagnosis, risk stratification, and treatment.
+  key_evidence: EXPLORER-HCM trial validates mavacamten for obstructive HCM.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: HCM Diagnosis & SCD Risk Stratification
+    description: Echo-documented LV hypertrophy, SCD risk calculator, evaluation of family history.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_imaging_echocardiogram_tte
+    - order_ecg
+    allowed_actions:
+    - order_genetic_testing_referral
+    - order_ecg
+    - order_ambulatory_holter
+    - assess_vital_signs
+    - order_imaging_echocardiogram_tte
+    - calculate_hcm_risk_scd_score
+    - order_lab_bnp
+    - assess_family_history
+    - order_imaging_cardiac_mri
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 15
+      order_imaging_echocardiogram_tte: 1440
+      order_ecg: 30
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: ESC HCM 2024
+    source_section: Diagnosis and risk stratification
+    source_page: null
+    source_quote: HCM Risk-SCD is recommended for sudden death risk estimation.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Symptom & SCD Management
+    description: Beta-blockers first-line; consider septal reduction or ICD by symptoms and risk.
+    precondition: null
+    mandatory_actions:
+    - initiate_beta_blocker
+    - counsel_avoid_competitive_sports
+    allowed_actions:
+    - consult_cardiothoracic_surgery
+    - initiate_mavacamten_if_obstructive
+    - initiate_disopyramide_if_lvot_obstruction
+    - plan_icd_if_high_scd_risk
+    - initiate_beta_blocker
+    - plan_septal_myectomy_if_refractory
+    - plan_alcohol_septal_ablation
+    - counsel_avoid_competitive_sports
+    forbidden_actions:
+    - give_vasodilator_in_obstructive_hcm
+    deadlines:
+      initiate_beta_blocker: 1440
+      counsel_avoid_competitive_sports: 2880
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESC HCM 2024
+    source_section: Treatment
+    source_page: null
+    source_quote: Beta-blockers are first-line therapy for symptomatic HCM.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Annual Surveillance & Family Screening
+    description: Annual clinical review, periodic echo/CMR, first-degree relative screening.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - plan_annual_followup
+    allowed_actions:
+    - initiate_anticoagulation_if_af
+    - plan_annual_followup
+    - reassess_hcm_risk_scd_score
+    - monitor_af_burden
+    - reassess_vital_signs
+    - plan_family_cascade_screening
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      plan_annual_followup: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESC HCM 2024
+    source_section: Long-term follow-up
+    source_page: null
+    source_quote: First-degree relative screening is recommended for inherited HCM.
+    next_nodes: []
+    conditional_next: {}

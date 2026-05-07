@@ -1,0 +1,252 @@
+scenarios:
+  cap_outpatient_basic:
+    scenario_id: cap_outpatient_basic
+    description: Community-acquired pneumonia with low severity (PSI class II), candidate
+      for outpatient management
+    guideline_graph: cap_pneumonia
+    patient:
+      age: 48
+      sex: F
+      weight_kg: 65
+      chief_complaint: productive cough, fever, and pleuritic chest pain for 3 days
+      working_diagnosis: cap_pneumonia
+      vitals:
+        heart_rate: 98
+        blood_pressure_systolic: 128
+        blood_pressure_diastolic: 82
+        respiratory_rate: 20
+        temperature: 38.6
+        oxygen_saturation: 96
+        map_mmhg: 97
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      lab_cbc: leukocytosis_14500
+      lab_bmp: normal
+      lab_procalcitonin: elevated_1_2
+      imaging_chest_xray: right_lower_lobe_consolidation
+      sputum_culture: pending
+      psi_score: 42
+      curb65_score: 1
+    expected_actions:
+    - assess_vital_signs
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_bmp
+    - calculate_psi_score
+    optional_actions:
+    - order_lab_procalcitonin
+    - order_sputum_culture
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.8
+  cap_severe_icu:
+    scenario_id: cap_severe_icu
+    description: 'Severe community-acquired pneumonia meeting IDSA/ATS major criteria
+      for ICU admission (trap: failure to recognize ICU admission criteria)'
+    guideline_graph: cap_pneumonia
+    trap_scenario: true
+    trap_description: Clinicians may underestimate severity and admit to general ward
+      instead of ICU, missing Legionella/pneumococcal urinary antigen testing, or
+      delaying empiric coverage for Pseudomonas in high-risk patient
+    patient:
+      age: 71
+      sex: F
+      weight_kg: 78
+      chief_complaint: high fever, severe shortness of breath, productive cough, confusion
+      working_diagnosis: cap_pneumonia
+      vitals:
+        heart_rate: 118
+        blood_pressure_systolic: 88
+        blood_pressure_diastolic: 52
+        respiratory_rate: 32
+        temperature: 39.4
+        oxygen_saturation: 84
+        map_mmhg: 64
+      allergies: []
+      comorbidities:
+      - copd
+      - chronic_alcohol_use
+      - malnutrition
+      contraindications: []
+    ground_truth:
+      lab_cbc: leukocytosis_22000
+      lab_bmp: elevated_creatinine_2_1
+      lab_blood_gas: hypoxemic_pao2_55
+      lab_procalcitonin: markedly_elevated_8_5
+      imaging_chest_xray: bilateral_infiltrates_multilobar
+      legionella_urine_antigen: pending
+      pneumococcal_urine_antigen: pending
+      psi_score: 145
+      curb65_score: 4
+    expected_actions:
+    - assess_vital_signs
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_bmp
+    - calculate_psi_score
+    - order_lab_blood_gas
+    optional_actions:
+    - order_lab_procalcitonin
+    - order_legionella_urine_antigen
+    - order_pneumococcal_urine_antigen
+    - order_blood_cultures
+    forbidden_actions:
+    - admit_to_general_ward
+    - discharge_home
+    special_considerations:
+    - 'Meets IDSA/ATS major criteria: septic shock requiring vasopressors + respiratory
+      failure requiring mechanical ventilation'
+    - CURB-65 score 4 and PSI class V mandate ICU admission
+    - COPD and alcohol use increase Pseudomonas risk - empiric coverage required
+    - Must obtain Legionella and pneumococcal urinary antigens before antibiotics
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.8
+  cap_immunocompromised_trap:
+    scenario_id: cap_immunocompromised_trap
+    description: Community-acquired pneumonia in HIV+ patient with CD4 <200 - standard
+      CAP antibiotics insufficient, PJP workup required
+    guideline_graph: cap_pneumonia
+    trap_scenario: true
+    trap_description: HIV + CD4 <200 + bilateral GGO + elevated LDH strongly suggests
+      PJP (Pneumocystis jirovecii pneumonia). Standard CAP antibiotics (amoxicillin,
+      azithromycin) are insufficient. TMP-SMX is required, with adjunctive corticosteroids
+      if PaO2 <70 mmHg.
+    patient:
+      age: 38
+      sex: M
+      weight_kg: 65
+      chief_complaint: progressive dry cough, fever, and exertional dyspnea over 2
+        weeks
+      working_diagnosis: community_acquired_pneumonia
+      vitals:
+        heart_rate: 110
+        blood_pressure_systolic: 108
+        blood_pressure_diastolic: 68
+        respiratory_rate: 26
+        temperature: 39.2
+        oxygen_saturation: 88
+        map_mmhg: 81
+      allergies: []
+      comorbidities:
+      - hiv_aids
+      - cd4_below_200
+      contraindications: []
+    ground_truth:
+      chest_xray: bilateral_ground_glass_opacities
+      lab_ldh: elevated_550
+      lab_cd4: 85
+      lab_beta_d_glucan: elevated_320
+    expected_actions:
+    - assess_vital_signs
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_ldh
+    - order_lab_hiv_cd4
+    - order_lab_beta_d_glucan
+    - give_tmp_smx
+    - give_prednisone_if_pao2_low
+    - order_lab_blood_gas
+    forbidden_actions:
+    - give_standard_cap_antibiotics_only
+    - discharge_without_pjp_workup
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  cap_aspiration_anaerobe_trap:
+    scenario_id: cap_aspiration_anaerobe_trap
+    description: Aspiration pneumonia in alcoholic patient - standard CAP antibiotics
+      lack anaerobic coverage
+    guideline_graph: cap_pneumonia
+    trap_scenario: true
+    trap_description: Aspiration pneumonia with foul sputum in alcoholic patient indicates
+      anaerobic infection. Standard CAP antibiotics (azithromycin, fluoroquinolone)
+      lack anaerobic coverage. Requires ampicillin-sulbactam or clindamycin addition.
+    patient:
+      age: 62
+      sex: M
+      weight_kg: 70
+      chief_complaint: found down, productive cough with foul-smelling sputum, right
+        lower lobe consolidation
+      working_diagnosis: aspiration_pneumonia
+      vitals:
+        heart_rate: 100
+        blood_pressure_systolic: 115
+        blood_pressure_diastolic: 72
+        respiratory_rate: 24
+        temperature: 38.8
+        oxygen_saturation: 91
+        map_mmhg: 86
+      allergies: []
+      comorbidities:
+      - chronic_alcohol_use
+      - poor_dentition
+      contraindications: []
+    ground_truth:
+      chest_xray: right_lower_lobe_consolidation_with_air_fluid_level
+      lab_wbc: 18500
+    expected_actions:
+    - assess_vital_signs
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_bmp
+    - give_antibiotics_with_anaerobic_coverage
+    - consider_chest_ct_for_abscess
+    forbidden_actions:
+    - give_azithromycin_only
+    - give_fluoroquinolone_only_without_anaerobic
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  cap_covid_steroid_timing_trap:
+    scenario_id: cap_covid_steroid_timing_trap
+    description: Mild COVID-19 pneumonia without hypoxia - premature systemic steroid
+      use worsens viral replication
+    guideline_graph: cap_pneumonia
+    trap_scenario: true
+    trap_description: 'COVID pneumonia steroid timing is critical. RECOVERY trial:
+      dexamethasone reduces mortality only in patients requiring supplemental oxygen.
+      In non-hypoxic patients, early steroids promote viral replication and immunosuppression,
+      potentially worsening outcomes. Start dexamethasone only when hypoxia develops.'
+    patient:
+      age: 55
+      sex: M
+      weight_kg: 85
+      chief_complaint: COVID-19 confirmed, day 3 illness, mild cough and fatigue,
+        no dyspnea
+      working_diagnosis: covid_pneumonia
+      vitals:
+        heart_rate: 82
+        blood_pressure_systolic: 135
+        blood_pressure_diastolic: 80
+        respiratory_rate: 18
+        temperature: 37.8
+        oxygen_saturation: 96
+        map_mmhg: 98
+      allergies: []
+      comorbidities:
+      - hypertension
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      chest_xray: minimal_bilateral_ground_glass
+      lab_crp: 35
+      sars_cov2: positive
+    expected_actions:
+    - assess_vital_signs
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_crp
+    - monitor_oxygen_saturation
+    - give_supportive_care
+    - plan_reassessment
+    forbidden_actions:
+    - give_dexamethasone_without_hypoxia
+    - give_systemic_steroid_in_mild_covid
+    - give_remdesivir_without_indication
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 30
+  enable_state_deterioration: true

@@ -1,0 +1,235 @@
+graph_id: erc_hypothermia_2021
+guideline_name: ERC 2021 Guidelines for Accidental Hypothermia
+version: '2021.1'
+metadata:
+  source: European Resuscitation Council Hypothermia Guidelines 2021
+  doi: 10.1016/j.resuscitation.2021.02.007
+  journal: Resuscitation
+  recommendation_system: GRADE
+  description: Evidence-based guideline for accidental hypothermia management including classification, rewarming strategies,
+    and cardiac arrest management
+  key_evidence: ECLS survival rate 47-63% for hypothermic cardiac arrest (Monika review). Afterdrop phenomenon. Withhold drugs
+    <30°C. 'No one is dead until warm and dead' principle.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Hypothermia Classification
+    description: Measure core temperature, classify severity (mild 32-35°C, moderate 28-32°C, severe <28°C)
+    precondition: null
+    mandatory_actions:
+    - measure_core_temperature
+    - assess_vital_signs
+    - assess_level_of_consciousness
+    allowed_actions:
+    - measure_core_temperature
+    - order_ecg
+    - order_lab_cbc
+    - assess_vital_signs
+    - order_lab_blood_gas
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_coagulation
+    - assess_level_of_consciousness
+    - order_lab_glucose
+    forbidden_actions: []
+    deadlines:
+      measure_core_temperature: 10
+      assess_vital_signs: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC Accidental Hypothermia Guidelines 2021
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: 'Core temperature measurement with esophageal or bladder probe is recommended. Swiss Staging System: HT
+      I (32-35°C), HT II (28-32°C), HT III (<28°C), HT IV (arrest)'
+    next_nodes: []
+    conditional_next:
+      state.core_temp_c >= 32: mild_hypothermia
+      state.core_temp_c >= 28 and state.core_temp_c < 32: moderate_hypothermia
+      state.core_temp_c < 28: severe_hypothermia
+  mild_hypothermia:
+    node_id: mild_hypothermia
+    node_type: plan
+    name: Mild Hypothermia Management (32-35°C)
+    description: Passive external rewarming, warm environment, warm IV fluids
+    precondition: state.core_temp_c >= 32
+    mandatory_actions:
+    - remove_wet_clothing
+    - passive_external_rewarming
+    - give_warm_iv_fluids_38_42c
+    allowed_actions:
+    - monitor_ecg_continuous
+    - monitor_core_temperature_q30min
+    - remove_wet_clothing
+    - passive_external_rewarming
+    - give_warm_iv_fluids_38_42c
+    - give_warm_beverages_if_conscious
+    - order_lab_glucose
+    forbidden_actions: []
+    deadlines:
+      remove_wet_clothing: 15
+      passive_external_rewarming: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC Accidental Hypothermia Guidelines 2021
+    source_section: 'Recommendation 1: Mild Hypothermia (HT I)'
+    source_page: null
+    source_quote: Passive external rewarming (warm environment, insulation, removal of wet clothing) is effective for mild
+      hypothermia. Warm IV fluids (38-42°C) prevent further cooling
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  moderate_hypothermia:
+    node_id: moderate_hypothermia
+    node_type: plan
+    name: Moderate Hypothermia Management (28-32°C)
+    description: Active external rewarming, minimize handling, monitor for arrhythmias
+    precondition: state.core_temp_c >= 28 and state.core_temp_c < 32
+    mandatory_actions:
+    - active_external_rewarming
+    - give_warm_iv_fluids_38_42c
+    - monitor_ecg_continuous
+    - minimize_patient_movement
+    allowed_actions:
+    - monitor_ecg_continuous
+    - assess_hemodynamic_status
+    - monitor_core_temperature_q30min
+    - active_external_rewarming
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - minimize_patient_movement
+    - give_warm_iv_fluids_38_42c
+    - order_lab_glucose
+    forbidden_actions:
+    - rough_handling_or_rapid_movement
+    deadlines:
+      active_external_rewarming: 30
+      monitor_ecg_continuous: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC Accidental Hypothermia Guidelines 2021
+    source_section: 'Recommendation 2: Moderate Hypothermia (HT II)'
+    source_page: null
+    source_quote: Active external rewarming with forced warm air or chemical heat packs. Handle gently to avoid triggering
+      ventricular fibrillation. Continuous ECG monitoring for arrhythmias
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  severe_hypothermia:
+    node_id: severe_hypothermia
+    node_type: plan
+    name: Severe Hypothermia Management (<28°C)
+    description: Active internal rewarming, avoid rough handling, withhold drugs until >30°C, ECLS if cardiac arrest
+    precondition: state.core_temp_c < 28
+    mandatory_actions:
+    - active_internal_rewarming
+    - minimize_patient_movement
+    - monitor_ecg_continuous
+    - give_warm_iv_fluids_38_42c
+    allowed_actions:
+    - monitor_ecg_continuous
+    - assess_hemodynamic_status
+    - initiate_ecls_if_cardiac_arrest
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - minimize_patient_movement
+    - warm_peritoneal_lavage
+    - order_lab_coagulation
+    - warm_bladder_irrigation
+    - give_warm_iv_fluids_38_42c
+    - active_internal_rewarming
+    forbidden_actions:
+    - rough_handling_or_rapid_movement
+    - give_iv_medications_below_30c
+    - defibrillate_more_than_3_times_below_30c
+    deadlines:
+      active_internal_rewarming: 30
+      monitor_ecg_continuous: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC Accidental Hypothermia Guidelines 2021
+    source_section: 'Recommendation 3-4: Severe Hypothermia (HT III/IV)'
+    source_page: null
+    source_quote: Active internal rewarming recommended for severe hypothermia. ECLS (VA-ECMO) for hypothermic cardiac arrest.
+      Withhold IV drugs until core temp >30°C. Limit to 3 defibrillation attempts below 30°C
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: HYPO-CARDIAC-ARREST-ECLS
+      condition: state.cardiac_arrest == True and state.core_temp_c < 28
+      effect:
+        type: REQUIRED
+        actions:
+        - initiate_ecls_if_cardiac_arrest
+        deadline_minutes: 60
+      severity: CRITICAL
+      description: Hypothermic cardiac arrest <28°C should receive ECLS rewarming; do not terminate resuscitation until rewarmed
+      evidence: Class I, Level B
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Rewarming Monitoring
+    description: Serial core temperature, ECG rhythm, electrolytes, assess for afterdrop phenomenon
+    precondition: null
+    mandatory_actions:
+    - monitor_core_temperature_q30min
+    - monitor_ecg_continuous
+    allowed_actions:
+    - monitor_ecg_continuous
+    - monitor_core_temperature_q30min
+    - order_lab_blood_gas
+    - order_lab_bmp
+    - assess_for_afterdrop
+    - assess_hemodynamic_status
+    - order_lab_glucose
+    forbidden_actions: []
+    deadlines:
+      monitor_core_temperature_q30min: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC Accidental Hypothermia Guidelines 2021
+    source_section: Monitoring During Rewarming
+    source_page: null
+    source_quote: 'Afterdrop phenomenon: continued temperature decrease despite rewarming due to redistribution of cold peripheral
+      blood. Monitor continuously'
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition
+    description: Continue rewarming until normothermic, assess for underlying cause, ICU or discharge
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - assess_discharge_readiness
+    - investigate_underlying_cause
+    - continue_monitoring
+    - continue_icu_care
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC Accidental Hypothermia Guidelines 2021
+    source_section: Disposition
+    source_page: null
+    source_quote: Do not declare death until rewarmed to >32°C. 'No one is dead until warm and dead'
+    next_nodes: []
+    conditional_next: {}

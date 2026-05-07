@@ -1,0 +1,346 @@
+{
+  "scenario_id": "se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.15384615384615385,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.29479999999999995,
+  "total_violations": 11,
+  "sub_scores": {
+    "C1_path_selection": 0.8461538461538461,
+    "C2_mandatory_completion": 0.46153846153846156,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 0.8461538461538461,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "timing": 2,
+    "deviation": 2,
+    "omission": 7
+  },
+  "actions_count": 12,
+  "actions": [
+    {
+      "action_id": "assess_airway_breathing_circulation",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory first action per AES Status Epilepticus guidelines - assess ABC within 2 minutes of presentation to ensure patient safety and airway protection during active seizure."
+    },
+    {
+      "action_id": "assess_seizure_semiology",
+      "timestamp_minutes": 5.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action per AES guidelines - characterize seizure type, onset, and duration to guide management and identify potential etiology."
+    },
+    {
+      "action_id": "check_point_of_care_glucose",
+      "timestamp_minutes": 10.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Mandatory action per AES guidelines within 5 minutes - hypoglycemia is a reversible cause of seizures that must be identified and treated immediately. Patient has liver disease which increases risk of hypoglycemia."
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 15.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "MANDATORY per AES status epilepticus guidelines - IV access must be established within 5 minutes of presentation to allow administration of first-line benzodiazepines and other medications. This is the only mandatory action not yet completed."
+    },
+    {
+      "action_id": "apply_continuous_monitoring",
+      "timestamp_minutes": 20.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Continuous cardiac and SpO2 monitoring is essential in status epilepticus to detect hemodynamic instability, hypoxia, or arrhythmias during and after seizure activity and treatment."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 25.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Serial vital sign assessment is needed to track patient stability during active status epilepticus and monitor for changes before initiating benzodiazepine therapy."
+    },
+    {
+      "action_id": "give_benzodiazepine_first_line",
+      "timestamp_minutes": 30.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Per AES status epilepticus guidelines, first-line benzodiazepine is the cornerstone treatment for status epilepticus. At 30 minutes of continuous seizure activity, this is critically urgent. Lorazepam IV or diazepam IV should be administered immediately to abort seizure activity."
+    },
+    {
+      "action_id": "assess_etiology",
+      "timestamp_minutes": 35.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Identifying the underlying etiology of status epilepticus is essential to guide targeted treatment. Patient has liver disease as a comorbidity, which may suggest metabolic encephalopathy, hepatic encephalopathy, or medication-related causes. Etiology assessment guides AED selection and additional interventions."
+    },
+    {
+      "action_id": "administer_oxygen",
+      "timestamp_minutes": 40.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Supplemental oxygen should be provided to maintain adequate oxygenation during ongoing seizure activity. Although SpO2 is currently 98%, prolonged seizures increase metabolic demand and risk of hypoxia, especially after benzodiazepine administration which may reduce respiratory drive."
+    },
+    {
+      "action_id": "give_levetiracetam_60mg_kg",
+      "timestamp_minutes": 45.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Second-line AED indicated after first-line benzodiazepine in status epilepticus. Levetiracetam is preferred over fosphenytoin/valproate in patients with liver disease as it does not require hepatic metabolism. Patient is 45 minutes into presentation with ongoing seizure activity."
+    },
+    {
+      "action_id": "continuous_eeg_monitoring",
+      "timestamp_minutes": 50.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Continuous EEG monitoring is indicated per AES guidelines to detect ongoing non-convulsive status epilepticus, especially important as clinical seizure activity may be suppressed after benzodiazepine while electrical seizures continue."
+    },
+    {
+      "action_id": "admit_to_icu",
+      "timestamp_minutes": 55.0,
+      "type": "disposition",
+      "args": {},
+      "justification": "Patient with prolonged status epilepticus (>45 minutes) requires ICU-level monitoring for airway management, hemodynamic monitoring, and potential need for anesthetic agents if seizures remain refractory."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "bdaf47a0-813e-44b3-9da6-7ea0131d555b",
+      "violation_type": "timing",
+      "timestamp_minutes": 10.0,
+      "action_involved": "assess_point_of_care_glucose",
+      "expected_action": null,
+      "expected_deadline": 5.0,
+      "actual_time": 10.0,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action assess_point_of_care_glucose performed 5 min after deadline",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "12f541c6-21db-4269-861f-6d7cd0b111d5",
+      "violation_type": "timing",
+      "timestamp_minutes": 15.0,
+      "action_involved": "establish_iv_access",
+      "expected_action": null,
+      "expected_deadline": 5.0,
+      "actual_time": 15.0,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "minor",
+      "guideline_class": "I",
+      "preventability": 1.0,
+      "description": "Action establish_iv_access performed 10 min after deadline",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "9e5fc0c4-e57c-4074-8407-770c49c7cbaa",
+      "violation_type": "deviation",
+      "timestamp_minutes": 40.0,
+      "action_involved": "give_oxygen",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_oxygen",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "37065b34-8e19-4ce1-bd7e-2dfe1404d86f",
+      "violation_type": "deviation",
+      "timestamp_minutes": 50.0,
+      "action_involved": "order_lab_unknown",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: order_lab_unknown",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "8715c14f-02c8-469c-8885-31dff614ab58",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "continuous_eeg_monitoring",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: continuous_eeg_monitoring",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "a4c8503e-41af-4710-a749-f4ea4add709f",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "give_second_line_antiepileptic",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_second_line_antiepileptic",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "5ec1d0e6-0da3-44d9-82d6-7a5e79ee1c02",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "initiate_continuous_iv_anesthetic",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: initiate_continuous_iv_anesthetic",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "b0d63218-2b51-4aa2-834f-09409ad92558",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "initiate_maintenance_antiepileptic",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: initiate_maintenance_antiepileptic",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "00258487-07fd-42c9-bca6-14bea5c3470a",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "monitor_respiratory_status",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: monitor_respiratory_status",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "fddfe42f-334e-4787-8f05-034c6f4c822a",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "perform_endotracheal_intubation",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: perform_endotracheal_intubation",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    },
+    {
+      "violation_id": "5262dadb-ce4b-4c9c-be4c-1ffc8a4f7f4a",
+      "violation_type": "omission",
+      "timestamp_minutes": 60.0,
+      "action_involved": null,
+      "expected_action": "reassess_neurological_status",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_se_combo_hypoglycemia_glucose_first_hepatic_no_valproate",
+      "node_at_violation": "initial_stabilization",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: reassess_neurological_status",
+      "guideline_reference": "Initial Stabilization (T=0-5 min)"
+    }
+  ],
+  "expected_actions": [
+    "admit_to_icu",
+    "assess_airway_breathing_circulation",
+    "assess_seizure_semiology",
+    "check_point_of_care_glucose",
+    "continuous_eeg_monitoring",
+    "establish_iv_access",
+    "give_benzodiazepine_first_line",
+    "give_second_line_antiepileptic",
+    "initiate_continuous_iv_anesthetic",
+    "initiate_maintenance_antiepileptic",
+    "monitor_respiratory_status",
+    "perform_endotracheal_intubation",
+    "reassess_neurological_status"
+  ],
+  "forbidden_actions": [
+    "delay_benzodiazepine",
+    "delay_glucose_correction_for_eeg",
+    "delay_second_line_agent",
+    "discharge_home",
+    "discharge_without_neurology_followup",
+    "discontinue_eeg_monitoring",
+    "discontinue_eeg_prematurely",
+    "extubate_during_active_se",
+    "give_antiepileptic_before_glucose_correction",
+    "give_benzodiazepine_as_second_line",
+    "give_levetiracetam_as_first_line",
+    "give_oral_antiepileptic",
+    "give_oral_antiepileptic_only",
+    "give_phenytoin_as_first_line",
+    "give_propofol_as_first_line",
+    "give_valproate",
+    "give_valproate_40mg_kg",
+    "give_valproate_as_first_line",
+    "give_valproic_acid",
+    "place_oral_airway_during_seizure",
+    "rapid_anesthetic_wean",
+    "restrain_patient_forcefully"
+  ],
+  "total_duration_minutes": 60.0,
+  "termination_reason": "disposition_decided",
+  "total_llm_calls": 4,
+  "total_tokens": 11833,
+  "elapsed_seconds": 105.19
+}

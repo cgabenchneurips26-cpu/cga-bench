@@ -1,0 +1,886 @@
+graph_id: aha_heart_failure_2022
+version: '2022.1'
+description: AHA/ACC/HFSA Guideline for the Management of Heart Failure
+metadata:
+  source: 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure
+  doi: 10.1016/j.jacc.2021.12.012
+  publication_year: 2022
+  key_recommendations:
+  - GDMT optimization for HFrEF
+  - SGLT2 inhibitors for HF regardless of diabetes status
+  - Device therapy for appropriate candidates
+  - Management of acute decompensated HF
+  recommendation_class_mapping:
+    CLASS_I: Strong recommendation, benefit >>> risk
+    CLASS_IIA: Moderate recommendation, benefit >> risk
+    CLASS_IIB: Weak recommendation, benefit >= risk
+    CLASS_III_NO_BENEFIT: No benefit
+    CLASS_III_HARM: Harm
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: hf_initial_assessment
+nodes:
+  hf_initial_assessment:
+    node_id: hf_initial_assessment
+    node_type: action
+    description: Initial heart failure assessment
+    mandatory_actions:
+    - obtain_history
+    - physical_examination
+    - order_bnp_or_ntprobnp
+    - order_ecg
+    - order_chest_xray
+    - order_basic_metabolic_panel
+    - order_cbc
+    - order_tsh
+    allowed_actions:
+    - assess_hemodynamic_profile
+    - assess_lvef
+    - assess_nyha_class
+    - assess_structural_abnormalities
+    - consult_cardiology
+    - continuous_monitoring
+    - document_hfmref_diagnosis
+    - document_hfpef_diagnosis
+    - document_hfref_diagnosis
+    - identify_etiology
+    - identify_precipitating_factors
+    - initiate_ace_or_arb_or_arni
+    - initiate_beta_blocker
+    - initiate_mra
+    - initiate_sglt2i
+    - order_echocardiogram
+    - order_hba1c
+    - order_imaging_chest_xray
+    - order_iron_studies
+    - order_lab_bmp
+    - order_lab_troponin
+    - order_lipid_panel
+    deadlines:
+      order_bnp_or_ntprobnp: 60
+      order_ecg: 60
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: bnp >= 100 or ntprobnp >= 300
+      target_node: confirm_hf_diagnosis
+    - condition: bnp < 100 and ntprobnp < 300
+      target_node: hf_unlikely
+    source_guideline: AHA HF Guideline Section 4.1
+    source_section: Section 4.1 - Initial Evaluation
+    source_page: Section 4.1
+    source_quote: Initial heart failure assessment including natriuretic peptides and ECG.
+    name: Hf Initial Assessment
+  confirm_hf_diagnosis:
+    node_id: confirm_hf_diagnosis
+    node_type: action
+    description: Confirm HF diagnosis with echocardiography
+    mandatory_actions:
+    - order_echocardiogram
+    - assess_lvef
+    - assess_structural_abnormalities
+    deadlines:
+      order_echocardiogram: 1440
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: lvef <= 40
+      target_node: hfref_classification
+    - condition: lvef >= 41 and lvef <= 49
+      target_node: hfmref_classification
+    - condition: lvef >= 50
+      target_node: hfpef_classification
+    source_guideline: AHA HF Guideline Section 4.2
+    source_section: Section 4.2 - Diagnostic Confirmation
+    source_page: Section 4.2
+    source_quote: Confirm heart failure diagnosis with echocardiography and LVEF assessment.
+    name: Confirm Hf Diagnosis
+  hf_unlikely:
+    node_id: hf_unlikely
+    node_type: action
+    description: HF unlikely - consider alternative diagnoses
+    mandatory_actions:
+    - evaluate_alternative_diagnoses
+    recommendation_class: IIa
+    evidence_level: C
+    source_guideline: AHA HF Guideline Section 4.1
+    source_section: Section 4.1 - Diagnostic Exclusion
+    source_page: Section 4.1
+    source_quote: If BNP and NT-proBNP are low, evaluate alternative diagnoses.
+    name: Hf Unlikely
+  hfref_classification:
+    node_id: hfref_classification
+    node_type: decision
+    description: Heart Failure with Reduced Ejection Fraction (HFrEF)
+    patient_activation_condition: '''hfref'' in patient.comorbidities or ''ef_below_40'' in patient.comorbidities'
+    mandatory_actions:
+    - document_hfref_diagnosis
+    - assess_nyha_class
+    - identify_etiology
+    transitions:
+    - condition: acute_decompensation
+      target_node: adhf_management
+    - condition: stable
+      target_node: hfref_gdmt
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 5
+    source_section: Section 5 - HF Phenotype Classification
+    source_page: Section 5
+    source_quote: Classify HF phenotype and document HFrEF with etiology and NYHA class.
+    source_figure: Figure 1 - HF Classification
+    name: Hfref Classification
+  hfmref_classification:
+    node_id: hfmref_classification
+    node_type: decision
+    description: Heart Failure with Mildly Reduced Ejection Fraction (HFmrEF)
+    patient_activation_condition: '''hfmref'' in patient.comorbidities or ''ef_41_49'' in patient.comorbidities'
+    mandatory_actions:
+    - document_hfmref_diagnosis
+    - assess_nyha_class
+    transitions:
+    - condition: acute_decompensation
+      target_node: adhf_management
+    - condition: stable
+      target_node: hfmref_treatment
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 5
+    source_section: Section 5 - HF Phenotype Classification
+    source_page: Section 5
+    source_quote: Classify HFmrEF and assess symptom burden before treatment pathway.
+    name: Hfmref Classification
+  hfpef_classification:
+    node_id: hfpef_classification
+    node_type: decision
+    description: Heart Failure with Preserved Ejection Fraction (HFpEF)
+    patient_activation_condition: '''hfpef'' in patient.comorbidities or ''ef_above_50'' in patient.comorbidities'
+    mandatory_actions:
+    - document_hfpef_diagnosis
+    - assess_nyha_class
+    - evaluate_diastolic_function
+    transitions:
+    - condition: acute_decompensation
+      target_node: adhf_management
+    - condition: stable
+      target_node: hfpef_treatment
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 5
+    source_section: Section 5 - HF Phenotype Classification
+    source_page: Section 5
+    source_quote: Classify HFpEF with diastolic assessment and clinical phenotype documentation.
+    name: Hfpef Classification
+  hfref_gdmt:
+    node_id: hfref_gdmt
+    node_type: action
+    description: Guideline-Directed Medical Therapy for HFrEF
+    patient_activation_condition: '''hfref'' in patient.comorbidities or ''ef_below_40'' in patient.comorbidities'
+    mandatory_actions:
+    - initiate_ace_or_arb_or_arni
+    - initiate_beta_blocker
+    - initiate_mra
+    - initiate_sglt2i
+    forbidden_actions:
+    - give_nsaid
+    - give_diltiazem
+    - give_verapamil
+    - give_thiazolidinedione
+    allowed_actions:
+    - add_hydralazine_isdn_if_intolerant
+    - add_ivabradine_if_indicated
+    - add_diuretic_for_congestion
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: lvef <= 35 and nyha_class >= 2
+      target_node: device_therapy_evaluation
+    - condition: symptoms_persist
+      target_node: advanced_hf_evaluation
+    - condition: stable_on_gdmt
+      target_node: hf_chronic_management
+    conditional_rules:
+    - rule_id: HF-HYPERK-NO-RAAS
+      condition: patient.labs.potassium > 5.5
+      effect:
+        type: FORBIDDEN
+        actions:
+        - initiate_arni
+        - initiate_ace_or_arb_or_arni
+        - initiate_mra
+        - give_potassium_supplement
+      evidence: AHA/ACC 2022 HF Guidelines, Section 7.3.2
+      severity: CRITICAL
+      description: RAAS inhibitors and K+ supplements in hyperkalemia cause fatal arrhythmias.
+      condition_variables:
+      - patient.labs.potassium
+      trigger_range:
+        patient.labs.potassium:
+          min: 5.6
+          max: 8.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.0
+          type: float
+    - rule_id: HF-NSAID-FORBIDDEN
+      condition: '''nsaid_use'' in patient.medications or ''ibuprofen'' in patient.medications'
+      effect:
+        type: REQUIRED
+        actions:
+        - discontinue_nsaid
+        - give_acetaminophen_alternative
+      evidence: AHA/ACC 2022 HF Guidelines, Class III (Harm)
+      severity: HIGH
+      description: NSAIDs cause sodium and fluid retention, worsening heart failure.
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: nsaid_use
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid_use
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: HF-HYPERKALEMIA-NO-RAAS-VARIANT
+      condition: '''ckd_stage_3'' in patient.comorbidities and patient.labs.potassium > 5.0'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - initiate_ace_with_hyperkalemia
+        - initiate_arni_with_hyperkalemia
+        - initiate_mra_with_hyperkalemia
+        - give_potassium_supplement
+      evidence: AHA/ACC 2022 HF Guidelines, Section 7.3.2
+      severity: CRITICAL
+      description: CKD with borderline K+ - RAAS inhibitors worsen hyperkalemia.
+      condition_variables:
+      - patient.comorbidities
+      - patient.labs.potassium
+      trigger_range:
+        patient.comorbidities:
+          contains: ckd_stage_3
+          type: list_contains
+        patient.labs.potassium:
+          min: 5.1
+          max: 7.0
+          type: float
+      normal_range:
+        patient.labs.potassium:
+          min: 3.5
+          max: 5.0
+          type: float
+    - rule_id: HF-NSAID-SPECIFIC-DRUGS
+      condition: '''nsaid_use'' in patient.medications or ''ibuprofen'' in patient.medications or ''naproxen'' in patient.medications
+        or ''celecoxib'' in patient.medications or ''osteoarthritis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_nsaid
+        - give_ibuprofen
+        - give_naproxen
+        - give_celecoxib
+      evidence: AHA/ACC 2022 HF Guidelines, Class III (Harm)
+      severity: HIGH
+      description: Specific NSAIDs forbidden in HF patients.
+      condition_variables:
+      - patient.medications
+      - patient.comorbidities
+      trigger_range:
+        patient.medications:
+          contains: nsaid_use
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid_use
+          type: list_not_contains
+    - rule_id: HF-OVERDIURESIS-VARIANT
+      condition: '''hfpef'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_high_dose_diuretics
+        - increase_furosemide
+        - add_metolazone
+      evidence: AHA/ACC 2022 HF Guidelines, Section 10.2
+      severity: HIGH
+      description: HFpEF patients are preload-sensitive - aggressive diuresis causes hypotension.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: hfpef
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: hfpef
+          type: list_not_contains
+    - rule_id: HF-OVERDIURESIS-HYPOVOLEMIA-SPECIFIC
+      condition: patient.labs.get('creatinine', 1.0) > 2.0 or patient.vitals.get('sbp', 120) < 90
+      effect:
+        type: FORBIDDEN
+        actions:
+        - escalate_diuresis_in_cardiorenal_syndrome
+        - give_aggressive_diuresis_in_hypotensive_hf
+      evidence: AHA HF 2022; over-diuresis in cardiorenal syndrome worsens renal function and causes hemodynamic collapse
+      severity: HIGH
+      description: Aggressive diuresis in HF with rising creatinine or hypotension causes cardiorenal syndrome progression
+        and hemodynamic collapse.
+      condition_variables:
+      - patient.labs.creatinine
+      - patient.vitals.sbp
+      trigger_range:
+        patient.labs.creatinine:
+          min: 2.1
+          max: 15.0
+          type: float
+      normal_range:
+        patient.labs.creatinine:
+          min: 0.5
+          max: 2.0
+          type: float
+    source_guideline: AHA HF Guideline Section 7.3
+    source_section: Section 7.3 - HFrEF GDMT
+    source_page: Section 7.3
+    source_quote: Use quadruple guideline-directed medical therapy for HFrEF and avoid harmful agents.
+    source_figure: Figure 3 - GDMT for HFrEF
+    name: Hfref Gdmt
+  hfmref_treatment:
+    node_id: hfmref_treatment
+    node_type: action
+    description: Treatment for HFmrEF
+    patient_activation_condition: '''hfmref'' in patient.comorbidities or ''ef_41_49'' in patient.comorbidities'
+    mandatory_actions:
+    - initiate_sglt2i
+    allowed_actions:
+    - consider_ace_or_arb_or_arni
+    - consider_beta_blocker
+    - consider_mra
+    - add_diuretic_for_congestion
+    recommendation_class: IIa
+    evidence_level: B
+    transitions:
+    - condition: symptoms_persist
+      target_node: advanced_hf_evaluation
+    - condition: stable
+      target_node: hf_chronic_management
+    source_guideline: AHA HF Guideline Section 7.4
+    source_section: Section 7.4 - HFmrEF Management
+    source_page: Section 7.4
+    source_quote: SGLT2 inhibitors are recommended with consideration of additional HF therapies.
+    name: Hfmref Treatment
+  hfpef_treatment:
+    node_id: hfpef_treatment
+    node_type: action
+    description: Treatment for HFpEF
+    patient_activation_condition: '''hfpef'' in patient.comorbidities or ''ef_above_50'' in patient.comorbidities'
+    mandatory_actions:
+    - initiate_sglt2i
+    - manage_comorbidities
+    - manage_volume_status
+    allowed_actions:
+    - diuretics_for_congestion
+    - treat_atrial_fibrillation
+    - treat_hypertension
+    - weight_management
+    recommendation_class: IIa
+    evidence_level: A
+    transitions:
+    - condition: symptoms_persist
+      target_node: advanced_hf_evaluation
+    - condition: stable
+      target_node: hf_chronic_management
+    source_guideline: AHA HF Guideline Section 7.5
+    source_section: Section 7.5 - HFpEF Management
+    source_page: Section 7.5
+    source_quote: Treat HFpEF with SGLT2 inhibitors, congestion control, and comorbidity management.
+    name: Hfpef Treatment
+  device_therapy_evaluation:
+    node_id: device_therapy_evaluation
+    node_type: decision
+    description: Evaluation for ICD and CRT
+    patient_activation_condition: '''device_candidate'' in patient.comorbidities'
+    mandatory_actions:
+    - assess_icd_indication
+    - assess_crt_indication
+    - check_optimal_gdmt_duration
+    transitions:
+    - condition: icd_indicated and qrs < 120
+      target_node: icd_implantation
+    - condition: crt_indicated and qrs >= 150 and lbbb
+      target_node: crt_implantation
+    - condition: no_device_indicated
+      target_node: hf_chronic_management
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 8
+    source_section: Section 8 - Device Therapy
+    source_page: Section 8
+    source_quote: Evaluate ICD and CRT eligibility after optimization of medical therapy.
+    name: Device Therapy Evaluation
+  icd_implantation:
+    node_id: icd_implantation
+    node_type: action
+    description: ICD implantation for primary prevention
+    precondition: state.lvef <= 35 and state.optimal_gdmt_days >= 90 and state.life_expectancy_years > 1
+    patient_activation_condition: '''device_candidate'' in patient.comorbidities'
+    mandatory_actions:
+    - discuss_risks_benefits
+    - obtain_informed_consent
+    - implant_icd
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: post_implantation
+      target_node: hf_chronic_management
+    source_guideline: AHA HF Guideline Section 8.1
+    source_section: Section 8.1 - ICD for Primary Prevention
+    source_page: Section 8.1
+    source_quote: ICD implantation is recommended for eligible HFrEF patients after GDMT.
+    name: Icd Implantation
+  crt_implantation:
+    node_id: crt_implantation
+    node_type: action
+    description: CRT implantation
+    precondition: state.lvef <= 35 and state.qrs >= 150 and state.lbbb and state.sinus_rhythm
+    patient_activation_condition: '''device_candidate'' in patient.comorbidities'
+    mandatory_actions:
+    - discuss_risks_benefits
+    - obtain_informed_consent
+    - implant_crt
+    recommendation_class: I
+    evidence_level: A
+    transitions:
+    - condition: post_implantation
+      target_node: hf_chronic_management
+    source_guideline: AHA HF Guideline Section 8.2
+    source_section: Section 8.2 - CRT Indications
+    source_page: Section 8.2
+    source_quote: CRT is recommended for selected patients with reduced LVEF and conduction delay.
+    name: Crt Implantation
+  adhf_management:
+    node_id: adhf_management
+    node_type: decision
+    description: Acute Decompensated Heart Failure Management
+    patient_activation_condition: '''acute_decompensated'' in patient.comorbidities or patient.vitals.get(''spo2'', 100) <
+      92'
+    mandatory_actions:
+    - assess_hemodynamic_profile
+    - identify_precipitating_factors
+    - continuous_monitoring
+    transitions:
+    - condition: warm_wet
+      target_node: adhf_warm_wet
+    - condition: cold_wet
+      target_node: adhf_cold_wet
+    - condition: cold_dry
+      target_node: adhf_cold_dry
+    - condition: cardiogenic_shock
+      target_node: cardiogenic_shock_management
+    recommendation_class: I
+    evidence_level: B
+    conditional_rules:
+    - rule_id: HF-BRADYCARDIA-NO-BB-INCREASE
+      condition: patient.vitals.heart_rate < 50 or 'av_block' in patient.comorbidities
+      effect:
+        type: FORBIDDEN
+        actions:
+        - increase_beta_blocker
+        - add_digoxin
+        - add_ivabradine
+      evidence: AHA/ACC 2022 HF Guidelines, Section 7.3.1
+      severity: HIGH
+      description: Rate-lowering agents in bradycardia or AV block risk complete heart block.
+      condition_variables:
+      - patient.vitals.heart_rate
+      - patient.comorbidities
+      trigger_range:
+        patient.vitals.heart_rate:
+          min: 30
+          max: 49
+          type: int
+      normal_range:
+        patient.vitals.heart_rate:
+          min: 60
+          max: 100
+          type: int
+    - rule_id: HF-ACUTE-PULMONARY-EDEMA-NO-BB
+      condition: patient.vitals.spo2 < 90 and 'bilateral_crackles' in patient.exam_findings
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_high_dose_beta_blocker
+        - give_iv_metoprolol_in_acute_failure
+      evidence: AHA/ACC 2022 HF Guidelines, Section 10.1
+      severity: CRITICAL
+      description: IV beta-blockers in acute pulmonary edema cause cardiogenic shock.
+      condition_variables:
+      - patient.vitals.spo2
+      - patient.exam_findings
+      trigger_range:
+        patient.vitals.spo2:
+          min: 60
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.spo2:
+          min: 92
+          max: 100
+          type: int
+    - rule_id: HF-OVERDIURESIS-STOP
+      condition: patient.labs.bun_cr_ratio > 20 and patient.vitals.sbp_orthostatic_drop > 20
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_high_dose_diuretics
+        - increase_furosemide
+        - add_metolazone
+      evidence: AHA/ACC 2022 HF Guidelines, Section 10.2; Testani JM, JACC 2011
+      severity: HIGH
+      description: Over-diuresis causes acute kidney injury and electrolyte derangements.
+      condition_variables:
+      - patient.labs.bun_cr_ratio
+      - patient.vitals.sbp_orthostatic_drop
+      trigger_range:
+        patient.labs.bun_cr_ratio:
+          min: 21
+          max: 60
+          type: float
+        patient.vitals.sbp_orthostatic_drop:
+          min: 21
+          max: 60
+          type: float
+      normal_range:
+        patient.labs.bun_cr_ratio:
+          min: 10
+          max: 20
+          type: float
+        patient.vitals.sbp_orthostatic_drop:
+          min: 0
+          max: 10
+          type: float
+    source_guideline: AHA HF Guideline Section 9
+    source_section: Section 9 - Acute Decompensated HF
+    source_page: Section 9
+    source_quote: Acute decompensated HF management is guided by hemodynamic profile.
+    source_figure: Figure 4 - Hemodynamic Profiles
+    name: Adhf Management
+  adhf_warm_wet:
+    node_id: adhf_warm_wet
+    node_type: action
+    description: Warm and Wet Profile - Adequate perfusion with congestion
+    patient_activation_condition: '''warm_wet'' in patient.get(''hemodynamic_profile'', [])'
+    mandatory_actions:
+    - iv_diuretics
+    - fluid_restrict
+    - daily_weights
+    - monitor_urine_output
+    - monitor_electrolytes
+    allowed_actions:
+    - add_vasodilator_if_hypertensive
+    - continue_beta_blocker_if_stable
+    - assess_hemodynamic_profile
+    - identify_precipitating_factors
+    - continuous_monitoring
+    - obtain_history
+    - physical_examination
+    - order_bnp_or_ntprobnp
+    - order_ecg
+    - order_chest_xray
+    - order_basic_metabolic_panel
+    - order_cbc
+    - order_echocardiogram
+    - assess_lvef
+    forbidden_actions:
+    - give_iv_inotropes
+    deadlines:
+      iv_diuretics: 30
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: euvolemic
+      target_node: hfref_gdmt
+    - condition: diuretic_resistance
+      target_node: diuretic_resistance_management
+    source_guideline: AHA HF Guideline Section 9.2
+    source_section: Section 9.2 - Warm and Wet Profile
+    source_page: Section 9.2
+    source_quote: Use IV diuretics promptly for congestion with preserved perfusion.
+    name: Adhf Warm Wet
+  adhf_cold_wet:
+    node_id: adhf_cold_wet
+    node_type: action
+    description: Cold and Wet Profile - Inadequate perfusion with congestion
+    patient_activation_condition: '''cold_wet'' in patient.get(''hemodynamic_profile'', [])'
+    mandatory_actions:
+    - iv_diuretics
+    - consider_inotropes
+    - consider_vasodilators
+    - hemodynamic_monitoring
+    allowed_actions:
+    - assess_hemodynamic_profile
+    - identify_precipitating_factors
+    - continuous_monitoring
+    - obtain_history
+    - physical_examination
+    - order_bnp_or_ntprobnp
+    - order_ecg
+    - order_basic_metabolic_panel
+    - order_cbc
+    - order_echocardiogram
+    - assess_lvef
+    - fluid_restrict
+    - daily_weights
+    - monitor_urine_output
+    - monitor_electrolytes
+    forbidden_actions:
+    - give_high_dose_beta_blocker
+    deadlines:
+      consider_inotropes: 60
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: improved_perfusion
+      target_node: adhf_warm_wet
+    - condition: worsening
+      target_node: cardiogenic_shock_management
+    source_guideline: AHA HF Guideline Section 9.3
+    source_section: Section 9.3 - Cold and Wet Profile
+    source_page: Section 9.3
+    source_quote: Consider inotropes and close monitoring for low-perfusion congested patients.
+    name: Adhf Cold Wet
+  adhf_cold_dry:
+    node_id: adhf_cold_dry
+    node_type: action
+    description: Cold and Dry Profile - Inadequate perfusion without congestion
+    patient_activation_condition: '''cold_dry'' in patient.get(''hemodynamic_profile'', [])'
+    mandatory_actions:
+    - careful_fluid_challenge
+    - hemodynamic_monitoring
+    forbidden_actions:
+    - give_diuretics
+    recommendation_class: IIa
+    evidence_level: C
+    transitions:
+    - condition: improved_with_fluid
+      target_node: hfref_gdmt
+    - condition: no_improvement
+      target_node: cardiogenic_shock_management
+    source_guideline: AHA HF Guideline Section 9.4
+    source_section: Section 9.4 - Cold and Dry Profile
+    source_page: Section 9.4
+    source_quote: Use careful fluid challenge with hemodynamic reassessment in cold-dry profile.
+    name: Adhf Cold Dry
+  cardiogenic_shock_management:
+    node_id: cardiogenic_shock_management
+    node_type: action
+    description: Cardiogenic Shock Management
+    patient_activation_condition: patient.vitals.get('sbp', 120) < 90 or 'cardiogenic_shock' in patient.comorbidities
+    mandatory_actions:
+    - admit_to_icu
+    - invasive_hemodynamic_monitoring
+    - vasopressor_support
+    - inotrope_support
+    - mechanical_circulatory_support_evaluation
+    allowed_actions:
+    - assess_hemodynamic_profile
+    - identify_precipitating_factors
+    - continuous_monitoring
+    - obtain_history
+    - physical_examination
+    - order_bnp_or_ntprobnp
+    - order_ecg
+    - order_basic_metabolic_panel
+    - order_cbc
+    - order_echocardiogram
+    - assess_lvef
+    - select_mcs_device
+    - multidisciplinary_team_evaluation
+    - iabp
+    - impella
+    - ecmo
+    - consider_inotropes
+    - hemodynamic_monitoring
+    forbidden_actions:
+    - give_beta_blocker
+    - give_high_dose_diuretics_if_hypotensive
+    deadlines:
+      admit_to_icu: 30
+      vasopressor_support: 30
+    recommendation_class: I
+    evidence_level: B
+    transitions:
+    - condition: stabilized
+      target_node: adhf_cold_wet
+    - condition: mcs_indicated
+      target_node: mcs_management
+    source_guideline: AHA HF Guideline Section 9.5
+    source_section: Section 9.5 - Cardiogenic Shock
+    source_page: Section 9.5
+    source_quote: Cardiogenic shock requires ICU care, vasoactive support, and urgent escalation.
+    name: Cardiogenic Shock Management
+  mcs_management:
+    node_id: mcs_management
+    node_type: action
+    description: Mechanical Circulatory Support
+    patient_activation_condition: patient.vitals.get('sbp', 120) < 90 or 'cardiogenic_shock' in patient.comorbidities
+    mandatory_actions:
+    - select_mcs_device
+    - multidisciplinary_team_evaluation
+    allowed_actions:
+    - iabp
+    - impella
+    - ecmo
+    - lvad_evaluation
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 9.6
+    source_section: Section 9.6 - Mechanical Circulatory Support
+    source_page: Section 9.6
+    source_quote: Select temporary or durable circulatory support with multidisciplinary input.
+    name: Mcs Management
+  diuretic_resistance_management:
+    node_id: diuretic_resistance_management
+    node_type: action
+    description: Management of Diuretic Resistance
+    patient_activation_condition: '''diuretic_resistance'' in patient.get(''presentation'', {})'
+    mandatory_actions:
+    - increase_diuretic_dose
+    - consider_combination_diuretics
+    - monitor_kidney_function
+    allowed_actions:
+    - add_thiazide_metolazone
+    - continuous_diuretic_infusion
+    - consider_ultrafiltration
+    recommendation_class: IIa
+    evidence_level: B
+    transitions:
+    - condition: adequate_diuresis
+      target_node: adhf_warm_wet
+    - condition: refractory
+      target_node: advanced_hf_evaluation
+    source_guideline: AHA HF Guideline Section 9.7
+    source_section: Section 9.7 - Diuretic Resistance
+    source_page: Section 9.7
+    source_quote: Escalate diuretic strategy and monitor kidney function in resistant congestion.
+    name: Diuretic Resistance Management
+  advanced_hf_evaluation:
+    node_id: advanced_hf_evaluation
+    node_type: decision
+    description: Evaluation for Advanced HF Therapies
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - confirm_optimal_gdmt
+    - assess_candidacy_for_advanced_therapies
+    - palliative_care_discussion
+    transitions:
+    - condition: transplant_candidate
+      target_node: transplant_evaluation
+    - condition: lvad_candidate
+      target_node: lvad_evaluation
+    - condition: not_candidate
+      target_node: palliative_management
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 10
+    source_section: Section 10 - Advanced HF Therapies
+    source_page: Section 10
+    source_quote: Assess candidacy for transplant, LVAD, or palliative pathway in advanced HF.
+    name: Advanced Hf Evaluation
+  transplant_evaluation:
+    node_id: transplant_evaluation
+    node_type: action
+    description: Heart Transplant Evaluation
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - comprehensive_transplant_workup
+    - psychosocial_evaluation
+    - list_if_appropriate
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 10.1
+    source_section: Section 10.1 - Heart Transplant Evaluation
+    source_page: Section 10.1
+    source_quote: Perform comprehensive transplant evaluation and list appropriate candidates.
+    name: Transplant Evaluation
+  lvad_evaluation:
+    node_id: lvad_evaluation
+    node_type: action
+    description: LVAD Evaluation
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - lvad_workup
+    - discuss_goals_of_care
+    allowed_actions:
+    - lvad_as_bridge_to_transplant
+    - lvad_as_destination_therapy
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 10.2
+    source_section: Section 10.2 - LVAD Evaluation
+    source_page: Section 10.2
+    source_quote: Evaluate LVAD candidacy and align therapy with patient goals of care.
+    name: Lvad Evaluation
+  palliative_management:
+    node_id: palliative_management
+    node_type: action
+    description: Palliative and Supportive Care
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - symptom_management
+    - discuss_advance_directives
+    - hospice_referral_if_appropriate
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA HF Guideline Section 10.3
+    source_section: Section 10.3 - Palliative and Supportive Care
+    source_page: Section 10.3
+    source_quote: Integrate symptom-focused and advance-care planning for non-candidates.
+    name: Palliative Management
+  hf_chronic_management:
+    node_id: hf_chronic_management
+    node_type: action
+    description: Chronic HF Management
+    patient_activation_condition: 'False'
+    mandatory_actions:
+    - optimize_gdmt_titration
+    - regular_follow_up
+    - monitor_for_deterioration
+    - patient_education
+    allowed_actions:
+    - cardiac_rehabilitation
+    - sodium_restriction
+    - fluid_restriction_if_needed
+    - vaccinations
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA HF Guideline Section 7.7
+    source_section: Section 7.7 - Chronic HF Follow-up
+    source_page: Section 7.7
+    source_quote: Continue GDMT optimization, surveillance, and patient education longitudinally.
+    name: Hf Chronic Management
+sequence_dependencies:
+- before: assess_lvef
+  after: device_therapy_evaluation
+- before: optimal_gdmt_duration
+  after: icd_implantation
+- before: optimal_gdmt_duration
+  after: crt_implantation
+forbidden_combinations:
+- actions:
+  - give_diltiazem
+  - give_beta_blocker
+  condition: lvef <= 40
+  reason: Non-dihydropyridine CCBs contraindicated in HFrEF
+- actions:
+  - give_nsaid
+  - any_hf_medication
+  reason: NSAIDs worsen HF and reduce efficacy of diuretics
+guideline_name: AHA/ACC/HFSA Heart Failure Guideline

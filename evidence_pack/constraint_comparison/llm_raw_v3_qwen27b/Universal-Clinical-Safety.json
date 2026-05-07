@@ -1,0 +1,197 @@
+{
+  "cpg": "Universal-Clinical-Safety",
+  "model": "Qwen/Qwen3.5-27B-FP8",
+  "constraints": [
+    {
+      "type": "WITHIN",
+      "action": "assess_vital_signs",
+      "deadline_minutes": 15,
+      "before_action": null,
+      "source_section": "Initial Assessment"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "discharge_without_assessment",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Initial Assessment"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_thrombolytics_without_imaging",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Initial Assessment"
+    },
+    {
+      "type": "BEFORE",
+      "action": "verify_allergy",
+      "deadline_minutes": null,
+      "before_action": "medication_administration",
+      "source_section": "Joint Commission NPSG 2024; WHO Patient Safety"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_known_allergen_drug",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; administering a known allergen is a sentinel event with anaphylaxis risk"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "skip_allergy_verification_before_drug",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; administering a known allergen is a sentinel event with anaphylaxis risk"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_category_x_drug",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Pregnancy Category X; ACOG 2020"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_warfarin",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Pregnancy Category X; ACOG 2020"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_methotrexate",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Pregnancy Category X; ACOG 2020"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_isotretinoin",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Pregnancy Category X; ACOG 2020"
+    },
+    {
+      "type": "MUST",
+      "action": "check_renal_dose_adjustment",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "CKD-EPI 2021; FDA Renal Dosing Guidelines"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_full_dose_nephrotoxin_in_renal_failure",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Renal Impairment Guidance 2020; renally-cleared drugs accumulate causing toxicity in renal failure"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_enoxaparin_full_dose_in_ckd",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Renal Impairment Guidance 2020; renally-cleared drugs accumulate causing toxicity in renal failure"
+    },
+    {
+      "type": "MUST",
+      "action": "check_hepatic_dose_adjustment",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Child-Pugh Classification; FDA Hepatic Dosing"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_full_dose_hepatotoxin_in_liver_failure",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Hepatic Impairment Guidance 2020; hepatotoxins at full dose in liver failure cause acute decompensation"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_acetaminophen_full_dose_in_cirrhosis",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "FDA Hepatic Impairment Guidance 2020; hepatotoxins at full dose in liver failure cause acute decompensation"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_benzodiazepine_chronic",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "AGS Beers Criteria 2023"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_anticholinergic_high_dose",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "AGS Beers Criteria 2023"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_long_acting_sulfonylurea",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "AGS Beers Criteria 2023"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_nsaid",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_ibuprofen",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_naproxen",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_ketorolac",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_aspirin_high_dose",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "discharge_critically_ill",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Ongoing Evaluation"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "give_contraindicated_medication",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Ongoing Evaluation"
+    },
+    {
+      "type": "FORBIDDEN",
+      "action": "discharge_without_diagnosis",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Disposition"
+    }
+  ],
+  "elapsed_s": 69.29,
+  "timestamp": "2026-04-26T09:14:51.311490+00:00"
+}

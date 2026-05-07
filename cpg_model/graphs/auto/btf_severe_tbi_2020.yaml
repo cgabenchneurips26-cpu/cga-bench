@@ -1,0 +1,126 @@
+graph_id: btf_severe_tbi_2020
+guideline_name: Brain Trauma Foundation Severe TBI Guidelines 4th Edition
+version: '2020.1'
+metadata:
+  source: Brain Trauma Foundation Severe TBI Guidelines 4th Edition
+  doi: 10.1227/NEU.0000000000001432
+  journal: Neurosurgery
+  recommendation_system: BTF
+  description: Severe traumatic brain injury management.
+  key_evidence: ICP-directed therapy and avoidance of hypotension reduce mortality.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Severe TBI Recognition (GCS <=8)
+    description: Identify severe TBI, secure airway, establish hemodynamic targets.
+    precondition: null
+    mandatory_actions:
+    - assess_glasgow_coma_scale
+    - secure_airway_intubation_if_gcs_8_or_less
+    - assess_vital_signs
+    - order_imaging_ct_head
+    allowed_actions:
+    - order_lab_bmp
+    - order_imaging_ct_head
+    - order_lab_cbc
+    - establish_iv_access_large_bore
+    - assess_glasgow_coma_scale
+    - consult_neurosurgery
+    - secure_airway_intubation_if_gcs_8_or_less
+    - order_lab_coagulation
+    - assess_vital_signs
+    forbidden_actions:
+    - give_prophylactic_hyperventilation
+    deadlines:
+      assess_glasgow_coma_scale: 5
+      secure_airway_intubation_if_gcs_8_or_less: 15
+      order_imaging_ct_head: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Brain Trauma Foundation Severe TBI Guidelines 4th Edition
+    source_section: Initial Evaluation
+    source_page: null
+    source_quote: Patients with severe TBI (GCS <=8) require definitive airway management and urgent CT imaging.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: ICP Control and Secondary Injury Prevention
+    description: Maintain CPP 60-70 mmHg, avoid SBP <100, treat ICP >22.
+    precondition: null
+    mandatory_actions:
+    - monitor_intracranial_pressure
+    - maintain_cpp_60_70
+    - elevate_head_of_bed_30_degrees
+    - maintain_normothermia
+    allowed_actions:
+    - give_hypertonic_saline_if_icp_elevated
+    - sedate_with_propofol_or_midazolam
+    - give_analgesia_fentanyl
+    - avoid_hypotension_sbp_less_than_100
+    - maintain_cpp_60_70
+    - initiate_seizure_prophylaxis_levetiracetam
+    - elevate_head_of_bed_30_degrees
+    - monitor_intracranial_pressure
+    - maintain_normothermia
+    - give_mannitol_if_icp_elevated
+    forbidden_actions:
+    - give_prophylactic_hyperventilation
+    - give_corticosteroids_for_tbi
+    deadlines:
+      monitor_intracranial_pressure: 120
+      elevate_head_of_bed_30_degrees: 30
+      initiate_seizure_prophylaxis_levetiracetam: 60
+    required_prior_actions:
+      monitor_intracranial_pressure:
+      - consult_neurosurgery
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Brain Trauma Foundation Severe TBI Guidelines 4th Edition
+    source_section: ICP Management
+    source_page: null
+    source_quote: Treatment of ICP should be initiated at thresholds above 22 mmHg; corticosteroids are not recommended.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Neurologic Monitoring and Escalation
+    description: Serial neuro exams, ICP trends, escalate to decompressive craniectomy if refractory.
+    precondition: null
+    mandatory_actions:
+    - reassess_neurologic_status
+    - monitor_icp_trend
+    allowed_actions:
+    - reassess_neurologic_status
+    - consider_decompressive_craniectomy_if_refractory
+    - monitor_sodium_and_osmolarity
+    - consider_barbiturate_coma_if_refractory
+    - repeat_ct_head_if_deterioration
+    - order_lab_bmp_repeat
+    - monitor_icp_trend
+    forbidden_actions: []
+    deadlines:
+      reassess_neurologic_status: 60
+      monitor_icp_trend: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Brain Trauma Foundation Severe TBI Guidelines 4th Edition
+    source_section: Monitoring
+    source_page: null
+    source_quote: Continuous ICP monitoring informs titration of therapy and escalation decisions.
+    next_nodes: []
+    conditional_next: {}

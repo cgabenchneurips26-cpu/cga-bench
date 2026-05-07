@@ -1,0 +1,113 @@
+graph_id: aha_acc_peripheral_artery_disease_2024
+guideline_name: AHA/ACC Peripheral Artery Disease Guideline 2024
+version: '2024.1'
+metadata:
+  source: AHA/ACC Peripheral Artery Disease Guideline 2024
+  doi: 10.1161/CIR.0000000000001251
+  journal: Circulation
+  recommendation_system: ACC/AHA
+  description: Management of lower-extremity PAD.
+  key_evidence: 'COMPASS: rivaroxaban 2.5 mg BID + aspirin reduces MACE/MALE.'
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: PAD Recognition and ABI Assessment
+    description: Identify PAD via symptoms, pulse exam, and resting ankle-brachial index.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - perform_vascular_exam
+    - measure_ankle_brachial_index
+    - order_lab_lipid_panel
+    - order_lab_hba1c
+    allowed_actions:
+    - order_lab_creatinine
+    - order_lab_lipid_panel
+    - perform_vascular_exam
+    - measure_ankle_brachial_index
+    - order_lab_hba1c
+    - order_imaging_duplex_ultrasound_lower_extremities
+    - assess_smoking_status
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      measure_ankle_brachial_index: 1440
+      perform_vascular_exam: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Peripheral Artery Disease Guideline 2024
+    source_section: Diagnosis
+    source_page: null
+    source_quote: Resting ABI should be used to establish the diagnosis of PAD in patients with suggestive symptoms.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: Medical Therapy and Risk Reduction
+    description: 'Guideline-directed medical therapy: antiplatelet, statin, smoking cessation.'
+    precondition: null
+    mandatory_actions:
+    - initiate_antiplatelet_therapy
+    - initiate_high_intensity_statin
+    - counsel_smoking_cessation
+    - prescribe_supervised_exercise_therapy
+    allowed_actions:
+    - initiate_high_intensity_statin
+    - optimize_diabetes_management
+    - give_rivaroxaban_low_dose_if_indicated
+    - initiate_ace_inhibitor_or_arb
+    - counsel_smoking_cessation
+    - optimize_blood_pressure_control
+    - initiate_antiplatelet_therapy
+    - prescribe_supervised_exercise_therapy
+    forbidden_actions:
+    - initiate_cilostazol_if_heart_failure
+    - prescribe_beta_blocker_if_critical_limb_ischemia
+    deadlines:
+      initiate_antiplatelet_therapy: 1440
+      initiate_high_intensity_statin: 1440
+      counsel_smoking_cessation: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA/ACC Peripheral Artery Disease Guideline 2024
+    source_section: Medical Therapy
+    source_page: null
+    source_quote: Antiplatelet therapy and statins are recommended to reduce cardiovascular events in PAD.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Long-term Monitoring and Revascularization Decision
+    description: Serial ABI, symptom progression, revascularization consult if lifestyle-limiting.
+    precondition: null
+    mandatory_actions:
+    - reassess_symptoms
+    - repeat_ankle_brachial_index
+    allowed_actions:
+    - repeat_ankle_brachial_index
+    - monitor_medication_adherence
+    - reassess_symptoms
+    - consult_vascular_surgery_if_clti
+    - order_imaging_ct_angiography_if_intervention_planned
+    - assess_wound_healing_if_ulcer
+    forbidden_actions: []
+    deadlines:
+      reassess_symptoms: 20160
+      repeat_ankle_brachial_index: 86400
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Peripheral Artery Disease Guideline 2024
+    source_section: Follow-up
+    source_page: null
+    source_quote: Patients with PAD should be monitored for symptom progression and cardiovascular events.
+    next_nodes: []
+    conditional_next: {}

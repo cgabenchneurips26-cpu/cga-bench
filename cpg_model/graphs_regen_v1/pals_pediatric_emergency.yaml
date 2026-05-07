@@ -1,0 +1,293 @@
+graph_id: pals_pediatric_emergency
+guideline_name: AHA PALS 2025 Pediatric Emergency Guidelines
+version: '2025.1'
+metadata:
+  primary_source:
+    title: AHA PALS 2025 Guidelines
+    authors: American Heart Association
+    year: 2025
+  secondary_source:
+    title: AAP Pediatric Emergency Medicine Guidelines
+    authors: American Academy of Pediatrics
+    year: 2024
+  source: AHA PALS 2025 + AAP 2024
+  description: Pediatric emergency assessment, fluid resuscitation, seizure management, and anaphylaxis
+  key_evidence: Rapid fluid bolus (>10ml/kg/h) in pediatric DKA causes cerebral edema and herniation (ISPAD 2022)
+  recommendation_system: AHA/ACC
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_pals_pediatric_emergency.json
+entry_node: pediatric_assessment
+nodes:
+  pediatric_assessment:
+    node_id: pediatric_assessment
+    node_type: enquiry
+    name: Pediatric Assessment
+    description: Pediatric assessment triangle (appearance, breathing, circulation) + weight-based parameters
+    precondition: null
+    mandatory_actions:
+    - assess_pediatric_triangle
+    - obtain_weight_kg
+    - assess_vital_signs_age_appropriate
+    - establish_iv_or_io_access
+    allowed_actions:
+    - assess_pediatric_triangle
+    - obtain_weight_kg
+    - assess_vital_signs_age_appropriate
+    - establish_iv_or_io_access
+    - check_glucose
+    - assess_mental_status
+    - calculate_broselow_weight
+    - order_lab_cbc
+    - order_lab_bmp
+    forbidden_actions:
+    - use_adult_vital_sign_norms
+    - give_adult_dose_medications
+    deadlines:
+      assess_pediatric_triangle: 5
+      assess_vital_signs_age_appropriate: 5
+      obtain_weight_kg: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS 2025
+    source_section: 'Section 1: Pediatric Assessment'
+    source_quote: The Pediatric Assessment Triangle provides rapid, initial evaluation of appearance, work of breathing, and
+      circulation.
+    next_nodes:
+    - pediatric_fluid_resuscitation
+    - pediatric_seizure
+    - pediatric_anaphylaxis
+    conditional_next: {}
+  pediatric_fluid_resuscitation:
+    node_id: pediatric_fluid_resuscitation
+    node_type: action
+    name: Pediatric Fluid Resuscitation
+    description: Weight-based fluid resuscitation for pediatric shock/dehydration
+    precondition: null
+    mandatory_actions:
+    - give_ns_bolus_20ml_kg
+    - reassess_after_each_bolus
+    - monitor_urine_output
+    allowed_actions:
+    - give_ns_bolus_20ml_kg
+    - reassess_after_each_bolus
+    - monitor_urine_output
+    - give_ns_bolus_10ml_kg
+    - establish_second_iv_access
+    - order_lab_lactate
+    - order_lab_blood_gas
+    forbidden_actions:
+    - give_bolus_greater_than_20ml_kg
+    deadlines:
+      give_ns_bolus_20ml_kg: 15
+      reassess_after_each_bolus: 20
+    required_prior_actions:
+      give_ns_bolus_20ml_kg:
+      - establish_iv_or_io_access
+      - obtain_weight_kg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS 2025
+    source_section: 'Section 2: Fluid Resuscitation'
+    source_quote: 20ml/kg NS bolus over 5-20 minutes. Reassess after each bolus. Max 60ml/kg in first hour.
+    patient_activation_condition: '''dehydration'' in patient.get(''presentation'', {}) or ''shock'' in patient.get(''presentation'',
+      {})
+
+      '
+    conditional_rules:
+    - rule_id: PEDS-DKA-SLOW-FLUID
+      condition: '''dka'' in patient.get(''presentation'', {})'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_rapid_fluid_bolus
+        - give_bolus_greater_than_10ml_kg
+      evidence: ISPAD 2022; AHA PALS 2025 - cerebral edema risk in pediatric DKA
+      severity: CRITICAL
+      description: 'Pediatric DKA: rapid fluid (>10ml/kg/h) causes cerebral edema and herniation. Use 10ml/kg over 1h, then
+        slow correction over 48h.
+
+        '
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: dka
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: dka
+          type: list_not_contains
+    - rule_id: PEDS-CARDIAC-LIMIT-FLUID
+      condition: '''congenital_heart_disease'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_ns_bolus_20ml_kg
+        - give_rapid_fluid_bolus
+      evidence: AHA PALS 2025; Pediatric Cardiology Guidelines
+      severity: HIGH
+      description: 'CHD patients have limited cardiac reserve. Standard 20ml/kg bolus can cause pulmonary edema. Use 5-10ml/kg
+        with frequent reassessment.
+
+        '
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: congenital_heart_disease
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: congenital_heart_disease
+          type: list_not_contains
+    next_nodes: []
+    conditional_next: {}
+  pediatric_seizure:
+    node_id: pediatric_seizure
+    node_type: action
+    name: Pediatric Seizure Management
+    description: Age-appropriate seizure management with glucose check and weight-based benzodiazepines
+    precondition: null
+    mandatory_actions:
+    - check_glucose
+    - give_benzodiazepine_weight_based
+    - protect_airway
+    - monitor_respiratory_status
+    allowed_actions:
+    - check_glucose
+    - give_benzodiazepine_weight_based
+    - protect_airway
+    - monitor_respiratory_status
+    - give_phenobarbital_first_line
+    - give_levetiracetam
+    - give_phenytoin
+    - give_antipyretic
+    - order_lab_bmp
+    forbidden_actions: []
+    deadlines:
+      check_glucose: 5
+      give_benzodiazepine_weight_based: 10
+    required_prior_actions:
+      give_benzodiazepine_weight_based:
+      - obtain_weight_kg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS 2025
+    source_section: 'Section 3: Seizure Management'
+    source_quote: Check glucose immediately. Benzodiazepine is first-line for active seizure. Weight-based dosing is mandatory.
+    patient_activation_condition: '''seizure'' in patient.get(''presentation'', {})'
+    conditional_rules:
+    - rule_id: PEDS-FEBRILE-SEIZURE-NO-AED
+      condition: '''simple_febrile_seizure'' in patient.get(''presentation'', {}) and patient.age >= 1'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_antiepileptic_medication
+        - start_levetiracetam
+        - start_phenytoin
+      evidence: AAP 2011 Febrile Seizure Practice Parameter (reaffirmed 2023)
+      severity: HIGH
+      description: 'Simple febrile seizures in children >=1y do NOT require antiepileptic medication. Treatment is supportive
+        + antipyretic. Starting AEDs is overtreatment with side effects and no benefit for simple febrile seizures.
+
+        '
+      condition_variables:
+      - patient.presentation
+      - patient.age
+      trigger_range:
+        patient.presentation:
+          contains: simple_febrile_seizure
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: simple_febrile_seizure
+          type: list_not_contains
+    - rule_id: PEDS-NEONATE-SEIZURE-PHENOBARB
+      condition: patient.age < 1
+      effect:
+        type: REQUIRED
+        actions:
+        - give_phenobarbital_first_line
+      evidence: AHA PALS 2025; Neonatal seizure management - phenobarbital preferred over levetiracetam
+      severity: HIGH
+      description: 'Neonatal seizures (<1 year): phenobarbital is the first-line agent. Benzodiazepines alone are insufficient.
+        Levetiracetam has less evidence in neonates compared to phenobarbital.
+
+        '
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 0
+          max: 0
+          type: int
+      normal_range:
+        patient.age:
+          min: 1
+          max: 17
+          type: int
+    - rule_id: PEDS-NEONATE-SEIZURE-PHENOBARB-FORBIDDEN
+      condition: patient.age < 1
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_adult_dose_anticonvulsant_in_neonate
+        - give_diazepam_iv_in_neonate
+      evidence: AHA PALS 2020; neonates require phenobarbital as first-line; IV diazepam contains benzyl alcohol toxic to
+        neonates
+      severity: CRITICAL
+      description: Neonatal seizures require phenobarbital; IV diazepam contains benzyl alcohol causing gasping syndrome in
+        neonates.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 0
+          max: 0
+          type: int
+      normal_range:
+        patient.age:
+          min: 1
+          max: 17
+          type: int
+      skip_scenario_generation: true
+    next_nodes: []
+    conditional_next: {}
+  pediatric_anaphylaxis:
+    node_id: pediatric_anaphylaxis
+    node_type: action
+    name: Pediatric Anaphylaxis
+    description: Weight-based epinephrine for pediatric anaphylaxis
+    precondition: null
+    mandatory_actions:
+    - give_epinephrine_im_0_01mg_kg
+    - establish_iv_access
+    - give_fluid_bolus
+    - monitor_closely
+    allowed_actions:
+    - give_epinephrine_im_0_01mg_kg
+    - establish_iv_access
+    - give_fluid_bolus
+    - monitor_closely
+    - give_h1_antihistamine_weight_based
+    - give_corticosteroid_weight_based
+    - administer_oxygen
+    forbidden_actions:
+    - give_adult_dose_epinephrine
+    - give_epinephrine_iv_push
+    deadlines:
+      give_epinephrine_im_0_01mg_kg: 5
+      establish_iv_access: 10
+    required_prior_actions:
+      give_epinephrine_im_0_01mg_kg:
+      - obtain_weight_kg
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA PALS 2025
+    source_section: 'Section 4: Anaphylaxis'
+    source_quote: Epinephrine IM 0.01mg/kg (max 0.3mg child, 0.5mg adolescent). IV epinephrine push is contraindicated in
+      pediatrics.
+    patient_activation_condition: '''anaphylaxis'' in patient.get(''presentation'', {})'
+    next_nodes: []
+    conditional_next: {}

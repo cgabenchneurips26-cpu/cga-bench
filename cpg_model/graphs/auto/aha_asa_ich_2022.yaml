@@ -1,0 +1,273 @@
+graph_id: aha_asa_ich_2022
+guideline_name: 2022 AHA/ASA Guideline for the Management of Patients With Spontaneous Intracerebral Hemorrhage
+version: '2022.1'
+metadata:
+  source: AHA/ASA ICH Guidelines 2022
+  doi: 10.1161/STR.0000000000000407
+  journal: Stroke
+  recommendation_system: AHA Class/Level
+  description: Evidence-based guideline for spontaneous ICH including BP control, coagulopathy reversal, and neurosurgical
+    decision-making
+  key_evidence: 'INTERACT2 trial: SBP <140 reduces hematoma expansion. 4-factor PCC reverses warfarin faster than FFP. Routine
+    surgical evacuation of deep ICH not beneficial (STICH trials).'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: ICH Recognition & Severity Assessment
+    description: Confirm ICH via CT, assess GCS, NIHSS, and identify underlying cause
+    precondition: null
+    mandatory_actions:
+    - assess_neurological_status
+    - order_imaging_ct_head
+    - assess_gcs
+    allowed_actions:
+    - assess_nihss
+    - order_imaging_ct_head
+    - order_lab_cbc
+    - assess_vital_signs
+    - establish_iv_access
+    - assess_gcs
+    - order_lab_bmp
+    - assess_neurological_status
+    - order_lab_coagulation
+    - order_lab_glucose
+    forbidden_actions: []
+    deadlines:
+      assess_neurological_status: 10
+      order_imaging_ct_head: 25
+      assess_gcs: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ASA ICH Guidelines 2022
+    source_section: Initial Evaluation
+    source_page: null
+    source_quote: Non-contrast CT is the gold standard for acute ICH diagnosis. Immediate neurological assessment including
+      GCS and NIHSS
+    next_nodes:
+    - bp_management
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.154
+  bp_management:
+    node_id: bp_management
+    node_type: plan
+    name: Blood Pressure Management
+    description: Rapid BP lowering to target SBP <140 if presenting SBP 150-220 mmHg
+    precondition: null
+    mandatory_actions:
+    - initiate_iv_antihypertensive
+    - target_sbp_below_140
+    allowed_actions:
+    - initiate_iv_antihypertensive
+    - target_sbp_below_140
+    - give_iv_nicardipine
+    - assess_neurological_status
+    - give_iv_esmolol
+    - give_iv_labetalol
+    - monitor_bp_q5min
+    forbidden_actions: []
+    deadlines:
+      initiate_iv_antihypertensive: 60
+      target_sbp_below_140: 60
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: A
+    source_guideline: AHA/ASA ICH Guidelines 2022
+    source_section: 'Recommendation 2: Blood Pressure Management'
+    source_page: null
+    source_quote: For patients with ICH presenting with SBP 150-220 mmHg, acute lowering to target SBP 140 mmHg is safe and
+      reasonable (Class IIa, Level A)
+    next_nodes:
+    - coagulopathy_reversal
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.062
+  coagulopathy_reversal:
+    node_id: coagulopathy_reversal
+    node_type: plan
+    name: Coagulopathy Reversal
+    description: Reverse anticoagulation if present (warfarin, DOAC, heparin)
+    precondition: null
+    mandatory_actions:
+    - assess_anticoagulation_status
+    allowed_actions:
+    - give_vitamin_k
+    - give_pcc_4factor
+    - give_protamine_if_heparin
+    - order_lab_coagulation_repeat
+    - order_lab_ptt
+    - give_idarucizumab_if_dabigatran
+    - assess_anticoagulation_status
+    - order_lab_inr
+    - give_andexanet_if_xa_inhibitor
+    forbidden_actions: []
+    deadlines:
+      assess_anticoagulation_status: 30
+    required_prior_actions:
+      give_pcc_4factor:
+      - order_lab_inr
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ASA ICH Guidelines 2022
+    source_section: 'Recommendation 3: Coagulopathy Reversal'
+    source_page: null
+    source_quote: Patients with ICH on warfarin should receive rapid INR reversal with 4-factor PCC and vitamin K (Class I,
+      Level B)
+    next_nodes:
+    - neurosurgical_evaluation
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: ICH-WARFARIN-REVERSAL
+      condition: state.on_warfarin == True
+      effect:
+        type: REQUIRED
+        actions:
+        - give_pcc_4factor
+        - give_vitamin_k
+        deadline_minutes: 60
+      severity: CRITICAL
+      evidence: Class I, Level B
+      description: Warfarin-associated ICH requires immediate reversal with 4-factor PCC and vitamin K
+    - rule_id: ICH-DABIGATRAN-REVERSAL
+      condition: state.on_dabigatran == True
+      effect:
+        type: REQUIRED
+        actions:
+        - give_idarucizumab_if_dabigatran
+        deadline_minutes: 60
+      severity: CRITICAL
+      evidence: Class I, Level C
+      description: Dabigatran-associated ICH requires idarucizumab reversal
+    - rule_id: ICH-XA-REVERSAL
+      condition: state.on_xa_inhibitor == True
+      effect:
+        type: REQUIRED
+        actions:
+        - give_andexanet_if_xa_inhibitor
+        deadline_minutes: 60
+      severity: CRITICAL
+      evidence: Class IIb, Level C
+      description: Factor Xa inhibitor-associated ICH requires andexanet alfa reversal
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.083
+  neurosurgical_evaluation:
+    node_id: neurosurgical_evaluation
+    node_type: decision
+    name: Neurosurgical Consultation
+    description: Assess need for surgical evacuation, EVD, or ICP monitoring
+    precondition: null
+    mandatory_actions:
+    - request_neurosurgery_consultation
+    allowed_actions:
+    - order_imaging_ct_head_repeat
+    - place_external_ventricular_drain
+    - request_neurosurgery_consultation
+    - assess_hydrocephalus
+    - assess_gcs
+    - assess_ich_volume
+    - monitor_icp
+    forbidden_actions:
+    - routine_surgical_evacuation_deep_ich
+    deadlines:
+      request_neurosurgery_consultation: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ASA ICH Guidelines 2022
+    source_section: 'Recommendation 4-5: Surgical Management'
+    source_page: null
+    source_quote: Surgical evacuation is reasonable for cerebellar hemorrhage >3cm with neurological deterioration. Routine
+      evacuation of deep ICH is not recommended (Class III)
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: ICH-CEREBELLAR-EVD
+      condition: state.ich_location == 'cerebellar' and state.ich_volume_ml > 30
+      effect:
+        type: REQUIRED
+        actions:
+        - place_external_ventricular_drain
+        deadline_minutes: 120
+      severity: CRITICAL
+      evidence: Class IIa, Level B
+      description: Large cerebellar hemorrhage >3cm requires EVD to prevent hydrocephalus and brainstem compression
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.071
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Monitoring & Complications
+    description: Serial neurological exams, monitor for hematoma expansion, ICP control
+    precondition: null
+    mandatory_actions:
+    - assess_neurological_status_q1h
+    - repeat_ct_head_24h
+    allowed_actions:
+    - assess_seizure_activity
+    - give_osmotic_therapy_if_elevated_icp
+    - assess_neurological_status_q1h
+    - order_lab_cbc
+    - order_lab_bmp
+    - repeat_ct_head_24h
+    - monitor_bp_continuous
+    - monitor_icp
+    forbidden_actions:
+    - prophylactic_antiepileptics_routine
+    deadlines:
+      assess_neurological_status_q1h: 60
+      repeat_ct_head_24h: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ASA ICH Guidelines 2022
+    source_section: 'Recommendation 6-7: Monitoring'
+    source_page: null
+    source_quote: Serial neurological assessments recommended. Repeat CT at 24h to assess stability. Prophylactic antiepileptics
+      NOT recommended for routine use (Class III)
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.143
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Rehabilitation
+    description: Assess readiness for rehabilitation, step-down, or continued ICU care
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - schedule_follow_up_imaging
+    - assess_discharge_readiness
+    - arrange_rehabilitation
+    - continue_icu_care
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ASA ICH Guidelines 2022
+    source_section: Disposition
+    source_page: null
+    source_quote: Early rehabilitation within 24-48 hours is reasonable for stable patients (Class IIa, Level B)
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.1

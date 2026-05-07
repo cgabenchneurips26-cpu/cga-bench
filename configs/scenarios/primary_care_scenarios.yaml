@@ -1,0 +1,1098 @@
+# Primary Care Scenario Families for External Validity
+# 1차 진료 외래 대표 시나리오 (4개 패밀리)
+#
+# Design Principles:
+# - Real-world incident distribution: low-risk (70%), moderate (20%), high-risk (10%)
+# - FHIR-based data structure
+# - WHO ICPS / NCC MERP taxonomy compatible
+# - Guideline + cohort statistics-based risk encoding
+
+metadata:
+  version: "1.0"
+  description: "Primary Care External Validity Scenarios"
+  target_setting: "primary_care_outpatient"
+  risk_distribution:
+    low_risk: 0.70
+    moderate_risk: 0.20
+    high_risk: 0.10
+
+# ============================================================
+# Family 1: Acute Chest Pain (ACS Rule-out)
+# Reference: AHA/ACC 2021 Chest Pain Guideline
+# ============================================================
+acute_chest_pain:
+  family_id: "chest_pain"
+  description: "Acute Chest Pain - ACS Rule-out Workflow"
+  guideline_reference:
+    source: "AHA/ACC 2021"
+    doi: "10.1161/CIR.0000000000001029"
+    section: "Section 4 - Initial Evaluation"
+
+  workflow_phases:
+    - phase: "history"
+      actions:
+        - "obtain_chest_pain_history"
+        - "assess_risk_factors"
+        - "document_time_of_onset"
+      max_duration_minutes: 5
+
+    - phase: "examination"
+      actions:
+        - "perform_vital_signs"
+        - "cardiac_auscultation"
+        - "lung_examination"
+      max_duration_minutes: 5
+
+    - phase: "testing"
+      actions:
+        - "obtain_12_lead_ecg"
+        - "order_troponin"
+        - "order_chest_xray"
+      deadlines:
+        obtain_12_lead_ecg: 10
+
+    - phase: "risk_stratification"
+      actions:
+        - "interpret_ecg"
+        - "calculate_heart_score"
+        - "assess_acs_probability"
+
+    - phase: "disposition"
+      actions:
+        - "discharge_home"
+        - "observation_admission"
+        - "transfer_to_pci_center"
+        - "activate_cath_lab"
+
+  scenarios:
+    # LOW RISK (70%)
+    chest_pain_low_01:
+      scenario_id: "chest_pain_low_01"
+      risk_level: "low"
+      description: "Young adult with atypical chest pain, low risk features"
+
+      patient:
+        age: 32
+        sex: "M"
+        weight_kg: 75
+        chief_complaint: "sharp chest pain worse with breathing"
+        working_diagnosis: "musculoskeletal_chest_pain"
+
+        vitals:
+          heart_rate: 78
+          blood_pressure_systolic: 125
+          blood_pressure_diastolic: 80
+          respiratory_rate: 16
+          temperature: 36.8
+          oxygen_saturation: 99
+
+        risk_factors: []
+        allergies: []
+        comorbidities: []
+
+      ground_truth:
+        ecg_finding: "normal_sinus_rhythm"
+        troponin_result: "negative"
+        heart_score: 2
+        acs_probability: "very_low"
+        expected_disposition: "discharge_home"
+
+      expected_actions:
+        - "obtain_chest_pain_history"
+        - "perform_vital_signs"
+        - "obtain_12_lead_ecg"
+        - "interpret_ecg"
+        - "discharge_home"
+
+      forbidden_actions:
+        - "activate_cath_lab"
+        - "give_thrombolytics"
+
+      max_duration_minutes: 60
+      passing_compliance_threshold: 0.85
+
+    chest_pain_low_02:
+      scenario_id: "chest_pain_low_02"
+      risk_level: "low"
+      description: "Middle-aged with GERD history, typical reflux symptoms"
+
+      patient:
+        age: 45
+        sex: "F"
+        weight_kg: 68
+        chief_complaint: "burning chest pain after meals"
+        working_diagnosis: "gerd_exacerbation"
+
+        vitals:
+          heart_rate: 72
+          blood_pressure_systolic: 130
+          blood_pressure_diastolic: 82
+          respiratory_rate: 14
+          temperature: 36.9
+          oxygen_saturation: 98
+
+        risk_factors: []
+        comorbidities: ["gerd"]
+        allergies: []
+
+      ground_truth:
+        ecg_finding: "normal_sinus_rhythm"
+        troponin_result: "negative"
+        heart_score: 1
+        acs_probability: "very_low"
+        expected_disposition: "discharge_home"
+
+      expected_actions:
+        - "obtain_chest_pain_history"
+        - "perform_vital_signs"
+        - "obtain_12_lead_ecg"
+
+      max_duration_minutes: 45
+      passing_compliance_threshold: 0.80
+
+    # MODERATE RISK (20%)
+    chest_pain_mod_01:
+      scenario_id: "chest_pain_mod_01"
+      risk_level: "moderate"
+      description: "Diabetic patient with atypical ACS presentation"
+
+      patient:
+        age: 58
+        sex: "M"
+        weight_kg: 88
+        chief_complaint: "dyspnea and fatigue, mild chest discomfort"
+        working_diagnosis: "possible_acs"
+
+        vitals:
+          heart_rate: 92
+          blood_pressure_systolic: 148
+          blood_pressure_diastolic: 88
+          respiratory_rate: 20
+          temperature: 37.0
+          oxygen_saturation: 95
+
+        risk_factors:
+          - "diabetes_mellitus"
+          - "hypertension"
+          - "hyperlipidemia"
+        comorbidities:
+          - "type_2_diabetes"
+        allergies: []
+
+      ground_truth:
+        ecg_finding: "nonspecific_st_changes"
+        troponin_result: "borderline_elevated"
+        heart_score: 5
+        acs_probability: "moderate"
+        expected_disposition: "observation_admission"
+
+      expected_actions:
+        - "obtain_chest_pain_history"
+        - "perform_vital_signs"
+        - "obtain_12_lead_ecg"
+        - "order_troponin"
+        - "calculate_heart_score"
+        - "observation_admission"
+
+      forbidden_actions:
+        - "discharge_home"  # Should not discharge moderate risk
+
+      deadlines:
+        obtain_12_lead_ecg: 10
+        order_troponin: 30
+
+      max_duration_minutes: 60
+      passing_compliance_threshold: 0.85
+
+    # HIGH RISK (10%)
+    chest_pain_high_01:
+      scenario_id: "chest_pain_high_01"
+      risk_level: "high"
+      description: "Obvious STEMI requiring immediate intervention"
+
+      patient:
+        age: 62
+        sex: "M"
+        weight_kg: 82
+        chief_complaint: "crushing chest pain radiating to left arm, diaphoresis"
+        working_diagnosis: "stemi"
+
+        vitals:
+          heart_rate: 105
+          blood_pressure_systolic: 100
+          blood_pressure_diastolic: 65
+          respiratory_rate: 24
+          temperature: 36.5
+          oxygen_saturation: 92
+
+        risk_factors:
+          - "smoking"
+          - "family_history_cad"
+          - "hypertension"
+        comorbidities: []
+        allergies: []
+
+      ground_truth:
+        ecg_finding: "st_elevation_anterior_leads"
+        troponin_result: "elevated"
+        heart_score: 9
+        acs_probability: "very_high"
+        expected_disposition: "activate_cath_lab"
+
+      expected_actions:
+        - "obtain_12_lead_ecg"
+        - "interpret_ecg"
+        - "give_aspirin"
+        - "give_anticoagulation"
+        - "activate_cath_lab"
+
+      forbidden_actions:
+        - "discharge_home"
+        - "observation_only"
+
+      deadlines:
+        obtain_12_lead_ecg: 10
+        activate_cath_lab: 30
+
+      critical_omissions:
+        - action: "obtain_12_lead_ecg"
+          harm_weight: 1.0
+          description: "Failure to obtain ECG in STEMI delays reperfusion"
+        - action: "activate_cath_lab"
+          harm_weight: 1.0
+          description: "Delay in cath lab activation increases mortality"
+
+      max_duration_minutes: 90
+      passing_compliance_threshold: 0.95
+
+    chest_pain_high_02:
+      scenario_id: "chest_pain_high_02"
+      risk_level: "high"
+      description: "Inferior STEMI with RV involvement - nitrate contraindication"
+
+      patient:
+        age: 68
+        sex: "M"
+        weight_kg: 78
+        chief_complaint: "chest pain, nausea, bradycardia"
+        working_diagnosis: "inferior_stemi_rv_involvement"
+
+        vitals:
+          heart_rate: 52
+          blood_pressure_systolic: 88
+          blood_pressure_diastolic: 55
+          respiratory_rate: 20
+          temperature: 36.6
+          oxygen_saturation: 94
+
+        risk_factors:
+          - "hypertension"
+          - "prior_mi"
+        comorbidities: []
+        contraindications:
+          - "rv_infarct"
+        allergies: []
+
+      ground_truth:
+        ecg_finding: "st_elevation_inferior_leads_with_v4r_elevation"
+        troponin_result: "elevated"
+        rv_involvement: true
+        expected_disposition: "transfer_to_pci_center"
+
+      expected_actions:
+        - "obtain_12_lead_ecg"
+        - "obtain_right_sided_ecg_v4r"
+        - "give_aspirin"
+        - "iv_fluid_bolus"
+        - "activate_cath_lab"
+
+      forbidden_actions:
+        - "give_nitroglycerin"  # Contraindicated in RV infarct
+        - "give_morphine"
+        - "discharge_home"
+
+      deadlines:
+        obtain_12_lead_ecg: 10
+        obtain_right_sided_ecg_v4r: 15
+
+      max_duration_minutes: 60
+      passing_compliance_threshold: 0.95
+
+
+# ============================================================
+# Family 2: Febrile Child (Sepsis/SBI Rule-out)
+# Reference: SSC 2021, NICE Fever in Children
+# ============================================================
+febrile_child:
+  family_id: "febrile_child"
+  description: "Febrile Child - Sepsis/Serious Bacterial Infection Rule-out"
+  guideline_reference:
+    source: "SSC 2021, NICE NG143"
+    doi: "10.1007/s00134-021-06506-y"
+    section: "Pediatric Sepsis Bundle"
+
+  workflow_phases:
+    - phase: "triage"
+      actions:
+        - "measure_temperature"
+        - "assess_hydration_status"
+        - "check_consciousness_level"
+      max_duration_minutes: 5
+
+    - phase: "history"
+      actions:
+        - "obtain_fever_history"
+        - "check_vaccination_status"
+        - "assess_feeding_pattern"
+        - "review_recent_illness"
+
+    - phase: "examination"
+      actions:
+        - "perform_vital_signs"
+        - "assess_sepsis_red_flags"
+        - "skin_examination"
+        - "fontanelle_check"
+
+    - phase: "testing"
+      actions:
+        - "order_cbc"
+        - "order_crp"
+        - "order_blood_culture"
+        - "order_urinalysis"
+        - "order_lumbar_puncture"
+
+    - phase: "treatment"
+      actions:
+        - "give_antipyretics"
+        - "give_iv_fluids"
+        - "give_broad_spectrum_antibiotics"
+
+    - phase: "disposition"
+      actions:
+        - "discharge_with_precautions"
+        - "short_observation"
+        - "admit_to_pediatric_ward"
+        - "admit_to_picu"
+
+  scenarios:
+    # LOW RISK
+    febrile_child_low_01:
+      scenario_id: "febrile_child_low_01"
+      risk_level: "low"
+      description: "Well-appearing toddler with viral URI symptoms"
+
+      patient:
+        age: 2  # years
+        sex: "M"
+        weight_kg: 12
+        chief_complaint: "fever for 1 day, runny nose"
+        working_diagnosis: "viral_uri"
+
+        vitals:
+          heart_rate: 120
+          blood_pressure_systolic: 95
+          blood_pressure_diastolic: 60
+          respiratory_rate: 28
+          temperature: 38.5
+          oxygen_saturation: 98
+
+        vaccination_status: "up_to_date"
+        hydration_status: "adequate"
+        consciousness: "alert_active"
+        allergies: []
+
+      ground_truth:
+        sepsis_red_flags: []
+        expected_disposition: "discharge_with_precautions"
+
+      expected_actions:
+        - "perform_vital_signs"
+        - "assess_sepsis_red_flags"
+        - "obtain_fever_history"
+        - "give_antipyretics"
+        - "discharge_with_precautions"
+
+      forbidden_actions:
+        - "give_broad_spectrum_antibiotics"
+        - "admit_to_picu"
+
+      max_duration_minutes: 45
+      passing_compliance_threshold: 0.80
+
+    # MODERATE RISK
+    febrile_child_mod_01:
+      scenario_id: "febrile_child_mod_01"
+      risk_level: "moderate"
+      description: "Infant with fever and incomplete vaccination"
+
+      patient:
+        age: 0.5  # 6 months
+        sex: "F"
+        weight_kg: 7
+        chief_complaint: "fever for 2 days, fussy"
+        working_diagnosis: "fever_workup"
+
+        vitals:
+          heart_rate: 150
+          blood_pressure_systolic: 85
+          blood_pressure_diastolic: 55
+          respiratory_rate: 40
+          temperature: 39.2
+          oxygen_saturation: 96
+
+        vaccination_status: "incomplete"
+        hydration_status: "mildly_decreased"
+        consciousness: "irritable"
+        allergies: []
+
+      ground_truth:
+        sepsis_red_flags: ["age_under_3_months", "incomplete_vaccination"]
+        urinalysis: "positive_uti"
+        expected_disposition: "admit_to_pediatric_ward"
+
+      expected_actions:
+        - "perform_vital_signs"
+        - "assess_sepsis_red_flags"
+        - "order_cbc"
+        - "order_urinalysis"
+        - "order_blood_culture"
+        - "give_iv_fluids"
+        - "give_broad_spectrum_antibiotics"
+        - "admit_to_pediatric_ward"
+
+      forbidden_actions:
+        - "discharge_with_precautions"
+
+      deadlines:
+        give_broad_spectrum_antibiotics: 60
+
+      max_duration_minutes: 90
+      passing_compliance_threshold: 0.90
+
+    # HIGH RISK
+    febrile_child_high_01:
+      scenario_id: "febrile_child_high_01"
+      risk_level: "high"
+      description: "Neonate with fever - presumed sepsis"
+
+      patient:
+        age: 0.08  # 1 month
+        sex: "M"
+        weight_kg: 4.5
+        chief_complaint: "fever, poor feeding, lethargy"
+        working_diagnosis: "neonatal_sepsis"
+
+        vitals:
+          heart_rate: 180
+          blood_pressure_systolic: 65
+          blood_pressure_diastolic: 40
+          respiratory_rate: 60
+          temperature: 38.8
+          oxygen_saturation: 92
+
+        vaccination_status: "none"
+        hydration_status: "poor"
+        consciousness: "lethargic"
+        fontanelle: "bulging"
+        allergies: []
+
+      ground_truth:
+        sepsis_red_flags:
+          - "age_under_1_month"
+          - "lethargy"
+          - "tachycardia"
+          - "tachypnea"
+          - "poor_perfusion"
+        meningitis_suspected: true
+        expected_disposition: "admit_to_picu"
+
+      expected_actions:
+        - "perform_vital_signs"
+        - "assess_sepsis_red_flags"
+        - "order_cbc"
+        - "order_blood_culture"
+        - "order_lumbar_puncture"
+        - "give_iv_fluids"
+        - "give_broad_spectrum_antibiotics"
+        - "admit_to_picu"
+
+      forbidden_actions:
+        - "discharge_with_precautions"
+        - "short_observation"
+
+      deadlines:
+        give_broad_spectrum_antibiotics: 60
+        give_iv_fluids: 30
+
+      critical_omissions:
+        - action: "give_broad_spectrum_antibiotics"
+          harm_weight: 1.0
+          description: "Delay in antibiotics in neonatal sepsis increases mortality"
+        - action: "order_lumbar_puncture"
+          harm_weight: 0.8
+          description: "Missing meningitis diagnosis can be catastrophic"
+
+      max_duration_minutes: 60
+      passing_compliance_threshold: 0.95
+
+
+# ============================================================
+# Family 3: New Hyperglycemia/Diabetes
+# Reference: ADA 2024, KDIGO 2020
+# ============================================================
+new_hyperglycemia:
+  family_id: "new_hyperglycemia"
+  description: "Newly Discovered Hyperglycemia - DKA/HHS Rule-out and Management"
+  guideline_reference:
+    source: "ADA Standards of Care 2024, KDIGO 2020"
+    doi: "10.2337/dc24-SINT"
+    section: "Classification and Diagnosis"
+
+  workflow_phases:
+    - phase: "discovery"
+      actions:
+        - "document_hyperglycemia_context"
+        - "assess_symptoms"
+
+    - phase: "acute_assessment"
+      actions:
+        - "check_ketones"
+        - "check_blood_gas"
+        - "assess_mental_status"
+        - "check_hydration"
+
+    - phase: "laboratory"
+      actions:
+        - "order_hba1c"
+        - "order_bmp"
+        - "order_egfr"
+        - "order_urine_albumin"
+
+    - phase: "treatment_initiation"
+      actions:
+        - "start_iv_fluids"
+        - "start_insulin"
+        - "lifestyle_counseling"
+        - "start_oral_agents"
+
+    - phase: "disposition"
+      actions:
+        - "outpatient_followup"
+        - "admit_for_dka"
+        - "admit_for_hhs"
+        - "admit_to_icu"
+
+  scenarios:
+    # LOW RISK
+    hyperglycemia_low_01:
+      scenario_id: "hyperglycemia_low_01"
+      risk_level: "low"
+      description: "Incidental hyperglycemia on routine labs, asymptomatic"
+
+      patient:
+        age: 52
+        sex: "F"
+        weight_kg: 78
+        chief_complaint: "routine health check"
+        working_diagnosis: "new_type_2_diabetes"
+
+        vitals:
+          heart_rate: 76
+          blood_pressure_systolic: 138
+          blood_pressure_diastolic: 85
+          respiratory_rate: 14
+          temperature: 36.8
+          oxygen_saturation: 98
+
+        random_glucose: 245
+        mental_status: "alert"
+        hydration: "normal"
+        allergies: []
+        comorbidities: ["obesity", "hypertension"]
+
+      ground_truth:
+        hba1c: 8.2
+        ketones: "negative"
+        egfr: 85
+        dka_hhs: false
+        expected_disposition: "outpatient_followup"
+
+      expected_actions:
+        - "order_hba1c"
+        - "order_egfr"
+        - "lifestyle_counseling"
+        - "start_metformin"
+        - "outpatient_followup"
+
+      forbidden_actions:
+        - "admit_for_dka"
+        - "admit_to_icu"
+
+      max_duration_minutes: 60
+      passing_compliance_threshold: 0.80
+
+    # MODERATE RISK
+    hyperglycemia_mod_01:
+      scenario_id: "hyperglycemia_mod_01"
+      risk_level: "moderate"
+      description: "Symptomatic hyperglycemia with mild ketosis"
+
+      patient:
+        age: 35
+        sex: "M"
+        weight_kg: 72
+        chief_complaint: "polyuria, polydipsia, weight loss"
+        working_diagnosis: "new_diabetes_with_ketosis"
+
+        vitals:
+          heart_rate: 95
+          blood_pressure_systolic: 118
+          blood_pressure_diastolic: 72
+          respiratory_rate: 20
+          temperature: 37.0
+          oxygen_saturation: 97
+
+        random_glucose: 420
+        mental_status: "alert"
+        hydration: "mild_dehydration"
+        allergies: []
+
+      ground_truth:
+        hba1c: 12.5
+        ketones: "small"
+        ph: 7.32
+        bicarbonate: 20
+        egfr: 92
+        dka_hhs: false  # Not meeting full DKA criteria
+        expected_disposition: "short_observation"
+
+      expected_actions:
+        - "check_ketones"
+        - "check_blood_gas"
+        - "order_bmp"
+        - "start_iv_fluids"
+        - "start_insulin"
+
+      deadlines:
+        check_ketones: 30
+        start_iv_fluids: 60
+
+      max_duration_minutes: 120
+      passing_compliance_threshold: 0.85
+
+    # HIGH RISK
+    hyperglycemia_high_01:
+      scenario_id: "hyperglycemia_high_01"
+      risk_level: "high"
+      description: "Diabetic ketoacidosis requiring ICU"
+
+      patient:
+        age: 28
+        sex: "F"
+        weight_kg: 58
+        chief_complaint: "vomiting, abdominal pain, confusion"
+        working_diagnosis: "diabetic_ketoacidosis"
+
+        vitals:
+          heart_rate: 120
+          blood_pressure_systolic: 95
+          blood_pressure_diastolic: 60
+          respiratory_rate: 32  # Kussmaul breathing
+          temperature: 37.2
+          oxygen_saturation: 96
+
+        random_glucose: 580
+        mental_status: "confused"
+        hydration: "severe_dehydration"
+        allergies: []
+        comorbidities: ["type_1_diabetes"]
+
+      ground_truth:
+        hba1c: 13.8
+        ketones: "large"
+        ph: 7.15
+        bicarbonate: 10
+        anion_gap: 22
+        egfr: 75
+        dka_hhs: true
+        expected_disposition: "admit_to_icu"
+
+      expected_actions:
+        - "check_ketones"
+        - "check_blood_gas"
+        - "order_bmp"
+        - "start_iv_fluids"
+        - "start_insulin_drip"
+        - "admit_to_icu"
+
+      forbidden_actions:
+        - "outpatient_followup"
+        - "start_metformin"  # Contraindicated in DKA
+
+      deadlines:
+        start_iv_fluids: 30
+        start_insulin_drip: 60
+
+      critical_omissions:
+        - action: "start_iv_fluids"
+          harm_weight: 1.0
+          description: "Delayed fluid resuscitation in DKA increases mortality"
+        - action: "admit_to_icu"
+          harm_weight: 0.9
+          description: "DKA requires ICU-level monitoring"
+
+      max_duration_minutes: 90
+      passing_compliance_threshold: 0.95
+
+    hyperglycemia_high_02:
+      scenario_id: "hyperglycemia_high_02"
+      risk_level: "high"
+      description: "HHS in elderly with severe dehydration"
+
+      patient:
+        age: 75
+        sex: "M"
+        weight_kg: 70
+        chief_complaint: "altered mental status, weakness"
+        working_diagnosis: "hyperosmolar_hyperglycemic_state"
+
+        vitals:
+          heart_rate: 110
+          blood_pressure_systolic: 85
+          blood_pressure_diastolic: 50
+          respiratory_rate: 22
+          temperature: 37.5
+          oxygen_saturation: 94
+
+        random_glucose: 850
+        mental_status: "obtunded"
+        hydration: "severe_dehydration"
+        allergies: []
+        comorbidities: ["type_2_diabetes", "ckd_stage_3"]
+        contraindications: ["severe_renal_impairment"]
+
+      ground_truth:
+        hba1c: 11.2
+        ketones: "trace"
+        serum_osmolality: 345
+        egfr: 35
+        dka_hhs: true
+        expected_disposition: "admit_to_icu"
+
+      expected_actions:
+        - "check_blood_gas"
+        - "order_bmp"
+        - "start_iv_fluids"
+        - "start_insulin_drip"
+        - "admit_to_icu"
+
+      forbidden_actions:
+        - "outpatient_followup"
+        - "start_metformin"  # Contraindicated with eGFR < 30
+        - "start_sglt2_inhibitor"  # Contraindicated
+
+      deadlines:
+        start_iv_fluids: 30
+
+      max_duration_minutes: 90
+      passing_compliance_threshold: 0.95
+
+
+# ============================================================
+# Family 4: Headache (SAH/Meningitis Red Flags)
+# Reference: AHA SAH 2012, IDSA Meningitis 2017
+# ============================================================
+headache:
+  family_id: "headache"
+  description: "Headache - SAH/Meningitis Red Flag Evaluation"
+  guideline_reference:
+    source: "AHA SAH 2012, IDSA Meningitis 2017"
+    doi: "10.1161/STR.0b013e3182587839"
+
+  workflow_phases:
+    - phase: "red_flag_screening"
+      actions:
+        - "assess_headache_onset"
+        - "check_worst_headache_ever"
+        - "check_fever_neck_stiffness"
+        - "check_neurological_deficits"
+
+    - phase: "examination"
+      actions:
+        - "perform_vital_signs"
+        - "neurological_examination"
+        - "fundoscopy"
+        - "meningeal_signs"
+
+    - phase: "imaging"
+      actions:
+        - "order_ct_head"
+        - "order_ct_angiography"
+        - "order_mri_brain"
+
+    - phase: "lumbar_puncture"
+      actions:
+        - "perform_lumbar_puncture"
+        - "csf_analysis"
+
+    - phase: "treatment"
+      actions:
+        - "give_analgesics"
+        - "give_antibiotics_empiric"
+        - "give_steroids"
+        - "neurosurgery_consult"
+
+    - phase: "disposition"
+      actions:
+        - "discharge_with_migraine_plan"
+        - "admit_for_observation"
+        - "admit_to_neuro_icu"
+        - "transfer_to_neurosurgery"
+
+  scenarios:
+    # LOW RISK
+    headache_low_01:
+      scenario_id: "headache_low_01"
+      risk_level: "low"
+      description: "Typical tension-type headache"
+
+      patient:
+        age: 35
+        sex: "F"
+        weight_kg: 62
+        chief_complaint: "bilateral pressing headache for 3 days"
+        working_diagnosis: "tension_type_headache"
+
+        vitals:
+          heart_rate: 72
+          blood_pressure_systolic: 122
+          blood_pressure_diastolic: 78
+          respiratory_rate: 14
+          temperature: 36.7
+          oxygen_saturation: 99
+
+        headache_onset: "gradual"
+        worst_headache: false
+        fever: false
+        neck_stiffness: false
+        neuro_deficits: false
+        allergies: []
+
+      ground_truth:
+        red_flags: []
+        expected_disposition: "discharge_with_analgesics"
+
+      expected_actions:
+        - "assess_headache_onset"
+        - "check_worst_headache_ever"
+        - "perform_vital_signs"
+        - "neurological_examination"
+        - "give_analgesics"
+        - "discharge_with_migraine_plan"
+
+      forbidden_actions:
+        - "order_ct_head"  # Not indicated for typical tension headache
+        - "perform_lumbar_puncture"
+
+      max_duration_minutes: 45
+      passing_compliance_threshold: 0.80
+
+    # MODERATE RISK
+    headache_mod_01:
+      scenario_id: "headache_mod_01"
+      risk_level: "moderate"
+      description: "New-onset severe headache requiring workup"
+
+      patient:
+        age: 50
+        sex: "M"
+        weight_kg: 85
+        chief_complaint: "severe headache, worst in weeks"
+        working_diagnosis: "headache_rule_out_sah"
+
+        vitals:
+          heart_rate: 88
+          blood_pressure_systolic: 165
+          blood_pressure_diastolic: 95
+          respiratory_rate: 16
+          temperature: 37.0
+          oxygen_saturation: 98
+
+        headache_onset: "sudden"
+        worst_headache: true
+        fever: false
+        neck_stiffness: false
+        neuro_deficits: false
+        allergies: []
+        comorbidities: ["hypertension"]
+
+      ground_truth:
+        ct_head: "negative"
+        lumbar_puncture_indicated: true
+        expected_disposition: "admit_for_observation"
+
+      expected_actions:
+        - "assess_headache_onset"
+        - "check_worst_headache_ever"
+        - "order_ct_head"
+        - "perform_lumbar_puncture"
+
+      deadlines:
+        order_ct_head: 60
+
+      max_duration_minutes: 120
+      passing_compliance_threshold: 0.85
+
+    # HIGH RISK
+    headache_high_01:
+      scenario_id: "headache_high_01"
+      risk_level: "high"
+      description: "Thunderclap headache with focal deficits - SAH"
+
+      patient:
+        age: 55
+        sex: "F"
+        weight_kg: 70
+        chief_complaint: "sudden severe headache, worst of life, brief LOC"
+        working_diagnosis: "subarachnoid_hemorrhage"
+
+        vitals:
+          heart_rate: 95
+          blood_pressure_systolic: 185
+          blood_pressure_diastolic: 105
+          respiratory_rate: 18
+          temperature: 37.2
+          oxygen_saturation: 96
+
+        headache_onset: "thunderclap"
+        worst_headache: true
+        fever: false
+        neck_stiffness: true
+        neuro_deficits: true
+        pupils: "anisocoria"
+        gcs: 14
+        allergies: []
+
+      ground_truth:
+        ct_head: "subarachnoid_blood"
+        ct_angiography: "anterior_communicating_aneurysm"
+        expected_disposition: "transfer_to_neurosurgery"
+
+      expected_actions:
+        - "assess_headache_onset"
+        - "neurological_examination"
+        - "order_ct_head"
+        - "order_ct_angiography"
+        - "neurosurgery_consult"
+        - "admit_to_neuro_icu"
+
+      forbidden_actions:
+        - "discharge_with_analgesics"
+        - "give_aspirin"  # Contraindicated with hemorrhage
+
+      deadlines:
+        order_ct_head: 30
+
+      critical_omissions:
+        - action: "order_ct_head"
+          harm_weight: 1.0
+          description: "Missing SAH diagnosis can be fatal"
+        - action: "neurosurgery_consult"
+          harm_weight: 0.9
+          description: "Aneurysmal SAH requires urgent neurosurgical intervention"
+
+      max_duration_minutes: 90
+      passing_compliance_threshold: 0.95
+
+    headache_high_02:
+      scenario_id: "headache_high_02"
+      risk_level: "high"
+      description: "Fever with neck stiffness - bacterial meningitis"
+
+      patient:
+        age: 22
+        sex: "M"
+        weight_kg: 75
+        chief_complaint: "severe headache, fever, neck pain"
+        working_diagnosis: "bacterial_meningitis"
+
+        vitals:
+          heart_rate: 115
+          blood_pressure_systolic: 100
+          blood_pressure_diastolic: 60
+          respiratory_rate: 22
+          temperature: 39.5
+          oxygen_saturation: 95
+
+        headache_onset: "rapid"
+        worst_headache: true
+        fever: true
+        neck_stiffness: true
+        neuro_deficits: false
+        photophobia: true
+        rash: "petechial"
+        gcs: 14
+        allergies: []
+
+      ground_truth:
+        ct_head: "normal"
+        csf_analysis: "bacterial_meningitis"
+        expected_disposition: "admit_to_neuro_icu"
+
+      expected_actions:
+        - "assess_headache_onset"
+        - "meningeal_signs"
+        - "order_ct_head"
+        - "perform_lumbar_puncture"
+        - "give_antibiotics_empiric"
+        - "give_steroids"
+        - "admit_to_neuro_icu"
+
+      forbidden_actions:
+        - "discharge_with_analgesics"
+
+      deadlines:
+        give_antibiotics_empiric: 60
+        order_ct_head: 30
+
+      critical_omissions:
+        - action: "give_antibiotics_empiric"
+          harm_weight: 1.0
+          description: "Delay in antibiotics for bacterial meningitis increases mortality"
+
+      max_duration_minutes: 90
+      passing_compliance_threshold: 0.95
+
+
+# ============================================================
+# Global Configuration
+# ============================================================
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 15
+  enable_state_deterioration: true
+
+harm_weights:
+  minor: 0.1
+  moderate: 0.4
+  severe: 0.8
+  catastrophic: 1.0
+
+violation_taxonomy:
+  # WHO ICPS / NCC MERP Compatible
+  omission:
+    description: "Required action not performed"
+    base_weight: 0.7
+  commission:
+    description: "Forbidden/contraindicated action performed"
+    base_weight: 1.0
+  timing_delay:
+    description: "Action performed after deadline"
+    base_weight: 0.5
+  sequence_error:
+    description: "Actions performed in wrong order"
+    base_weight: 0.6
+  documentation_error:
+    description: "Incorrect or missing documentation"
+    base_weight: 0.3

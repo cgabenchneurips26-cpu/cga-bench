@@ -1,0 +1,222 @@
+graph_id: isth_ash_ttp_2020
+guideline_name: ISTH 2020 Guidelines for Thrombotic Thrombocytopenic Purpura
+version: '2020.1'
+metadata:
+  source: ISTH Guidelines for the Investigation and Management of TTP
+  doi: 10.1182/bloodadvances.2020002474
+  journal: Blood Advances
+  recommendation_system: GRADE
+  description: Evidence-based guideline for TTP management including urgent TPE, caplacizumab, platelet transfusion prohibition,
+    and ADAMTS13 monitoring
+  key_evidence: 'TPE reduces TTP mortality from ~90% to ~10-20%. HERCULES trial: caplacizumab reduces composite endpoint by
+    74%. Platelet transfusion in TTP is associated with clinical deterioration (Swisher et al. Transfusion 2009). PLASMIC
+    score has 91% sensitivity for ADAMTS13 <10% (Bendapudi et al. Blood 2017).'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: TTP Suspicion & PLASMIC Score
+    description: Calculate PLASMIC score for TTP probability. Thrombocytopenia + MAHA (schistocytes on smear) with no alternative
+      explanation.
+    precondition: null
+    mandatory_actions:
+    - calculate_plasmic_score
+    - order_lab_cbc_with_smear
+    - order_lab_ldh
+    - order_lab_haptoglobin
+    - order_lab_creatinine
+    allowed_actions:
+    - establish_iv_access
+    - order_lab_reticulocyte_count
+    - order_lab_cbc_with_smear
+    - order_lab_adamts13_activity
+    - assess_vital_signs
+    - order_lab_ldh
+    - calculate_plasmic_score
+    - order_lab_haptoglobin
+    - order_lab_direct_bilirubin
+    - order_lab_coagulation
+    - order_lab_creatinine
+    forbidden_actions: []
+    deadlines:
+      calculate_plasmic_score: 60
+      order_lab_cbc_with_smear: 30
+      order_lab_ldh: 30
+      order_lab_haptoglobin: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISTH 2020 Guidelines for TTP
+    source_section: 'Section 2: Diagnosis'
+    source_page: null
+    source_quote: 'PLASMIC score >=6 indicates high probability of ADAMTS13 deficiency. Hallmark: thrombocytopenia + microangiopathic
+      hemolytic anemia (schistocytes, elevated LDH, low haptoglobin). Do NOT wait for ADAMTS13 results to initiate treatment.'
+    next_nodes:
+    - urgent_tpe
+    conditional_next: {}
+  urgent_tpe:
+    node_id: urgent_tpe
+    node_type: action
+    name: Urgent Therapeutic Plasma Exchange (TPE)
+    description: Initiate TPE as soon as TTP is suspected — do not delay for ADAMTS13 results. Exchange 1-1.5 plasma volumes
+      daily with FFP replacement.
+    precondition: null
+    mandatory_actions:
+    - initiate_therapeutic_plasma_exchange
+    - give_corticosteroids
+    allowed_actions:
+    - give_folic_acid
+    - give_rbc_transfusion_if_symptomatic_anemia
+    - give_corticosteroids
+    - give_methylprednisolone_iv
+    - initiate_therapeutic_plasma_exchange
+    - give_prednisone_1mg_kg
+    - place_central_venous_catheter_for_tpe
+    forbidden_actions:
+    - transfuse_platelets
+    deadlines:
+      initiate_therapeutic_plasma_exchange: 240
+      give_corticosteroids: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISTH 2020 Guidelines for TTP
+    source_section: 'Section 3: Initial Treatment'
+    source_page: null
+    source_quote: TPE should be initiated urgently (within 4-8 hours of diagnosis). Platelet transfusion is CONTRAINDICATED
+      — associated with clinical deterioration and thrombosis ('fuel on the fire'). Corticosteroids (methylprednisolone 1g/day
+      x3 or prednisone 1 mg/kg) should be started concurrently.
+    next_nodes:
+    - caplacizumab_consideration
+    conditional_next: {}
+  caplacizumab_consideration:
+    node_id: caplacizumab_consideration
+    node_type: action
+    name: Caplacizumab Initiation
+    description: Anti-vWF nanobody that accelerates platelet recovery and reduces thrombotic events. Administer before first
+      TPE session.
+    precondition: null
+    mandatory_actions:
+    - give_caplacizumab
+    allowed_actions:
+    - monitor_for_bleeding
+    - give_caplacizumab
+    - continue_caplacizumab_11mg_sc_daily
+    - give_caplacizumab_11mg_iv_pre_tpe
+    forbidden_actions:
+    - transfuse_platelets
+    deadlines:
+      give_caplacizumab: 480
+    required_prior_actions:
+      give_caplacizumab:
+      - initiate_therapeutic_plasma_exchange
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: ISTH 2020 Guidelines for TTP
+    source_section: 'Section 3.2: Caplacizumab'
+    source_page: null
+    source_quote: 'Caplacizumab (anti-vWF nanobody): HERCULES trial showed faster platelet normalization (2.69 vs 2.88 days),
+      74% reduction in composite of TTP-related death, recurrence, or thromboembolic event (Scully et al. NEJM 2019).'
+    next_nodes:
+    - monitoring_response
+    conditional_next: {}
+  monitoring_response:
+    node_id: monitoring_response
+    node_type: enquiry
+    name: Daily Monitoring & TPE Response
+    description: Daily platelet count, LDH, hemolysis markers. Continue daily TPE until platelets >150,000 for 2 consecutive
+      days.
+    precondition: null
+    mandatory_actions:
+    - monitor_platelet_count_daily
+    - monitor_ldh_daily
+    allowed_actions:
+    - adjust_tpe_frequency
+    - assess_neurological_status
+    - monitor_platelet_count_daily
+    - monitor_haptoglobin
+    - monitor_ldh_daily
+    - monitor_for_bleeding
+    - review_adamts13_result
+    forbidden_actions:
+    - transfuse_platelets
+    deadlines:
+      monitor_platelet_count_daily: 1440
+      monitor_ldh_daily: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISTH 2020 Guidelines for TTP
+    source_section: 'Section 4: Monitoring'
+    source_page: null
+    source_quote: Continue daily TPE until platelets >150,000/uL for 2 consecutive days. Rising platelet count and declining
+      LDH indicate response. ADAMTS13 activity <10% confirms acquired TTP.
+    next_nodes: []
+    conditional_next:
+      state.refractory_ttp == True: refractory_management
+      state.ttp_responding == True: disposition
+  refractory_management:
+    node_id: refractory_management
+    node_type: plan
+    name: Refractory TTP Management
+    description: 'Refractory TTP (platelet count does not recover after 5-7 days of TPE): add rituximab, consider twice-daily
+      TPE.'
+    precondition: state.refractory_ttp == True
+    mandatory_actions:
+    - give_rituximab_375mg_m2
+    - increase_tpe_to_twice_daily
+    allowed_actions:
+    - give_rituximab_375mg_m2
+    - consider_cyclosporine
+    - monitor_platelet_count_daily
+    - consider_bortezomib
+    - consult_hematology
+    - increase_tpe_to_twice_daily
+    forbidden_actions:
+    - transfuse_platelets
+    deadlines:
+      give_rituximab_375mg_m2: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISTH 2020 Guidelines for TTP
+    source_section: 'Section 5: Refractory TTP'
+    source_page: null
+    source_quote: Rituximab (375 mg/m2 weekly x4) is recommended for refractory or relapsing TTP. Reduces ADAMTS13 autoantibody
+      production. Response rate ~80-90% (Scully et al. Blood 2011).
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Long-Term ADAMTS13 Monitoring
+    description: Continue caplacizumab for 30 days after last TPE. Monitor ADAMTS13 activity monthly for relapse prediction.
+    precondition: null
+    mandatory_actions:
+    - plan_adamts13_monitoring
+    allowed_actions:
+    - plan_adamts13_monitoring
+    - assess_organ_recovery
+    - taper_corticosteroids
+    - continue_caplacizumab_post_tpe
+    - schedule_hematology_followup
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ISTH 2020 Guidelines for TTP
+    source_section: 'Section 6: Follow-Up'
+    source_page: null
+    source_quote: ADAMTS13 monitoring is essential post-remission — declining activity predicts relapse. Preemptive rituximab
+      for ADAMTS13 <20% reduces relapse (Hie et al. Blood 2014).
+    next_nodes: []
+    conditional_next: {}

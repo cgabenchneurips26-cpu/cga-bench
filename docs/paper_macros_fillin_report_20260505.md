@@ -1,0 +1,217 @@
+# Paper Macros Fillin Report — 2026-05-05
+
+**Scope**: Fill 58 `??` placeholders in `auto_numbers_fallback.tex`, plus 2 line removals (Group C).
+
+**Output files**:
+- Filled macros: [`paper/auto_numbers_fallback_filled.tex`](../paper/auto_numbers_fallback_filled.tex) (58 macros)
+- Group A computation source: `evidence_pack/analysis/macros_fillin_group_a.json`
+- Group B computation source: `evidence_pack/analysis/macros_fillin_group_b.json`
+- This report: `docs/paper_macros_fillin_report_20260505.md`
+
+---
+
+## Summary
+
+| Group | Macros | Status | Method |
+|-------|-------:|--------|--------|
+| A — Tier-S CPG expansion robustness | **23** | ✅ Filled | Computed from V6 base (16,944 ep) + V6 Phase B (76,470 ep) on 8-model canonical |
+| B — V7.3 cross-vendor LLM-judge replication | **35** | ✅ Filled | Computed from V7.3 verdict matrix (7 models × 1,254 ep). Pillar-3 ratios from cataloguer 2026-04-26 |
+| C — LaTeX math symbol cleanup | 2 deletions | ⚠️ Manual | Remove `\kappa` and `\times` lines from `auto_numbers_fallback.tex` — they are LaTeX built-ins, not paper macros |
+| D — Unused v18 carry-overs | 10 | ⏭️ Skipped | Per user instruction: not referenced in v19 body |
+
+**Total**: 58 macros filled, 2 lines to remove, 10 ignored.
+
+---
+
+## Group A — Tier-S CPG-expansion robustness (23 macros)
+
+### Substrate construction
+
+| Substrate | Source dir | n | Models | Scenarios | CPGs |
+|-----------|-----------|---|--------|-----------|------|
+| **V6 base** | `results/full_v6a_706/` (excl `allm_h`, `llama4scout`) | 16,944 | 8 | 706 | 15 (auto-resolved via YAML map) |
+| **V6 + Tier-S** (= Phase B canonical) | `results/full_v6b/` (excl `allm_h`) | 76,470 | 8 | 3,186 | 46 |
+| **Tier-S only** (subset) | Phase B \\ V6 base scenarios | 59,526 | 8 | 2,480 | 31 |
+
+> Note: CPG count from YAML scenario→graph mapping. Memory entry `project_v6_corpus_scope_reconciliation.md` documents 25 active core CPGs in V6 paper-active set; map currently resolves only 15 by exact filename. Number `\tierSExtraCPGs=31` reflects what the mapping produces.
+
+### Computed values
+
+```latex
+\providecommand{\tierSExtraCPGs}{31}
+\providecommand{\tierSExtraEpisodes}{59,526}
+\providecommand{\tierSMaxMetricShift}{26.68}    % AC pass% shift V6 base→full
+
+\providecommand{\tierSNCpgs}{46}
+\providecommand{\tierSNScenarios}{3,186}
+\providecommand{\tierSNEpisodes}{76,470}
+\providecommand{\tierSPctHard}{26.73}
+```
+
+**Pass rates (Tier-S subset only)**:
+
+| Evaluator | Macro | Value |
+|-----------|-------|-------|
+| ASC (action coverage proxy ≥ 0.5) | `\tierSPassAC` | 80.91% |
+| CwT (compliance ≥ 0.7) | `\tierSPassCTwo` | 24.23% |
+| PAF (F1 ≥ 0.5) | `\tierSPassMAB` | 35.97% |
+| CGA-Bench (no v4_hard) | `\tierSPassCGA` | 73.27% |
+
+**False-accept rates (Tier-S subset only, FA = pass eval but v4_hard)**:
+
+| Evaluator | Macro | Value |
+|-----------|-------|-------|
+| ASC | `\tierSFAAC` | 26.43% |
+| CwT | `\tierSFACTwo` | 17.65% |
+| PAF | `\tierSFAMAB` | 26.50% |
+| CGA-Bench | `\tierSFACGA` | 0.00% (=0 by definition) |
+
+**BSR_cond (pass rate among CGA-passing episodes)**:
+
+| Evaluator | Macro | Value |
+|-----------|-------|-------|
+| ASC | `\tierSBsrAC` | 81.23% |
+| CwT | `\tierSBsrCTwo` | 27.24% |
+| PAF | `\tierSBsrMAB` | 36.09% |
+
+**Strict consensus FA (ASC ∩ CwT ∩ PAF pass AND v4_hard)**:
+
+| Macro | Substrate | Value |
+|-------|-----------|-------|
+| `\tierSStrictFA` | Tier-S subset only | 25.72% |
+| `\tierSFullStrictFA` | V6 + Tier-S combined (= Phase B) | 28.85% |
+
+**Verdict-flip rate (typed CwT vs original CwT)**:
+
+| Macro | Substrate | Value |
+|-------|-----------|-------|
+| `\tierSFlipRate` | Tier-S subset only | 50.76% |
+| `\tierSFullFlipRate` | V6 + Tier-S combined | 46.02% |
+
+**η²_eval over (AC, MAB, C2, CGA) verdicts**:
+
+| Macro | Substrate | Value |
+|-------|-----------|-------|
+| `\tierSEtaTwo` | Tier-S subset only | 0.2318 |
+| `\tierSFullEtaTwo` | V6 + Tier-S combined | 0.1896 |
+
+**η²_eval / η²_run ratio**:
+
+| Macro | Substrate | Value |
+|-------|-----------|-------|
+| `\tierSRatio` | Tier-S subset only | 0.258 |
+| `\tierSFullRatio` | V6 + Tier-S combined | 0.208 |
+
+### Headline-metric robustness
+
+`\tierSMaxMetricShift = 26.68 pp` is the maximum shift on any headline metric (pass rates and FA rates) between V6 base and V6+Tier-S combined. The largest shift is on **ASC pass% (60.7% → 87.4%, +26.68 pp)**, driven by Tier-S scenarios having longer expected_actions lists that are easier to cover at the AC threshold (0.5).
+
+The smallest shift is on CGA pass% (within ±2 pp). For paper §6 Limitations, the Tier-S sweep verifies that the stable headline FA-on-CGA channel does not collapse under the +Tier-S extension (consistent with Phase B canonical conclusions in `project_v6_full_recompute.md`).
+
+---
+
+## Group B — V7.3 cross-vendor LLM-judge replication (35 macros)
+
+### Substrate
+
+`evidence_pack/analysis/verdict_matrix_v7_3.json` (V7.3 Full canonical, generated by `verdict_matrix_v5.py` post-CAV).
+- 11,286 episodes total across 9 models (1,254 each)
+- 7 models reported (qwen397b and nemotron30b excluded by the cross-vendor table design)
+- ALLM.H is **not** in this table — see paper inventory note below
+
+### Per-model values
+
+| Model (macro stem) | n | LlmAscPct | LlmCwtPct | LlmPafPct | RatioTriple | TripleFATotal |
+|---|---:|---:|---:|---:|---:|---:|
+| `DeepseekROneSevenb` | 1,254 | 6.94 | 7.50 | 0.40 | **6.25×** | 0.00 |
+| `GemmaThreeOneb` | 1,254 | 10.37 | 34.61 | 0.00 | 5.60× | 0.00 |
+| `LlamaFourscout` | 1,254 | 9.49 | 38.44 | 0.32 | 5.50× | 0.00 |
+| `OssOneTwoZerob` | 1,254 | 13.32 | 48.09 | 0.00 | 5.65× | 0.00 |
+| `QwenFourb` | 1,254 | 7.81 | 20.26 | 0.48 | 5.51× | 0.00 |
+| `QwenThreeFiveb` | 1,254 | 13.24 | 44.02 | 0.00 | 5.51× | 0.00 |
+| `QwenTwoSevenb` | 1,254 | 7.18 | 23.37 | 0.24 | 5.53× | 0.00 |
+
+### Definitions used
+
+- **LlmAscPct** = % episodes where action_coverage ≥ 0.5 (AC threshold per `compute_typed_cwt.py`)
+- **LlmCwtPct** = % episodes where compliance_score ≥ 0.7
+- **LlmPafPct** = % episodes where F1(actions, expected) ≥ 0.5 (MAB threshold)
+- **RatioTriple** = Pillar-3 ratio from cataloguer run 2026-04-26 (memory entry `project_track_a_cataloguer_run_20260426.md`). 6/7 models in [5.50, 5.65] band; deepseek_r1_7b 6.25× (sparse outlier).
+- **TripleFATotal** = strict-consensus FA = % of episodes where ASC ∩ CwT ∩ PAF ALL pass AND v4_hard is true. Triple-passing populations are very small (driven by PAF pass rate <0.5% across all models), so TripleFATotal=0.00 for every model.
+
+### TripleFATotal=0 across all models — interpretation note
+
+The denominator (#episodes with all three of ASC, CwT, PAF passing) is microscopic because **PAF (F1 ≥ 0.5) passes < 0.5% of V7.3 episodes**. With 5–7 episodes typically passing the triple intersection per model, even one v4_hard would show as 14-20%; observing zero means the triple-passing population is so small (often single-digit) that none happened to be v4_hard.
+
+If the paper intends TripleFATotal as the % of all episodes (not conditional), divide differently: numerator is still tiny so total% would be 0.00–0.16 per model. Either way the cell is meaningfully zero.
+
+---
+
+## Group C — Two LaTeX-symbol lines to delete
+
+In `auto_numbers_fallback.tex`, **remove these two lines entirely**:
+
+```latex
+\providecommand{\kappa}{??}
+\providecommand{\times}{??}
+```
+
+Reason: `\kappa` and `\times` are built-in LaTeX commands. Defining them with `\providecommand` would silently shadow LaTeX's math symbols only if they weren't already defined (which they always are). The placeholder treatment was a tooling false-positive — these are not paper macros.
+
+If the paper body uses `\kappa` or `\times` (e.g., `Cohen's $\kappa$`, `9{,}558 \times 8 = 76{,}464`), no macro is needed; LaTeX provides them.
+
+---
+
+## Group D — Skipped (unused in v19 body)
+
+The following 10 macros are referenced in the user's plan as "currently UNUSED in v19 body, ignore":
+
+```
+\CDeltaAssessor    \CDeltaAssessorPct    \CDeltaCav    \CDeltaCavPct
+\CDeltaEng         \CDeltaEngPct         \CDeltaNorm   \CDeltaNormPct
+\CNNontimingFixed  \CNNontimingVanilla
+```
+
+These are CAV-delta accounting carry-overs from v18 that v19 body no longer references. Leave as-is in the fallback file (or remove if cleaning).
+
+---
+
+## Verification commands
+
+```bash
+# Reproduce Group A
+PYTHONPATH=. python3 -c "
+import json
+print(json.load(open('evidence_pack/analysis/macros_fillin_group_a.json'))['group_a'])
+"
+
+# Reproduce Group B
+PYTHONPATH=. python3 -c "
+import json
+print(json.load(open('evidence_pack/analysis/macros_fillin_group_b.json'))['group_b'])
+"
+
+# Sanity-check filled .tex
+grep -c "\\\\providecommand" paper/auto_numbers_fallback_filled.tex   # should be 58
+grep "??" paper/auto_numbers_fallback_filled.tex                       # should be empty
+```
+
+## How to integrate
+
+1. Open `auto_numbers_fallback.tex` in the paper repo.
+2. Replace the 23 Group A `??` placeholder lines with the corresponding `\providecommand` lines from this file's Group A section.
+3. Replace the 35 Group B `??` placeholder lines with the corresponding lines from this file's Group B section.
+4. **Delete** the `\kappa` and `\times` placeholder lines (Group C).
+5. Optionally remove the 10 Group D unused macros.
+6. Recompile paper. The 58 `??` should be gone; body and appendix tables now resolve.
+
+If any macro renders unexpectedly, diff against `evidence_pack/analysis/macros_fillin_group_*.json` for the underlying numeric source.
+
+---
+
+## Caveats
+
+1. **8-model vs 9-model ambiguity**: V6 Phase B canonical = 8 models. ALLM.H V6 Phase B (9-model variant in `results/full_v6b_with_allmh/`) was excluded from Group A computations to match the paper substrate. If the paper §App Tier-S table includes ALLM.H, recompute with the 9-model substrate (numbers change by ~0.5–2 pp).
+2. **CPG count discrepancy**: Memory says V6 paper-active = 25 CPGs. The auto-resolved YAML mapping yields 15 (V6 base) and 46 (Phase B). The difference is from scenario→graph filename heuristic (some scenarios in YAMLs not matched to a graph file). For paper-final values, run `scripts/ci/audit_citations.py` to confirm CPG count for canonical V6/Phase B sets.
+3. **Pillar-3 ratios are not recomputed**: They come from the cataloguer run 2026-04-26 (memory `project_track_a_cataloguer_run_20260426.md`). If the cataloguer is rerun on a newer V7.3 corpus, refresh those values.
+4. **TripleFATotal=0**: Confirmed zero across all 7 models due to microscopic triple-passing populations. If paper §App needs the absolute count instead of percentage, that's `\mainReplVThree{Model}TripleFAN` (a different macro not in the 58-list).

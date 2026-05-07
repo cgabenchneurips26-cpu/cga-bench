@@ -1,0 +1,320 @@
+graph_id: gi_bleeding
+guideline_name: ACG 2021 GI Bleeding Management
+version: '2021.1'
+metadata:
+  source: ACG GI Bleeding Guidelines 2021
+  doi: 10.14309/ajg.0000000000001245
+  description: Management of upper and lower gastrointestinal bleeding
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_gi_bleeding.json
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: GI Bleeding Assessment
+    description: Assess hemodynamic stability and bleeding source
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - assess_hemodynamic_status
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_type_and_crossmatch
+    - establish_iv_access
+    allowed_actions:
+    - assess_hemodynamic_status
+    - assess_vital_signs
+    - establish_iv_access
+    - give_octreotide
+    - give_prokinetic
+    - order_imaging_ct_abdomen
+    - order_lab_bmp
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_lactate
+    - order_lab_type_and_crossmatch
+    - order_type_and_crossmatch
+    - perform_angiography
+    - repeat_cbc
+    - repeat_lactate
+    forbidden_actions: []
+    deadlines:
+      establish_iv_access: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ACG 2021
+    source_section: Initial Assessment
+    source_page: '208'
+    source_quote: Hemodynamic assessment and resuscitation should be initiated immediately
+    conditional_rules:
+    - rule_id: GIB-VARICEAL-NO-NSAID
+      condition: '''variceal_bleed'' in patient.presentation or ''cirrhosis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid
+        - give_aspirin
+        - give_anticoagulation
+      evidence: ACG GI Bleeding 2023; Baveno VII 2022
+      severity: CRITICAL
+      description: NSAIDs and anticoagulants worsen variceal bleeding in cirrhosis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: cirrhosis
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: cirrhosis
+          type: list_not_contains
+    - rule_id: GIB-HEMODYNAMIC-INSTABILITY-RESUSCITATE
+      condition: patient.vitals.sbp < 90 or patient.vitals.heart_rate > 120
+      effect:
+        type: REQUIRED
+        actions:
+        - establish_large_bore_iv
+        - give_crystalloid_bolus
+        - type_and_crossmatch
+      evidence: ACG GI Bleeding 2023, Section 3.1
+      severity: CRITICAL
+      description: Hemodynamic instability requires immediate resuscitation before endoscopy.
+      condition_variables:
+      - patient.vitals.sbp
+      - patient.vitals.heart_rate
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+    - rule_id: GIB-HEMODYNAMIC-INSTABILITY-RESUSCITATE-FORBIDDEN
+      condition: patient.vitals.sbp < 90 or patient.vitals.heart_rate > 120
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_resuscitation_for_endoscopy_in_gi_bleed
+        - give_oral_fluids_only_in_gi_hemorrhagic_shock
+      evidence: ACG GI Bleeding 2023; hemodynamic resuscitation takes priority over endoscopy in unstable patients
+      severity: HIGH
+      description: Hemodynamic resuscitation must precede endoscopy in unstable GI bleeding; oral fluids are insufficient
+        for hemorrhagic shock.
+      condition_variables:
+      - patient.vitals.sbp
+      - patient.vitals.heart_rate
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+      skip_scenario_generation: true
+    - rule_id: GIB-ANTICOAG-REVERSAL
+      condition: '''warfarin'' in patient.medications and patient.labs.inr > 2.5'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_pcc
+        - give_vitamin_k
+      evidence: ACG GI Bleeding 2023; AGA 2020
+      severity: HIGH
+      description: Supratherapeutic INR with active bleeding requires urgent reversal.
+      condition_variables:
+      - patient.medications
+      - patient.labs.inr
+      trigger_range:
+        patient.medications:
+          contains: warfarin
+        patient.labs.inr:
+          min: 2.6
+          max: 10.0
+          type: float
+      normal_range:
+        patient.labs.inr:
+          min: 0.8
+          max: 1.5
+          type: float
+    - rule_id: GIB-VARICEAL-OCTREOTIDE
+      condition: '''variceal_bleed'' in patient.presentation'
+      effect:
+        type: REQUIRED
+        actions:
+        - give_octreotide
+        - give_prophylactic_antibiotics
+      evidence: Baveno VII 2022; ACG GI Bleeding 2023
+      severity: HIGH
+      description: Variceal bleeding requires octreotide and prophylactic antibiotics.
+      condition_variables:
+      - patient.presentation
+      trigger_range:
+        patient.presentation:
+          contains: variceal_bleed
+          type: list_contains
+      normal_range:
+        patient.presentation:
+          not_contains: variceal_bleed
+          type: list_not_contains
+    - rule_id: GIB-PLATELET-TRANSFUSE
+      condition: patient.labs.platelets < 50
+      effect:
+        type: REQUIRED
+        actions:
+        - transfuse_platelets
+      evidence: ACG GI Bleeding 2023
+      severity: HIGH
+      description: Platelets <50k with active bleeding require transfusion before endoscopy.
+      condition_variables:
+      - patient.labs.platelets
+      trigger_range:
+        patient.labs.platelets:
+          min: 5
+          max: 49
+          type: int
+      normal_range:
+        patient.labs.platelets:
+          min: 150
+          max: 400
+          type: int
+    - rule_id: GIB-PLATELET-TRANSFUSE-FORBIDDEN
+      condition: patient.labs.platelets < 50
+      effect:
+        type: FORBIDDEN
+        actions:
+        - delay_platelet_transfusion_in_active_bleed
+        - give_aspirin_in_severe_thrombocytopenia
+      evidence: ACG GI Bleeding 2023; platelet count < 50k with active bleeding requires transfusion; antiplatelet agents
+        worsen bleeding
+      severity: HIGH
+      description: Active GI bleeding with thrombocytopenia requires platelet transfusion; aspirin in this setting worsens
+        hemorrhage.
+      condition_variables:
+      - patient.labs.platelets
+      trigger_range:
+        patient.labs.platelets:
+          min: 5
+          max: 49
+          type: int
+      normal_range:
+        patient.labs.platelets:
+          min: 150
+          max: 400
+          type: int
+      skip_scenario_generation: true
+    - rule_id: GIB-MECHANICAL-VALVE-ANTICOAG
+      condition: '''mechanical_heart_valve'' in patient.comorbidities and ''warfarin'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - stop_anticoagulation_indefinitely
+        - withhold_anticoagulation_without_bridge
+      evidence: ACG GI Bleeding 2023; AHA/ACC Valve 2020
+      severity: CRITICAL
+      description: Mechanical valve patients need bridging; cannot hold anticoagulation indefinitely.
+      condition_variables:
+      - patient.comorbidities
+      - patient.medications
+      trigger_range:
+        patient.comorbidities:
+          contains: mechanical_heart_valve
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: mechanical_heart_valve
+          type: list_not_contains
+    - rule_id: GIB-NSAID-PPI-FAILURE
+      condition: '''nsaid_use'' in patient.medications and ''ppi_failure'' in patient.history'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - continue_nsaid
+        - give_nsaid
+        - restart_nsaid_without_ppi
+      evidence: ACG GI Bleeding 2023; Lanza FL, Am J Gastroenterol 2009
+      severity: HIGH
+      description: 'NSAID-associated GI bleed despite PPI: NSAID must be discontinued.'
+      condition_variables:
+      - patient.medications
+      - patient.history
+      trigger_range:
+        patient.medications:
+          contains: nsaid_use
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: nsaid_use
+          type: list_not_contains
+    - rule_id: GIB-UNSTABLE-RESUSCITATE-FIRST
+      condition: patient.vitals.sbp < 90 and patient.vitals.heart_rate > 120
+      effect:
+        type: FORBIDDEN
+        actions:
+        - proceed_to_endoscopy_without_resuscitation
+        - delay_transfusion_for_endoscopy
+      evidence: ACG GI Bleeding 2023, Section 3.1
+      severity: CRITICAL
+      description: Hemodynamically unstable patients must be resuscitated before endoscopy.
+      condition_variables:
+      - patient.vitals.sbp
+      - patient.vitals.heart_rate
+      trigger_range:
+        patient.vitals.sbp:
+          min: 40
+          max: 89
+          type: int
+        patient.vitals.heart_rate:
+          min: 121
+          max: 200
+          type: int
+      normal_range:
+        patient.vitals.sbp:
+          min: 90
+          max: 160
+          type: int
+        patient.vitals.heart_rate:
+          min: 60
+          max: 100
+          type: int
+    next_nodes: []
+    conditional_next:
+      state.working_diagnosis == 'hemodynamically_unstable_gi_bleed': hemodynamically_unstable
+  hemodynamically_unstable:
+    node_id: hemodynamically_unstable
+    node_type: plan
+    name: Hemodynamically Unstable GI Bleed
+    description: Active resuscitation for unstable GI bleeding
+    precondition: state.working_diagnosis == 'hemodynamically_unstable_gi_bleed'
+    mandatory_actions:
+    - give_iv_crystalloid_bolus
+    - give_packed_rbc_if_hgb_below_7
+    - consult_gi
+    - consult_surgery
+    allowed_actions:
+    - give_iv_crystalloid_bolus
+    - give_packed_rbc_if_hgb_below_7
+    - consult_gi
+    - consult_surgery
+    - give_iv_ppi
+    - order_lab_cbc_repeat
+    forbidden_actions:
+    - delay_resuscitation_for_endoscopy
+    deadlines:
+      give_iv_crystalloid_bolus: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ACG 2021
+    source_section: Resuscitation
+    source_page: '212'
+    source_quote: Do not delay resuscitation to perform endoscopy in hemodynamically unstable patients
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,69 @@
+{
+  "benchmark_version": "frontier_v7.3",
+  "generated": "2026-05-04T06:15:00Z",
+  "substrate": "v73_full (418 scenarios, 49 graphs, 3 runs)",
+  "source_dir": "configs/scenarios/sgsc/",
+  "sha256_lock": "reports/path_d_day3/paper_headline_sot.sha256",
+  "tier_design": {
+    "rationale": "Two tiers match models by capability class across vendors for fair cross-vendor comparison. Thinking disabled (thinking_budget=0) on Gemini models for budget fairness.",
+    "tier1_name": "Opus-class (flagship)",
+    "tier2_name": "Sonnet-class (efficient)"
+  },
+  "tier1_flagship": {
+    "f1_anthropic": {
+      "config": "configs/agents/rag_claude_opus47.yaml",
+      "backend": "anthropic",
+      "model": "claude-opus-4-7",
+      "tier": "flagship",
+      "status": "READY"
+    },
+    "f2_openai": {
+      "config": "configs/agents/rag_gpt54.yaml",
+      "backend": "openai",
+      "model": "gpt-5.4",
+      "tier": "flagship",
+      "note": "gpt-5.5 is reasoning-only (temp=1), gpt-5.5-pro is completions-only; gpt-5.4 is strongest chat model with temp=0.1",
+      "status": "READY"
+    },
+    "f3_google": {
+      "config": "configs/agents/rag_gemini25pro.yaml",
+      "backend": "gemini",
+      "model": "gemini-2.5-pro",
+      "tier": "flagship",
+      "thinking": "required (cannot disable); thinking tokens excluded from budget tracking for fairness",
+      "status": "READY"
+    }
+  },
+  "tier2_efficient": {
+    "e1_anthropic": {
+      "config": "configs/agents/rag_claude_sonnet46.yaml",
+      "backend": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "tier": "efficient",
+      "status": "READY"
+    },
+    "e2_openai": {
+      "config": "configs/agents/rag_gpt41.yaml",
+      "backend": "openai",
+      "model": "gpt-4.1",
+      "tier": "efficient",
+      "status": "READY"
+    },
+    "e3_google": {
+      "config": "configs/agents/rag_gemini25flash.yaml",
+      "backend": "gemini",
+      "model": "gemini-2.5-flash",
+      "tier": "efficient",
+      "thinking": "disabled (thinking_budget=0)",
+      "status": "READY"
+    }
+  },
+  "runs_per_scenario": 3,
+  "expected_episodes_per_model": 1254,
+  "budget": {
+    "budget_limit_tokens": 100000,
+    "budget_limit_tool_calls": 50
+  },
+  "n_scenarios": 418,
+  "n_graphs": 49
+}

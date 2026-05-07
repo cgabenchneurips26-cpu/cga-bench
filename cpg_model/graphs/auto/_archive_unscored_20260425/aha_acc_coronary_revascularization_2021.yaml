@@ -1,0 +1,108 @@
+graph_id: aha_acc_coronary_revascularization_2021
+guideline_name: AHA/ACC Coronary Revascularization 2021
+version: '2021.1'
+metadata:
+  source: AHA/ACC Coronary Revascularization 2021
+  doi: 10.1161/CIR.0000000000001038
+  journal: Circulation
+  recommendation_system: ACC/AHA Class/Level
+  description: Coronary artery disease revascularization strategy.
+  key_evidence: SYNTAX, FREEDOM, and EXCEL trials inform PCI vs CABG selection.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Ischemia Evaluation & SYNTAX Scoring
+    description: Evaluate CAD severity via angiography, assess SYNTAX score and ischemic burden.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_coronary_angiography
+    - order_lab_troponin
+    allowed_actions:
+    - order_ecg
+    - order_lab_troponin
+    - assess_vital_signs
+    - order_imaging_stress_test
+    - order_coronary_angiography
+    - calculate_syntax_score
+    - order_lab_hba1c
+    - assess_lv_function
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 15
+      order_coronary_angiography: 1440
+      order_lab_troponin: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Coronary Revascularization 2021
+    source_section: Diagnostic evaluation
+    source_page: null
+    source_quote: Revascularization decisions require anatomic and functional assessment.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: PCI vs CABG Decision
+    description: Heart Team selects PCI vs CABG based on anatomy, diabetes, LV function, surgical risk.
+    precondition: null
+    mandatory_actions:
+    - discuss_heart_team_evaluation
+    - initiate_guideline_antiplatelet_therapy
+    allowed_actions:
+    - initiate_statin_high_intensity
+    - initiate_guideline_antiplatelet_therapy
+    - plan_cabg_if_left_main_complex
+    - consult_cardiothoracic_surgery
+    - initiate_beta_blocker
+    - discuss_heart_team_evaluation
+    - plan_cabg_if_diabetes_multivessel
+    - plan_pci_if_single_or_low_complexity
+    forbidden_actions:
+    - proceed_pci_without_heart_team_in_complex_disease
+    deadlines:
+      discuss_heart_team_evaluation: 4320
+      initiate_guideline_antiplatelet_therapy: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA/ACC Coronary Revascularization 2021
+    source_section: Revascularization strategy
+    source_page: null
+    source_quote: Heart Team approach is recommended for complex multivessel or left main disease.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Secondary Prevention & Follow-up
+    description: DAPT duration, cardiac rehab, risk factor modification after revascularization.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - plan_dual_antiplatelet_duration
+    allowed_actions:
+    - refer_cardiac_rehab
+    - manage_diabetes
+    - reassess_vital_signs
+    - counsel_smoking_cessation
+    - plan_dual_antiplatelet_duration
+    - plan_lipid_followup
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      plan_dual_antiplatelet_duration: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AHA/ACC Coronary Revascularization 2021
+    source_section: Secondary prevention
+    source_page: null
+    source_quote: Guideline-directed medical therapy must accompany revascularization.
+    next_nodes: []
+    conditional_next: {}

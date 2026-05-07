@@ -1,0 +1,119 @@
+graph_id: aagbi_perioperative_hemorrhage_2016
+guideline_name: AAGBI Perioperative Hemorrhage 2016
+version: '2016.1'
+metadata:
+  source: AAGBI Perioperative Hemorrhage 2016
+  doi: 10.1111/anae.13489
+  journal: Anaesthesia
+  recommendation_system: AAGBI
+  description: Perioperative major haemorrhage management.
+  key_evidence: 'CRASH-2: early tranexamic acid reduces mortality.'
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Major Haemorrhage Recognition
+    description: Identify ongoing or anticipated major perioperative haemorrhage.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_fibrinogen
+    allowed_actions:
+    - order_lab_bmp
+    - order_lab_lactate
+    - order_lab_cbc
+    - establish_iv_access_large_bore
+    - activate_massive_haemorrhage_protocol
+    - order_lab_blood_type_crossmatch
+    - order_lab_coagulation
+    - order_lab_fibrinogen
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 5
+      order_lab_cbc: 15
+      order_lab_coagulation: 15
+      order_lab_fibrinogen: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AAGBI Perioperative Hemorrhage 2016
+    source_section: Recognition and activation
+    source_page: null
+    source_quote: Major haemorrhage should be recognised promptly and the massive haemorrhage protocol activated.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: Goal-directed Resuscitation
+    description: Deliver balanced components, early TXA, correct hypothermia/acidosis.
+    precondition: null
+    mandatory_actions:
+    - transfuse_prbc
+    - transfuse_ffp
+    - give_tranexamic_acid_iv
+    allowed_actions:
+    - give_tranexamic_acid_iv
+    - transfuse_prbc
+    - give_fibrinogen_concentrate_if_available
+    - give_cryoprecipitate_if_fibrinogen_low
+    - give_calcium_chloride_iv
+    - transfuse_ffp
+    - transfuse_platelets
+    - warm_patient
+    forbidden_actions:
+    - give_crystalloid_large_volume_only
+    - give_starch_colloid
+    deadlines:
+      give_tranexamic_acid_iv: 60
+      transfuse_prbc: 30
+      transfuse_ffp: 60
+    required_prior_actions:
+      transfuse_prbc:
+      - order_lab_blood_type_crossmatch
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: AAGBI Perioperative Hemorrhage 2016
+    source_section: Transfusion management
+    source_page: null
+    source_quote: Give tranexamic acid as early as possible in massive haemorrhage.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Endpoint Monitoring
+    description: Serial labs, haemostatic endpoints, VTE planning after control.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - order_lab_cbc_repeat
+    - order_lab_coagulation_repeat
+    allowed_actions:
+    - order_lab_coagulation_repeat
+    - order_lab_cbc_repeat
+    - plan_vte_prophylaxis_after_bleeding_control
+    - order_lab_abg
+    - monitor_urine_output
+    - reassess_vital_signs
+    - order_lab_lactate_repeat
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 30
+      order_lab_cbc_repeat: 60
+      order_lab_coagulation_repeat: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AAGBI Perioperative Hemorrhage 2016
+    source_section: Post-haemorrhage monitoring
+    source_page: null
+    source_quote: Serial laboratory monitoring is required until bleeding is controlled.
+    next_nodes: []
+    conditional_next: {}

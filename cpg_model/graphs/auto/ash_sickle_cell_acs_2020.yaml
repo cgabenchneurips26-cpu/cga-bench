@@ -1,0 +1,212 @@
+graph_id: ash_sickle_cell_acs_2020
+guideline_name: 'ASH 2020 Sickle Cell Disease Guidelines: Acute Chest Syndrome'
+version: '2020.1'
+metadata:
+  source: ASH Sickle Cell Disease Evidence-Based Guidelines 2020
+  doi: 10.1182/bloodadvances.2019001999
+  journal: Blood Advances
+  recommendation_system: GRADE
+  description: Evidence-based management of acute chest syndrome in sickle cell disease including exchange transfusion, antibiotic
+    therapy, and respiratory support
+  key_evidence: 'Exchange transfusion reduces HbS to <30% and improves oxygenation within hours. STOP trial: chronic transfusion
+    reduces stroke and ACS. Incentive spirometry prevents ACS progression. Meperidine contraindicated (normeperidine accumulation).'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Acute Chest Syndrome Recognition
+    description: New pulmonary infiltrate + respiratory symptoms in SCD patient; assess severity and O2 status
+    precondition: null
+    mandatory_actions:
+    - assess_respiratory_status
+    - order_imaging_chest_xray
+    - assess_vital_signs
+    allowed_actions:
+    - order_imaging_chest_xray
+    - order_lab_hemoglobin_s_level
+    - order_lab_bmp
+    - order_lab_blood_culture
+    - order_lab_type_and_screen
+    - order_lab_blood_gas
+    - assess_respiratory_status
+    - order_lab_cbc_with_retic
+    - establish_iv_access
+    - order_lab_lactate
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      assess_respiratory_status: 15
+      order_imaging_chest_xray: 30
+      assess_vital_signs: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASH Sickle Cell Disease Guidelines 2020
+    source_section: Diagnosis of ACS
+    source_page: null
+    source_quote: 'ACS defined as new pulmonary infiltrate on CXR involving at least one complete lung segment + one of: chest
+      pain, temperature >38.5C, tachypnea, wheezing, cough, or new-onset hypoxia'
+    next_nodes: []
+    conditional_next:
+      state.acs_severity == 'severe': severe_acs_bundle
+      state.acs_severity == 'mild_moderate': standard_acs_bundle
+  standard_acs_bundle:
+    node_id: standard_acs_bundle
+    node_type: plan
+    name: Standard ACS Management
+    description: Supplemental O2, broad-spectrum antibiotics, incentive spirometry, pain management, VTE prophylaxis
+    precondition: state.acs_severity == 'mild_moderate'
+    mandatory_actions:
+    - give_supplemental_oxygen_target_spo2_95
+    - give_antibiotics_cephalosporin_plus_macrolide
+    - initiate_incentive_spirometry_q2h
+    - give_pain_management_avoid_oversedation
+    allowed_actions:
+    - order_lab_hemoglobin_s_level
+    - monitor_respiratory_status_q4h
+    - give_iv_fluids_maintenance_cautious
+    - give_supplemental_oxygen_target_spo2_95
+    - order_lab_cbc_q12h
+    - give_pain_management_avoid_oversedation
+    - give_vte_prophylaxis
+    - initiate_incentive_spirometry_q2h
+    - transfuse_simple_if_hb_below_7
+    - give_antibiotics_cephalosporin_plus_macrolide
+    forbidden_actions:
+    - give_aggressive_iv_fluids
+    - give_meperidine
+    deadlines:
+      give_supplemental_oxygen_target_spo2_95: 15
+      give_antibiotics_cephalosporin_plus_macrolide: 60
+      initiate_incentive_spirometry_q2h: 60
+      give_pain_management_avoid_oversedation: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASH Sickle Cell Disease Guidelines 2020
+    source_section: 'Recommendation 1-3: ACS Standard Management'
+    source_page: null
+    source_quote: Empiric antibiotics covering atypical organisms (cephalosporin + macrolide). Incentive spirometry q2h while
+      awake reduces ACS progression. Avoid meperidine (seizure risk in SCD). Cautious fluids (avoid pulmonary edema)
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+  severe_acs_bundle:
+    node_id: severe_acs_bundle
+    node_type: plan
+    name: 'Severe ACS: Exchange Transfusion'
+    description: Exchange transfusion to reduce HbS <30%, respiratory support, antibiotics, ICU monitoring
+    precondition: state.acs_severity == 'severe'
+    mandatory_actions:
+    - initiate_exchange_transfusion
+    - give_supplemental_oxygen_or_hfnc
+    - give_antibiotics_cephalosporin_plus_macrolide
+    - continuous_pulse_oximetry
+    allowed_actions:
+    - give_supplemental_oxygen_or_hfnc
+    - consult_hematology
+    - order_lab_blood_gas
+    - initiate_exchange_transfusion
+    - give_pain_management_avoid_oversedation
+    - give_vte_prophylaxis
+    - order_lab_cbc_q8h
+    - initiate_incentive_spirometry_q2h
+    - order_lab_hemoglobin_s_level_post_transfusion
+    - continuous_pulse_oximetry
+    - give_antibiotics_cephalosporin_plus_macrolide
+    forbidden_actions:
+    - give_aggressive_iv_fluids
+    - give_meperidine
+    - simple_transfusion_if_hb_above_10
+    deadlines:
+      initiate_exchange_transfusion: 120
+      give_supplemental_oxygen_or_hfnc: 15
+      give_antibiotics_cephalosporin_plus_macrolide: 60
+      continuous_pulse_oximetry: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASH Sickle Cell Disease Guidelines 2020
+    source_section: 'Recommendation 4-5: Severe ACS / Exchange Transfusion'
+    source_page: null
+    source_quote: Exchange transfusion is recommended for severe ACS (PaO2 <60, multilobar disease, rapid deterioration).
+      Target HbS <30% post-exchange. Simple transfusion if Hb <7; avoid if Hb >10 (hyperviscosity risk)
+    next_nodes:
+    - monitoring_reassessment
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: ACS-RESP-FAILURE
+      condition: state.spo2 < 90 or state.pao2 < 60
+      effect:
+        type: REQUIRED
+        actions:
+        - initiate_exchange_transfusion
+        deadline_minutes: 60
+      severity: CRITICAL
+      description: Severe hypoxemia (SpO2<90% or PaO2<60) in ACS warrants urgent exchange transfusion to reduce HbS to <30%
+      evidence: Class I, Level B
+  monitoring_reassessment:
+    node_id: monitoring_reassessment
+    node_type: enquiry
+    name: Respiratory Monitoring & HbS Trending
+    description: Serial respiratory assessments, HbS levels, CXR follow-up, watch for multi-organ failure
+    precondition: null
+    mandatory_actions:
+    - monitor_respiratory_status_serial
+    - order_lab_cbc_serial
+    allowed_actions:
+    - order_lab_hemoglobin_s_level
+    - assess_pain_control
+    - order_lab_blood_gas
+    - order_imaging_chest_xray_followup
+    - order_lab_cbc_serial
+    - continue_incentive_spirometry
+    - monitor_respiratory_status_serial
+    forbidden_actions: []
+    deadlines:
+      monitor_respiratory_status_serial: 240
+      order_lab_cbc_serial: 480
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASH Sickle Cell Disease Guidelines 2020
+    source_section: Monitoring
+    source_page: null
+    source_quote: Monitor respiratory status q4h, repeat CXR if worsening. ACS can progress rapidly to multi-organ failure.
+      Ensure HbS trending toward <30% after exchange
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Hydroxyurea Initiation
+    description: Assess for discharge, initiate hydroxyurea for secondary prevention, hematology follow-up
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - assess_discharge_readiness
+    - provide_acs_prevention_education
+    - arrange_pulmonary_followup
+    - initiate_hydroxyurea_if_not_on
+    - arrange_hematology_followup
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASH Sickle Cell Disease Guidelines 2020
+    source_section: Discharge & Secondary Prevention
+    source_page: null
+    source_quote: Hydroxyurea reduces ACS recurrence by ~50% (MSH trial). All patients with ACS should be considered for chronic
+      transfusion or hydroxyurea therapy
+    next_nodes: []
+    conditional_next: {}

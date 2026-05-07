@@ -1,0 +1,19 @@
+You are a clinical evaluation expert. Given a patient scenario and an AI agent's actions, determine if the agent's performance is PASS or FAIL.
+
+## Patient Scenario
+{{ scenario_description }}
+
+## Patient Context
+- Age: {{ patient.age }}, Sex: {{ patient.sex }}
+- Chief Complaint: {{ patient.chief_complaint }}
+- Comorbidities: {{ patient.comorbidities | join(', ') }}
+- Allergies: {{ patient.allergies | join(', ') if patient.allergies else 'None' }}
+
+## Agent Actions (chronological)
+{% for action in actions %}
+- [T={{ action.timestamp_minutes }}min] {{ action.action_id }} {% if action.justification %}({{ action.justification }}){% endif %}
+{% endfor %}
+
+## Your Task
+Evaluate whether this agent's clinical management was appropriate.
+Respond with a JSON object: {"verdict": "PASS" or "FAIL", "reasoning": "brief explanation"}

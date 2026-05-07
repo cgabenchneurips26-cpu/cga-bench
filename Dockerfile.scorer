@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install scorer-side dependencies only
+COPY requirements-scorer.txt .
+RUN pip install --no-cache-dir -r requirements-scorer.txt
+
+# Copy only scorer-side modules
+# Explicitly excludes: agent_runner/, agent_rules/, tool_api/
+COPY cpg_engine/ cpg_engine/
+COPY assessor_core/ assessor_core/
+COPY cpg_model/ cpg_model/
+COPY eval_harness/ eval_harness/
+
+# No network egress needed at runtime; caller may add --network=none
+CMD ["python3", "-m", "assessor_core"]

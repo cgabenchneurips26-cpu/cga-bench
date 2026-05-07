@@ -1,0 +1,870 @@
+scenarios:
+  dka_moderate_basic:
+    scenario_id: dka_moderate_basic
+    description: Moderate DKA in young adult with Type 1 diabetes - standard management
+    guideline_graph: ada_dka_management
+    patient:
+      age: 28
+      sex: F
+      weight_kg: 62
+      chief_complaint: nausea, vomiting, abdominal pain for 12 hours, increased thirst
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 108
+        blood_pressure_systolic: 105
+        blood_pressure_diastolic: 65
+        respiratory_rate: 26
+        temperature: 37.4
+        oxygen_saturation: 98
+        map_mmhg: 78
+      allergies: []
+      comorbidities:
+      - type_1_diabetes
+      contraindications: []
+    ground_truth:
+      lab_glucose: 420
+      lab_ketones: 4.8
+      lab_ph: 7.18
+      lab_bicarbonate: 12
+      lab_potassium: 4.5
+      lab_sodium: 131
+      lab_chloride: 98
+      lab_bun: 28
+      lab_creatinine: 1.4
+      lab_anion_gap: 21
+      lab_lactate: 2.1
+      lab_wbc: 14500
+      imaging_chest_xray: normal
+      ecg_result: sinus_tachycardia
+      urinalysis: ketones_large_glucose_large
+    expected_actions:
+    - assess_vital_signs
+    - assess_mental_status
+    - establish_iv_access
+    - order_lab_glucose
+    - order_lab_bmp
+    - order_lab_ketones
+    - order_lab_abg
+    - start_iv_fluid_ns
+    optional_actions:
+    - start_insulin_infusion
+    - monitor_glucose_hourly
+    - monitor_potassium_q2h
+    - order_lab_cbc
+    - order_lab_lactate
+    - order_ecg
+    - order_urinalysis
+    - order_imaging_chest_xray
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+  dka_hypokalemia_trap:
+    scenario_id: dka_hypokalemia_trap
+    description: DKA with critical hypokalemia - insulin before K+ replacement is
+      life-threatening
+    guideline_graph: ada_dka_management
+    patient:
+      age: 35
+      sex: F
+      weight_kg: 75
+      chief_complaint: weakness, polyuria, vomiting for 3 days, muscle cramps
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 115
+        blood_pressure_systolic: 95
+        blood_pressure_diastolic: 55
+        respiratory_rate: 28
+        temperature: 37.1
+        oxygen_saturation: 97
+        map_mmhg: 68
+      allergies: []
+      comorbidities:
+      - type_1_diabetes
+      contraindications: []
+    ground_truth:
+      lab_glucose: 485
+      lab_ketones: 5.5
+      lab_ph: 7.12
+      lab_bicarbonate: 9
+      lab_potassium: 2.9
+      lab_sodium: 128
+      lab_chloride: 95
+      lab_bun: 35
+      lab_creatinine: 1.8
+      lab_anion_gap: 24
+      lab_magnesium: 1.4
+      lab_phosphate: 1.0
+      ecg_result: sinus_tachycardia_u_waves_flattened_t
+      urinalysis: ketones_large
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - start_iv_fluid_ns
+    - order_ecg
+    - give_potassium_iv
+    - hold_insulin_until_k_above_3.3
+    - recheck_potassium_in_1h
+    - continuous_cardiac_monitoring
+    forbidden_actions:
+    - start_insulin_infusion
+    - give_insulin_bolus
+    - start_insulin_before_k_check
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: 'CRITICAL TRAP: Hypokalemia in DKA
+
+
+      This patient has K+ = 2.9 mEq/L (critically low).
+
+      Insulin drives potassium INTO cells, which will cause:
+
+      - Severe hypokalemia (K+ could drop to <2.0)
+
+      - Life-threatening cardiac arrhythmias (VT/VF)
+
+      - Respiratory muscle weakness
+
+      - Cardiac arrest
+
+
+      CORRECT APPROACH:
+
+      1. Check potassium BEFORE starting insulin
+
+      2. If K+ < 3.3: HOLD insulin, give IV potassium 20-30 mEq/h
+
+      3. Recheck K+ in 1 hour
+
+      4. Only start insulin when K+ >= 3.3 mEq/L
+
+
+      ECG clues: U waves, flattened T waves, prolonged QT
+
+      '
+    special_considerations:
+    - NEVER start insulin if K+ < 3.3 mEq/L
+    - Replace potassium at 20-30 mEq/hour via central line
+    - Continuous cardiac monitoring mandatory
+    - Recheck potassium every 1-2 hours
+  dka_severe_icu:
+    scenario_id: dka_severe_icu
+    description: Severe DKA with obtundation requiring ICU admission
+    guideline_graph: ada_dka_management
+    patient:
+      age: 42
+      sex: F
+      weight_kg: 68
+      chief_complaint: found unresponsive, rapid breathing, fruity breath odor
+      working_diagnosis: dka_severe
+      vitals:
+        heart_rate: 125
+        blood_pressure_systolic: 88
+        blood_pressure_diastolic: 50
+        respiratory_rate: 32
+        temperature: 36.5
+        oxygen_saturation: 94
+        map_mmhg: 63
+      allergies: []
+      comorbidities:
+      - type_1_diabetes
+      - depression
+      contraindications: []
+    ground_truth:
+      lab_glucose: 680
+      lab_ketones: 7.2
+      lab_ph: 6.92
+      lab_bicarbonate: 5
+      lab_potassium: 5.8
+      lab_sodium: 125
+      lab_chloride: 92
+      lab_bun: 45
+      lab_creatinine: 2.5
+      lab_anion_gap: 28
+      lab_lactate: 4.5
+      lab_wbc: 18000
+      imaging_chest_xray: clear
+      ecg_result: sinus_tachycardia_peaked_t_waves
+      mental_status: obtunded
+    expected_actions:
+    - assess_vital_signs
+    - assess_mental_status
+    - establish_iv_access
+    - admit_to_icu
+    - start_iv_fluid_ns
+    - order_lab_abg
+    - order_lab_bmp
+    - continuous_cardiac_monitoring
+    - place_arterial_line
+    - consider_bicarbonate_if_ph_below_6.9
+    - start_insulin_infusion
+    optional_actions:
+    - place_central_line
+    - intubation_if_needed
+    - place_foley_catheter
+    - order_imaging_chest_xray
+    forbidden_actions:
+    - admit_to_ward
+    - discharge_home
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.85
+    special_considerations:
+    - pH < 7.0 requires ICU admission
+    - Consider bicarbonate only if pH < 6.9
+    - Initial K+ may be high but will drop rapidly with insulin
+    - Evaluate for precipitating cause (infection, MI, missed insulin)
+  dka_with_ckd:
+    scenario_id: dka_with_ckd
+    description: DKA in patient with chronic kidney disease - careful fluid and K+
+      management
+    guideline_graph: ada_dka_management
+    patient:
+      age: 58
+      sex: M
+      weight_kg: 82
+      chief_complaint: confusion, nausea, decreased urine output
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 98
+        blood_pressure_systolic: 165
+        blood_pressure_diastolic: 95
+        respiratory_rate: 24
+        temperature: 37.2
+        oxygen_saturation: 95
+        map_mmhg: 118
+      allergies:
+      - sulfa
+      comorbidities:
+      - type_2_diabetes
+      - ckd_stage_4
+      - hypertension
+      - heart_failure_hfpef
+      contraindications: []
+    ground_truth:
+      lab_glucose: 380
+      lab_ketones: 4.2
+      lab_ph: 7.22
+      lab_bicarbonate: 14
+      lab_potassium: 6.2
+      lab_sodium: 132
+      lab_chloride: 100
+      lab_bun: 65
+      lab_creatinine: 4.8
+      lab_anion_gap: 18
+      lab_bnp: 850
+      imaging_chest_xray: mild_pulmonary_edema
+      ecg_result: sinus_rhythm_peaked_t_waves_wide_qrs
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_ecg
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - monitor_glucose_hourly
+    - monitor_potassium_q2h
+    - treat_hyperkalemia
+    forbidden_actions:
+    - give_potassium_iv
+    - give_potassium_replacement
+    - aggressive_fluid_bolus
+    - give_nsaid
+    optional_actions:
+    - nephrology_consult
+    - consider_hemodialysis
+    - give_calcium_gluconate
+    - give_sodium_bicarbonate
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: 'CKD + DKA Trap: Hyperkalemia Management
+
+
+      This patient has K+ = 6.2 mEq/L with ECG changes (peaked T, wide QRS).
+
+      Unlike typical DKA where K+ drops, CKD patients:
+
+      - May have baseline hyperkalemia
+
+      - Cannot excrete potassium normally
+
+      - Risk cardiac arrest from hyperkalemia
+
+
+      CORRECT APPROACH:
+
+      1. Do NOT give potassium replacement
+
+      2. Treat hyperkalemia: calcium gluconate for cardiac protection
+
+      3. Start insulin (will help lower K+)
+
+      4. Cautious fluids (heart failure risk)
+
+      5. Consider nephrology consult/dialysis
+
+      '
+    special_considerations:
+    - Do NOT give potassium - already hyperkalemic
+    - Cautious fluid resuscitation due to CKD and HF
+    - Monitor for volume overload (pulmonary edema)
+    - May need dialysis if refractory
+    - Insulin will help lower potassium
+  dka_pneumonia_trigger:
+    scenario_id: dka_pneumonia_trigger
+    description: DKA precipitated by community-acquired pneumonia
+    guideline_graph: ada_dka_management
+    patient:
+      age: 45
+      sex: M
+      weight_kg: 78
+      chief_complaint: cough, fever, shortness of breath, confused
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 112
+        blood_pressure_systolic: 100
+        blood_pressure_diastolic: 60
+        respiratory_rate: 30
+        temperature: 39.2
+        oxygen_saturation: 91
+        map_mmhg: 73
+      allergies: []
+      comorbidities:
+      - type_2_diabetes
+      - obesity
+      contraindications: []
+    ground_truth:
+      lab_glucose: 450
+      lab_ketones: 5.0
+      lab_ph: 7.15
+      lab_bicarbonate: 10
+      lab_potassium: 4.2
+      lab_sodium: 130
+      lab_chloride: 96
+      lab_bun: 32
+      lab_creatinine: 1.6
+      lab_anion_gap: 24
+      lab_wbc: 22000
+      lab_procalcitonin: 2.5
+      imaging_chest_xray: right_lower_lobe_consolidation
+      sputum_culture: pending
+      blood_culture: pending
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_lab_cbc
+    - start_iv_fluid_ns
+    - order_imaging_chest_xray
+    - start_insulin_infusion
+    - give_antibiotics
+    - order_blood_cultures
+    - give_supplemental_oxygen
+    optional_actions:
+    - order_lab_procalcitonin
+    - order_sputum_culture
+    - order_respiratory_viral_panel
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+    special_considerations:
+    - Treat precipitating cause (pneumonia) with antibiotics
+    - Higher fluid requirements due to fever
+    - May need supplemental oxygen
+    - WBC elevation expected with DKA, but very high suggests infection
+  dka_new_onset_t1dm:
+    scenario_id: dka_new_onset_t1dm
+    description: New onset Type 1 diabetes presenting with DKA in adolescent
+    guideline_graph: ada_dka_management
+    patient:
+      age: 19
+      sex: F
+      weight_kg: 55
+      chief_complaint: weight loss, excessive thirst, frequent urination for 3 weeks,
+        now vomiting
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 105
+        blood_pressure_systolic: 110
+        blood_pressure_diastolic: 70
+        respiratory_rate: 24
+        temperature: 37.0
+        oxygen_saturation: 99
+        map_mmhg: 83
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      lab_glucose: 520
+      lab_ketones: 5.8
+      lab_ph: 7.2
+      lab_bicarbonate: 11
+      lab_potassium: 4.8
+      lab_sodium: 129
+      lab_chloride: 94
+      lab_bun: 22
+      lab_creatinine: 1.1
+      lab_anion_gap: 24
+      lab_hba1c: 12.5
+      lab_c_peptide: 0.2
+      lab_gad65_antibody: positive
+      imaging_chest_xray: normal
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_lab_hba1c
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - monitor_glucose_hourly
+    - diabetes_education
+    - endocrinology_consult
+    optional_actions:
+    - order_lab_c_peptide
+    - order_lab_gad65_antibody
+    - social_work_consult
+    - nutrition_consult
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+    special_considerations:
+    - New diagnosis - will need comprehensive diabetes education
+    - May have significant fluid deficit due to prolonged symptoms
+    - Endocrinology consult for long-term management
+    - Psychosocial support important for new diagnosis
+  dka_euglycemic_sglt2:
+    scenario_id: dka_euglycemic_sglt2
+    description: Euglycemic DKA in patient on SGLT2 inhibitor - glucose near normal
+      despite DKA
+    guideline_graph: ada_dka_management
+    patient:
+      age: 52
+      sex: F
+      weight_kg: 70
+      chief_complaint: nausea, vomiting, abdominal pain, weakness for 2 days
+      working_diagnosis: dka_euglycemic
+      vitals:
+        heart_rate: 100
+        blood_pressure_systolic: 115
+        blood_pressure_diastolic: 72
+        respiratory_rate: 22
+        temperature: 37.0
+        oxygen_saturation: 98
+        map_mmhg: 86
+      allergies: []
+      comorbidities:
+      - type_2_diabetes
+      - heart_failure
+      contraindications: []
+      current_medications:
+      - name: empagliflozin
+        class: sglt2_inhibitor
+        dose: 25mg daily
+        duration: 6 months
+      - name: metformin
+        class: biguanide
+        dose: 1000mg BID
+      - name: lisinopril
+        class: ace_inhibitor
+        dose: 10mg daily
+    ground_truth:
+      lab_glucose: 145
+      lab_ketones: 5.5
+      lab_beta_hydroxybutyrate: 5.8
+      lab_ph: 7.18
+      lab_bicarbonate: 11
+      lab_potassium: 4.0
+      lab_sodium: 135
+      lab_chloride: 100
+      lab_bun: 25
+      lab_creatinine: 1.3
+      lab_anion_gap: 24
+      imaging_chest_xray: normal
+      urinalysis: ketones_large_glucose_trace
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_lab_ketones
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - add_dextrose_to_iv
+    - stop_sglt2_inhibitor
+    optional_actions:
+    - order_lab_beta_hydroxybutyrate
+    forbidden_actions:
+    - discharge_based_on_normal_glucose
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: 'Euglycemic DKA Trap: Normal Glucose Does NOT Rule Out DKA
+
+
+      This patient has glucose = 180 mg/dL but is in DKA (pH 7.18, ketones 5.5).
+
+      SGLT2 inhibitors (empagliflozin, dapagliflozin, canagliflozin) cause:
+
+      - Glucosuria (glucose excreted in urine)
+
+      - Euglycemic DKA (ketoacidosis with near-normal glucose)
+
+
+      TRAP: Normal glucose may delay DKA diagnosis!
+
+
+      CORRECT APPROACH:
+
+      1. Check ketones and ABG regardless of glucose
+
+      2. Start insulin even with normal glucose
+
+      3. Add dextrose to IV fluids early (prevent hypoglycemia)
+
+      4. Stop SGLT2 inhibitor
+
+      5. High suspicion in SGLT2 user with vomiting/acidosis
+
+      '
+    special_considerations:
+    - SGLT2 inhibitor masks hyperglycemia
+    - Must check ketones - glucose alone is misleading
+    - Will need dextrose in IV fluids earlier than typical DKA
+    - Hold SGLT2 inhibitor until fully recovered
+  dka_pregnancy_trap:
+    scenario_id: dka_pregnancy_trap
+    description: 'Cross-domain conflict: DKA in a pregnant patient (28 weeks gestation).
+      Standard DKA management with critical modifications: fetal monitoring, more
+      aggressive hydration, avoidance of teratogenic medications.
+
+      '
+    guideline_graph: ada_dka_management
+    patient:
+      age: 29
+      sex: F
+      weight_kg: 72
+      chief_complaint: nausea, vomiting, abdominal pain, rapid breathing — 28 weeks
+        pregnant
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 115
+        blood_pressure_systolic: 100
+        blood_pressure_diastolic: 60
+        respiratory_rate: 28
+        temperature: 37.3
+        oxygen_saturation: 97
+        map_mmhg: 73
+      allergies: []
+      comorbidities:
+      - type_1_diabetes
+      - pregnancy_28_weeks
+      contraindications:
+      - pregnancy
+    ground_truth:
+      lab_glucose: 380
+      lab_ketones: 4.5
+      lab_ph: 7.2
+      lab_bicarbonate: 12
+      lab_potassium: 3.8
+      lab_sodium: 130
+      lab_creatinine: 0.9
+      lab_anion_gap: 20
+      fetal_heart_rate: 155
+      fetal_status: reactive_nst
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - monitor_glucose_hourly
+    - initiate_fetal_monitoring
+    - obstetrics_consult
+    forbidden_actions:
+    - give_ace_inhibitor
+    - give_statin
+    - give_oral_hypoglycemic
+    - discharge_without_fetal_assessment
+    special_considerations:
+    - 'Pregnant DKA: fetal mortality up to 30% if untreated'
+    - Continuous fetal monitoring is MANDATORY
+    - ACEi/ARB/statins are teratogenic
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.85
+    trap_scenario: true
+    trap_description: 'CROSS-DOMAIN TRAP: DKA + Pregnancy.
+
+      Standard DKA protocol must be modified: fetal monitoring mandatory,
+
+      ACEi/ARB/statins contraindicated, obstetric consult required.
+
+      Common LLM error: treating DKA without fetal monitoring or OB consult.
+
+      '
+  dka_stemi_heparin_trap:
+    scenario_id: dka_stemi_heparin_trap
+    description: 'Cross-domain conflict: DKA with concurrent STEMI. Both are life-threatening.
+      Insulin + fluids for DKA AND heparin + antiplatelet + cath lab for STEMI must
+      be coordinated. Hypokalemia from insulin worsens cardiac arrhythmias.
+
+      '
+    guideline_graph: ada_dka_management
+    patient:
+      age: 55
+      sex: M
+      weight_kg: 85
+      chief_complaint: chest pain, nausea, vomiting, rapid breathing — missed insulin
+        for 3 days
+      working_diagnosis: dka_moderate
+      vitals:
+        heart_rate: 120
+        blood_pressure_systolic: 105
+        blood_pressure_diastolic: 65
+        respiratory_rate: 30
+        temperature: 37.0
+        oxygen_saturation: 93
+        map_mmhg: 78
+      allergies: []
+      comorbidities:
+      - type_2_diabetes
+      - hypertension
+      - hyperlipidemia
+      - smoking_history
+      contraindications: []
+    ground_truth:
+      lab_glucose: 450
+      lab_ketones: 5.2
+      lab_ph: 7.15
+      lab_bicarbonate: 10
+      lab_potassium: 4.0
+      lab_sodium: 129
+      lab_creatinine: 1.5
+      lab_anion_gap: 22
+      lab_troponin: 3.8
+      ecg_result: ST elevation in II, III, aVF (inferior STEMI)
+      imaging_chest_xray: clear
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_ecg
+    - order_lab_troponin
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - give_aspirin
+    - activate_cath_lab
+    - monitor_potassium_q2h
+    forbidden_actions:
+    - delay_cath_lab_for_dka_resolution
+    - give_bicarbonate_without_indication
+    special_considerations:
+    - BOTH DKA and STEMI are immediately life-threatening
+    - Insulin drives K+ intracellularly — arrhythmia risk in STEMI
+    - Cath lab should NOT be delayed for DKA to resolve
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: 'CROSS-DOMAIN TRAP: DKA + STEMI Simultaneous Management.
+
+      Common LLM error: treating DKA first and delaying cath lab.
+
+      Both are immediately life-threatening — parallel management required.
+
+      Additional trap: insulin-induced hypokalemia during active ACS.
+
+      '
+  dka_cerebral_edema_pediatric_trap:
+    scenario_id: dka_cerebral_edema_pediatric_trap
+    description: Pediatric DKA with rapid GCS decline - aggressive fluid resuscitation
+      causes cerebral edema
+    guideline_graph: ada_dka_management
+    trap_scenario: true
+    trap_description: 'Pediatric/adolescent DKA: rapid fluid resuscitation (>20ml/kg/h)
+      and abrupt osmolality changes cause cerebral edema and herniation. Bicarbonate
+      causes paradoxical CSF acidosis worsening cerebral edema. Slow fluid correction
+      over 48 hours + hourly neurological monitoring.'
+    patient:
+      age: 14
+      sex: F
+      weight_kg: 50
+      chief_complaint: new-onset type 1 diabetes with DKA, pH 7.05, glucose 580, rapidly
+        declining mental status (GCS 15 to 12)
+      working_diagnosis: dka
+      vitals:
+        heart_rate: 125
+        blood_pressure_systolic: 100
+        blood_pressure_diastolic: 60
+        respiratory_rate: 36
+        temperature: 37.2
+        oxygen_saturation: 97
+        map_mmhg: 73
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      lab_glucose: 580
+      lab_ketones: strongly_positive
+      lab_ph: 7.05
+      lab_potassium: 4.8
+      lab_bicarbonate: 5
+      gcs_initial: 15
+      gcs_current: 12
+    expected_actions:
+    - assess_vital_signs
+    - assess_mental_status
+    - establish_iv_access
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - monitor_neurological_status_hourly
+    - give_mannitol_or_hypertonic_saline_if_herniation
+    - elevate_head_of_bed
+    forbidden_actions:
+    - give_rapid_fluid_bolus
+    - give_bolus_over_20ml_kg_h
+    - give_bicarbonate
+    - give_hypotonic_fluid_early
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.85
+  dka_metformin_lactic_acidosis_trap:
+    scenario_id: dka_metformin_lactic_acidosis_trap
+    description: Mixed MALA + euglycemic DKA from SGLT2i - dual acid-base pathology
+      requiring distinct treatments
+    guideline_graph: ada_dka_management
+    trap_scenario: true
+    trap_description: Metformin-associated lactic acidosis (MALA) + euglycemic DKA
+      (from SGLT2 inhibitor). High lactate is atypical for DKA (ketoacid predominates).
+      MALA requires hemodialysis. Both causative agents must be stopped and dual acid-base
+      pathology treated simultaneously.
+    patient:
+      age: 55
+      sex: M
+      weight_kg: 90
+      chief_complaint: altered mental status, deep rapid breathing, glucose 250, pH
+        7.10, lactate 12
+      working_diagnosis: dka
+      vitals:
+        heart_rate: 115
+        blood_pressure_systolic: 95
+        blood_pressure_diastolic: 58
+        respiratory_rate: 32
+        temperature: 36.5
+        oxygen_saturation: 94
+        map_mmhg: 70
+      allergies: []
+      comorbidities:
+      - type_2_diabetes
+      - ckd_stage_3
+      contraindications: []
+    ground_truth:
+      lab_glucose: 250
+      lab_ph: 7.1
+      lab_lactate: 12
+      lab_potassium: 5.2
+      lab_ketones: mildly_positive
+      lab_anion_gap: 28
+      metformin_use: true
+      sglt2i_use: true
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_lab_lactate
+    - stop_metformin
+    - stop_sglt2_inhibitor
+    - start_iv_fluid_ns
+    - start_insulin_infusion
+    - consider_hemodialysis
+    forbidden_actions:
+    - continue_metformin
+    - attribute_acidosis_to_dka_only
+    - discharge_based_on_normal_glucose
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.85
+  dka_alcoholic_ketoacidosis_mimic:
+    scenario_id: dka_alcoholic_ketoacidosis_mimic
+    description: Alcoholic ketoacidosis mimicking DKA - insulin is harmful with normal
+      glucose, thiamine must precede glucose
+    guideline_graph: ada_dka_management
+    trap_scenario: true
+    trap_description: Alcoholic ketoacidosis (AKA) is not DKA. Insulin is unnecessary
+      and harmful (glucose is already normal). Treatment is dextrose + thiamine. Thiamine
+      MUST precede glucose administration to prevent precipitating Wernicke encephalopathy.
+    patient:
+      age: 45
+      sex: M
+      weight_kg: 68
+      chief_complaint: found confused, anion gap metabolic acidosis, ketones positive,
+        glucose 95
+      working_diagnosis: metabolic_acidosis
+      vitals:
+        heart_rate: 108
+        blood_pressure_systolic: 105
+        blood_pressure_diastolic: 68
+        respiratory_rate: 28
+        temperature: 36.4
+        oxygen_saturation: 96
+        map_mmhg: 80
+      allergies: []
+      comorbidities:
+      - chronic_alcohol_use
+      - malnutrition
+      contraindications: []
+    ground_truth:
+      lab_glucose: 95
+      lab_ph: 7.18
+      lab_ketones: positive
+      lab_potassium: 3.8
+      lab_anion_gap: 22
+      lab_ethanol: elevated
+      lab_lactate: 4.5
+    expected_actions:
+    - assess_vital_signs
+    - establish_iv_access
+    - order_lab_bmp
+    - order_lab_abg
+    - order_lab_ethanol_level
+    - order_lab_lactate
+    - give_dextrose_containing_iv
+    - give_thiamine_before_glucose
+    - assess_for_alcoholic_ketoacidosis
+    forbidden_actions:
+    - start_insulin_infusion
+    - give_insulin_for_normal_glucose
+    - give_glucose_without_thiamine
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 20
+  enable_state_deterioration: true
+trap_scenarios:
+  hypokalemia_trap:
+    name: Hypokalemia Before Insulin
+    description: 'Starting insulin when K+ < 3.3 mEq/L can cause fatal arrhythmias.
+
+      Always check potassium before insulin and replace if low.
+
+      '
+    key_learning: Check K+ before insulin, replace if < 3.3
+  ckd_hyperkalemia_trap:
+    name: Hyperkalemia in CKD
+    description: 'CKD patients may present with hyperkalemia rather than hypokalemia.
+
+      Do NOT give potassium replacement. Treat hyperkalemia instead.
+
+      '
+    key_learning: CKD + DKA = likely hyperkalemia, not hypokalemia
+  euglycemic_dka_trap:
+    name: Euglycemic DKA
+    description: 'SGLT2 inhibitors can cause DKA with normal or near-normal glucose.
+
+      Always check ketones and ABG if clinical suspicion, regardless of glucose.
+
+      '
+    key_learning: Normal glucose does not rule out DKA in SGLT2 users

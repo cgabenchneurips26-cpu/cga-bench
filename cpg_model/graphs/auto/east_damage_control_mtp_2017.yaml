@@ -1,0 +1,246 @@
+graph_id: east_damage_control_mtp_2017
+guideline_name: 'EAST 2017 Practice Management Guidelines: Damage Control Resuscitation'
+version: '2017.1'
+metadata:
+  source: EAST Damage Control Resuscitation Practice Management Guidelines 2017
+  doi: 10.1097/TA.0000000000001333
+  journal: Journal of Trauma and Acute Care Surgery
+  recommendation_system: GRADE
+  description: Evidence-based guidelines for damage control resuscitation including 1:1:1 balanced transfusion, TXA, permissive
+    hypotension, and staged surgical repair
+  key_evidence: 'PROPPR trial: 1:1:1 ratio reduces 24h mortality (9.2% vs 14.6%) and improves hemostasis. CRASH-2 trial: TXA
+    within 3h reduces mortality by 1.5%. Permissive hypotension improves survival in penetrating trauma (Bickell et al.).'
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Hemorrhagic Shock Recognition & MTP Activation
+    description: Identify massive hemorrhage (ABC score ≥2, shock index >1), activate MTP, permissive hypotension
+    precondition: null
+    mandatory_actions:
+    - assess_hemorrhagic_shock
+    - activate_massive_transfusion_protocol
+    - assess_vital_signs
+    allowed_actions:
+    - order_lab_lactate
+    - order_lab_fibrinogen
+    - order_lab_teg_or_rotem
+    - order_lab_coagulation
+    - activate_massive_transfusion_protocol
+    - establish_large_bore_iv_access
+    - order_lab_blood_gas
+    - assess_vital_signs
+    - order_lab_type_and_crossmatch
+    - assess_hemorrhagic_shock
+    - order_lab_cbc
+    forbidden_actions: []
+    deadlines:
+      assess_hemorrhagic_shock: 5
+      activate_massive_transfusion_protocol: 10
+      assess_vital_signs: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EAST Damage Control Resuscitation 2017
+    source_section: MTP Activation Criteria
+    source_page: null
+    source_quote: 'Activate MTP when: ABC score ≥2, shock index >1.0, anticipated need for >10 units PRBC in 24h, or hemodynamic
+      instability despite 2L crystalloid'
+    next_nodes:
+    - balanced_resuscitation
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0
+  balanced_resuscitation:
+    node_id: balanced_resuscitation
+    node_type: plan
+    name: Balanced 1:1:1 Resuscitation + TXA
+    description: 1:1:1 ratio PRBC:FFP:Platelets, TXA within 3h of injury, limit crystalloid, permissive hypotension
+    precondition: null
+    mandatory_actions:
+    - transfuse_1_1_1_prbc_ffp_platelets
+    - give_txa_1g_within_3h
+    - target_permissive_hypotension_sbp_80_90
+    allowed_actions:
+    - order_lab_teg_or_rotem_guided
+    - target_permissive_hypotension_sbp_80_90
+    - give_txa_1g_within_3h
+    - order_lab_blood_gas_serial
+    - order_lab_ionized_calcium
+    - give_calcium_gluconate_for_citrate_toxicity
+    - transfuse_1_1_1_prbc_ffp_platelets
+    - give_cryoprecipitate_if_fibrinogen_below_150
+    - monitor_temperature_prevent_hypothermia
+    forbidden_actions:
+    - give_excessive_crystalloid_over_2L
+    - target_normal_sbp_in_uncontrolled_hemorrhage
+    - give_txa_after_3h_of_injury
+    deadlines:
+      transfuse_1_1_1_prbc_ffp_platelets: 15
+      give_txa_1g_within_3h: 180
+      target_permissive_hypotension_sbp_80_90: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: EAST Damage Control Resuscitation 2017
+    source_section: 'Recommendation 1-3: Balanced Resuscitation'
+    source_page: null
+    source_quote: '1:1:1 PRBC:FFP:Platelet ratio is recommended (PROPPR trial: reduced 24h mortality). TXA within 3h of injury
+      reduces mortality (CRASH-2 trial). Permissive hypotension (SBP 80-90) until surgical hemorrhage control'
+    next_nodes:
+    - hemorrhage_control
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0
+  hemorrhage_control:
+    node_id: hemorrhage_control
+    node_type: decision
+    name: Hemorrhage Source Control
+    description: Damage control surgery vs IR embolization based on injury pattern, correct lethal triad
+    precondition: null
+    mandatory_actions:
+    - identify_hemorrhage_source
+    - plan_hemorrhage_control_procedure
+    allowed_actions:
+    - perform_angioembolization
+    - apply_pelvic_binder
+    - order_imaging_ct_trauma
+    - order_imaging_fast_ultrasound
+    - plan_hemorrhage_control_procedure
+    - identify_hemorrhage_source
+    - perform_damage_control_surgery
+    - apply_direct_pressure_or_tourniquet
+    forbidden_actions: []
+    deadlines:
+      identify_hemorrhage_source: 30
+      plan_hemorrhage_control_procedure: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EAST Damage Control Resuscitation 2017
+    source_section: 'Recommendation 4: Source Control'
+    source_page: null
+    source_quote: 'Damage control surgery: abbreviated operation to control hemorrhage and contamination, temporary closure,
+      ICU resuscitation, then definitive repair (staged approach)'
+    next_nodes:
+    - icu_resuscitation
+    conditional_next:
+      state.requires_surgery == True: damage_control_surgery
+      state.requires_surgery == False: icu_resuscitation
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0
+  damage_control_surgery:
+    node_id: damage_control_surgery
+    node_type: plan
+    name: Damage Control Surgery (Abbreviated Laparotomy)
+    description: Hemorrhage control, contamination control, temporary abdominal closure, correct lethal triad in ICU
+    precondition: state.requires_surgery == True
+    mandatory_actions:
+    - perform_damage_control_laparotomy
+    - control_hemorrhage_surgical
+    - apply_temporary_abdominal_closure
+    allowed_actions:
+    - resect_damaged_bowel_no_anastomosis
+    - control_hemorrhage_surgical
+    - perform_damage_control_laparotomy
+    - pack_abdomen
+    - continue_mtp_intraoperatively
+    - ligate_damaged_vessels
+    - apply_temporary_abdominal_closure
+    forbidden_actions:
+    - perform_definitive_repair_in_unstable_patient
+    - perform_bowel_anastomosis_in_dc_setting
+    deadlines:
+      perform_damage_control_laparotomy: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EAST Damage Control Resuscitation 2017
+    source_section: 'Recommendation 5: Damage Control Surgery'
+    source_page: null
+    source_quote: 'Damage control surgery is indicated for the lethal triad (hypothermia <35C, acidosis pH<7.2, coagulopathy).
+      Goal: <60 min OR time. Pack, ligate, staple; NO definitive repair until physiologically normalized'
+    next_nodes:
+    - icu_resuscitation
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0
+  icu_resuscitation:
+    node_id: icu_resuscitation
+    node_type: plan
+    name: ICU Resuscitation & Lethal Triad Correction
+    description: Rewarm, correct acidosis and coagulopathy, goal-directed resuscitation, reassess for definitive repair
+    precondition: null
+    mandatory_actions:
+    - rewarm_to_normothermia
+    - correct_coagulopathy_teg_guided
+    - monitor_lactate_clearance
+    allowed_actions:
+    - order_lab_blood_gas_q2h
+    - plan_definitive_surgery_24_48h
+    - give_calcium_supplementation
+    - rewarm_to_normothermia
+    - continue_balanced_transfusion
+    - correct_coagulopathy_teg_guided
+    - order_lab_coagulation_q4h
+    - monitor_lactate_clearance
+    - assess_abdominal_compartment_pressure
+    forbidden_actions: []
+    deadlines:
+      rewarm_to_normothermia: 360
+      correct_coagulopathy_teg_guided: 240
+      monitor_lactate_clearance: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EAST Damage Control Resuscitation 2017
+    source_section: 'Recommendation 6: ICU Resuscitation Phase'
+    source_page: null
+    source_quote: 'ICU resuscitation targets: temp >36C, pH >7.25, INR <1.5, platelets >100K, fibrinogen >200, lactate clearance.
+      Return to OR for definitive repair at 24-48h when physiologically stable'
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Definitive Repair Planning
+    description: Assess readiness for definitive surgery, MTP deactivation, step-down planning
+    precondition: null
+    mandatory_actions:
+    - assess_readiness_for_definitive_repair
+    allowed_actions:
+    - continue_icu_monitoring
+    - plan_definitive_surgery
+    - assess_readiness_for_definitive_repair
+    - deactivate_mtp
+    - assess_for_abdominal_compartment_syndrome
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: EAST Damage Control Resuscitation 2017
+    source_section: Disposition
+    source_page: null
+    source_quote: Definitive surgery at 24-48h when lethal triad corrected. Monitor for abdominal compartment syndrome (IAP
+      >20 mmHg with organ dysfunction)
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.0

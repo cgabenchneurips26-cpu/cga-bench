@@ -1,0 +1,828 @@
+{
+  "summary": {
+    "total_scenarios": 15,
+    "perfect_coverage": 1,
+    "partial_coverage": 14,
+    "no_coverage": 0,
+    "analysis_note": "Oracle uses agent_rules/ decision tables (NEVER cpg_engine). Coverage ratio = |matched| / |expected_actions|. Missing actions are expected by the scenario but not recommended by Oracle rules. Extra actions are recommended by Oracle but not in the scenario's expected_actions list."
+  },
+  "error_taxonomy": {
+    "perfect": "Oracle covers all expected actions",
+    "oracle_gap": "Oracle rules simply don't include required actions",
+    "naming_mismatch": "Oracle produces semantically equivalent actions with different action_ids",
+    "context_gap": "Oracle has conditional rules but context data doesn't trigger them (missing lab values, vitals, etc.)",
+    "prereq_block": "Oracle has the action but prerequisite constraints block it",
+    "mixed_gap_and_naming": "Combination of naming mismatches and genuine oracle gaps",
+    "mixed_oracle_and_context_gap": "Some actions missing due to oracle gaps, others due to context/conditional issues",
+    "domain_missing": "No Oracle decision table exists for this domain"
+  },
+  "scenarios": {
+    "septic_shock_basic": {
+      "domain": "sepsis",
+      "guideline_graph": "ssc_sepsis_hour1",
+      "expected_actions": [
+        "order_lab_lactate",
+        "order_lab_blood_culture",
+        "give_broad_spectrum_antibiotics",
+        "give_crystalloid_30ml_kg",
+        "start_vasopressor_if_hypotensive"
+      ],
+      "expected_count": 5,
+      "oracle_recommended": [
+        "assess_infection_source",
+        "assess_organ_dysfunction",
+        "measure_lactate",
+        "blood_culture_before_antibiotics",
+        "broad_spectrum_antibiotics",
+        "crystalloid_30ml_kg"
+      ],
+      "oracle_recommended_count": 6,
+      "oracle_forbidden": [
+        "delay_antibiotics_over_3h"
+      ],
+      "matched": [],
+      "matched_count": 0,
+      "missing_from_oracle": [
+        "give_broad_spectrum_antibiotics",
+        "give_crystalloid_30ml_kg",
+        "order_lab_blood_culture",
+        "order_lab_lactate",
+        "start_vasopressor_if_hypotensive"
+      ],
+      "extra_in_oracle": [
+        "assess_infection_source",
+        "assess_organ_dysfunction",
+        "blood_culture_before_antibiotics",
+        "broad_spectrum_antibiotics",
+        "crystalloid_30ml_kg",
+        "measure_lactate"
+      ],
+      "coverage_ratio": 0.0,
+      "error_classification": "mixed_gap_and_naming",
+      "notes": "Potential naming mismatches: 'give_broad_spectrum_antibiotics' may match Oracle's 'broad_spectrum_antibiotics'; 'give_crystalloid_30ml_kg' may match Oracle's 'crystalloid_30ml_kg'; 'order_lab_blood_culture' may match Oracle's 'blood_culture_before_antibiotics'; 'order_lab_lactate' may match Oracle's 'measure_lactate'",
+      "actual_compliance_score": 1.0,
+      "actual_sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {},
+      "actual_total_violations": 0
+    },
+    "septic_shock_penicillin_allergy": {
+      "domain": "sepsis",
+      "guideline_graph": "ssc_sepsis_hour1",
+      "expected_actions": [
+        "order_lab_lactate",
+        "order_lab_blood_culture",
+        "give_broad_spectrum_antibiotics",
+        "give_crystalloid_30ml_kg",
+        "start_vasopressor_if_hypotensive"
+      ],
+      "expected_count": 5,
+      "oracle_recommended": [
+        "assess_infection_source",
+        "assess_organ_dysfunction",
+        "measure_lactate",
+        "blood_culture_before_antibiotics",
+        "broad_spectrum_antibiotics",
+        "crystalloid_30ml_kg"
+      ],
+      "oracle_recommended_count": 6,
+      "oracle_forbidden": [
+        "delay_antibiotics_over_3h",
+        "ampicillin",
+        "piperacillin_tazobactam",
+        "amoxicillin",
+        "piperacillin"
+      ],
+      "matched": [],
+      "matched_count": 0,
+      "missing_from_oracle": [
+        "give_broad_spectrum_antibiotics",
+        "give_crystalloid_30ml_kg",
+        "order_lab_blood_culture",
+        "order_lab_lactate",
+        "start_vasopressor_if_hypotensive"
+      ],
+      "extra_in_oracle": [
+        "assess_infection_source",
+        "assess_organ_dysfunction",
+        "blood_culture_before_antibiotics",
+        "broad_spectrum_antibiotics",
+        "crystalloid_30ml_kg",
+        "measure_lactate"
+      ],
+      "coverage_ratio": 0.0,
+      "error_classification": "mixed_gap_and_naming",
+      "notes": "Potential naming mismatches: 'give_broad_spectrum_antibiotics' may match Oracle's 'broad_spectrum_antibiotics'; 'give_crystalloid_30ml_kg' may match Oracle's 'crystalloid_30ml_kg'; 'order_lab_blood_culture' may match Oracle's 'blood_culture_before_antibiotics'; 'order_lab_lactate' may match Oracle's 'measure_lactate'",
+      "actual_compliance_score": 1.0,
+      "actual_sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {},
+      "actual_total_violations": 0
+    },
+    "stemi_inferior_rv_trap": {
+      "domain": "chest_pain",
+      "guideline_graph": "aha_chest_pain",
+      "expected_actions": [
+        "obtain_12_lead_ecg",
+        "obtain_right_sided_ecg_v4r",
+        "order_lab_troponin",
+        "give_aspirin",
+        "start_iv_fluid_bolus",
+        "activate_cath_lab"
+      ],
+      "expected_count": 6,
+      "oracle_recommended": [
+        "check_vital_signs",
+        "obtain_ecg",
+        "obtain_chest_pain_history",
+        "order_troponin"
+      ],
+      "oracle_recommended_count": 4,
+      "oracle_forbidden": [],
+      "matched": [],
+      "matched_count": 0,
+      "missing_from_oracle": [
+        "activate_cath_lab",
+        "give_aspirin",
+        "obtain_12_lead_ecg",
+        "obtain_right_sided_ecg_v4r",
+        "order_lab_troponin",
+        "start_iv_fluid_bolus"
+      ],
+      "extra_in_oracle": [
+        "check_vital_signs",
+        "obtain_chest_pain_history",
+        "obtain_ecg",
+        "order_troponin"
+      ],
+      "coverage_ratio": 0.0,
+      "error_classification": "mixed_gap_and_naming",
+      "notes": "Potential naming mismatches: 'obtain_12_lead_ecg' may match Oracle's 'obtain_ecg'; 'obtain_right_sided_ecg_v4r' may match Oracle's 'obtain_ecg'; 'order_lab_troponin' may match Oracle's 'order_troponin'",
+      "actual_compliance_score": 1.0,
+      "actual_sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {},
+      "actual_total_violations": 0
+    },
+    "dka_moderate_basic": {
+      "domain": "dka",
+      "guideline_graph": "ada_dka_management",
+      "expected_actions": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_glucose",
+        "order_lab_bmp",
+        "order_lab_ketones",
+        "order_lab_abg",
+        "start_iv_fluid_ns",
+        "start_insulin_infusion",
+        "monitor_glucose_hourly",
+        "monitor_potassium_q2h"
+      ],
+      "expected_count": 10,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "assess_mental_status",
+        "establish_iv_access",
+        "order_lab_glucose",
+        "order_lab_bmp",
+        "start_iv_fluid_ns",
+        "order_lab_ketones",
+        "order_lab_abg",
+        "monitor_glucose_hourly",
+        "monitor_potassium_q2h",
+        "add_potassium_to_iv"
+      ],
+      "oracle_recommended_count": 11,
+      "oracle_forbidden": [
+        "discharge_home"
+      ],
+      "matched": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "monitor_glucose_hourly",
+        "monitor_potassium_q2h",
+        "order_lab_abg",
+        "order_lab_bmp",
+        "order_lab_glucose",
+        "order_lab_ketones",
+        "start_iv_fluid_ns"
+      ],
+      "matched_count": 9,
+      "missing_from_oracle": [
+        "start_insulin_infusion"
+      ],
+      "extra_in_oracle": [
+        "add_potassium_to_iv",
+        "assess_mental_status"
+      ],
+      "coverage_ratio": 0.9,
+      "error_classification": "naming_mismatch",
+      "notes": "Potential naming mismatches: 'start_insulin_infusion' may match Oracle's 'start_iv_fluid_ns'",
+      "actual_compliance_score": 0.5,
+      "actual_sub_scores": {
+        "C1_path_selection": 0.8,
+        "C2_mandatory_completion": 0.7,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {
+        "deviation": 2,
+        "omission": 3
+      },
+      "actual_total_violations": 5
+    },
+    "dka_hypokalemia_trap": {
+      "domain": "dka",
+      "guideline_graph": "ada_dka_management",
+      "expected_actions": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_bmp",
+        "order_lab_abg",
+        "start_iv_fluid_ns",
+        "order_ecg",
+        "give_potassium_iv",
+        "hold_insulin_until_k_above_3.3",
+        "recheck_potassium_in_1h",
+        "continuous_cardiac_monitoring"
+      ],
+      "expected_count": 10,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "assess_mental_status",
+        "establish_iv_access",
+        "order_lab_glucose",
+        "order_lab_bmp",
+        "start_iv_fluid_ns",
+        "order_lab_ketones",
+        "order_lab_abg",
+        "hold_insulin_until_k_above_3.3"
+      ],
+      "oracle_recommended_count": 9,
+      "oracle_forbidden": [
+        "give_insulin_bolus",
+        "start_insulin_infusion",
+        "discharge_home"
+      ],
+      "matched": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "hold_insulin_until_k_above_3.3",
+        "order_lab_abg",
+        "order_lab_bmp",
+        "start_iv_fluid_ns"
+      ],
+      "matched_count": 6,
+      "missing_from_oracle": [
+        "continuous_cardiac_monitoring",
+        "give_potassium_iv",
+        "order_ecg",
+        "recheck_potassium_in_1h"
+      ],
+      "extra_in_oracle": [
+        "assess_mental_status",
+        "order_lab_glucose",
+        "order_lab_ketones"
+      ],
+      "coverage_ratio": 0.6,
+      "error_classification": "naming_mismatch",
+      "notes": "Potential naming mismatches: 'give_potassium_iv' may match Oracle's 'establish_iv_access'; 'give_potassium_iv' may match Oracle's 'start_iv_fluid_ns'; 'order_ecg' may match Oracle's 'order_lab_glucose'; 'order_ecg' may match Oracle's 'order_lab_bmp'; 'order_ecg' may match Oracle's 'order_lab_ketones'; 'order_ecg' may match Oracle's 'order_lab_abg'",
+      "actual_compliance_score": 0.5,
+      "actual_sub_scores": {
+        "C1_path_selection": 0.8,
+        "C2_mandatory_completion": 0.7,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {
+        "deviation": 2,
+        "omission": 3
+      },
+      "actual_total_violations": 5
+    },
+    "stroke_tpa_eligible": {
+      "domain": "stroke",
+      "guideline_graph": "aha_stroke",
+      "expected_actions": [
+        "activate_stroke_team",
+        "obtain_last_known_well_time",
+        "perform_nihss",
+        "check_glucose",
+        "order_stat_ct_head",
+        "review_inclusion_criteria",
+        "review_exclusion_criteria",
+        "obtain_informed_consent",
+        "give_alteplase_0.9mg_kg"
+      ],
+      "expected_count": 9,
+      "oracle_recommended": [
+        "order_stat_ct_head",
+        "activate_stroke_team",
+        "icu_admission",
+        "bp_reduction_target_140",
+        "neurosurgery_consult",
+        "repeat_ct_6h_or_if_deterioration"
+      ],
+      "oracle_recommended_count": 6,
+      "oracle_forbidden": [
+        "aspirin",
+        "alteplase",
+        "give_tpa",
+        "give_anticoagulation",
+        "give_alteplase",
+        "tpa",
+        "heparin",
+        "give_antiplatelet"
+      ],
+      "matched": [
+        "activate_stroke_team",
+        "order_stat_ct_head"
+      ],
+      "matched_count": 2,
+      "missing_from_oracle": [
+        "check_glucose",
+        "give_alteplase_0.9mg_kg",
+        "obtain_informed_consent",
+        "obtain_last_known_well_time",
+        "perform_nihss",
+        "review_exclusion_criteria",
+        "review_inclusion_criteria"
+      ],
+      "extra_in_oracle": [
+        "bp_reduction_target_140",
+        "icu_admission",
+        "neurosurgery_consult",
+        "repeat_ct_6h_or_if_deterioration"
+      ],
+      "coverage_ratio": 0.2222222222222222,
+      "error_classification": "oracle_gap",
+      "notes": "Oracle rules do not recommend these expected actions: ['check_glucose', 'give_alteplase_0.9mg_kg', 'obtain_informed_consent', 'obtain_last_known_well_time', 'perform_nihss', 'review_exclusion_criteria', 'review_inclusion_criteria']",
+      "actual_compliance_score": 1.0,
+      "actual_sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {},
+      "actual_total_violations": 0
+    },
+    "contrast_aki_prevention_basic": {
+      "domain": "kdigo_contrast_aki",
+      "guideline_graph": "kdigo_contrast_aki",
+      "expected_actions": [
+        "order_lab_creatinine",
+        "assess_aki_risk",
+        "start_iv_hydration",
+        "hold_nephrotoxic_medications",
+        "use_lowest_contrast_dose"
+      ],
+      "expected_count": 5,
+      "oracle_recommended": [
+        "order_baseline_creatinine",
+        "assess_ci_aki_risk"
+      ],
+      "oracle_recommended_count": 2,
+      "oracle_forbidden": [
+        "give_high_osmolar_contrast"
+      ],
+      "matched": [],
+      "matched_count": 0,
+      "missing_from_oracle": [
+        "assess_aki_risk",
+        "hold_nephrotoxic_medications",
+        "order_lab_creatinine",
+        "start_iv_hydration",
+        "use_lowest_contrast_dose"
+      ],
+      "extra_in_oracle": [
+        "assess_ci_aki_risk",
+        "order_baseline_creatinine"
+      ],
+      "coverage_ratio": 0.0,
+      "error_classification": "mixed_gap_and_naming",
+      "notes": "Potential naming mismatches: 'assess_aki_risk' may match Oracle's 'assess_ci_aki_risk'; 'order_lab_creatinine' may match Oracle's 'order_baseline_creatinine'",
+      "actual_compliance_score": 1.0,
+      "actual_sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {},
+      "actual_total_violations": 0
+    },
+    "aki_stage1_basic": {
+      "domain": "aki",
+      "guideline_graph": "kdigo_aki_full",
+      "expected_actions": [
+        "order_creatinine",
+        "monitor_urine_output",
+        "optimize_volume_status",
+        "discontinue_nephrotoxins",
+        "avoid_contrast"
+      ],
+      "expected_count": 5,
+      "oracle_recommended": [
+        "order_creatinine",
+        "monitor_urine_output",
+        "discontinue_nephrotoxins",
+        "optimize_volume_status"
+      ],
+      "oracle_recommended_count": 4,
+      "oracle_forbidden": [
+        "give_aminoglycoside_without_monitoring",
+        "give_nsaid"
+      ],
+      "matched": [
+        "discontinue_nephrotoxins",
+        "monitor_urine_output",
+        "optimize_volume_status",
+        "order_creatinine"
+      ],
+      "matched_count": 4,
+      "missing_from_oracle": [
+        "avoid_contrast"
+      ],
+      "extra_in_oracle": [],
+      "coverage_ratio": 0.8,
+      "error_classification": "oracle_gap",
+      "notes": "Oracle rules do not recommend these expected actions: ['avoid_contrast']",
+      "actual_compliance_score": 0.19999999999999996,
+      "actual_sub_scores": {
+        "C1_path_selection": 0.19999999999999996,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {
+        "deviation": 4
+      },
+      "actual_total_violations": 4
+    },
+    "af_new_onset_basic": {
+      "domain": "atrial_fibrillation",
+      "guideline_graph": "atrial_fibrillation",
+      "expected_actions": [
+        "assess_vital_signs",
+        "obtain_12_lead_ecg",
+        "order_lab_tsh",
+        "order_lab_bmp",
+        "assess_chadsvasc_score"
+      ],
+      "expected_count": 5,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "order_ecg",
+        "assess_chadsvasc_score",
+        "assess_anticoagulation_need",
+        "give_rate_control"
+      ],
+      "oracle_recommended_count": 5,
+      "oracle_forbidden": [],
+      "matched": [
+        "assess_chadsvasc_score",
+        "assess_vital_signs"
+      ],
+      "matched_count": 2,
+      "missing_from_oracle": [
+        "obtain_12_lead_ecg",
+        "order_lab_bmp",
+        "order_lab_tsh"
+      ],
+      "extra_in_oracle": [
+        "assess_anticoagulation_need",
+        "give_rate_control",
+        "order_ecg"
+      ],
+      "coverage_ratio": 0.4,
+      "error_classification": "mixed_gap_and_naming",
+      "notes": "Potential naming mismatches: 'order_lab_bmp' may match Oracle's 'order_ecg'; 'order_lab_tsh' may match Oracle's 'order_ecg'"
+    },
+    "gi_bleeding_upper_basic": {
+      "domain": "gi_bleeding",
+      "guideline_graph": "gi_bleeding",
+      "expected_actions": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_cbc",
+        "order_lab_bmp",
+        "order_lab_coagulation",
+        "calculate_glasgow_blatchford_score"
+      ],
+      "expected_count": 6,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "assess_hemodynamic_status",
+        "establish_iv_access",
+        "order_lab_cbc",
+        "order_lab_bmp",
+        "order_type_and_crossmatch",
+        "give_iv_crystalloid_bolus",
+        "give_iv_ppi",
+        "consult_gi"
+      ],
+      "oracle_recommended_count": 9,
+      "oracle_forbidden": [
+        "delay_resuscitation"
+      ],
+      "matched": [
+        "assess_vital_signs",
+        "establish_iv_access",
+        "order_lab_bmp",
+        "order_lab_cbc"
+      ],
+      "matched_count": 4,
+      "missing_from_oracle": [
+        "calculate_glasgow_blatchford_score",
+        "order_lab_coagulation"
+      ],
+      "extra_in_oracle": [
+        "assess_hemodynamic_status",
+        "consult_gi",
+        "give_iv_crystalloid_bolus",
+        "give_iv_ppi",
+        "order_type_and_crossmatch"
+      ],
+      "coverage_ratio": 0.6666666666666666,
+      "error_classification": "naming_mismatch",
+      "notes": "Potential naming mismatches: 'order_lab_coagulation' may match Oracle's 'order_lab_cbc'; 'order_lab_coagulation' may match Oracle's 'order_lab_bmp'; 'order_lab_coagulation' may match Oracle's 'order_type_and_crossmatch'"
+    },
+    "htn_emergency_basic": {
+      "domain": "hypertensive_emergency",
+      "guideline_graph": "hypertensive_emergency",
+      "expected_actions": [
+        "assess_vital_signs",
+        "obtain_iv_access",
+        "order_lab_bmp",
+        "order_lab_cbc",
+        "order_lab_urinalysis",
+        "order_imaging_ct_head"
+      ],
+      "expected_count": 6,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "assess_end_organ_damage",
+        "continuous_bp_monitoring",
+        "order_lab_bmp",
+        "order_lab_troponin",
+        "give_iv_antihypertensive",
+        "order_imaging_ct_head",
+        "admit_to_icu"
+      ],
+      "oracle_recommended_count": 8,
+      "oracle_forbidden": [
+        "rapid_bp_reduction",
+        "give_oral_antihypertensive_only"
+      ],
+      "matched": [
+        "assess_vital_signs",
+        "order_imaging_ct_head",
+        "order_lab_bmp"
+      ],
+      "matched_count": 3,
+      "missing_from_oracle": [
+        "obtain_iv_access",
+        "order_lab_cbc",
+        "order_lab_urinalysis"
+      ],
+      "extra_in_oracle": [
+        "admit_to_icu",
+        "assess_end_organ_damage",
+        "continuous_bp_monitoring",
+        "give_iv_antihypertensive",
+        "order_lab_troponin"
+      ],
+      "coverage_ratio": 0.5,
+      "error_classification": "naming_mismatch",
+      "notes": "Potential naming mismatches: 'obtain_iv_access' may match Oracle's 'give_iv_antihypertensive'; 'order_lab_cbc' may match Oracle's 'order_lab_bmp'; 'order_lab_cbc' may match Oracle's 'order_lab_troponin'; 'order_lab_cbc' may match Oracle's 'order_imaging_ct_head'; 'order_lab_urinalysis' may match Oracle's 'order_lab_bmp'; 'order_lab_urinalysis' may match Oracle's 'order_lab_troponin'; 'order_lab_urinalysis' may match Oracle's 'order_imaging_ct_head'"
+    },
+    "pe_submassive_basic": {
+      "domain": "pulmonary_embolism",
+      "guideline_graph": "pulmonary_embolism",
+      "expected_actions": [
+        "assess_vital_signs",
+        "assess_wells_score",
+        "order_lab_d_dimer",
+        "order_imaging_ct_pulmonary_angiography"
+      ],
+      "expected_count": 4,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "assess_wells_score",
+        "order_lab_d_dimer",
+        "order_lab_troponin",
+        "order_lab_bnp",
+        "order_imaging_ct_pa",
+        "give_anticoagulation"
+      ],
+      "oracle_recommended_count": 7,
+      "oracle_forbidden": [
+        "delay_anticoagulation"
+      ],
+      "matched": [
+        "assess_vital_signs",
+        "assess_wells_score",
+        "order_lab_d_dimer"
+      ],
+      "matched_count": 3,
+      "missing_from_oracle": [
+        "order_imaging_ct_pulmonary_angiography"
+      ],
+      "extra_in_oracle": [
+        "give_anticoagulation",
+        "order_imaging_ct_pa",
+        "order_lab_bnp",
+        "order_lab_troponin"
+      ],
+      "coverage_ratio": 0.75,
+      "error_classification": "naming_mismatch",
+      "notes": "Potential naming mismatches: 'order_imaging_ct_pulmonary_angiography' may match Oracle's 'order_imaging_ct_pa'"
+    },
+    "copd_moderate_exacerbation": {
+      "domain": "copd",
+      "guideline_graph": "copd_exacerbation",
+      "expected_actions": [
+        "assess_vital_signs",
+        "order_lab_blood_gas",
+        "order_imaging_chest_xray",
+        "give_short_acting_bronchodilator",
+        "give_systemic_corticosteroid"
+      ],
+      "expected_count": 5,
+      "oracle_recommended": [
+        "assess_vital_signs",
+        "assess_respiratory_status",
+        "give_supplemental_oxygen",
+        "order_lab_abg",
+        "give_bronchodilator",
+        "order_lab_bmp",
+        "order_imaging_chest_xray",
+        "give_systemic_corticosteroid"
+      ],
+      "oracle_recommended_count": 8,
+      "oracle_forbidden": [
+        "give_high_flow_oxygen_without_monitoring"
+      ],
+      "matched": [
+        "assess_vital_signs",
+        "give_systemic_corticosteroid",
+        "order_imaging_chest_xray"
+      ],
+      "matched_count": 3,
+      "missing_from_oracle": [
+        "give_short_acting_bronchodilator",
+        "order_lab_blood_gas"
+      ],
+      "extra_in_oracle": [
+        "assess_respiratory_status",
+        "give_bronchodilator",
+        "give_supplemental_oxygen",
+        "order_lab_abg",
+        "order_lab_bmp"
+      ],
+      "coverage_ratio": 0.6,
+      "error_classification": "naming_mismatch",
+      "notes": "Potential naming mismatches: 'give_short_acting_bronchodilator' may match Oracle's 'give_bronchodilator'; 'order_lab_blood_gas' may match Oracle's 'order_lab_abg'; 'order_lab_blood_gas' may match Oracle's 'order_lab_bmp'"
+    },
+    "adhf_warm_wet": {
+      "domain": "heart_failure",
+      "guideline_graph": "aha_heart_failure",
+      "expected_actions": [
+        "assess_hemodynamic_profile",
+        "iv_diuretics",
+        "fluid_restrict",
+        "daily_weights",
+        "monitor_urine_output",
+        "monitor_electrolytes"
+      ],
+      "expected_count": 6,
+      "oracle_recommended": [
+        "assess_hemodynamic_profile",
+        "iv_diuretics",
+        "identify_precipitating_factors",
+        "fluid_restrict",
+        "daily_weights",
+        "monitor_urine_output",
+        "monitor_electrolytes",
+        "add_vasodilator_if_hypertensive"
+      ],
+      "oracle_recommended_count": 8,
+      "oracle_forbidden": [
+        "milrinone",
+        "dobutamine",
+        "inotrope",
+        "give_iv_inotropes"
+      ],
+      "matched": [
+        "assess_hemodynamic_profile",
+        "daily_weights",
+        "fluid_restrict",
+        "iv_diuretics",
+        "monitor_electrolytes",
+        "monitor_urine_output"
+      ],
+      "matched_count": 6,
+      "missing_from_oracle": [],
+      "extra_in_oracle": [
+        "add_vasodilator_if_hypertensive",
+        "identify_precipitating_factors"
+      ],
+      "coverage_ratio": 1.0,
+      "error_classification": "perfect",
+      "notes": "Oracle covers all expected actions",
+      "actual_compliance_score": 0.875,
+      "actual_sub_scores": {
+        "C1_path_selection": 0.875,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {
+        "deviation": 1
+      },
+      "actual_total_violations": 1
+    },
+    "hemorrhagic_stroke": {
+      "domain": "stroke",
+      "guideline_graph": "aha_stroke",
+      "expected_actions": [
+        "activate_stroke_team",
+        "order_stat_ct_head",
+        "icu_admission",
+        "bp_reduction_target_140",
+        "reverse_anticoagulation_if_applicable",
+        "neurosurgery_consult"
+      ],
+      "expected_count": 6,
+      "oracle_recommended": [
+        "order_stat_ct_head",
+        "activate_stroke_team",
+        "icu_admission",
+        "bp_reduction_target_140",
+        "neurosurgery_consult",
+        "repeat_ct_6h_or_if_deterioration"
+      ],
+      "oracle_recommended_count": 6,
+      "oracle_forbidden": [
+        "aspirin",
+        "alteplase",
+        "give_tpa",
+        "give_anticoagulation",
+        "give_alteplase",
+        "tpa",
+        "heparin",
+        "give_antiplatelet"
+      ],
+      "matched": [
+        "activate_stroke_team",
+        "bp_reduction_target_140",
+        "icu_admission",
+        "neurosurgery_consult",
+        "order_stat_ct_head"
+      ],
+      "matched_count": 5,
+      "missing_from_oracle": [
+        "reverse_anticoagulation_if_applicable"
+      ],
+      "extra_in_oracle": [
+        "repeat_ct_6h_or_if_deterioration"
+      ],
+      "coverage_ratio": 0.8333333333333334,
+      "error_classification": "context_gap",
+      "notes": "All missing actions are conditional: ['reverse_anticoagulation_if_applicable']. Oracle conditions may not fire without full patient simulation.",
+      "actual_compliance_score": 1.0,
+      "actual_sub_scores": {
+        "C1_path_selection": 1.0,
+        "C2_mandatory_completion": 1.0,
+        "C3_forbidden_avoidance": 1.0,
+        "C4_timing_compliance": 1.0,
+        "C5_sequence_integrity": 1.0
+      },
+      "actual_violations_by_type": {},
+      "actual_total_violations": 0
+    }
+  }
+}

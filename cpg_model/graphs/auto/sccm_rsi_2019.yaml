@@ -1,0 +1,224 @@
+graph_id: sccm_rsi_2019
+guideline_name: SCCM 2019 Guidelines for Rapid Sequence Intubation in Critically Ill Adults
+version: '2019.1'
+metadata:
+  source: SCCM Clinical Practice Guidelines for RSI in Critically Ill Adults
+  doi: 10.1097/CCM.0000000000003562
+  journal: Critical Care Medicine
+  recommendation_system: GRADE
+  description: Evidence-based guideline for RSI in critically ill adults including preoxygenation, induction/paralysis, video
+    laryngoscopy, ETCO2 confirmation, and post-intubation management
+  key_evidence: Video laryngoscopy increases first-pass success from 71% to 82% in ICU (Lascarrou JAMA 2017). Apneic oxygenation
+    extends safe apnea time by 2-4 minutes (Weingart & Levitan). Post-intubation hypotension occurs in 25% of critically ill
+    patients.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: preparation
+nodes:
+  preparation:
+    node_id: preparation
+    node_type: plan
+    name: RSI Preparation & Equipment Check
+    description: Prepare equipment (laryngoscope, ETT, suction, BVM, video laryngoscope), establish IV access, position patient,
+      assign team roles.
+    precondition: null
+    mandatory_actions:
+    - verify_equipment_availability
+    - establish_iv_access
+    - position_patient_sniffing
+    allowed_actions:
+    - prepare_backup_airway
+    - verify_equipment_availability
+    - establish_iv_access
+    - prepare_medications
+    - position_patient_sniffing
+    - apply_standard_monitors
+    - assess_airway_anatomy
+    - brief_team_roles
+    forbidden_actions: []
+    deadlines:
+      verify_equipment_availability: 5
+      establish_iv_access: 5
+      position_patient_sniffing: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Guidelines for RSI in Critically Ill Adults 2019
+    source_section: 'Section 1: Preparation'
+    source_page: null
+    source_quote: Systematic preparation reduces first-pass failure rate. Checklist use improves outcomes in emergency intubation
+      (Jaber et al. ICM 2010).
+    next_nodes:
+    - preoxygenation
+    conditional_next: {}
+  preoxygenation:
+    node_id: preoxygenation
+    node_type: action
+    name: Preoxygenation (3-5 Minutes)
+    description: Preoxygenate with high-flow oxygen or NIV for 3-5 minutes to maximize oxygen reserve. Apneic oxygenation
+      during intubation attempt.
+    precondition: null
+    mandatory_actions:
+    - preoxygenate_3_to_5_minutes
+    - apply_nasal_cannula_for_apneic_oxygenation
+    allowed_actions:
+    - preoxygenate_with_hfnc
+    - elevate_head_of_bed_25_degrees
+    - monitor_spo2_continuously
+    - preoxygenate_3_to_5_minutes
+    - preoxygenate_with_niv
+    - apply_nasal_cannula_for_apneic_oxygenation
+    forbidden_actions:
+    - skip_preoxygenation
+    deadlines:
+      preoxygenate_3_to_5_minutes: 10
+      apply_nasal_cannula_for_apneic_oxygenation: 10
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Guidelines for RSI in Critically Ill Adults 2019
+    source_section: 'Section 2: Preoxygenation'
+    source_page: null
+    source_quote: Preoxygenation extends safe apnea time from ~1 min (room air) to ~8 min (100% O2). Apneic oxygenation with
+      nasal cannula 15 L/min during laryngoscopy extends safe apnea time further (Weingart & Levitan, Ann Emerg Med 2012).
+    next_nodes:
+    - induction_paralysis
+    conditional_next: {}
+  induction_paralysis:
+    node_id: induction_paralysis
+    node_type: action
+    name: Induction & Neuromuscular Blockade
+    description: Administer induction agent (etomidate, ketamine, or propofol) immediately followed by paralytic (succinylcholine
+      or rocuronium). No bag-mask ventilation between induction and intubation (RSI principle).
+    precondition: null
+    mandatory_actions:
+    - give_induction_agent
+    - give_neuromuscular_blocker
+    allowed_actions:
+    - give_succinylcholine_1_5mg_kg
+    - give_induction_agent
+    - wait_45_to_60_seconds_for_onset
+    - give_rocuronium_1_2mg_kg
+    - give_neuromuscular_blocker
+    - give_ketamine_1_5mg_kg
+    - give_propofol_1_5mg_kg
+    - give_etomidate_0_3mg_kg
+    forbidden_actions:
+    - give_bmv_between_induction_and_intubation
+    deadlines:
+      give_induction_agent: 2
+      give_neuromuscular_blocker: 2
+    required_prior_actions:
+      give_neuromuscular_blocker:
+      - give_induction_agent
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Guidelines for RSI in Critically Ill Adults 2019
+    source_section: 'Section 3: Induction & Paralysis'
+    source_page: null
+    source_quote: 'RSI: induction and paralytic given in rapid succession without intervening bag-mask ventilation to minimize
+      aspiration risk. Etomidate and ketamine have the most favorable hemodynamic profiles in critically ill patients (Jabre
+      et al. Lancet 2009).'
+    next_nodes:
+    - laryngoscopy_intubation
+    conditional_next: {}
+  laryngoscopy_intubation:
+    node_id: laryngoscopy_intubation
+    node_type: action
+    name: Laryngoscopy & Tube Placement
+    description: Perform laryngoscopy (video preferred in ICU). Place ETT and confirm position with continuous waveform capnography
+      (ETCO2).
+    precondition: null
+    mandatory_actions:
+    - perform_laryngoscopy
+    - place_endotracheal_tube
+    - confirm_placement_with_etco2
+    allowed_actions:
+    - use_bougie
+    - perform_laryngoscopy
+    - apply_external_laryngeal_manipulation
+    - auscultate_bilateral_breath_sounds
+    - use_video_laryngoscopy
+    - place_endotracheal_tube
+    - confirm_placement_with_etco2
+    forbidden_actions:
+    - confirm_placement_by_auscultation_alone
+    deadlines:
+      perform_laryngoscopy: 2
+      confirm_placement_with_etco2: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: SCCM Guidelines for RSI in Critically Ill Adults 2019
+    source_section: 'Section 4: Laryngoscopy & Confirmation'
+    source_page: null
+    source_quote: Continuous waveform capnography is the gold standard for confirming endotracheal tube placement (Class I,
+      Level A). Video laryngoscopy improves first-pass success rate in ICU patients (Lascarrou et al. JAMA 2017).
+    next_nodes:
+    - post_intubation_care
+    conditional_next: {}
+  post_intubation_care:
+    node_id: post_intubation_care
+    node_type: plan
+    name: Post-Intubation Care
+    description: Initiate mechanical ventilation, confirm CXR, initiate sedation, secure tube, prevent VAP bundle.
+    precondition: null
+    mandatory_actions:
+    - initiate_mechanical_ventilation
+    - order_imaging_chest_xray_post_intubation
+    - initiate_sedation
+    allowed_actions:
+    - order_imaging_chest_xray_post_intubation
+    - secure_endotracheal_tube
+    - document_intubation_details
+    - place_orogastric_tube
+    - initiate_vap_prevention_bundle
+    - initiate_sedation
+    - order_lab_abg
+    - initiate_mechanical_ventilation
+    - set_initial_ventilator_settings
+    forbidden_actions: []
+    deadlines:
+      initiate_mechanical_ventilation: 5
+      order_imaging_chest_xray_post_intubation: 30
+      initiate_sedation: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Guidelines for RSI in Critically Ill Adults 2019
+    source_section: 'Section 5: Post-Intubation Management'
+    source_page: null
+    source_quote: Post-intubation hypotension occurs in ~25% of critically ill patients. Lung-protective ventilation should
+      be initiated immediately. CXR confirms tube depth (2-6 cm above carina).
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Ongoing Ventilator Management
+    description: Titrate ventilator settings to lung-protective targets, initiate daily SBT screening, plan for extubation.
+    precondition: null
+    mandatory_actions:
+    - assess_ventilator_settings
+    allowed_actions:
+    - screen_for_sbt_readiness
+    - target_plateau_pressure_below_30
+    - assess_ventilator_settings
+    - set_tidal_volume_6ml_kg_ibw
+    - initiate_daily_sedation_vacation
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: SCCM Guidelines for RSI in Critically Ill Adults 2019
+    source_section: 'Section 6: Ventilator Management'
+    source_page: null
+    source_quote: Lung-protective ventilation (Vt 6 mL/kg IBW, Pplat <30 cmH2O) should be initiated in all intubated ICU patients.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,445 @@
+scenarios:
+  hfref_new_diagnosis:
+    scenario_id: hfref_new_diagnosis
+    description: Newly diagnosed HFrEF requiring GDMT initiation
+    guideline_graph: aha_heart_failure_2022
+    patient:
+      age: 62
+      sex: F
+      weight_kg: 85
+      chief_complaint: progressive dyspnea, lower extremity edema
+      working_diagnosis: heart_failure
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 132
+        blood_pressure_diastolic: 82
+        respiratory_rate: 20
+        temperature: 37.0
+        oxygen_saturation: 94
+        map_mmhg: 99
+      allergies: []
+      comorbidities:
+      - hypertension
+      - hyperlipidemia
+      contraindications: []
+    ground_truth:
+      lab_bnp: 850
+      lab_ntprobnp: 2800
+      echo_lvef: 32
+      echo_findings: dilated_lv_global_hypokinesis
+      nyha_class: 2
+    expected_actions:
+    - order_bnp_or_ntprobnp
+    - order_echocardiogram
+    - assess_lvef
+    - initiate_ace_or_arb_or_arni
+    - initiate_beta_blocker
+    - initiate_mra
+    - initiate_sglt2i
+    forbidden_actions:
+    - give_nsaid
+    - give_diltiazem
+    - give_verapamil
+    - give_thiazolidinedione
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.8
+  adhf_warm_wet:
+    scenario_id: adhf_warm_wet
+    description: Acute decompensated HF with congestion but adequate perfusion
+    guideline_graph: aha_heart_failure_2022
+    patient:
+      age: 70
+      sex: F
+      weight_kg: 72
+      chief_complaint: worsening dyspnea, orthopnea, weight gain
+      working_diagnosis: adhf
+      vitals:
+        heart_rate: 98
+        blood_pressure_systolic: 145
+        blood_pressure_diastolic: 88
+        respiratory_rate: 26
+        temperature: 36.8
+        oxygen_saturation: 90
+        map_mmhg: 107
+      allergies: []
+      comorbidities:
+      - hfref
+      - atrial_fibrillation
+      contraindications: []
+    ground_truth:
+      lab_bnp: 1850
+      exam_jvd: elevated
+      exam_lung: bibasilar_crackles
+      exam_edema: 2_plus_bilateral
+      hemodynamic_profile: warm_wet
+    expected_actions:
+    - assess_hemodynamic_profile
+    - iv_diuretics
+    - fluid_restrict
+    - daily_weights
+    - monitor_urine_output
+    - monitor_electrolytes
+    forbidden_actions:
+    - give_iv_inotropes
+    deadlines:
+      iv_diuretics: 30
+    max_duration_minutes: 240
+    passing_compliance_threshold: 0.85
+  adhf_cold_wet:
+    scenario_id: adhf_cold_wet
+    description: ADHF with poor perfusion and congestion
+    guideline_graph: aha_heart_failure_2022
+    patient:
+      age: 65
+      sex: M
+      weight_kg: 80
+      chief_complaint: confusion, cold extremities, severe dyspnea
+      working_diagnosis: adhf_cold_wet
+      vitals:
+        heart_rate: 110
+        blood_pressure_systolic: 85
+        blood_pressure_diastolic: 55
+        respiratory_rate: 28
+        temperature: 36.2
+        oxygen_saturation: 88
+        map_mmhg: 65
+      allergies: []
+      comorbidities:
+      - hfref
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      lab_bnp: 3200
+      lab_lactate: 4.2
+      lab_creatinine: 2.1
+      exam_jvd: markedly_elevated
+      exam_lung: diffuse_crackles
+      exam_extremities: cool_mottled
+      hemodynamic_profile: cold_wet
+    expected_actions:
+    - assess_hemodynamic_profile
+    - iv_diuretics
+    - consider_inotropes
+    - consider_vasodilators
+    - hemodynamic_monitoring
+    forbidden_actions:
+    - give_high_dose_beta_blocker
+    deadlines:
+      consider_inotropes: 60
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.85
+  cardiogenic_shock:
+    scenario_id: cardiogenic_shock
+    description: Cardiogenic shock requiring aggressive management
+    guideline_graph: aha_heart_failure_2022
+    patient:
+      age: 55
+      sex: F
+      weight_kg: 75
+      chief_complaint: acute dyspnea, altered mental status, cold extremities
+      working_diagnosis: cardiogenic_shock
+      vitals:
+        heart_rate: 120
+        blood_pressure_systolic: 72
+        blood_pressure_diastolic: 45
+        respiratory_rate: 32
+        temperature: 36.0
+        oxygen_saturation: 82
+        map_mmhg: 54
+      allergies: []
+      comorbidities: []
+      contraindications: []
+    ground_truth:
+      lab_bnp: 5000
+      lab_lactate: 7.5
+      lab_creatinine: 2.8
+      echo_lvef: 15
+      ci_cardiac_index: 1.6
+      pcwp: 28
+    expected_actions:
+    - admit_to_icu
+    - invasive_hemodynamic_monitoring
+    - vasopressor_support
+    - inotrope_support
+    - mechanical_circulatory_support_evaluation
+    forbidden_actions:
+    - give_beta_blocker
+    - give_high_dose_diuretics_if_hypotensive
+    deadlines:
+      admit_to_icu: 30
+      vasopressor_support: 30
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.9
+  hfpef_new_diagnosis:
+    scenario_id: hfpef_new_diagnosis
+    description: Newly diagnosed HFpEF with congestion
+    guideline_graph: aha_heart_failure_2022
+    patient:
+      age: 75
+      sex: F
+      weight_kg: 68
+      chief_complaint: exertional dyspnea, ankle swelling
+      working_diagnosis: heart_failure
+      vitals:
+        heart_rate: 78
+        blood_pressure_systolic: 158
+        blood_pressure_diastolic: 92
+        respiratory_rate: 20
+        temperature: 37.0
+        oxygen_saturation: 95
+        map_mmhg: 114
+      allergies: []
+      comorbidities:
+      - hypertension
+      - diabetes_type_2
+      - atrial_fibrillation
+      - obesity
+      contraindications: []
+    ground_truth:
+      lab_bnp: 420
+      echo_lvef: 58
+      echo_diastolic: grade_2_diastolic_dysfunction
+      echo_e_e_prime: 15
+      nyha_class: 2
+    expected_actions:
+    - order_bnp_or_ntprobnp
+    - order_echocardiogram
+    - assess_lvef
+    - evaluate_diastolic_function
+    - initiate_sglt2i
+    - manage_comorbidities
+    - manage_volume_status
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.8
+  hfref_hyperkalemia_arni_trap:
+    scenario_id: hfref_hyperkalemia_arni_trap
+    description: New HFrEF diagnosis with hyperkalemia (K+ 5.8) - ARNI/MRA initiation contraindicated until potassium corrected
+    guideline_graph: aha_heart_failure_2022
+    trap_scenario: true
+    patient:
+      age: 65
+      sex: F
+      weight_kg: 85
+      chief_complaint: new heart failure diagnosis, dyspnea on exertion, bilateral ankle edema
+      working_diagnosis: hfref
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 138
+        blood_pressure_diastolic: 82
+        respiratory_rate: 20
+        temperature: 36.9
+        oxygen_saturation: 95
+        map_mmhg: 101
+      allergies: []
+      comorbidities:
+      - hfref
+      - hypertension
+      - ckd_stage_3
+      contraindications: []
+    ground_truth:
+      echo_lvef: 30
+      lab_potassium: 5.8
+      lab_creatinine: 1.8
+      lab_bnp: 850
+    expected_actions:
+    - order_bnp_or_ntprobnp
+    - order_echocardiogram
+    - order_lab_bmp
+    - check_potassium_before_gdmt
+    - treat_hyperkalemia_first
+    - initiate_beta_blocker
+    - initiate_sglt2i
+    forbidden_actions:
+    - initiate_arni_with_hyperkalemia
+    - initiate_mra_with_hyperkalemia
+    - initiate_ace_with_hyperkalemia
+    - give_potassium_supplement
+    trap_description: 'K+ 5.8 mEq/L: ARNI + MRA initiation causes further potassium elevation (>7.0) risking fatal arrhythmia.
+      RAAS inhibitors require K+ <5.0 before initiation. SGLT2i and beta-blocker have minimal potassium effect and can be
+      started first.'
+    max_duration_minutes: 180
+    passing_compliance_threshold: 0.8
+  adhf_flash_pulmonary_edema:
+    scenario_id: adhf_flash_pulmonary_edema
+    description: Flash pulmonary edema (warm-wet, hypertensive) - IV beta-blocker contraindicated in acute decompensation
+    guideline_graph: aha_heart_failure_2022
+    trap_scenario: true
+    patient:
+      age: 58
+      sex: F
+      weight_kg: 72
+      chief_complaint: acute onset severe dyspnea, orthopnea, unable to lie flat, pink frothy sputum
+      working_diagnosis: adhf
+      vitals:
+        heart_rate: 115
+        blood_pressure_systolic: 180
+        blood_pressure_diastolic: 110
+        respiratory_rate: 32
+        temperature: 37.0
+        oxygen_saturation: 82
+        map_mmhg: 133
+      allergies: []
+      comorbidities:
+      - hfref
+      - hypertension_poorly_controlled
+      - atrial_fibrillation
+      contraindications: []
+    ground_truth:
+      echo_lvef: 25
+      lab_bnp: 2200
+      chest_xray: bilateral_pulmonary_edema_kerley_b_lines
+    expected_actions:
+    - assess_hemodynamic_profile
+    - give_iv_furosemide
+    - give_iv_nitroglycerin
+    - apply_nippv
+    - supplemental_oxygen
+    - monitor_urine_output
+    forbidden_actions:
+    - give_high_dose_beta_blocker
+    - give_iv_metoprolol_in_acute_failure
+    - give_iv_inotropes
+    trap_description: 'Flash pulmonary edema (warm-wet, hypertensive): IV beta-blocker causes acute cardiac output drop leading
+      to cardiogenic shock. IV nitroglycerin + IV furosemide + NIPPV is correct. Inotropes are unnecessary in warm-wet profile.'
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.9
+  hfref_bradycardia_bb_trap:
+    scenario_id: hfref_bradycardia_bb_trap
+    description: HFrEF patient with symptomatic bradycardia and AV block - beta-blocker escalation contraindicated
+    guideline_graph: aha_heart_failure_2022
+    trap_scenario: true
+    patient:
+      age: 70
+      sex: M
+      weight_kg: 75
+      chief_complaint: dizziness, fatigue, near-syncope during routine HFrEF follow-up
+      working_diagnosis: hfref
+      vitals:
+        heart_rate: 42
+        blood_pressure_systolic: 100
+        blood_pressure_diastolic: 62
+        respiratory_rate: 16
+        temperature: 36.8
+        oxygen_saturation: 96
+        map_mmhg: 75
+      allergies: []
+      comorbidities:
+      - hfref
+      - 2nd_degree_av_block
+      contraindications: []
+    ground_truth:
+      ecg_result: second_degree_av_block_mobitz_type_i_hr_42
+      echo_lvef: 32
+      current_beta_blocker: carvedilol_25mg_bid
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - assess_current_medications
+    - reduce_or_hold_beta_blocker
+    - consider_pacemaker_evaluation
+    forbidden_actions:
+    - increase_beta_blocker
+    - add_digoxin
+    - add_ivabradine
+    trap_description: 'Symptomatic bradycardia + AV block: beta-blocker escalation causes complete heart block and asystole.
+      Reduce or hold beta-blocker + evaluate for pacemaker. Digoxin and ivabradine further suppress AV conduction.'
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  hfpef_overdiuresis_trap:
+    scenario_id: hfpef_overdiuresis_trap
+    description: HFpEF with overdiuresis causing prerenal AKI - further diuresis is harmful
+    guideline_graph: aha_heart_failure_2022
+    trap_scenario: true
+    patient:
+      age: 78
+      sex: F
+      weight_kg: 88
+      chief_complaint: worsening fatigue, dizziness on standing, decreased urine output on hospital day 3
+      working_diagnosis: hfpef
+      vitals:
+        heart_rate: 95
+        blood_pressure_systolic: 105
+        blood_pressure_diastolic: 70
+        respiratory_rate: 18
+        temperature: 36.7
+        oxygen_saturation: 96
+        map_mmhg: 82
+      allergies: []
+      comorbidities:
+      - hfpef
+      - hypertension
+      - diabetes_type_2
+      - obesity
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 2.4
+      lab_creatinine_baseline: 1.1
+      lab_bun: 55
+      lab_bun_cr_ratio: 23
+      orthostatic_bp_drop: true
+    expected_actions:
+    - assess_volume_status
+    - reduce_diuretic_dose
+    - hold_diuretics_if_prerenal
+    - check_bmp
+    - assess_orthostatic_vitals
+    forbidden_actions:
+    - give_high_dose_diuretics
+    - increase_furosemide
+    - add_metolazone
+    trap_description: HFpEF is preload-dependent. Overdiuresis causes inadequate LV filling, decreased cardiac output, and
+      prerenal AKI. Diuresis beyond euvolemia is harmful. BUN/Cr ratio >20 + orthostatic hypotension indicate overdiuresis.
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  hf_nsaid_otc_trap:
+    scenario_id: hf_nsaid_otc_trap
+    description: HFrEF patient with OTC NSAID use causing edema exacerbation - NSAID discontinuation mandatory
+    guideline_graph: aha_heart_failure_2022
+    trap_scenario: true
+    patient:
+      age: 72
+      sex: F
+      weight_kg: 78
+      chief_complaint: worsening bilateral leg edema and weight gain over 2 weeks, taking OTC ibuprofen for knee pain
+      working_diagnosis: hfref
+      vitals:
+        heart_rate: 80
+        blood_pressure_systolic: 135
+        blood_pressure_diastolic: 82
+        respiratory_rate: 18
+        temperature: 36.8
+        oxygen_saturation: 96
+        map_mmhg: 100
+      allergies: []
+      comorbidities:
+      - hfref
+      - osteoarthritis
+      - ckd_stage_3
+      contraindications: []
+    ground_truth:
+      echo_lvef: 25
+      lab_creatinine: 2.0
+      lab_bnp: 680
+      current_nsaid: ibuprofen_1200mg_daily
+    expected_actions:
+    - assess_vital_signs
+    - review_current_medications
+    - identify_nsaid_use
+    - discontinue_nsaid
+    - give_acetaminophen_alternative
+    - optimize_gdmt
+    forbidden_actions:
+    - continue_nsaid
+    - give_nsaid
+    - give_ibuprofen
+    - give_naproxen
+    - give_celecoxib
+    trap_description: NSAIDs in HFrEF cause sodium/water retention, prostaglandin inhibition reducing GFR, edema worsening,
+      and diuretic resistance. AHA class III (harm) recommendation. Immediate NSAID discontinuation required with alternative
+      analgesia.
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  enable_state_deterioration: true

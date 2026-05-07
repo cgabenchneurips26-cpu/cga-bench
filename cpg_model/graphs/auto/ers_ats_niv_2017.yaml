@@ -1,0 +1,247 @@
+graph_id: ers_ats_niv_2017
+guideline_name: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure (2017)'
+version: '2017.1'
+metadata:
+  source: 'ERS/ATS Clinical Practice Guidelines: Noninvasive Ventilation for Acute Respiratory Failure'
+  doi: 10.1183/13993003.02426-2016
+  journal: European Respiratory Journal
+  recommendation_system: GRADE
+  description: Evidence-based guideline for NIV in acute respiratory failure covering COPD, cardiogenic pulmonary edema, and
+    immunocompromised patients
+  key_evidence: NIV reduces mortality by 46% and intubation by 64% in COPD exacerbation (Lightowler meta-analysis). CPAP reduces
+    mortality in cardiogenic pulmonary edema (3CPO trial). NNT=5 for COPD mortality prevention.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Acute Respiratory Failure Recognition & NIV Indication
+    description: 'Identify type of acute respiratory failure and assess NIV eligibility. Strong indications: COPD exacerbation,
+      cardiogenic pulmonary edema, immunocompromised with acute hypoxemia.'
+    precondition: null
+    mandatory_actions:
+    - assess_respiratory_status
+    - order_lab_abg
+    - assess_niv_indication
+    allowed_actions:
+    - assess_vital_signs
+    - apply_supplemental_oxygen
+    - assess_respiratory_status
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - assess_niv_indication
+    - order_lab_abg
+    - order_lab_bnp
+    - order_lab_bmp
+    forbidden_actions: []
+    deadlines:
+      assess_respiratory_status: 10
+      order_lab_abg: 30
+      assess_niv_indication: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: 'Recommendation 1-3: Indications for NIV'
+    source_page: null
+    source_quote: We recommend NIV for COPD exacerbation with acute respiratory acidosis (strong, moderate certainty). We
+      recommend NIV for acute cardiogenic pulmonary edema (strong, low certainty).
+    next_nodes: []
+    conditional_next:
+      state.diagnosis == 'copd_exacerbation': niv_copd_initiation
+      state.diagnosis == 'cardiogenic_pulmonary_edema': niv_cpe_initiation
+      state.diagnosis == 'immunocompromised_arf': niv_immunocompromised
+      state.niv_contraindicated == True: intubation_decision
+  niv_copd_initiation:
+    node_id: niv_copd_initiation
+    node_type: action
+    name: NIV for COPD Exacerbation (Strong Recommendation)
+    description: Initiate bilevel NIV (IPAP/EPAP) for acute hypercapnic respiratory failure due to COPD exacerbation. Target
+      pH improvement within 1-2 hours.
+    precondition: state.diagnosis == 'copd_exacerbation' and state.ph < 7.35
+    mandatory_actions:
+    - initiate_bilevel_niv
+    - set_ipap_10_to_20_cmh2o
+    - set_epap_4_to_6_cmh2o
+    allowed_actions:
+    - reassess_respiratory_status
+    - titrate_fio2_to_spo2_88_92
+    - initiate_bilevel_niv
+    - set_ipap_10_to_20_cmh2o
+    - give_bronchodilator_nebulized
+    - order_lab_abg
+    - set_epap_4_to_6_cmh2o
+    - give_systemic_corticosteroids
+    forbidden_actions:
+    - initiate_high_flow_o2_above_spo2_92
+    deadlines:
+      initiate_bilevel_niv: 60
+      set_ipap_10_to_20_cmh2o: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: 'Recommendation 1: COPD'
+    source_page: null
+    source_quote: Bilevel NIV reduces mortality (RR 0.54), intubation (RR 0.36), and hospital LOS in COPD with acute respiratory
+      acidosis (pH <7.35). NNT=5 for mortality reduction (Lightowler et al. BMJ 2003).
+    next_nodes:
+    - niv_monitoring
+    conditional_next: {}
+  niv_cpe_initiation:
+    node_id: niv_cpe_initiation
+    node_type: action
+    name: NIV for Cardiogenic Pulmonary Edema
+    description: Initiate CPAP or bilevel NIV for acute cardiogenic pulmonary edema. CPAP 5-10 cmH2O is first-line.
+    precondition: state.diagnosis == 'cardiogenic_pulmonary_edema'
+    mandatory_actions:
+    - initiate_cpap_or_bilevel
+    - set_cpap_5_to_10_cmh2o
+    allowed_actions:
+    - reassess_respiratory_status
+    - give_iv_nitroglycerin
+    - set_cpap_5_to_10_cmh2o
+    - order_imaging_chest_xray
+    - give_iv_furosemide
+    - order_lab_abg
+    - order_lab_bnp
+    - initiate_cpap_or_bilevel
+    forbidden_actions: []
+    deadlines:
+      initiate_cpap_or_bilevel: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: 'Recommendation 2: Cardiogenic Pulmonary Edema'
+    source_page: null
+    source_quote: NIV (CPAP or bilevel) reduces mortality and intubation rate in acute cardiogenic pulmonary edema (3CPO trial,
+      Gray et al. NEJM 2008).
+    next_nodes:
+    - niv_monitoring
+    conditional_next: {}
+  niv_immunocompromised:
+    node_id: niv_immunocompromised
+    node_type: action
+    name: NIV for Immunocompromised Patients with ARF
+    description: Early NIV in immunocompromised patients with acute hypoxemic respiratory failure to avoid intubation-associated
+      complications.
+    precondition: state.diagnosis == 'immunocompromised_arf'
+    mandatory_actions:
+    - initiate_niv_early
+    - monitor_closely_for_niv_failure
+    allowed_actions:
+    - reassess_respiratory_status
+    - initiate_niv_early
+    - order_imaging_chest_xray
+    - titrate_fio2_to_target_spo2
+    - monitor_closely_for_niv_failure
+    - set_pressure_support_ventilation
+    - order_lab_abg
+    forbidden_actions: []
+    deadlines:
+      initiate_niv_early: 60
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: 'Recommendation 3: Immunocompromised'
+    source_page: null
+    source_quote: We suggest NIV for early acute respiratory failure in immunocompromised patients (conditional, low certainty).
+      Close monitoring is essential as delayed intubation increases mortality (Hilbert et al. NEJM 2001).
+    next_nodes:
+    - niv_monitoring
+    conditional_next: {}
+  niv_monitoring:
+    node_id: niv_monitoring
+    node_type: enquiry
+    name: NIV Response Monitoring (1-2 Hour Check)
+    description: 'Assess NIV response at 1-2 hours. Key targets: pH improvement, RR reduction, patient comfort, air leak minimization.'
+    precondition: null
+    mandatory_actions:
+    - reassess_abg_at_1_to_2_hours
+    - evaluate_niv_tolerance
+    allowed_actions:
+    - monitor_vital_signs
+    - assess_patient_ventilator_synchrony
+    - adjust_niv_settings
+    - evaluate_niv_tolerance
+    - reassess_abg_at_1_to_2_hours
+    - assess_mask_fit
+    forbidden_actions: []
+    deadlines:
+      reassess_abg_at_1_to_2_hours: 120
+      evaluate_niv_tolerance: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: Monitoring & Failure Criteria
+    source_page: null
+    source_quote: Failure to improve pH within 1-2 hours predicts NIV failure. Predictors of failure include high severity
+      score, pH <7.25, and excessive air leak.
+    next_nodes: []
+    conditional_next:
+      state.niv_failed == True: intubation_decision
+      state.niv_improving == True: disposition
+  intubation_decision:
+    node_id: intubation_decision
+    node_type: decision
+    name: Escalation to Invasive Mechanical Ventilation
+    description: NIV failure or contraindication — proceed to endotracheal intubation. Do not delay intubation in deteriorating
+      patients.
+    precondition: null
+    mandatory_actions:
+    - proceed_to_intubation
+    allowed_actions:
+    - confirm_tube_placement_etco2
+    - preoxygenate
+    - proceed_to_intubation
+    - prepare_rsi_medications
+    - initiate_mechanical_ventilation
+    forbidden_actions:
+    - continue_niv_if_failing
+    deadlines:
+      proceed_to_intubation: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: NIV Failure & Escalation
+    source_page: null
+    source_quote: Delayed intubation after NIV failure is associated with increased mortality. NIV should not be used as a
+      substitute for needed intubation.
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Weaning
+    description: Assess NIV weaning readiness, plan ICU vs step-down disposition.
+    precondition: null
+    mandatory_actions:
+    - assess_weaning_readiness
+    allowed_actions:
+    - trial_niv_discontinuation
+    - arrange_icu_or_stepdown
+    - transition_to_standard_oxygen
+    - continue_niv_intermittent
+    - assess_weaning_readiness
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: 'ERS/ATS Clinical Practice Guidelines: NIV for Acute Respiratory Failure 2017'
+    source_section: Weaning & Disposition
+    source_page: null
+    source_quote: NIV can be weaned as clinical condition improves, guided by ABG and respiratory rate improvement.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,1754 @@
+meta:
+  description: Comprehensive guideline cards for all CGA-Bench CPG graphs
+  generated_by: scripts/generate_guideline_cards.py
+  total_graphs: 25
+guideline_cards:
+- graph_id: aabb_transfusion
+  guideline_name: AABB 2024 RBC Transfusion Guidelines
+  source: AABB 2024 + ASA 2024
+  version: '2024.1'
+  scope: Evidence-based RBC transfusion thresholds and massive transfusion protocol
+  target_population: Patients requiring blood product transfusion
+  node_count: 4
+  source_guidelines_cited:
+  - AABB 2024
+  evidence_level: A
+  constraint_summary:
+    forbidden_action_count: 8
+    forbidden_actions:
+    - transfuse_without_consent
+    - transfuse_without_type_and_screen
+    - transfuse_for_hb_above_10
+    - transfuse_without_indication
+    - delay_blood_products_for_crossmatch
+    - give_crystalloid_as_sole_resuscitation
+    - continue_transfusion_during_reaction
+    - restart_same_unit
+    required_action_count: 15
+    required_actions:
+    - order_cbc
+    - order_type_and_screen
+    - assess_hemodynamic_status
+    - assess_active_bleeding
+    - review_transfusion_history
+    - apply_restrictive_threshold
+    - activate_massive_transfusion_protocol
+    - give_prbc_ffp_platelets_1_1_1
+    - give_tranexamic_acid
+    - monitor_coagulation
+    - maintain_temperature
+    - stop_transfusion_immediately
+    - maintain_iv_access
+    - send_blood_bank_workup
+    - monitor_vitals_q15min
+    before_constraint_count: 1
+    before_constraints:
+    - '[''order_cbc''] BEFORE apply_restrictive_threshold'
+    within_constraint_count: 8
+    within_constraints:
+    - action: order_cbc
+      within_minutes: 15
+    - action: order_type_and_screen
+      within_minutes: 15
+    - action: assess_hemodynamic_status
+      within_minutes: 10
+    - action: apply_restrictive_threshold
+      within_minutes: 60
+    - action: activate_massive_transfusion_protocol
+      within_minutes: 10
+    - action: give_tranexamic_acid
+      within_minutes: 15
+    - action: stop_transfusion_immediately
+      within_minutes: 2
+    - action: send_blood_bank_workup
+      within_minutes: 30
+  total_constraints: 32
+  known_limitations: []
+- graph_id: aba_burn_resuscitation
+  guideline_name: ABA 2024 Burn Resuscitation Guidelines
+  source: ABA 2024 + ISBI 2024
+  version: '2024.1'
+  scope: Comprehensive burn resuscitation from initial assessment through transfer disposition
+  target_population: Adult and pediatric burn patients
+  node_count: 6
+  source_guidelines_cited:
+  - ABA 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 8
+    forbidden_actions:
+    - apply_ice_to_burn
+    - apply_butter_to_burn
+    - debride_in_field
+    - give_colloid_in_first_24h
+    - use_normal_saline_only
+    - delay_intubation_for_imaging
+    - apply_topical_antibiotic_before_transfer
+    - discharge_major_burn_home
+    required_action_count: 24
+    required_actions:
+    - assess_airway
+    - assess_vital_signs
+    - estimate_tbsa
+    - assess_burn_depth
+    - obtain_patient_weight
+    - establish_iv_access
+    - calculate_parkland_formula
+    - start_lactated_ringers
+    - monitor_urine_output_target_0_5_ml_kg_h
+    - titrate_fluids_to_urine_output
+    - place_foley_catheter
+    - perform_early_intubation
+    - order_chest_xray
+    - order_carboxyhemoglobin
+    - give_100_percent_oxygen
+    - assess_compartment_pressures
+    - assess_distal_pulses
+    - perform_escharotomy
+    - remove_clothing_jewelry
+    - cover_with_clean_dry_dressing
+    - update_tetanus_if_needed
+    - pain_management
+    - assess_burn_center_referral_criteria
+    - arrange_transfer_if_indicated
+    before_constraint_count: 2
+    before_constraints:
+    - '[''estimate_tbsa'', ''obtain_patient_weight''] BEFORE calculate_parkland_formula'
+    - '[''establish_iv_access''] BEFORE start_lactated_ringers'
+    within_constraint_count: 15
+    within_constraints:
+    - action: assess_airway
+      within_minutes: 5
+    - action: assess_vital_signs
+      within_minutes: 5
+    - action: estimate_tbsa
+      within_minutes: 15
+    - action: establish_iv_access
+      within_minutes: 15
+    - action: calculate_parkland_formula
+      within_minutes: 30
+    - action: start_lactated_ringers
+      within_minutes: 30
+    - action: place_foley_catheter
+      within_minutes: 60
+    - action: perform_early_intubation
+      within_minutes: 15
+    - action: give_100_percent_oxygen
+      within_minutes: 5
+    - action: order_carboxyhemoglobin
+      within_minutes: 30
+    - action: assess_distal_pulses
+      within_minutes: 30
+    - action: perform_escharotomy
+      within_minutes: 60
+    - action: remove_clothing_jewelry
+      within_minutes: 30
+    - action: pain_management
+      within_minutes: 30
+    - action: assess_burn_center_referral_criteria
+      within_minutes: 120
+  total_constraints: 49
+  known_limitations: []
+- graph_id: acls_cardiac_arrest
+  guideline_name: AHA ACLS Cardiac Arrest Management
+  source: AHA ACLS 2025
+  version: '2025.1'
+  scope: Advanced cardiac life support algorithm for adult cardiac arrest management
+  target_population: Patients in cardiac arrest (all ages)
+  node_count: 6
+  source_guidelines_cited:
+  - AHA ACLS 2025
+  evidence_level: A
+  constraint_summary:
+    forbidden_action_count: 7
+    forbidden_actions:
+    - delay_cpr
+    - delay_defibrillation
+    - interrupt_cpr_for_intubation_extended
+    - interrupt_cpr_prolonged
+    - terminate_resuscitation_prematurely
+    - discharge_home
+    - terminate_care_prematurely
+    required_action_count: 16
+    required_actions:
+    - confirm_cardiac_arrest
+    - activate_code_team
+    - begin_high_quality_cpr
+    - attach_defibrillator_pads
+    - analyze_rhythm
+    - deliver_defibrillation
+    - resume_cpr_immediately
+    - give_epinephrine_1mg_iv
+    - give_amiodarone_300mg
+    - continue_high_quality_cpr
+    - give_epinephrine_1mg_iv_immediately
+    - evaluate_reversible_causes
+    - initiate_targeted_temperature_management
+    - obtain_12_lead_ecg
+    - optimize_hemodynamics
+    - admit_to_icu
+    before_constraint_count: 3
+    before_constraints:
+    - '[''attach_defibrillator_pads''] BEFORE analyze_rhythm'
+    - '[''deliver_defibrillation''] BEFORE give_amiodarone_300mg'
+    - '[''deliver_defibrillation''] BEFORE give_epinephrine_1mg_iv'
+    within_constraint_count: 14
+    within_constraints:
+    - action: confirm_cardiac_arrest
+      within_minutes: 1
+    - action: begin_high_quality_cpr
+      within_minutes: 1
+    - action: attach_defibrillator_pads
+      within_minutes: 3
+    - action: activate_code_team
+      within_minutes: 2
+    - action: analyze_rhythm
+      within_minutes: 2
+    - action: deliver_defibrillation
+      within_minutes: 2
+    - action: resume_cpr_immediately
+      within_minutes: 2
+    - action: give_epinephrine_1mg_iv
+      within_minutes: 10
+    - action: give_amiodarone_300mg
+      within_minutes: 10
+    - action: give_epinephrine_1mg_iv_immediately
+      within_minutes: 3
+    - action: evaluate_reversible_causes
+      within_minutes: 10
+    - action: initiate_targeted_temperature_management
+      within_minutes: 60
+    - action: obtain_12_lead_ecg
+      within_minutes: 60
+    - action: optimize_hemodynamics
+      within_minutes: 15
+  total_constraints: 40
+  known_limitations:
+  - Post-ROSC care and targeted temperature management not modelled
+- graph_id: acog_obstetric_hemorrhage
+  guideline_name: ACOG 2024 Postpartum Hemorrhage Guidelines
+  source: ACOG 2024 + CMQCC Toolkit
+  version: '2024.1'
+  scope: Comprehensive PPH management from recognition through surgical intervention
+  target_population: Pregnant and postpartum patients with hemorrhage
+  node_count: 4
+  source_guidelines_cited:
+  - ACOG 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 2
+    forbidden_actions:
+    - delay_treatment_for_estimated_blood_loss
+    - withhold_txa_in_pph
+    required_action_count: 15
+    required_actions:
+    - quantify_blood_loss
+    - assess_vital_signs
+    - assess_uterine_tone
+    - establish_large_bore_iv
+    - order_type_and_crossmatch
+    - order_cbc_coagulation
+    - give_oxytocin_iv
+    - perform_uterine_massage
+    - perform_balloon_tamponade
+    - consult_surgery
+    - activate_massive_transfusion_protocol
+    - give_prbc_ffp_platelets
+    - give_tranexamic_acid_1g
+    - monitor_fibrinogen
+    - give_cryoprecipitate_if_fibrinogen_low
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 10
+    within_constraints:
+    - action: quantify_blood_loss
+      within_minutes: 5
+    - action: assess_vital_signs
+      within_minutes: 5
+    - action: assess_uterine_tone
+      within_minutes: 10
+    - action: establish_large_bore_iv
+      within_minutes: 10
+    - action: give_oxytocin_iv
+      within_minutes: 15
+    - action: perform_uterine_massage
+      within_minutes: 10
+    - action: perform_balloon_tamponade
+      within_minutes: 60
+    - action: consult_surgery
+      within_minutes: 30
+    - action: activate_massive_transfusion_protocol
+      within_minutes: 15
+    - action: give_tranexamic_acid_1g
+      within_minutes: 20
+  total_constraints: 27
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: ada_dka_management
+  guideline_name: ADA Diabetic Ketoacidosis Management
+  source: Kitabchi et al. Diabetes Care 2009 + ADA Standards 2024
+  version: '2024.1'
+  scope: Evidence-based management protocol for diabetic ketoacidosis in adults
+  target_population: Adult patients with diabetic ketoacidosis
+  node_count: 8
+  source_guidelines_cited:
+  - ADA 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 18
+    forbidden_actions:
+    - discharge_home
+    - give_oral_fluids_if_altered
+    - delay_iv_access
+    - start_insulin_infusion
+    - give_insulin_bolus
+    - delay_potassium_replacement
+    - stop_insulin_before_gap_closed
+    - give_subcutaneous_insulin_initially
+    - discontinue_insulin_for_low_glucose
+    - admit_to_ward
+    - give_bicarbonate_if_ph_above_7.0
+    - stop_monitoring_early
+    - discharge_before_gap_closed
+    - stop_iv_insulin_without_overlap
+    - discharge_without_insulin_plan
+    - transition_before_criteria_met
+    - discharge_without_followup
+    - discharge_without_insulin
+    required_action_count: 30
+    required_actions:
+    - assess_vital_signs
+    - assess_mental_status
+    - establish_iv_access
+    - order_lab_glucose
+    - order_lab_bmp
+    - order_lab_ketones
+    - order_lab_abg
+    - start_iv_fluid_ns
+    - classify_dka_severity
+    - give_potassium_iv
+    - hold_insulin_until_k_above_3.3
+    - recheck_potassium_in_1h
+    - start_insulin_infusion
+    - monitor_glucose_hourly
+    - monitor_potassium_q2h
+    - admit_to_icu
+    - continuous_cardiac_monitoring
+    - place_arterial_line
+    - consider_bicarbonate_if_ph_below_6.9
+    - monitor_bmp_q2_4h
+    - assess_anion_gap_closure
+    - monitor_urine_output
+    - verify_resolution_criteria
+    - start_subcutaneous_insulin
+    - overlap_iv_insulin_2h
+    - resume_oral_intake
+    - diabetes_education
+    - ensure_stable_glucose_control
+    - ensure_patient_education
+    - arrange_followup
+    before_constraint_count: 8
+    before_constraints:
+    - '[''establish_iv_access''] BEFORE start_iv_fluid_ns'
+    - '[''order_lab_abg'', ''order_lab_bmp''] BEFORE classify_dka_severity'
+    - '[''order_lab_bmp'', ''establish_iv_access''] BEFORE give_potassium_iv'
+    - '[''order_lab_bmp'', ''start_iv_fluid_ns''] BEFORE start_insulin_infusion'
+    - '[''order_lab_abg''] BEFORE consider_bicarbonate_if_ph_below_6.9'
+    - '[''assess_anion_gap_closure''] BEFORE transition_to_subq_insulin'
+    - '[''verify_resolution_criteria'', ''assess_anion_gap_closure''] BEFORE start_subcutaneous_insulin'
+    - '[''assess_mental_status''] BEFORE resume_oral_intake'
+    within_constraint_count: 18
+    within_constraints:
+    - action: assess_vital_signs
+      within_minutes: 5
+    - action: establish_iv_access
+      within_minutes: 10
+    - action: start_iv_fluid_ns
+      within_minutes: 15
+    - action: order_lab_glucose
+      within_minutes: 15
+    - action: order_lab_bmp
+      within_minutes: 15
+    - action: order_lab_ketones
+      within_minutes: 30
+    - action: order_lab_abg
+      within_minutes: 30
+    - action: classify_dka_severity
+      within_minutes: 45
+    - action: give_potassium_iv
+      within_minutes: 30
+    - action: recheck_potassium_in_1h
+      within_minutes: 90
+    - action: start_insulin_infusion
+      within_minutes: 60
+    - action: monitor_glucose_hourly
+      within_minutes: 60
+    - action: monitor_potassium_q2h
+      within_minutes: 120
+    - action: admit_to_icu
+      within_minutes: 30
+    - action: continuous_cardiac_monitoring
+      within_minutes: 30
+    - action: place_arterial_line
+      within_minutes: 60
+    - action: monitor_bmp_q2_4h
+      within_minutes: 240
+    - action: assess_anion_gap_closure
+      within_minutes: 240
+  total_constraints: 74
+  known_limitations:
+  - Pediatric DKA dosing not covered — adult protocol only
+- graph_id: aha_chest_pain_evaluation
+  guideline_name: AHA Chest Pain Evaluation
+  source: AHA/ACC Chest Pain Guidelines 2021
+  version: '2021.1'
+  scope: Guideline for evaluation and diagnosis of chest pain
+  target_population: Adult patients presenting with chest pain
+  node_count: 11
+  source_guidelines_cited:
+  - AHA/ACC 2021
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 11
+    forbidden_actions:
+    - discharge_without_ecg
+    - delay_ecg_for_registration
+    - give_nitrates_if_rv_infarct
+    - give_nitrates_if_indicated
+    - give_nitroglycerin
+    - discharge_home
+    - delay_reperfusion
+    - delay_anticoagulation
+    - discharge_without_serial_testing
+    - discharge_without_documentation
+    - discontinue_antiplatelet_early
+    required_action_count: 23
+    required_actions:
+    - obtain_12_lead_ecg
+    - assess_vital_signs
+    - obtain_chest_pain_history
+    - interpret_ecg
+    - activate_cath_lab
+    - give_aspirin_loading
+    - give_p2y12_inhibitor
+    - give_anticoagulation
+    - arrange_pci
+    - order_lab_troponin
+    - calculate_risk_score
+    - serial_troponin
+    - serial_ecg
+    - stress_testing_or_cta
+    - document_risk_assessment
+    - provide_discharge_instructions
+    - assess_for_early_invasive
+    - admit_to_ccu
+    - continue_dual_antiplatelet
+    - initiate_secondary_prevention
+    - admit_to_cardiology_service
+    - continue_medical_therapy
+    - determine_disposition
+    before_constraint_count: 7
+    before_constraints:
+    - '[''obtain_12_lead_ecg''] BEFORE interpret_ecg'
+    - '[''obtain_12_lead_ecg'', ''interpret_ecg''] BEFORE activate_cath_lab'
+    - '[''assess_vital_signs''] BEFORE give_nitrates_if_indicated'
+    - '[''calculate_risk_score''] BEFORE give_p2y12_inhibitor'
+    - '[''order_lab_troponin''] BEFORE calculate_risk_score'
+    - '[''serial_troponin'', ''serial_ecg''] BEFORE stress_testing_or_cta'
+    - '[''document_risk_assessment''] BEFORE provide_discharge_instructions'
+    within_constraint_count: 16
+    within_constraints:
+    - action: obtain_12_lead_ecg
+      within_minutes: 10
+    - action: assess_vital_signs
+      within_minutes: 5
+    - action: interpret_ecg
+      within_minutes: 15
+    - action: activate_cath_lab
+      within_minutes: 10
+    - action: give_aspirin_loading
+      within_minutes: 15
+    - action: give_p2y12_inhibitor
+      within_minutes: 30
+    - action: arrange_pci
+      within_minutes: 90
+    - action: order_lab_troponin
+      within_minutes: 30
+    - action: give_aspirin_loading
+      within_minutes: 30
+    - action: give_anticoagulation
+      within_minutes: 60
+    - action: calculate_risk_score
+      within_minutes: 60
+    - action: order_lab_troponin
+      within_minutes: 60
+    - action: calculate_risk_score
+      within_minutes: 120
+    - action: serial_troponin
+      within_minutes: 180
+    - action: stress_testing_or_cta
+      within_minutes: 1440
+    - action: assess_for_early_invasive
+      within_minutes: 120
+  total_constraints: 57
+  known_limitations:
+  - Does not model outpatient or observation-unit discharge pathways
+- graph_id: aha_heart_failure_2022
+  guideline_name: AHA/ACC/HFSA Heart Failure Guideline
+  source: 2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure
+  version: '2022.1'
+  scope: AHA Heart Failure 2022 management
+  target_population: Adult patients with acute decompensated heart failure
+  node_count: 24
+  source_guidelines_cited:
+  - AHA HF Guideline Section 4.1
+  - AHA HF Guideline Section 4.2
+  - AHA HF Guideline Section 5
+  - AHA HF Guideline Section 7.3
+  - AHA HF Guideline Section 7.4
+  - AHA HF Guideline Section 7.5
+  - AHA HF Guideline Section 8
+  - AHA HF Guideline Section 8.1
+  - AHA HF Guideline Section 8.2
+  - AHA HF Guideline Section 9
+  - AHA HF Guideline Section 9.2
+  - AHA HF Guideline Section 9.3
+  - AHA HF Guideline Section 9.4
+  - AHA HF Guideline Section 9.5
+  - AHA HF Guideline Section 9.6
+  - AHA HF Guideline Section 9.7
+  - AHA HF Guideline Section 10
+  - AHA HF Guideline Section 10.1
+  - AHA HF Guideline Section 10.2
+  - AHA HF Guideline Section 10.3
+  - AHA HF Guideline Section 7.7
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 9
+    forbidden_actions:
+    - give_nsaid
+    - give_diltiazem
+    - give_verapamil
+    - give_thiazolidinedione
+    - give_iv_inotropes
+    - give_high_dose_beta_blocker
+    - give_diuretics
+    - give_beta_blocker
+    - give_high_dose_diuretics_if_hypotensive
+    required_action_count: 68
+    required_actions:
+    - obtain_history
+    - physical_examination
+    - order_bnp_or_ntprobnp
+    - order_ecg
+    - order_chest_xray
+    - order_basic_metabolic_panel
+    - order_cbc
+    - order_tsh
+    - order_echocardiogram
+    - assess_lvef
+    - assess_structural_abnormalities
+    - evaluate_alternative_diagnoses
+    - document_hfref_diagnosis
+    - assess_nyha_class
+    - identify_etiology
+    - document_hfmref_diagnosis
+    - document_hfpef_diagnosis
+    - evaluate_diastolic_function
+    - initiate_ace_or_arb_or_arni
+    - initiate_beta_blocker
+    - initiate_mra
+    - initiate_sglt2i
+    - manage_comorbidities
+    - manage_volume_status
+    - assess_icd_indication
+    - assess_crt_indication
+    - check_optimal_gdmt_duration
+    - discuss_risks_benefits
+    - obtain_informed_consent
+    - implant_icd
+    - implant_crt
+    - assess_hemodynamic_profile
+    - identify_precipitating_factors
+    - continuous_monitoring
+    - iv_diuretics
+    - fluid_restrict
+    - daily_weights
+    - monitor_urine_output
+    - monitor_electrolytes
+    - consider_inotropes
+    - consider_vasodilators
+    - hemodynamic_monitoring
+    - careful_fluid_challenge
+    - admit_to_icu
+    - invasive_hemodynamic_monitoring
+    - vasopressor_support
+    - inotrope_support
+    - mechanical_circulatory_support_evaluation
+    - select_mcs_device
+    - multidisciplinary_team_evaluation
+    - increase_diuretic_dose
+    - consider_combination_diuretics
+    - monitor_kidney_function
+    - confirm_optimal_gdmt
+    - assess_candidacy_for_advanced_therapies
+    - palliative_care_discussion
+    - comprehensive_transplant_workup
+    - psychosocial_evaluation
+    - list_if_appropriate
+    - lvad_workup
+    - discuss_goals_of_care
+    - symptom_management
+    - discuss_advance_directives
+    - hospice_referral_if_appropriate
+    - optimize_gdmt_titration
+    - regular_follow_up
+    - monitor_for_deterioration
+    - patient_education
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 7
+    within_constraints:
+    - action: order_bnp_or_ntprobnp
+      within_minutes: 60
+    - action: order_ecg
+      within_minutes: 60
+    - action: order_echocardiogram
+      within_minutes: 1440
+    - action: iv_diuretics
+      within_minutes: 30
+    - action: consider_inotropes
+      within_minutes: 60
+    - action: admit_to_icu
+      within_minutes: 30
+    - action: vasopressor_support
+      within_minutes: 30
+  total_constraints: 84
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: aha_stroke_2019
+  guideline_name: AHA/ASA Acute Ischemic Stroke Guideline
+  source: 2019 AHA/ASA Guidelines for Acute Ischemic Stroke
+  version: '2019.1'
+  scope: AHA Stroke 2019 management
+  target_population: Adult patients with acute ischemic stroke symptoms
+  node_count: 25
+  source_guidelines_cited:
+  - AHA Stroke Guideline Section 4
+  - AHA Stroke Guideline Section 5.1
+  - AHA Stroke Guideline Section 5.2
+  - AHA Stroke Guideline Section 5.3
+  - AHA Stroke Guideline Section 5.4
+  - AHA Stroke Guideline Section 6
+  - AHA Stroke Guideline Section 6.2
+  - AHA Stroke Guideline Section 6.3 (DAWN/DEFUSE-3)
+  - AHA Stroke Guideline Section 6.4
+  - AHA Stroke Guideline Section 7
+  - AHA Stroke Guideline Section 4.3
+  - AHA ICH Guideline 2015
+  - AHA ICH Guideline Section 8
+  - AHA ICH Guideline Section 7
+  - AHA Stroke Guideline Section 5.5
+  - AHA Stroke Guideline Section 8
+  - AHA Stroke Guideline Section 8.2
+  - AHA Stroke Guideline Section 9
+  - AHA Stroke Guideline Section 9.2
+  - AHA Stroke Guideline Section 9.3
+  - AHA Stroke Guideline Section 10
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 15
+    forbidden_actions:
+    - delay_ct_for_labs
+    - give_antiplatelet_within_24h
+    - give_anticoagulation_within_24h
+    - give_heparin_within_24h
+    - place_foley_within_30min
+    - place_ng_tube_within_30min
+    - place_arterial_line_within_30min
+    - give_antiplatelet_before_24h
+    - give_anticoagulation_before_24h
+    - give_anticoagulation_for_stroke_prevention_in_first_24h
+    - give_tpa_if_bp_uncontrolled
+    - give_tpa
+    - give_antiplatelet
+    - give_anticoagulation
+    - start_anticoagulation_before_24h_post_tpa
+    required_action_count: 91
+    required_actions:
+    - activate_stroke_team
+    - obtain_last_known_well_time
+    - perform_nihss
+    - check_glucose
+    - establish_iv_access
+    - order_stat_ct_head
+    - order_cbc_bmp_coag
+    - obtain_12_lead_ecg
+    - review_inclusion_criteria
+    - review_exclusion_criteria
+    - calculate_time_from_onset
+    - review_anticoagulation_status
+    - discuss_with_patient_family
+    - document_shared_decision
+    - obtain_informed_consent
+    - give_alteplase_0.9mg_kg
+    - admit_to_icu_or_stroke_unit
+    - monitor_bp_q15min_x2h_then_q30min_x6h
+    - neurological_checks_q15min
+    - hold_antiplatelet_anticoagulation_24h
+    - neurological_monitoring
+    - bp_management_target_180_105
+    - repeat_ct_24h
+    - start_antiplatelet_after_24h_if_no_hemorrhage
+    - confirm_lvo_on_imaging
+    - assess_aspects_score
+    - assess_prestroke_mrs
+    - activate_neurointerventional_team
+    - perform_thrombectomy_procedure
+    - achieve_tici_2b_or_better
+    - confirm_favorable_perfusion_imaging
+    - admit_to_icu
+    - bp_management
+    - groin_site_monitoring
+    - admit_to_stroke_unit
+    - aspirin_within_24_48h
+    - dvt_prophylaxis
+    - swallow_screen
+    - early_mobilization
+    - reduce_bp_to_below_185_110_before_tpa
+    - use_iv_labetalol_or_nicardipine
+    - maintain_bp_below_180_105_post_tpa
+    - treat_if_bp_above_220_120
+    - goal_reduction_15_percent
+    - bp_reduction_target_140
+    - reverse_anticoagulation_if_applicable
+    - neurosurgery_consult
+    - repeat_ct_6h_or_if_deterioration
+    - neurosurgery_evaluation
+    - consider_evacuation_if_indicated
+    - evd_for_hydrocephalus
+    - icp_monitoring_if_indicated
+    - seizure_prophylaxis_consideration
+    - dvt_prophylaxis_mechanical
+    - stop_tpa_infusion
+    - stat_ct_head
+    - stat_coagulation_panel
+    - type_and_screen
+    - give_cryoprecipitate
+    - give_tranexamic_acid
+    - reverse_coagulopathy
+    - icu_management
+    - repeat_nihss
+    - evaluate_for_recurrent_stroke
+    - evaluate_for_hemorrhage
+    - evaluate_for_edema
+    - elevate_head_of_bed
+    - avoid_hyperthermia
+    - avoid_hyperglycemia
+    - neurosurgery_consult_for_decompressive_craniectomy
+    - antiplatelet_therapy
+    - statin_therapy
+    - bp_management_long_term
+    - diabetes_management
+    - smoking_cessation
+    - carotid_evaluation
+    - cardiac_monitoring_for_afib
+    - calculate_chadsvasc
+    - calculate_hasbled
+    - start_doac_preferred
+    - confirm_stenosis_degree
+    - assess_surgical_risk
+    - surgical_planning
+    - perform_cea_within_2_weeks
+    - dual_antiplatelet_before_procedure
+    - perform_cas
+    - early_rehabilitation_assessment
+    - physical_therapy
+    - occupational_therapy
+    - speech_therapy_if_needed
+    - discharge_planning
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 6
+    within_constraints:
+    - action: check_glucose
+      within_minutes: 10
+    - action: order_stat_ct_head
+      within_minutes: 25
+    - action: give_alteplase_0.9mg_kg
+      within_minutes: 60
+    - action: perform_thrombectomy_procedure
+      within_minutes: 60
+    - action: reverse_anticoagulation_if_applicable
+      within_minutes: 60
+    - action: stat_ct_head
+      within_minutes: 15
+  total_constraints: 112
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: anaphylaxis_management
+  guideline_name: WAO/EAACI Anaphylaxis Management
+  source: WAO 2024 + EAACI 2024
+  version: '2024.1'
+  scope: Comprehensive anaphylaxis management from recognition through disposition
+  target_population: Patients experiencing anaphylaxis or severe allergic reaction
+  node_count: 5
+  source_guidelines_cited:
+  - WAO 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 15
+    forbidden_actions:
+    - give_antihistamine_as_first_line
+    - withhold_epinephrine
+    - give_oral_medication_if_vomiting
+    - give_epinephrine_iv_bolus
+    - give_epinephrine_subcutaneous
+    - delay_epinephrine_for_antihistamine
+    - give_sedative
+    - give_colloid_solution
+    - withhold_fluid_in_hypotension
+    - give_benzodiazepine
+    - discharge_before_airway_stable
+    - discharge_before_4_hours
+    - discharge_without_autoinjector_prescription
+    - discharge_without_action_plan
+    - discharge_without_allergist_referral
+    required_action_count: 13
+    required_actions:
+    - assess_airway_breathing_circulation
+    - assess_anaphylaxis_criteria
+    - remove_trigger_if_identifiable
+    - give_epinephrine_im
+    - establish_iv_access
+    - position_supine_legs_elevated
+    - give_normal_saline_bolus
+    - reassess_hemodynamic_status
+    - reassess_airway
+    - observe_minimum_4_hours
+    - prescribe_epinephrine_autoinjector
+    - provide_anaphylaxis_action_plan
+    - refer_to_allergist
+    before_constraint_count: 2
+    before_constraints:
+    - '[''establish_iv_access''] BEFORE give_normal_saline_bolus'
+    - '[''observe_minimum_4_hours''] BEFORE prescribe_epinephrine_autoinjector'
+    within_constraint_count: 9
+    within_constraints:
+    - action: assess_airway_breathing_circulation
+      within_minutes: 2
+    - action: assess_anaphylaxis_criteria
+      within_minutes: 3
+    - action: give_epinephrine_im
+      within_minutes: 5
+    - action: establish_iv_access
+      within_minutes: 10
+    - action: give_normal_saline_bolus
+      within_minutes: 15
+    - action: reassess_hemodynamic_status
+      within_minutes: 20
+    - action: reassess_airway
+      within_minutes: 15
+    - action: prescribe_epinephrine_autoinjector
+      within_minutes: 360
+    - action: provide_anaphylaxis_action_plan
+      within_minutes: 360
+  total_constraints: 39
+  known_limitations: []
+- graph_id: apa_agitation_management
+  guideline_name: APA 2024 Agitation Management Guidelines
+  source: APA 2024 + BETA Project 2012
+  version: '2024.1'
+  scope: Systematic approach to agitation from verbal de-escalation through chemical/physical restraint
+  target_population: Adult patients with acute agitation
+  node_count: 4
+  source_guidelines_cited:
+  - APA 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 5
+    forbidden_actions:
+    - restrain_without_attempting_deescalation
+    - leave_patient_unsupervised_while_agitated
+    - prone_restraint
+    - hobble_restraint
+    - leave_restrained_patient_unmonitored
+    required_action_count: 16
+    required_actions:
+    - assess_safety_of_environment
+    - attempt_verbal_deescalation
+    - assess_medical_causes
+    - obtain_vital_signs
+    - check_glucose
+    - choose_appropriate_medication
+    - monitor_sedation_level
+    - monitor_respiratory_status
+    - apply_least_restrictive_restraint
+    - monitor_neurovascular_status_q15min
+    - document_restraint_indication
+    - reassess_need_q1h
+    - stop_offending_agent
+    - aggressive_cooling
+    - give_iv_fluids
+    - monitor_ck_renal_function
+    before_constraint_count: 1
+    before_constraints:
+    - '[''attempt_verbal_deescalation''] BEFORE apply_least_restrictive_restraint'
+    within_constraint_count: 9
+    within_constraints:
+    - action: assess_safety_of_environment
+      within_minutes: 2
+    - action: attempt_verbal_deescalation
+      within_minutes: 10
+    - action: check_glucose
+      within_minutes: 10
+    - action: choose_appropriate_medication
+      within_minutes: 15
+    - action: monitor_respiratory_status
+      within_minutes: 20
+    - action: monitor_neurovascular_status_q15min
+      within_minutes: 15
+    - action: document_restraint_indication
+      within_minutes: 15
+    - action: stop_offending_agent
+      within_minutes: 5
+    - action: aggressive_cooling
+      within_minutes: 5
+  total_constraints: 31
+  known_limitations: []
+- graph_id: atrial_fibrillation
+  guideline_name: AHA/ACC/HRS 2023 Atrial Fibrillation
+  source: AHA/ACC/HRS AF Guidelines 2023
+  version: '2023.1'
+  scope: Management of atrial fibrillation
+  target_population: Adult patients with atrial fibrillation
+  node_count: 3
+  source_guidelines_cited:
+  - AHA/ACC/HRS 2023
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 1
+    forbidden_actions:
+    - give_rate_control_without_ecg
+    required_action_count: 9
+    required_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - order_lab_tsh
+    - order_lab_bmp
+    - assess_chadsvasc_score
+    - perform_cardioversion
+    - give_anticoagulation
+    - give_rate_control
+    - assess_anticoagulation_need
+    before_constraint_count: 1
+    before_constraints:
+    - '[''obtain_12_lead_ecg''] BEFORE give_rate_control'
+    within_constraint_count: 2
+    within_constraints:
+    - action: obtain_12_lead_ecg
+      within_minutes: 10
+    - action: perform_cardioversion
+      within_minutes: 30
+  total_constraints: 13
+  known_limitations: []
+- graph_id: cap_pneumonia
+  guideline_name: IDSA/ATS Community-Acquired Pneumonia 2019
+  source: IDSA/ATS CAP Guidelines 2019
+  version: '2019.1'
+  scope: Management of community-acquired pneumonia in adults
+  target_population: Adult patients with community-acquired pneumonia
+  node_count: 3
+  source_guidelines_cited:
+  - IDSA/ATS 2019
+  evidence_level: A
+  constraint_summary:
+    forbidden_action_count: 1
+    forbidden_actions:
+    - delay_antibiotics_for_cultures_beyond_1h
+    required_action_count: 8
+    required_actions:
+    - assess_vital_signs
+    - assess_respiratory_status
+    - order_imaging_chest_xray
+    - order_lab_cbc
+    - order_lab_blood_culture
+    - give_beta_lactam_plus_macrolide
+    - assess_icu_criteria
+    - give_iv_fluids
+    before_constraint_count: 1
+    before_constraints:
+    - '[''order_lab_blood_culture''] BEFORE give_beta_lactam_plus_macrolide'
+    within_constraint_count: 3
+    within_constraints:
+    - action: order_imaging_chest_xray
+      within_minutes: 60
+    - action: give_beta_lactam_plus_macrolide
+      within_minutes: 240
+    - action: give_beta_lactam_plus_macrolide
+      within_minutes: 60
+  total_constraints: 13
+  known_limitations: []
+- graph_id: copd_exacerbation
+  guideline_name: GOLD 2024 COPD Exacerbation Management
+  source: GOLD Report 2024
+  version: '2024.1'
+  scope: Management of acute exacerbations of COPD
+  target_population: Adult patients with COPD exacerbation
+  node_count: 2
+  source_guidelines_cited:
+  - GOLD 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 2
+    forbidden_actions:
+    - give_sedatives
+    - give_high_flow_o2_without_monitoring
+    required_action_count: 8
+    required_actions:
+    - assess_vital_signs
+    - assess_respiratory_status
+    - order_lab_abg
+    - order_imaging_chest_xray
+    - give_bronchodilator
+    - give_systemic_corticosteroid
+    - give_antibiotics
+    - assess_niv_eligibility
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 2
+    within_constraints:
+    - action: assess_vital_signs
+      within_minutes: 10
+    - action: give_bronchodilator
+      within_minutes: 30
+  total_constraints: 12
+  known_limitations:
+  - Single-node or minimal graph — limited state-transition coverage
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: gi_bleeding
+  guideline_name: ACG 2021 GI Bleeding Management
+  source: ACG GI Bleeding Guidelines 2021
+  version: '2021.1'
+  scope: Management of upper and lower gastrointestinal bleeding
+  target_population: Adult patients with acute gastrointestinal bleeding
+  node_count: 2
+  source_guidelines_cited:
+  - ACG 2021
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 1
+    forbidden_actions:
+    - delay_resuscitation_for_endoscopy
+    required_action_count: 10
+    required_actions:
+    - assess_vital_signs
+    - assess_hemodynamic_status
+    - order_lab_cbc
+    - order_lab_coagulation
+    - order_lab_type_and_crossmatch
+    - establish_iv_access
+    - give_iv_crystalloid_bolus
+    - give_packed_rbc_if_hgb_below_7
+    - consult_gi
+    - consult_surgery
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 2
+    within_constraints:
+    - action: establish_iv_access
+      within_minutes: 15
+    - action: give_iv_crystalloid_bolus
+      within_minutes: 15
+  total_constraints: 13
+  known_limitations:
+  - Single-node or minimal graph — limited state-transition coverage
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: gina_asthma_exacerbation
+  guideline_name: GINA Asthma Exacerbation Management
+  source: GINA 2024
+  version: '2024.1'
+  scope: Emergency department management of acute asthma exacerbations from mild-moderate through near-fatal
+  target_population: Adult and pediatric patients with asthma exacerbation
+  node_count: 5
+  source_guidelines_cited:
+  - GINA 2024
+  evidence_level: A
+  constraint_summary:
+    forbidden_action_count: 11
+    forbidden_actions:
+    - give_sedative
+    - give_benzodiazepine
+    - give_morphine
+    - give_beta_blocker
+    - give_nonselective_beta_blocker
+    - delay_bronchodilator
+    - discharge_home
+    - delay_intubation
+    - discharge_without_corticosteroid_prescription
+    - discharge_without_followup
+    - discharge_without_action_plan
+    required_action_count: 17
+    required_actions:
+    - assess_severity_classification
+    - measure_peak_expiratory_flow
+    - measure_oxygen_saturation
+    - assess_vital_signs
+    - give_salbutamol_nebulized
+    - give_ipratropium_nebulized
+    - give_systemic_corticosteroid
+    - administer_oxygen_to_target_94_98
+    - give_continuous_salbutamol_nebulized
+    - give_systemic_corticosteroid_iv
+    - administer_oxygen_high_flow
+    - give_magnesium_sulfate_iv
+    - give_epinephrine_im
+    - perform_endotracheal_intubation
+    - admit_to_icu
+    - reassess_after_treatment
+    - determine_disposition
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 14
+    within_constraints:
+    - action: assess_severity_classification
+      within_minutes: 5
+    - action: measure_peak_expiratory_flow
+      within_minutes: 10
+    - action: measure_oxygen_saturation
+      within_minutes: 3
+    - action: give_salbutamol_nebulized
+      within_minutes: 10
+    - action: give_systemic_corticosteroid
+      within_minutes: 60
+    - action: give_continuous_salbutamol_nebulized
+      within_minutes: 10
+    - action: give_systemic_corticosteroid_iv
+      within_minutes: 30
+    - action: give_magnesium_sulfate_iv
+      within_minutes: 30
+    - action: give_epinephrine_im
+      within_minutes: 5
+    - action: give_systemic_corticosteroid_iv
+      within_minutes: 15
+    - action: perform_endotracheal_intubation
+      within_minutes: 15
+    - action: admit_to_icu
+      within_minutes: 15
+    - action: reassess_after_treatment
+      within_minutes: 60
+    - action: determine_disposition
+      within_minutes: 240
+  total_constraints: 42
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: hypertensive_emergency
+  guideline_name: AHA/ACC 2017 Hypertension - Emergency Management
+  source: AHA/ACC Hypertension Guidelines 2017
+  version: '2017.1'
+  scope: Management of hypertensive emergencies and urgencies
+  target_population: Adult patients with hypertensive emergency
+  node_count: 2
+  source_guidelines_cited:
+  - AHA/ACC 2017
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 2
+    forbidden_actions:
+    - reduce_bp_more_than_25pct_in_1h
+    - give_oral_antihypertensive_only
+    required_action_count: 8
+    required_actions:
+    - assess_vital_signs
+    - assess_bp
+    - assess_end_organ_damage
+    - give_iv_antihypertensive
+    - continuous_bp_monitoring
+    - order_lab_bmp
+    - order_lab_troponin
+    - assess_neurological_status
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 2
+    within_constraints:
+    - action: assess_vital_signs
+      within_minutes: 5
+    - action: give_iv_antihypertensive
+      within_minutes: 30
+  total_constraints: 12
+  known_limitations:
+  - Single-node or minimal graph — limited state-transition coverage
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: idsa_meningitis
+  guideline_name: IDSA Bacterial Meningitis Management
+  source: IDSA 2024
+  version: '2024.1'
+  scope: Evidence-based management of community-acquired bacterial meningitis from empiric therapy through monitoring
+  target_population: Adult patients with suspected bacterial meningitis
+  node_count: 5
+  source_guidelines_cited:
+  - IDSA 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 6
+    forbidden_actions:
+    - discharge_without_evaluation
+    - withhold_antibiotics
+    - perform_lp_in_coagulopathy_uncorrected
+    - discharge_prematurely
+    - discontinue_antibiotics_early
+    - ignore_neurological_deterioration
+    required_action_count: 14
+    required_actions:
+    - assess_clinical_presentation
+    - assess_vital_signs
+    - assess_neurological_status
+    - assess_contraindications_to_lp
+    - order_lab_blood_culture
+    - give_empiric_antibiotics
+    - give_vancomycin_iv
+    - give_ceftriaxone_iv
+    - give_dexamethasone_iv
+    - perform_lumbar_puncture
+    - order_csf_analysis
+    - admit_to_icu
+    - monitor_neurological_status
+    - narrow_antibiotics_when_culture_available
+    before_constraint_count: 1
+    before_constraints:
+    - '[''order_lab_blood_culture''] BEFORE give_empiric_antibiotics'
+    within_constraint_count: 12
+    within_constraints:
+    - action: assess_clinical_presentation
+      within_minutes: 10
+    - action: assess_neurological_status
+      within_minutes: 10
+    - action: assess_contraindications_to_lp
+      within_minutes: 15
+    - action: order_lab_blood_culture
+      within_minutes: 15
+    - action: give_empiric_antibiotics
+      within_minutes: 15
+    - action: give_vancomycin_iv
+      within_minutes: 30
+    - action: give_ceftriaxone_iv
+      within_minutes: 30
+    - action: give_dexamethasone_iv
+      within_minutes: 30
+    - action: perform_lumbar_puncture
+      within_minutes: 120
+    - action: order_csf_analysis
+      within_minutes: 120
+    - action: admit_to_icu
+      within_minutes: 60
+    - action: monitor_neurological_status
+      within_minutes: 10
+  total_constraints: 33
+  known_limitations: []
+- graph_id: kdigo_aki_full
+  guideline_name: KDIGO AKI 2012 Full
+  source: KDIGO 2012 Clinical Practice Guidelines for AKI
+  version: '2012.1'
+  scope: KDIGO AKI Full management
+  target_population: Adult patients with or at risk for acute kidney injury
+  node_count: 13
+  source_guidelines_cited:
+  - KDIGO AKI Guideline Section 2.1
+  - KDIGO AKI Guideline Section 3.1
+  - KDIGO AKI Guideline Section 3.2
+  - KDIGO AKI Guideline Section 3.3
+  - KDIGO AKI Guideline Section 4.1
+  - KDIGO AKI Guideline Section 4.4
+  - KDIGO AKI Guideline Section 4.3
+  - KDIGO AKI Guideline Section 4.2
+  - KDIGO AKI Guideline Section 5.1
+  - KDIGO AKI Guideline Section 5.2
+  - KDIGO AKI Guideline Section 5.3
+  - KDIGO AKI Guideline Section 6
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 4
+    forbidden_actions:
+    - give_nsaid
+    - give_contrast_without_assessment
+    - give_high_osmolar_contrast
+    - repeat_contrast_within_48h
+    required_action_count: 44
+    required_actions:
+    - order_creatinine
+    - monitor_urine_output
+    - assess_aki_risk_factors
+    - calculate_aki_stage
+    - identify_aki_etiology
+    - optimize_volume_status
+    - discontinue_nephrotoxins
+    - avoid_contrast
+    - monitor_creatinine_daily
+    - monitor_creatinine_q12h
+    - consult_nephrology
+    - monitor_potassium
+    - monitor_acid_base
+    - urgent_nephrology_consult
+    - monitor_creatinine_q6h
+    - monitor_potassium_q6h
+    - monitor_fluid_balance_hourly
+    - assess_rrt_need
+    - ecg_for_hyperkalemia
+    - assess_ci_aki_risk
+    - order_baseline_creatinine
+    - calculate_egfr
+    - consider_alternative_imaging
+    - discuss_risk_benefit_with_patient
+    - iv_hydration_if_proceeding
+    - use_iso_osmolar_contrast
+    - minimize_contrast_volume
+    - hold_metformin
+    - hold_nsaids
+    - post_procedure_creatinine_48_72h
+    - iv_hydration_periprocedure
+    - use_low_or_iso_osmolar_contrast
+    - post_procedure_creatinine_48h
+    - standard_contrast_protocol
+    - evaluate_rrt_indications
+    - assess_vascular_access
+    - initiate_rrt_immediately
+    - treat_hyperkalemia_temporizing
+    - vascular_access_placement
+    - plan_rrt_modality
+    - initiate_rrt_within_24h
+    - monitor_recovery
+    - plan_follow_up_creatinine
+    - assess_for_ckd_development
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 9
+    within_constraints:
+    - action: order_creatinine
+      within_minutes: 60
+    - action: consult_nephrology
+      within_minutes: 240
+    - action: urgent_nephrology_consult
+      within_minutes: 60
+    - action: assess_rrt_need
+      within_minutes: 120
+    - action: order_baseline_creatinine
+      within_minutes: 60
+    - action: iv_hydration_if_proceeding
+      within_minutes: 360
+    - action: initiate_rrt_immediately
+      within_minutes: 60
+    - action: treat_hyperkalemia_temporizing
+      within_minutes: 30
+    - action: initiate_rrt_within_24h
+      within_minutes: 1440
+  total_constraints: 57
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+  - CKD staging and chronic management pathways not included
+- graph_id: kdigo_contrast_aki
+  guideline_name: KDIGO Contrast-Associated AKI Prevention
+  source: KDIGO 2024 CKD Guideline + KDIGO 2012 AKI Guideline
+  version: '2024.1'
+  scope: Prevention of contrast-associated AKI in CKD patients
+  target_population: Adult patients with or at risk for acute kidney injury
+  node_count: 7
+  source_guidelines_cited:
+  - KDIGO 2024 CKD
+  - KDIGO 2012 AKI
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 9
+    forbidden_actions:
+    - administer_contrast_without_egfr
+    - skip_risk_assessment
+    - use_high_osmolar_contrast
+    - administer_contrast_without_egfr_check
+    - discharge_without_scr_check
+    - additional_contrast_exposure
+    - continue_nephrotoxic_drugs
+    - discharge_without_followup
+    - discharge_without_egfr_confirmation
+    required_action_count: 21
+    required_actions:
+    - check_baseline_egfr
+    - review_risk_factors
+    - assess_hydration_status
+    - consider_alternative_imaging
+    - nephrology_consult
+    - hold_nephrotoxic_medications
+    - iv_hydration_pre_contrast
+    - use_minimum_contrast_volume
+    - iv_hydration_post_contrast
+    - hold_metformin_if_applicable
+    - monitor_scr_48_72h
+    - document_egfr_check
+    - standard_contrast_administration
+    - check_scr_at_48h
+    - assess_urine_output
+    - optimize_fluid_status
+    - avoid_additional_nephrotoxins
+    - serial_scr_monitoring
+    - document_stable_egfr
+    - provide_discharge_instructions
+    - schedule_followup
+    before_constraint_count: 5
+    before_constraints:
+    - '[''check_baseline_egfr'', ''iv_hydration_pre_contrast''] BEFORE use_minimum_contrast_volume'
+    - '[''iv_hydration_pre_contrast''] BEFORE iv_hydration_post_contrast'
+    - '[''check_baseline_egfr''] BEFORE use_minimum_contrast_volume'
+    - '[''check_scr_at_48h''] BEFORE resume_metformin_if_egfr_stable'
+    - '[''document_stable_egfr''] BEFORE provide_discharge_instructions'
+    within_constraint_count: 6
+    within_constraints:
+    - action: check_baseline_egfr
+      within_minutes: 60
+    - action: review_risk_factors
+      within_minutes: 60
+    - action: iv_hydration_pre_contrast
+      within_minutes: 60
+    - action: monitor_scr_48_72h
+      within_minutes: 4320
+    - action: check_scr_at_48h
+      within_minutes: 2880
+    - action: nephrology_consult
+      within_minutes: 120
+  total_constraints: 41
+  known_limitations:
+  - Contrast AKI prevention only; does not cover post-contrast monitoring
+- graph_id: pals_pediatric_emergency
+  guideline_name: AHA PALS 2025 Pediatric Emergency Guidelines
+  source: AHA PALS 2025 + AAP 2024
+  version: '2025.1'
+  scope: Pediatric emergency assessment, fluid resuscitation, seizure management, and anaphylaxis
+  target_population: Pediatric patients requiring emergency care
+  node_count: 4
+  source_guidelines_cited:
+  - AHA PALS 2025
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 5
+    forbidden_actions:
+    - use_adult_vital_sign_norms
+    - give_adult_dose_medications
+    - give_bolus_greater_than_20ml_kg
+    - give_adult_dose_epinephrine
+    - give_epinephrine_iv_push
+    required_action_count: 15
+    required_actions:
+    - assess_pediatric_triangle
+    - obtain_weight_kg
+    - assess_vital_signs_age_appropriate
+    - establish_iv_or_io_access
+    - give_ns_bolus_20ml_kg
+    - reassess_after_each_bolus
+    - monitor_urine_output
+    - check_glucose
+    - give_benzodiazepine_weight_based
+    - protect_airway
+    - monitor_respiratory_status
+    - give_epinephrine_im_0_01mg_kg
+    - establish_iv_access
+    - give_fluid_bolus
+    - monitor_closely
+    before_constraint_count: 3
+    before_constraints:
+    - '[''establish_iv_or_io_access'', ''obtain_weight_kg''] BEFORE give_ns_bolus_20ml_kg'
+    - '[''obtain_weight_kg''] BEFORE give_benzodiazepine_weight_based'
+    - '[''obtain_weight_kg''] BEFORE give_epinephrine_im_0_01mg_kg'
+    within_constraint_count: 9
+    within_constraints:
+    - action: assess_pediatric_triangle
+      within_minutes: 5
+    - action: assess_vital_signs_age_appropriate
+      within_minutes: 5
+    - action: obtain_weight_kg
+      within_minutes: 10
+    - action: give_ns_bolus_20ml_kg
+      within_minutes: 15
+    - action: reassess_after_each_bolus
+      within_minutes: 20
+    - action: check_glucose
+      within_minutes: 5
+    - action: give_benzodiazepine_weight_based
+      within_minutes: 10
+    - action: give_epinephrine_im_0_01mg_kg
+      within_minutes: 5
+    - action: establish_iv_access
+      within_minutes: 10
+  total_constraints: 32
+  known_limitations:
+  - Weight-based dosing variability not modelled at graph level
+- graph_id: pulmonary_embolism
+  guideline_name: ESC 2019 Pulmonary Embolism
+  source: ESC PE Guidelines 2019
+  version: '2019.1'
+  scope: Diagnosis and management of acute pulmonary embolism
+  target_population: Adult patients with suspected pulmonary embolism
+  node_count: 3
+  source_guidelines_cited:
+  - ESC 2019
+  evidence_level: A
+  constraint_summary:
+    forbidden_action_count: 2
+    forbidden_actions:
+    - delay_anticoagulation_if_high_probability
+    - delay_anticoagulation
+    required_action_count: 8
+    required_actions:
+    - assess_vital_signs
+    - assess_wells_score
+    - order_lab_d_dimer
+    - give_anticoagulation
+    - order_imaging_ct_pa
+    - order_lab_troponin
+    - order_lab_bnp
+    - give_thrombolysis
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 4
+    within_constraints:
+    - action: assess_vital_signs
+      within_minutes: 10
+    - action: give_anticoagulation
+      within_minutes: 60
+    - action: give_anticoagulation
+      within_minutes: 30
+    - action: give_thrombolysis
+      within_minutes: 60
+  total_constraints: 14
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: ssc_sepsis_hour1_bundle
+  guideline_name: Surviving Sepsis Campaign Hour-1 Bundle
+  source: SSC Guidelines 2021
+  version: '2021.1'
+  scope: Hour-1 bundle for sepsis and septic shock management
+  target_population: Adult patients with suspected sepsis or septic shock
+  node_count: 7
+  source_guidelines_cited:
+  - SSC 2021
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 5
+    forbidden_actions:
+    - discharge_home
+    - give_vasopressor_without_fluid
+    - delay_antibiotics
+    - withhold_fluid_in_hypotension
+    - admit_to_ward
+    required_action_count: 12
+    required_actions:
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - give_broad_spectrum_antibiotics
+    - give_crystalloid_30ml_kg
+    - start_vasopressor_if_hypotensive
+    - reassess_perfusion
+    - remeasure_lactate_if_elevated
+    - determine_disposition
+    - admit_to_icu
+    - admit_to_ward
+    before_constraint_count: 3
+    before_constraints:
+    - '[''order_lab_blood_culture''] BEFORE give_broad_spectrum_antibiotics'
+    - '[''give_crystalloid_30ml_kg''] BEFORE start_vasopressor_if_hypotensive'
+    - '[''order_lab_lactate''] BEFORE remeasure_lactate_if_elevated'
+    within_constraint_count: 8
+    within_constraints:
+    - action: assess_infection_source
+      within_minutes: 10
+    - action: assess_organ_dysfunction
+      within_minutes: 10
+    - action: order_lab_lactate
+      within_minutes: 60
+    - action: order_lab_blood_culture
+      within_minutes: 60
+    - action: give_broad_spectrum_antibiotics
+      within_minutes: 60
+    - action: give_crystalloid_30ml_kg
+      within_minutes: 180
+    - action: start_vasopressor_if_hypotensive
+      within_minutes: 60
+    - action: remeasure_lactate_if_elevated
+      within_minutes: 360
+  total_constraints: 28
+  known_limitations:
+  - Covers Hour-1 bundle only; post-resuscitation care not modelled
+- graph_id: status_epilepticus
+  guideline_name: AES Status Epilepticus Management
+  source: AES 2024
+  version: '2024.1'
+  scope: Time-phased management of convulsive status epilepticus from initial stabilization through refractory treatment
+  target_population: Adult and pediatric patients with status epilepticus
+  node_count: 5
+  source_guidelines_cited:
+  - AES 2024
+  evidence_level: A
+  constraint_summary:
+    forbidden_action_count: 17
+    forbidden_actions:
+    - give_phenytoin_as_first_line
+    - give_valproate_as_first_line
+    - restrain_patient_forcefully
+    - place_oral_airway_during_seizure
+    - give_levetiracetam_as_first_line
+    - delay_benzodiazepine
+    - give_propofol_as_first_line
+    - give_benzodiazepine_as_second_line
+    - delay_second_line_agent
+    - give_oral_antiepileptic
+    - discharge_home
+    - give_oral_antiepileptic_only
+    - discontinue_eeg_monitoring
+    - extubate_during_active_se
+    - discontinue_eeg_prematurely
+    - rapid_anesthetic_wean
+    - discharge_without_neurology_followup
+    required_action_count: 13
+    required_actions:
+    - assess_airway_breathing_circulation
+    - check_point_of_care_glucose
+    - establish_iv_access
+    - assess_seizure_semiology
+    - give_benzodiazepine_first_line
+    - monitor_respiratory_status
+    - give_second_line_antiepileptic
+    - continuous_eeg_monitoring
+    - perform_endotracheal_intubation
+    - initiate_continuous_iv_anesthetic
+    - admit_to_icu
+    - initiate_maintenance_antiepileptic
+    - reassess_neurological_status
+    before_constraint_count: 3
+    before_constraints:
+    - '[''give_benzodiazepine_first_line''] BEFORE give_second_line_antiepileptic'
+    - '[''give_benzodiazepine_first_line'', ''give_second_line_antiepileptic''] BEFORE initiate_continuous_iv_anesthetic'
+    - '[''perform_endotracheal_intubation''] BEFORE give_propofol_infusion'
+    within_constraint_count: 11
+    within_constraints:
+    - action: assess_airway_breathing_circulation
+      within_minutes: 2
+    - action: check_point_of_care_glucose
+      within_minutes: 5
+    - action: establish_iv_access
+      within_minutes: 5
+    - action: give_benzodiazepine_first_line
+      within_minutes: 10
+    - action: monitor_respiratory_status
+      within_minutes: 5
+    - action: give_second_line_antiepileptic
+      within_minutes: 30
+    - action: continuous_eeg_monitoring
+      within_minutes: 30
+    - action: perform_endotracheal_intubation
+      within_minutes: 45
+    - action: initiate_continuous_iv_anesthetic
+      within_minutes: 50
+    - action: admit_to_icu
+      within_minutes: 50
+    - action: initiate_maintenance_antiepileptic
+      within_minutes: 120
+  total_constraints: 44
+  known_limitations: []
+- graph_id: toxicology_management
+  guideline_name: AACT/ACMT Toxicology Management
+  source: AACT/ACMT 2024
+  version: '2024.1'
+  scope: Emergency management of acute poisoning and overdose including toxin identification, antidote administration, decontamination,
+    and supportive care
+  target_population: Adult patients with acute toxic exposure or overdose
+  node_count: 6
+  source_guidelines_cited:
+  - AACT/ACMT 2024
+  evidence_level: B
+  constraint_summary:
+    forbidden_action_count: 9
+    forbidden_actions:
+    - induce_emesis
+    - give_ipecac
+    - delay_resuscitation
+    - give_activated_charcoal_if_unprotected_airway
+    - give_antipyretic_for_hyperthermia_toxicologic
+    - physically_restrain_without_sedation
+    - discharge_without_psychiatry_evaluation
+    - discharge_during_absorption_phase
+    - discharge_without_observation_period
+    required_action_count: 13
+    required_actions:
+    - assess_airway_breathing_circulation
+    - assess_vital_signs
+    - obtain_exposure_history
+    - assess_toxidrome
+    - identify_toxin_class
+    - review_ecg_for_toxicity
+    - administer_specific_antidote
+    - assess_decontamination_indication
+    - provide_supportive_care
+    - reassess_clinical_status
+    - serial_vital_sign_monitoring
+    - serial_lab_monitoring
+    - determine_disposition
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 11
+    within_constraints:
+    - action: assess_airway_breathing_circulation
+      within_minutes: 2
+    - action: assess_vital_signs
+      within_minutes: 5
+    - action: obtain_exposure_history
+      within_minutes: 15
+    - action: identify_toxin_class
+      within_minutes: 30
+    - action: review_ecg_for_toxicity
+      within_minutes: 15
+    - action: administer_specific_antidote
+      within_minutes: 30
+    - action: assess_decontamination_indication
+      within_minutes: 30
+    - action: give_activated_charcoal
+      within_minutes: 60
+    - action: provide_supportive_care
+      within_minutes: 30
+    - action: serial_vital_sign_monitoring
+      within_minutes: 60
+    - action: determine_disposition
+      within_minutes: 360
+  total_constraints: 33
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+- graph_id: universal_clinical_safety
+  guideline_name: Universal Clinical Safety Principles
+  source: Clinical Best Practices Compilation
+  version: '1.0'
+  scope: Domain-independent clinical safety principles applicable to all patient encounters
+  target_population: All patients across clinical settings
+  node_count: 3
+  source_guidelines_cited:
+  - Universal Clinical Principles
+  - Universal Clinical Safety
+  evidence_level: C
+  constraint_summary:
+    forbidden_action_count: 5
+    forbidden_actions:
+    - discharge_without_assessment
+    - give_thrombolytics_without_imaging
+    - discharge_critically_ill
+    - give_contraindicated_medication
+    - discharge_without_diagnosis
+    required_action_count: 1
+    required_actions:
+    - assess_vital_signs
+    before_constraint_count: 0
+    before_constraints: []
+    within_constraint_count: 1
+    within_constraints:
+    - action: assess_vital_signs
+      within_minutes: 15
+  total_constraints: 7
+  known_limitations:
+  - No sequence constraints defined — ordering violations cannot be evaluated
+  - Domain-independent fallback — lower specificity than disease-specific graphs
+  - No patient simulation; designed for static external benchmark evaluation

@@ -1,0 +1,160 @@
+graph_id: aha_ttm_post_arrest_2023
+guideline_name: AHA 2023 TTM Post Arrest
+version: '2024.1'
+metadata:
+  source: AHA
+  doi: 10.1161/CIR.0000000000001164
+  recommendation_system: GRADE
+  description: Targeted temperature management and neuroprognostication for unresponsive adult patients after cardiac arrest.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Patient Assessment
+    description: Assess patient characteristics to determine TTM strategy.
+    mandatory_actions:
+    - monitor_core_temperature_continuously
+    allowed_actions:
+    - monitor_core_temperature_continuously
+    forbidden_actions:
+    - early_prognostication
+    - early_withdrawal_of_life_sustaining_therapy
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA 2023 TTM Post Arrest
+    source_section: CLINICAL STATEMENTS AND GUIDELINES
+    source_page: '985'
+    source_quote: avoiding early prognostication and withdrawal of life-sustaining therapy.
+    next_nodes: []
+    conditional_next:
+      state.ttm2_characteristics: normothermic_bundle
+      state.standard_unresponsive: hypothermic_bundle
+  hypothermic_bundle:
+    node_id: hypothermic_bundle
+    node_type: plan
+    name: Targeted Hypothermia Bundle
+    description: Implementation of temperature management between 32°C and 36°C.
+    mandatory_actions:
+    - target_temperature_32_to_36
+    allowed_actions:
+    - target_temperature_32_to_36
+    - monitor_core_temperature_continuously
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA 2023 TTM Post Arrest
+    source_section: CONCLUSIONS
+    source_page: '985'
+    source_quote: Current American Heart Association guidelines endorse treating unresponsive adult patients with cardiac
+      arrest, regardless of location of arrest, with temperature management targeting a temperature between 32° C and 36°
+      C for 24 hours of therapy.
+    next_nodes:
+    - temperature_monitoring
+    conditional_next: {}
+  normothermic_bundle:
+    node_id: normothermic_bundle
+    node_type: plan
+    name: Normothermic Bundle
+    description: Temperature control for patients with TTM2-like characteristics.
+    mandatory_actions:
+    - target_temperature_below_37_5
+    allowed_actions:
+    - target_temperature_below_37_5
+    - monitor_core_temperature_continuously
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: AHA 2023 TTM Post Arrest
+    source_section: CONCLUSIONS
+    source_page: '985'
+    source_quote: For unresponsive post–cardiac arrest adult patients with characteristics similar to those of individuals
+      included in the TTM2 trial (OHCA of cardiac or unknown cause, excluding those with unwitnessed asystole), controlling
+      patient temperature to <37.5° C is a reasonable and evidence-based approach.
+    next_nodes:
+    - temperature_monitoring
+    conditional_next: {}
+  temperature_monitoring:
+    node_id: temperature_monitoring
+    node_type: action
+    name: Continuous Temperature Monitoring & Fever Prevention
+    description: Strict prevention of fever and continuous core temperature tracking.
+    mandatory_actions:
+    - prevent_fever
+    - monitor_core_temperature_continuously
+    allowed_actions:
+    - prevent_fever
+    - monitor_core_temperature_continuously
+    - active_fever_prevention
+    - target_temperature_below_37_7
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA 2023 TTM Post Arrest
+    source_section: CONCLUSIONS
+    source_page: '985'
+    source_quote: strictly preventing fever with continuous temperature monitoring... remain essential for unresponsive post–cardiac
+      arrest adult patients.
+    next_nodes:
+    - neuroprognostication
+    conditional_next: {}
+  neuroprognostication:
+    node_id: neuroprognostication
+    node_type: action
+    name: Neuroprognostication
+    description: Deployment of multimodal strategies for neurological prognosis.
+    mandatory_actions:
+    - multimodal_neuroprognostication
+    allowed_actions:
+    - multimodal_neuroprognostication
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA 2023 TTM Post Arrest
+    source_section: CONCLUSIONS
+    source_page: '985'
+    source_quote: deploying multimodal evidence-based strategies for neuroprognostication at a minimum of 72 hours after normothermia
+      remain essential for unresponsive post–cardiac arrest adult patients.
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Final Disposition
+    description: Determine long-term care or withdrawal of therapy based on neuroprognostication.
+    mandatory_actions:
+    - multimodal_neuroprognostication
+    allowed_actions:
+    - multimodal_neuroprognostication
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: AHA 2023 TTM Post Arrest
+    source_section: CONCLUSIONS
+    source_page: '985'
+    source_quote: deploying multimodal evidence-based strategies for neuroprognostication at a minimum of 72 hours after normothermia
+      remain essential for unresponsive post–cardiac arrest adult patients.
+    next_nodes: []
+    conditional_next: {}
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 7
+  actionable_count: 7
+  validation_errors: 0
+  generated_at: '2026-04-29T16:59:47.742376+00:00'

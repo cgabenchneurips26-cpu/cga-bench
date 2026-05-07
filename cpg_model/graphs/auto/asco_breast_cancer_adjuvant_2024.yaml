@@ -1,0 +1,114 @@
+graph_id: asco_breast_cancer_adjuvant_2024
+guideline_name: ASCO Breast Cancer Adjuvant 2024
+version: '2024.1'
+metadata:
+  source: ASCO Breast Cancer Adjuvant 2024
+  doi: 10.1200/JCO.23.02472
+  journal: Journal of Clinical Oncology
+  recommendation_system: ASCO evidence-based
+  description: Adjuvant systemic therapy selection for invasive breast cancer.
+  key_evidence: TAILORx, MINDACT, and KATHERINE trials guide modern adjuvant therapy.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: female_only
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Receptor & Genomic Profiling
+    description: ER/PR/HER2 and Oncotype DX / MammaPrint profiling to guide adjuvant therapy.
+    precondition: null
+    mandatory_actions:
+    - order_staging_er_pr_her2
+    - order_lab_cbc
+    - consult_oncology
+    allowed_actions:
+    - order_staging_ct_chest_abdomen
+    - order_lab_mammaprint
+    - order_lab_cbc
+    - order_lab_oncotype_dx
+    - order_lab_lft
+    - order_staging_bone_scan_if_indicated
+    - order_staging_er_pr_her2
+    - consult_oncology
+    forbidden_actions: []
+    deadlines:
+      order_staging_er_pr_her2: 4320
+      order_lab_cbc: 1440
+      consult_oncology: 4320
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ASCO Breast Cancer Adjuvant 2024
+    source_section: Biomarker testing
+    source_page: null
+    source_quote: ER/PR/HER2 testing should be performed on all invasive breast cancers.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Adjuvant Systemic Therapy Selection
+    description: Select endocrine therapy, chemotherapy, and/or HER2-targeted therapy based on subtype.
+    precondition: null
+    mandatory_actions:
+    - plan_chemotherapy
+    - discuss_tumor_board
+    allowed_actions:
+    - plan_cdk4_6_inhibitor_if_high_risk
+    - plan_endocrine_therapy_if_hr_positive
+    - plan_chemotherapy
+    - plan_ovarian_suppression_if_premenopausal
+    - plan_trastuzumab_if_her2_positive
+    - discuss_tumor_board
+    - consult_radiation_oncology
+    - plan_pertuzumab_if_node_positive_her2
+    forbidden_actions:
+    - plan_chemotherapy_without_receptor_testing
+    deadlines:
+      plan_chemotherapy: 10080
+      discuss_tumor_board: 5760
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ASCO Breast Cancer Adjuvant 2024
+    source_section: Adjuvant therapy
+    source_page: null
+    source_quote: Endocrine therapy is mandatory for HR-positive invasive breast cancer.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Surveillance & Toxicity Management
+    description: Annual mammography, bone health, endocrine therapy adherence, and late-effect surveillance.
+    precondition: null
+    mandatory_actions:
+    - plan_surveillance_imaging
+    - monitor_bone_health
+    allowed_actions:
+    - assess_cardiotoxicity_if_her2_therapy
+    - monitor_bone_health
+    - counsel_lifestyle_modification
+    - monitor_endocrine_adherence
+    - refer_genetic_counseling_if_indicated
+    - plan_surveillance_imaging
+    forbidden_actions: []
+    deadlines:
+      plan_surveillance_imaging: 10080
+      monitor_bone_health: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ASCO Breast Cancer Adjuvant 2024
+    source_section: Survivorship
+    source_page: null
+    source_quote: Annual mammography remains the cornerstone of breast cancer surveillance.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,618 @@
+{
+  "scenario_id": "emergency_rrt_hyperkalemia",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.04166666666666663,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.4607999999999998,
+  "total_violations": 23,
+  "sub_scores": {
+    "C1_path_selection": 0.29166666666666663,
+    "C2_mandatory_completion": 0.0,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 1.0,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "deviation": 17,
+    "omission": 6
+  },
+  "actions_count": 24,
+  "actions": [
+    {
+      "action_id": "assess_aki_risk_factors",
+      "timestamp_minutes": 0.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "MANDATORY per KDIGO AKI guideline. Patient has diabetes type 2 (nephrotoxin risk), hypotension, and working diagnosis of AKI with hyperkalemia. Must assess risk factors including nephrotoxic medications, contrast exposure, sepsis, and hypovolemia."
+    },
+    {
+      "action_id": "monitor_urine_output",
+      "timestamp_minutes": 5.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "MANDATORY per KDIGO AKI guideline. Urine output monitoring is essential for AKI staging (oliguria defined as <0.5 mL/kg/h for 6 hours per KDIGO criteria) and guiding fluid management in this hypotensive patient."
+    },
+    {
+      "action_id": "order_creatinine",
+      "timestamp_minutes": 10.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "creatinine"
+      },
+      "justification": "MANDATORY per KDIGO AKI guideline. Baseline serum creatinine is required to diagnose and stage AKI severity. Patient has working diagnosis of AKI and this is essential for trending renal function."
+    },
+    {
+      "action_id": "obtain_12_lead_ecg",
+      "timestamp_minutes": 15.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Critical priority: Patient has hyperkalemia with bradycardia (HR 52), hypotension, and near-syncope. ECG is essential to detect hyperkalemia-induced cardiac toxicity (peaked T-waves, widened QRS, sine wave pattern) which requires immediate membrane stabilization with calcium gluconate."
+    },
+    {
+      "action_id": "establish_iv_access",
+      "timestamp_minutes": 20.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "IV access is urgently needed to administer calcium gluconate for cardiac membrane stabilization, insulin/dextrose for transcellular potassium shift, and IV fluids for hemodynamic support in this hypotensive patient with AKI and hyperkalemia."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 25.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Serial vital sign monitoring is essential given the patient's hemodynamic instability (HR 52, BP 98/60, MAP 73) to track response to interventions and detect further deterioration in this critically ill patient with hyperkalemia and AKI."
+    },
+    {
+      "action_id": "interpret_ecg",
+      "timestamp_minutes": 30.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Patient has bradycardia (HR 52) and hyperkalemia \u2014 ECG must be interpreted immediately to identify peaked T waves, widened QRS, or sine wave pattern indicating life-threatening hyperkalemic cardiac toxicity requiring urgent intervention."
+    },
+    {
+      "action_id": "request_cardiology_consult",
+      "timestamp_minutes": 35.0,
+      "type": "consult",
+      "args": {},
+      "justification": "Hemodynamically unstable patient with bradycardia, hypotension, AKI and hyperkalemia requires urgent cardiology input to guide cardiac stabilization and management of hyperkalemia-induced conduction abnormalities."
+    },
+    {
+      "action_id": "order_lab_troponin",
+      "timestamp_minutes": 40.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "troponin"
+      },
+      "justification": "Patient presents with palpitations, near syncope, and hemodynamic instability \u2014 troponin is warranted to rule out concurrent ACS as a precipitant or complication of AKI/hypotension."
+    },
+    {
+      "action_id": "administer_oxygen_if_hypoxic",
+      "timestamp_minutes": 45.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has bradycardia (HR 52) and hypotension (BP 98/60) with AKI and likely hyperkalemia. While SpO2 is 97%, oxygen should be assessed and administered if needed to support cardiac function in this hemodynamically compromised patient."
+    },
+    {
+      "action_id": "obtain_prior_ecg_comparison",
+      "timestamp_minutes": 50.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Patient has bradycardia likely due to hyperkalemia (creatinine 7.2 suggests severe AKI). Comparing to prior ECG will help identify peaked T-waves, widened QRS, or other hyperkalemia changes that may have evolved, guiding urgency of cardiac membrane stabilization."
+    },
+    {
+      "action_id": "give_beta_blocker_if_stable",
+      "timestamp_minutes": 55.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Evaluate whether beta-blocker is indicated or contraindicated - with HR of 52 and BP 98/60 in the setting of hyperkalemia-induced bradycardia, beta-blockers should be withheld/contraindicated here; this action allows formal assessment and documentation of contraindication in this hemodynamically unstable patient with AKI."
+    },
+    {
+      "action_id": "obtain_chest_pain_history",
+      "timestamp_minutes": 60.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has weakness, palpitations, near-syncope with bradycardia and hypotension. Obtaining chest pain history is relevant to evaluate for concurrent ACS which could co-exist with AKI/hyperkalemia, and helps guide further management decisions."
+    },
+    {
+      "action_id": "obtain_right_sided_ecg_v4r",
+      "timestamp_minutes": 65.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ecg"
+      },
+      "justification": "Patient has bradycardia (HR 52) and hypotension (BP 98/60) which may reflect hyperkalemia cardiac toxicity or right ventricular involvement. Right-sided ECG helps evaluate for RV infarct contributing to hemodynamic instability, and may also show peaked T-waves or conduction changes consistent with hyperkalemia."
+    },
+    {
+      "action_id": "give_crystalloid_fluid",
+      "timestamp_minutes": 70.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "crystalloid",
+        "dose": "standard"
+      },
+      "justification": "Patient has AKI with creatinine 7.2, hypotension (BP 98/60), and bradycardia (HR 52). Cautious IV fluid resuscitation is indicated to address potential pre-renal component and optimize renal perfusion, per KDIGO AKI guidelines. Avoid excessive fluids given possible oliguric AKI."
+    },
+    {
+      "action_id": "assess_volume_status",
+      "timestamp_minutes": 75.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has AKI with hypotension (BP 98/60) and bradycardia (HR 52). Volume status assessment is critical to determine if pre-renal AKI is contributing and guide safe fluid resuscitation without over-resuscitation in an oliguric patient."
+    },
+    {
+      "action_id": "give_crystalloid_30ml_kg",
+      "timestamp_minutes": 80.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "crystalloid",
+        "dose": "standard"
+      },
+      "justification": "Patient is hypotensive (MAP 73, BP 98/60) with AKI - cautious fluid resuscitation may address pre-renal component. Administer carefully while monitoring response given severe renal impairment (creatinine 7.2)."
+    },
+    {
+      "action_id": "assess_hydration_status",
+      "timestamp_minutes": 85.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has AKI with creatinine 7.2, hypotension (BP 98/60), and bradycardia (HR 52). Re-assess hydration/fluid status to guide ongoing fluid management and differentiate pre-renal from intrinsic AKI per KDIGO guidelines."
+    },
+    {
+      "action_id": "review_nephrotoxic_medications",
+      "timestamp_minutes": 90.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has severe AKI (creatinine 7.2) with diabetes type 2. Must review and discontinue nephrotoxins (NSAIDs, metformin, contrast agents) and dose-adjust renally cleared medications per universal_safety and KDIGO guidelines."
+    },
+    {
+      "action_id": "check_current_medications",
+      "timestamp_minutes": 95.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has AKI with creatinine 7.2 and diabetes type 2 - must check for nephrotoxins and renally cleared drugs (e.g., metformin, ACE inhibitors, NSAIDs) that require dose adjustment or discontinuation per KDIGO AKI and universal safety guidelines."
+    },
+    {
+      "action_id": "check_baseline_egfr",
+      "timestamp_minutes": 100.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Severe AKI with creatinine 7.2 requires baseline eGFR assessment to determine degree of renal impairment, guide medication dosing adjustments, and assess need for renal replacement therapy per KDIGO guidelines."
+    },
+    {
+      "action_id": "review_recent_contrast_exposure",
+      "timestamp_minutes": 105.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has severe AKI (creatinine 7.2). KDIGO guidelines recommend assessing recent contrast exposure as a nephrotoxic cause of AKI. This is directly relevant to identifying the etiology and avoiding further contrast administration in this patient with severe renal impairment."
+    },
+    {
+      "action_id": "review_risk_factors",
+      "timestamp_minutes": 110.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "KDIGO AKI guidelines recommend comprehensive risk factor assessment including nephrotoxic medications, sepsis, hypovolemia, and diabetes (patient has Type 2 DM). This helps identify reversible causes and guide ongoing management of severe AKI with hyperkalemia causing bradycardia and hemodynamic compromise."
+    },
+    {
+      "action_id": "order_lab_bmp",
+      "timestamp_minutes": 115.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "BMP is critical to confirm potassium level and severity of hyperkalemia in this patient with AKI (creatinine 7.2), bradycardia, and near syncope. Electrolyte panel will guide urgent treatment decisions (calcium, bicarbonate, kayexalate, dialysis)."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "83faf985-a19f-4ffb-93a1-a2b252655af3",
+      "violation_type": "deviation",
+      "timestamp_minutes": 5.0,
+      "action_involved": "assess_urine_output",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: assess_urine_output",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "a8a6d473-fec8-41ad-ab7e-8e1f3451195b",
+      "violation_type": "deviation",
+      "timestamp_minutes": 10.0,
+      "action_involved": "check_baseline_egfr",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: check_baseline_egfr",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "5a593ef7-1d95-4c12-9a2b-ce3e516fd8e0",
+      "violation_type": "deviation",
+      "timestamp_minutes": 15.0,
+      "action_involved": "obtain_12_lead_ecg",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: obtain_12_lead_ecg",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "885a7025-9cbc-4c57-94f2-722fce7057b4",
+      "violation_type": "deviation",
+      "timestamp_minutes": 20.0,
+      "action_involved": "establish_iv_access",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: establish_iv_access",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "08fbb627-ce24-46d8-b436-f1148ad6d0f4",
+      "violation_type": "deviation",
+      "timestamp_minutes": 30.0,
+      "action_involved": "obtain_12_lead_ecg",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: obtain_12_lead_ecg",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "f641da49-e1a6-4567-bec3-f3b5bc9d1d4f",
+      "violation_type": "deviation",
+      "timestamp_minutes": 35.0,
+      "action_involved": "request_cardiology_consult",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: request_cardiology_consult",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "a9061447-3d20-4d17-ad80-c34203b35c91",
+      "violation_type": "deviation",
+      "timestamp_minutes": 40.0,
+      "action_involved": "order_lab_troponin",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: order_lab_troponin",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "02ee389a-0ed2-47d0-9a50-ad2e758c4bca",
+      "violation_type": "deviation",
+      "timestamp_minutes": 45.0,
+      "action_involved": "give_oxygen_if_hypoxic",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_oxygen_if_hypoxic",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "2142c3be-3f4b-43d5-b151-57180b6ca55f",
+      "violation_type": "deviation",
+      "timestamp_minutes": 50.0,
+      "action_involved": "obtain_12_lead_ecg",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: obtain_12_lead_ecg",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "d46a1e90-9c21-46cf-a685-e31bc7482ff4",
+      "violation_type": "deviation",
+      "timestamp_minutes": 55.0,
+      "action_involved": "give_beta_blocker_if_stable",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_beta_blocker_if_stable",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "4f4496f2-d0ab-4c29-be65-af04e4ae07b3",
+      "violation_type": "deviation",
+      "timestamp_minutes": 60.0,
+      "action_involved": "obtain_chest_pain_history",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: obtain_chest_pain_history",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "8dbdba43-eec4-431b-8ad8-412735da17a7",
+      "violation_type": "deviation",
+      "timestamp_minutes": 65.0,
+      "action_involved": "obtain_right_sided_ecg_v4r",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: obtain_right_sided_ecg_v4r",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "8d610928-8d14-43f8-9fd5-653ec73c198f",
+      "violation_type": "deviation",
+      "timestamp_minutes": 75.0,
+      "action_involved": "assess_hemodynamic_profile",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: assess_hemodynamic_profile",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "d0be4c52-d5ca-41c1-86ac-49d4a1dd2c5e",
+      "violation_type": "deviation",
+      "timestamp_minutes": 80.0,
+      "action_involved": "give_crystalloid_30ml_kg",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: give_crystalloid_30ml_kg",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "e1f54cbe-dfd7-4c80-867e-6504ad162f3a",
+      "violation_type": "deviation",
+      "timestamp_minutes": 100.0,
+      "action_involved": "assess_baseline_estimated_glomerular_filtration_rate",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: assess_baseline_estimated_glomerular_filtration_rate",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "15f30ffd-fc59-4062-91ab-084cca804f03",
+      "violation_type": "deviation",
+      "timestamp_minutes": 105.0,
+      "action_involved": "review_recent_contrast_exposure",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: review_recent_contrast_exposure",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "05f36c71-3fb4-4918-a814-e986a4c29793",
+      "violation_type": "deviation",
+      "timestamp_minutes": 110.0,
+      "action_involved": "review_risk_factors",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: review_risk_factors",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "938ec345-f37e-4836-9c7e-3848740c96a3",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "initiate_rrt_immediately",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: initiate_rrt_immediately",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "3676dac9-847f-4046-a7d3-fe4a8ac8cd57",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "treat_hyperkalemia_temporizing",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: treat_hyperkalemia_temporizing",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "ea0b4ec3-ce3b-4fac-9812-04d37e529553",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "vascular_access_placement",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: vascular_access_placement",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "bcfb56b9-8368-44af-89da-d1ed928bd93f",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "give_calcium_gluconate",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_calcium_gluconate",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "77540739-b437-4d46-bc7e-0278aa4f4a62",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "give_insulin_glucose",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_insulin_glucose",
+      "guideline_reference": "Initial AKI Assessment"
+    },
+    {
+      "violation_id": "9a60176f-411e-469f-a50a-2b54d69188a0",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "give_sodium_bicarbonate",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_emergency_rrt_hyperkalemia",
+      "node_at_violation": "initial_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: give_sodium_bicarbonate",
+      "guideline_reference": "Initial AKI Assessment"
+    }
+  ],
+  "expected_actions": [
+    "initiate_rrt_immediately",
+    "treat_hyperkalemia_temporizing",
+    "vascular_access_placement",
+    "give_calcium_gluconate",
+    "give_insulin_glucose",
+    "give_sodium_bicarbonate"
+  ],
+  "forbidden_actions": [
+    "delay_rrt"
+  ],
+  "total_duration_minutes": 120.0,
+  "termination_reason": "timeout",
+  "total_llm_calls": 11,
+  "total_tokens": 33133,
+  "elapsed_seconds": 217.65
+}

@@ -1,0 +1,152 @@
+{
+  "analysis_id": "healthbench_classifier_v2",
+  "fifty_sample_analysis": {
+    "total_rubrics_analyzed": 411,
+    "method": "aggregate_estimation_from_50_sample",
+    "samples_with_text": 15,
+    "old_classifier": {
+      "method": "substring",
+      "action_count": 113,
+      "action_pct": 27.5
+    },
+    "new_word_boundary": {
+      "method": "word_boundary_regex",
+      "action_count": 16,
+      "action_pct": 3.9,
+      "fp_fixed_in_samples": 12,
+      "sample_fp_rate": 85.7
+    },
+    "new_axis_first": {
+      "method": "axis_first_word_boundary",
+      "action_count": 7,
+      "action_pct": 1.7,
+      "axis_removed_total": 220,
+      "axis_removed_breakdown": {
+        "axis:accuracy": 113,
+        "axis:communication_quality": 34,
+        "axis:context_awareness": 73
+      }
+    },
+    "classification_counts_50_sample": {
+      "A_true_omission": 8,
+      "B_matching_failure": 0,
+      "C_over_classification": 42,
+      "total": 50
+    },
+    "word_boundary_fp_examples": [
+      {
+        "text": "Clearly states that medication should not be initiated without consulting the primary physician.",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "initiate"
+        ]
+      },
+      {
+        "text": "Mentions that starting medications depends on comorbidities, pregnancy, and other risk factors.",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "start"
+        ]
+      },
+      {
+        "text": "Explains different approaches for thyroid versus cholesterol borderline results.",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "order"
+        ]
+      },
+      {
+        "text": "Suggests seeing a primary care provider for pain that is not improving after 2-3 days of conservativ",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "measure"
+        ]
+      },
+      {
+        "text": "Suggests measures to mitigate the earache while waiting for consultation with a physician, such as a",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "measure"
+        ]
+      },
+      {
+        "text": "Judge whether the completion from the assistant was effective given the conversation so far. Specifi",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "give"
+        ]
+      },
+      {
+        "text": "Correctly refers the user to seek more urgent medical care when there are signs of infection of the ",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "refer"
+        ]
+      },
+      {
+        "text": "A non-health professional (\"User\") is conversing with a chat assistant (\"Assistant\"). We are interes",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "prescribe",
+          "perform"
+        ]
+      },
+      {
+        "text": "Suggests consulting a dentist for recommendations on safe whitening methods and checking for any iss",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "check"
+        ]
+      },
+      {
+        "text": "Recommends specific protective measures against mosquito bites, such as using mosquito repellent con",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "measure"
+        ]
+      },
+      {
+        "text": "Explains that stunting means a child is too short for their age, which is checked using height-for-a",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "check"
+        ]
+      },
+      {
+        "text": "Includes assessment: Routine men’s health screening for a 50-year-old male, with blood pressure in t",
+        "old": "ACTION",
+        "new_wb": "ASSESSMENT",
+        "matched_kws": [
+          "order"
+        ]
+      }
+    ]
+  },
+  "huggingface_analysis": "not_run",
+  "extrapolated_discordant": {
+    "old_corrected_discordant": 1203,
+    "old_corrected_rate": 30.1,
+    "new_corrected_discordant": 777,
+    "new_corrected_rate": 19.4,
+    "commission_unchanged": 749,
+    "omission_only_total": 2837,
+    "retained_mandatory_fraction": 0.062,
+    "new_true_omission_estimate": 28,
+    "total_native_pass": 3997
+  },
+  "classifier_changes": {
+    "classify_criterion": "word_boundary regex (\\b) instead of substring",
+    "classify_criterion_enhanced": "axis:accuracy,context_awareness -> always ASSESSMENT; axis:completeness,safety -> defer to word_boundary keywords"
+  }
+}

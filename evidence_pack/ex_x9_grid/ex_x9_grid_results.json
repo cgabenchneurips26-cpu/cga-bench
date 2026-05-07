@@ -1,0 +1,162 @@
+{
+  "experiment": "X9: 4-scaffold x 3-model grid re-analysis",
+  "defense_target": "A6 (one-cell hero attack)",
+  "data_source": "results/ex_w8_crossmodel via load_w8_verdicts()",
+  "n_total_episodes": 14946,
+  "models": [
+    "oss120b",
+    "qwen35b",
+    "gemma31b"
+  ],
+  "scaffolds": [
+    "react",
+    "direct",
+    "checklist",
+    "tooluse"
+  ],
+  "thresholds": {
+    "degenerate_n_actions_min": 10.0,
+    "degenerate_both_pass_min": 0.95,
+    "bootstrap_n": 1000,
+    "rng_seed": 42
+  },
+  "cells": {
+    "oss120b_react": {
+      "n_episodes": 1460,
+      "tcc_pass_rate": 0.4425,
+      "ac_proxy_pass_rate": 0.8534,
+      "gap": -0.411,
+      "n_actions_mean": 23.91,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "oss120b_direct": {
+      "n_episodes": 817,
+      "tcc_pass_rate": 0.3831,
+      "ac_proxy_pass_rate": 0.8654,
+      "gap": -0.4823,
+      "n_actions_mean": 24.0,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "oss120b_checklist": {
+      "n_episodes": 918,
+      "tcc_pass_rate": 0.3573,
+      "ac_proxy_pass_rate": 0.8715,
+      "gap": -0.5142,
+      "n_actions_mean": 24.03,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "oss120b_tooluse": {
+      "n_episodes": 1520,
+      "tcc_pass_rate": 0.4533,
+      "ac_proxy_pass_rate": 0.8467,
+      "gap": -0.3934,
+      "n_actions_mean": 23.88,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "qwen35b_react": {
+      "n_episodes": 1786,
+      "tcc_pass_rate": 0.603,
+      "ac_proxy_pass_rate": 0.5924,
+      "gap": 0.0106,
+      "n_actions_mean": 16.95,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "qwen35b_direct": {
+      "n_episodes": 822,
+      "tcc_pass_rate": 0.382,
+      "ac_proxy_pass_rate": 0.8747,
+      "gap": -0.4927,
+      "n_actions_mean": 22.38,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "qwen35b_checklist": {
+      "n_episodes": 1057,
+      "tcc_pass_rate": 0.3746,
+      "ac_proxy_pass_rate": 0.8931,
+      "gap": -0.5184,
+      "n_actions_mean": 23.66,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "qwen35b_tooluse": {
+      "n_episodes": 2117,
+      "tcc_pass_rate": 0.8904,
+      "ac_proxy_pass_rate": 0.0482,
+      "gap": 0.8422,
+      "n_actions_mean": 3.13,
+      "degenerate": true,
+      "degeneracy_reason": "low_n_actions=3.13"
+    },
+    "gemma31b_react": {
+      "n_episodes": 2118,
+      "tcc_pass_rate": 0.728,
+      "ac_proxy_pass_rate": 0.33,
+      "gap": 0.398,
+      "n_actions_mean": 9.63,
+      "degenerate": true,
+      "degeneracy_reason": "low_n_actions=9.63"
+    },
+    "gemma31b_direct": {
+      "n_episodes": 706,
+      "tcc_pass_rate": 0.4306,
+      "ac_proxy_pass_rate": 0.7238,
+      "gap": -0.2932,
+      "n_actions_mean": 18.04,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "gemma31b_checklist": {
+      "n_episodes": 706,
+      "tcc_pass_rate": 0.5127,
+      "ac_proxy_pass_rate": 0.7465,
+      "gap": -0.2337,
+      "n_actions_mean": 19.74,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    },
+    "gemma31b_tooluse": {
+      "n_episodes": 919,
+      "tcc_pass_rate": 0.3351,
+      "ac_proxy_pass_rate": 0.9053,
+      "gap": -0.5702,
+      "n_actions_mean": 23.42,
+      "degenerate": false,
+      "degeneracy_reason": ""
+    }
+  },
+  "verdict": {
+    "n_cells_total": 12,
+    "n_non_degenerate": 10,
+    "n_negative_gap": 9,
+    "n_positive_gap": 1,
+    "negative_gap_cells": [
+      "oss120b_react",
+      "oss120b_direct",
+      "oss120b_checklist",
+      "oss120b_tooluse",
+      "qwen35b_direct",
+      "qwen35b_checklist",
+      "gemma31b_direct",
+      "gemma31b_checklist",
+      "gemma31b_tooluse"
+    ],
+    "positive_gap_cells": [
+      "qwen35b_react"
+    ],
+    "degenerate_cells": [
+      "qwen35b_tooluse",
+      "gemma31b_react"
+    ],
+    "mean_gap_non_degen": -0.3898,
+    "mean_gap_ci_lo": -0.4829,
+    "mean_gap_ci_hi": -0.2845,
+    "criterion_direction_met": true,
+    "criterion_ci_excludes_zero": true
+  }
+}

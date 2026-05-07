@@ -1,0 +1,942 @@
+{
+  "analysis_type": "pre_post_C3_fix_comparison",
+  "description": "Comparison of CGA scores before and after fixing the C3 (Forbidden Avoidance) formula. OLD formula: 1-N/(2N)=0.5 always (bug). NEW formula: 0.0 if any commission, 1.0 otherwise. Additionally detects previously-unrecorded commission violations by matching episode actions against scenario forbidden_actions.",
+  "methodology": {
+    "forbidden_matching": "1) Exact match against scenario-level forbidden_actions. 2) Substring match (forbidden in action_id) for scenario-level. 3) Exact match against graph-level node forbidden_actions. Actions that are in expected_actions for the scenario are exempt.",
+    "compliance_formula": "compliance = max(0, 1 - violation_count / max(total_actions, mandatory_count, 1))",
+    "c3_formula": "0.0 if commission_count > 0 else 1.0"
+  },
+  "summary": {
+    "total_episodes": 268,
+    "affected_episodes": 29,
+    "unaffected_episodes": 239,
+    "affected_pct": 10.8
+  },
+  "model_summary": {
+    "oss120b_baseline": {
+      "total_episodes": 22,
+      "affected_episodes": 6,
+      "old_mean_compliance": 0.7626,
+      "new_mean_compliance": 0.7475,
+      "mean_compliance_delta": -0.0151,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 0.7273,
+      "mean_C3_delta": -0.2727
+    },
+    "oss120b_patch_O": {
+      "total_episodes": 15,
+      "affected_episodes": 1,
+      "old_mean_compliance": 0.7027,
+      "new_mean_compliance": 0.6986,
+      "mean_compliance_delta": -0.0042,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 0.9333,
+      "mean_C3_delta": -0.0667
+    },
+    "oss120b_patch_S": {
+      "total_episodes": 21,
+      "affected_episodes": 4,
+      "old_mean_compliance": 0.742,
+      "new_mean_compliance": 0.7288,
+      "mean_compliance_delta": -0.0131,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 0.8095,
+      "mean_C3_delta": -0.1905
+    },
+    "oss120b_patch_T": {
+      "total_episodes": 23,
+      "affected_episodes": 4,
+      "old_mean_compliance": 0.7031,
+      "new_mean_compliance": 0.6927,
+      "mean_compliance_delta": -0.0104,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 0.8261,
+      "mean_C3_delta": -0.1739
+    },
+    "oss20b_baseline": {
+      "total_episodes": 61,
+      "affected_episodes": 8,
+      "old_mean_compliance": 0.6962,
+      "new_mean_compliance": 0.6882,
+      "mean_compliance_delta": -0.0079,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 0.8689,
+      "mean_C3_delta": -0.1311
+    },
+    "qwen35_baseline": {
+      "total_episodes": 66,
+      "affected_episodes": 6,
+      "old_mean_compliance": 0.6116,
+      "new_mean_compliance": 0.6056,
+      "mean_compliance_delta": -0.006,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 0.9091,
+      "mean_C3_delta": -0.0909
+    },
+    "qwen3_4b_baseline": {
+      "total_episodes": 60,
+      "affected_episodes": 0,
+      "old_mean_compliance": 0.7526,
+      "new_mean_compliance": 0.7526,
+      "mean_compliance_delta": 0.0,
+      "old_mean_C3": 1.0,
+      "new_mean_C3": 1.0,
+      "mean_C3_delta": 0.0
+    }
+  },
+  "model_ranking": {
+    "old_ranking": [
+      {
+        "rank": 1,
+        "model": "oss120b_baseline",
+        "mean_compliance": 0.7626
+      },
+      {
+        "rank": 2,
+        "model": "qwen3_4b_baseline",
+        "mean_compliance": 0.7526
+      },
+      {
+        "rank": 3,
+        "model": "oss120b_patch_S",
+        "mean_compliance": 0.742
+      },
+      {
+        "rank": 4,
+        "model": "oss120b_patch_T",
+        "mean_compliance": 0.7031
+      },
+      {
+        "rank": 5,
+        "model": "oss120b_patch_O",
+        "mean_compliance": 0.7027
+      },
+      {
+        "rank": 6,
+        "model": "oss20b_baseline",
+        "mean_compliance": 0.6962
+      },
+      {
+        "rank": 7,
+        "model": "qwen35_baseline",
+        "mean_compliance": 0.6116
+      }
+    ],
+    "new_ranking": [
+      {
+        "rank": 1,
+        "model": "qwen3_4b_baseline",
+        "mean_compliance": 0.7526
+      },
+      {
+        "rank": 2,
+        "model": "oss120b_baseline",
+        "mean_compliance": 0.7475
+      },
+      {
+        "rank": 3,
+        "model": "oss120b_patch_S",
+        "mean_compliance": 0.7288
+      },
+      {
+        "rank": 4,
+        "model": "oss120b_patch_O",
+        "mean_compliance": 0.6986
+      },
+      {
+        "rank": 5,
+        "model": "oss120b_patch_T",
+        "mean_compliance": 0.6927
+      },
+      {
+        "rank": 6,
+        "model": "oss20b_baseline",
+        "mean_compliance": 0.6882
+      },
+      {
+        "rank": 7,
+        "model": "qwen35_baseline",
+        "mean_compliance": 0.6056
+      }
+    ]
+  },
+  "scenario_breakdown": {
+    "dka_hypokalemia_trap": {
+      "affected_episodes": 14,
+      "models_affected": [
+        "oss120b_baseline",
+        "oss120b_patch_S",
+        "oss120b_patch_T",
+        "oss20b_baseline",
+        "qwen35_baseline"
+      ]
+    },
+    "stemi_inferior_rv_trap": {
+      "affected_episodes": 15,
+      "models_affected": [
+        "oss120b_baseline",
+        "oss120b_patch_O",
+        "oss120b_patch_S",
+        "oss120b_patch_T",
+        "oss20b_baseline",
+        "qwen35_baseline"
+      ]
+    }
+  },
+  "per_episode": [
+    {
+      "file": "eval_science_rag_oss120b/baseline/dka_hypokalemia_trap_rag_oss120b_baseline_20260329_102617.json",
+      "model_label": "oss120b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.5862,
+      "new_compliance_score": 0.5517,
+      "compliance_delta": -0.0345,
+      "old_total_violations": 12,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 13,
+      "total_actions": 29,
+      "estimated_mandatory_count": 29,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 40.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/baseline/dka_hypokalemia_trap_rag_oss120b_baseline_20260329_102931.json",
+      "model_label": "oss120b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6923,
+      "new_compliance_score": 0.6154,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 60.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/baseline/dka_hypokalemia_trap_rag_oss120b_baseline_20260329_105713.json",
+      "model_label": "oss120b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6522,
+      "new_compliance_score": 0.6087,
+      "compliance_delta": -0.0435,
+      "old_total_violations": 8,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 9,
+      "total_actions": 23,
+      "estimated_mandatory_count": 23,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 35.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/baseline/stemi_inferior_rv_trap_rag_oss120b_baseline_20260329_102252.json",
+      "model_label": "oss120b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8125,
+      "new_compliance_score": 0.75,
+      "compliance_delta": -0.0625,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 16,
+      "estimated_mandatory_count": 16,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/baseline/stemi_inferior_rv_trap_rag_oss120b_baseline_20260329_102801.json",
+      "model_label": "oss120b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8333,
+      "new_compliance_score": 0.7778,
+      "compliance_delta": -0.0556,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 18,
+      "estimated_mandatory_count": 18,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/baseline/stemi_inferior_rv_trap_rag_oss120b_baseline_20260329_105307.json",
+      "model_label": "oss120b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8235,
+      "new_compliance_score": 0.7647,
+      "compliance_delta": -0.0588,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 17,
+      "estimated_mandatory_count": 17,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_S/dka_hypokalemia_trap_rag_oss120b_patch_S_20260329_104738.json",
+      "model_label": "oss120b_patch_S",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_patch_S",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7692,
+      "new_compliance_score": 0.6923,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 55.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_S/dka_hypokalemia_trap_rag_oss120b_patch_S_20260329_111445.json",
+      "model_label": "oss120b_patch_S",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_patch_S",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6923,
+      "new_compliance_score": 0.6154,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 55.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_S/stemi_inferior_rv_trap_rag_oss120b_patch_S_20260329_104612.json",
+      "model_label": "oss120b_patch_S",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_patch_S",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8125,
+      "new_compliance_score": 0.75,
+      "compliance_delta": -0.0625,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 16,
+      "estimated_mandatory_count": 16,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_S/stemi_inferior_rv_trap_rag_oss120b_patch_S_20260329_111301.json",
+      "model_label": "oss120b_patch_S",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_patch_S",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8235,
+      "new_compliance_score": 0.7647,
+      "compliance_delta": -0.0588,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 17,
+      "estimated_mandatory_count": 17,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_T/dka_hypokalemia_trap_rag_oss120b_patch_T_20260329_103930.json",
+      "model_label": "oss120b_patch_T",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_patch_T",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6087,
+      "new_compliance_score": 0.5652,
+      "compliance_delta": -0.0435,
+      "old_total_violations": 9,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 10,
+      "total_actions": 23,
+      "estimated_mandatory_count": 23,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 60.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_T/dka_hypokalemia_trap_rag_oss120b_patch_T_20260329_110624.json",
+      "model_label": "oss120b_patch_T",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss120b_patch_T",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6923,
+      "new_compliance_score": 0.6154,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 60.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_T/stemi_inferior_rv_trap_rag_oss120b_patch_T_20260329_103514.json",
+      "model_label": "oss120b_patch_T",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_patch_T",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7778,
+      "new_compliance_score": 0.7222,
+      "compliance_delta": -0.0556,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 18,
+      "estimated_mandatory_count": 18,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_T/stemi_inferior_rv_trap_rag_oss120b_patch_T_20260329_110434.json",
+      "model_label": "oss120b_patch_T",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_patch_T",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8125,
+      "new_compliance_score": 0.75,
+      "compliance_delta": -0.0625,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 16,
+      "estimated_mandatory_count": 16,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss120b/patch_O/stemi_inferior_rv_trap_rag_oss120b_patch_O_20260329_112214.json",
+      "model_label": "oss120b_patch_O",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss120b_patch_O",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8125,
+      "new_compliance_score": 0.75,
+      "compliance_delta": -0.0625,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 16,
+      "estimated_mandatory_count": 16,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_qwen35/baseline/dka_hypokalemia_trap_rag_qwen35_baseline_20260330_000104.json",
+      "model_label": "qwen35_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_qwen35_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7692,
+      "new_compliance_score": 0.6923,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 35.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_qwen35/baseline/dka_hypokalemia_trap_rag_qwen35_baseline_20260330_001424.json",
+      "model_label": "qwen35_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_qwen35_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7692,
+      "new_compliance_score": 0.6923,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 35.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_qwen35/baseline/dka_hypokalemia_trap_rag_qwen35_baseline_20260330_002406.json",
+      "model_label": "qwen35_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_qwen35_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7692,
+      "new_compliance_score": 0.6923,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 35.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_qwen35/baseline/stemi_inferior_rv_trap_rag_qwen35_baseline_20260330_000029.json",
+      "model_label": "qwen35_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_qwen35_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7778,
+      "new_compliance_score": 0.7222,
+      "compliance_delta": -0.0556,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 18,
+      "estimated_mandatory_count": 18,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 80.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_qwen35/baseline/stemi_inferior_rv_trap_rag_qwen35_baseline_20260330_001345.json",
+      "model_label": "qwen35_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_qwen35_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7778,
+      "new_compliance_score": 0.7222,
+      "compliance_delta": -0.0556,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 18,
+      "estimated_mandatory_count": 18,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 60.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_qwen35/baseline/stemi_inferior_rv_trap_rag_qwen35_baseline_20260330_002329.json",
+      "model_label": "qwen35_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_qwen35_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.7778,
+      "new_compliance_score": 0.7222,
+      "compliance_delta": -0.0556,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 18,
+      "estimated_mandatory_count": 18,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 60.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/dka_hypokalemia_trap_rag_oss20b_baseline_20260329_141843.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.5417,
+      "new_compliance_score": 0.5,
+      "compliance_delta": -0.0417,
+      "old_total_violations": 11,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 12,
+      "total_actions": 24,
+      "estimated_mandatory_count": 24,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 50.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/dka_hypokalemia_trap_rag_oss20b_baseline_20260330_000646.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6923,
+      "new_compliance_score": 0.6154,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 55.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/dka_hypokalemia_trap_rag_oss20b_baseline_20260330_003104.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.5909,
+      "new_compliance_score": 0.5455,
+      "compliance_delta": -0.0455,
+      "old_total_violations": 9,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 10,
+      "total_actions": 22,
+      "estimated_mandatory_count": 22,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 60.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/dka_hypokalemia_trap_rag_oss20b_baseline_20260330_005120.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "dka_hypokalemia_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.6923,
+      "new_compliance_score": 0.6154,
+      "compliance_delta": -0.0769,
+      "old_total_violations": 4,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 5,
+      "total_actions": 13,
+      "estimated_mandatory_count": 13,
+      "commission_violation_details": [
+        {
+          "action_id": "start_insulin_infusion",
+          "timestamp": 60.0,
+          "forbidden_action": "start_insulin_infusion",
+          "match_type": "exact",
+          "confidence": "high",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/stemi_inferior_rv_trap_rag_oss20b_baseline_20260329_141505.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8235,
+      "new_compliance_score": 0.7647,
+      "compliance_delta": -0.0588,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 17,
+      "estimated_mandatory_count": 17,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 80.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/stemi_inferior_rv_trap_rag_oss20b_baseline_20260330_000507.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.875,
+      "new_compliance_score": 0.8125,
+      "compliance_delta": -0.0625,
+      "old_total_violations": 2,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 3,
+      "total_actions": 16,
+      "estimated_mandatory_count": 16,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 65.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/stemi_inferior_rv_trap_rag_oss20b_baseline_20260330_002621.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.8235,
+      "new_compliance_score": 0.7647,
+      "compliance_delta": -0.0588,
+      "old_total_violations": 3,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 4,
+      "total_actions": 17,
+      "estimated_mandatory_count": 17,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 75.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    },
+    {
+      "file": "eval_science_rag_oss20b/baseline/stemi_inferior_rv_trap_rag_oss20b_baseline_20260330_004925.json",
+      "model_label": "oss20b_baseline",
+      "scenario_id": "stemi_inferior_rv_trap",
+      "agent_id": "rag_oss20b_baseline",
+      "old_C3": 1.0,
+      "new_C3": 0.0,
+      "old_compliance_score": 0.875,
+      "new_compliance_score": 0.8125,
+      "compliance_delta": -0.0625,
+      "old_total_violations": 2,
+      "new_commission_violations_detected": 1,
+      "new_total_violations": 3,
+      "total_actions": 16,
+      "estimated_mandatory_count": 16,
+      "commission_violation_details": [
+        {
+          "action_id": "give_morphine_if_needed",
+          "timestamp": 70.0,
+          "forbidden_action": "give_morphine",
+          "match_type": "substring",
+          "confidence": "medium",
+          "source": "scenario_config"
+        }
+      ]
+    }
+  ]
+}

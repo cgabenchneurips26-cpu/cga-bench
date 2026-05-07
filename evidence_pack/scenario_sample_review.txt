@@ -1,0 +1,1819 @@
+================================================================================
+GRAPH: acls_cardiac_arrest | TYPE: TRAP | ID: acls_combo_nonshockable_epi_pregnancy_perimortem
+================================================================================
+
+PATIENT:
+  Age: 60, Sex: M
+  Chief complaint: unresponsive, pulseless
+
+  Labs: {'potassium': 4.5}
+  Vitals: {'hr': 0, 'sbp': 0, 'dbp': 0, 'rr': 0, 'spo2': 0, 'temp': 36.5, 'map_mmhg': 0}
+  Comorbidities: ['pregnancy']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (18):
+  - activate_code_team
+  - admit_to_icu
+  - analyze_rhythm
+  - attach_defibrillator_pads
+  - begin_high_quality_cpr
+  - confirm_cardiac_arrest
+  - continue_high_quality_cpr
+  - deliver_defibrillation
+  - evaluate_reversible_causes
+  - give_amiodarone_300mg
+  - give_epinephrine_1mg_iv
+  - give_epinephrine_1mg_iv_immediately
+  - initiate_targeted_temperature_management
+  - obtain_12_lead_ecg
+  - optimize_hemodynamics
+  ... (3 more)
+
+FORBIDDEN ACTIONS (14):
+  - delay_cpr
+  - delay_defibrillation
+  - deliver_defibrillation_asystole
+  - discharge_home
+  - give_amiodarone_for_asystole
+  - give_atropine_for_asystole
+  - give_atropine_for_cardiac_arrest
+  - give_calcium_without_indication
+  - give_sodium_bicarbonate_routine
+  - interrupt_cpr_for_intubation_extended
+  - interrupt_cpr_prolonged
+  - neuroprognosticate_before_72h
+  - terminate_care_prematurely
+  - terminate_resuscitation_prematurely
+
+TRAP: True
+TRAP DESCRIPTION: Multi-rule trap: ACLS-NONSHOCKABLE-EPI-IMMEDIATE, ACLS-PREGNANCY-PERIMORTEM-CSECTION
+TRIGGERED RULES: ['ACLS-NONSHOCKABLE-EPI-IMMEDIATE', 'ACLS-PREGNANCY-PERIMORTEM-CSECTION']
+
+
+================================================================================
+GRAPH: acls_cardiac_arrest | TYPE: NORMAL | ID: acls_basic_shockable_defib
+================================================================================
+
+PATIENT:
+  Age: 60, Sex: M
+  Chief complaint: unresponsive, pulseless
+
+  Labs: {'potassium': 4.5}
+  Vitals: {'hr': 0, 'sbp': 0, 'dbp': 0, 'rr': 0, 'spo2': 0, 'temp': 36.5, 'map_mmhg': 0}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (16):
+  - activate_code_team
+  - admit_to_icu
+  - analyze_rhythm
+  - attach_defibrillator_pads
+  - begin_high_quality_cpr
+  - confirm_cardiac_arrest
+  - continue_high_quality_cpr
+  - deliver_defibrillation
+  - evaluate_reversible_causes
+  - give_amiodarone_300mg
+  - give_epinephrine_1mg_iv
+  - give_epinephrine_1mg_iv_immediately
+  - initiate_targeted_temperature_management
+  - obtain_12_lead_ecg
+  - optimize_hemodynamics
+  ... (1 more)
+
+FORBIDDEN ACTIONS (14):
+  - delay_cpr
+  - delay_defibrillation
+  - deliver_defibrillation_asystole
+  - discharge_home
+  - give_amiodarone_for_asystole
+  - give_atropine_for_asystole
+  - give_atropine_for_cardiac_arrest
+  - give_calcium_without_indication
+  - give_sodium_bicarbonate_routine
+  - interrupt_cpr_for_intubation_extended
+  - interrupt_cpr_prolonged
+  - neuroprognosticate_before_72h
+  - terminate_care_prematurely
+  - terminate_resuscitation_prematurely
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: ada_dka_management | TYPE: TRAP | ID: dka_trap_eugly_sglt2
+================================================================================
+
+PATIENT:
+  Age: 35, Sex: M
+  Chief complaint: nausea, vomiting, abdominal pain
+
+  Labs: {'glucose': 450, 'ph': 7.15, 'potassium': 4.0, 'bicarbonate': 10, 'anion_gap': 24}
+  Vitals: {'hr': 110, 'sbp': 100, 'dbp': 60, 'rr': 28, 'spo2': 97, 'temp': 37.2, 'map_mmhg': 73}
+  Comorbidities: ['type_1_diabetes']
+  Allergies: []
+  Medications: ['sglt2_inhibitor']
+
+EXPECTED ACTIONS (31):
+  - add_dextrose_to_iv
+  - admit_to_icu
+  - arrange_followup
+  - assess_anion_gap_closure
+  - assess_mental_status
+  - assess_vital_signs
+  - classify_dka_severity
+  - consider_bicarbonate_if_ph_below_6.9
+  - continuous_cardiac_monitoring
+  - diabetes_education
+  - ensure_patient_education
+  - ensure_stable_glucose_control
+  - establish_iv_access
+  - give_potassium_iv
+  - hold_insulin_until_k_above_3.3
+  ... (16 more)
+
+FORBIDDEN ACTIONS (19):
+  - admit_to_ward
+  - delay_iv_access
+  - delay_potassium_replacement
+  - discharge_before_gap_closed
+  - discharge_home
+  - discharge_without_followup
+  - discharge_without_insulin
+  - discharge_without_insulin_plan
+  - discontinue_insulin_for_low_glucose
+  - give_bicarbonate_if_ph_above_7.0
+  - give_insulin_bolus
+  - give_oral_fluids_if_altered
+  - give_subcutaneous_insulin_initially
+  - start_insulin_before_k_check
+  - start_insulin_infusion
+  ... (4 more)
+
+TRAP: True
+TRAP DESCRIPTION: SGLT2 inhibitor patients may present with euglycemic DKA. Dextrose required.
+TRIGGERED RULES: ['DKA-EUGLY-SGLT2-DEXTROSE']
+
+
+================================================================================
+GRAPH: ada_dka_management | TYPE: NORMAL | ID: dka_basic_eugly_sglt2
+================================================================================
+
+PATIENT:
+  Age: 35, Sex: M
+  Chief complaint: nausea, vomiting, abdominal pain
+
+  Labs: {'glucose': 450, 'ph': 7.15, 'potassium': 4.0, 'bicarbonate': 10, 'anion_gap': 24}
+  Vitals: {'hr': 110, 'sbp': 100, 'dbp': 60, 'rr': 28, 'spo2': 97, 'temp': 37.2, 'map_mmhg': 73}
+  Comorbidities: ['type_1_diabetes']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (29):
+  - admit_to_icu
+  - arrange_followup
+  - assess_anion_gap_closure
+  - assess_mental_status
+  - assess_vital_signs
+  - classify_dka_severity
+  - consider_bicarbonate_if_ph_below_6.9
+  - continuous_cardiac_monitoring
+  - diabetes_education
+  - ensure_patient_education
+  - ensure_stable_glucose_control
+  - establish_iv_access
+  - give_potassium_iv
+  - hold_insulin_until_k_above_3.3
+  - monitor_bmp_q2_4h
+  ... (14 more)
+
+FORBIDDEN ACTIONS (19):
+  - admit_to_ward
+  - delay_iv_access
+  - delay_potassium_replacement
+  - discharge_before_gap_closed
+  - discharge_home
+  - discharge_without_followup
+  - discharge_without_insulin
+  - discharge_without_insulin_plan
+  - discontinue_insulin_for_low_glucose
+  - give_bicarbonate_if_ph_above_7.0
+  - give_insulin_bolus
+  - give_oral_fluids_if_altered
+  - give_subcutaneous_insulin_initially
+  - start_insulin_before_k_check
+  - start_insulin_infusion
+  ... (4 more)
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: aha_chest_pain_evaluation | TYPE: TRAP | ID: aha_ch_trap_ckd_enoxaparin
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {'egfr': 26.3}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (23):
+  - activate_cath_lab
+  - admit_to_cardiology_service
+  - admit_to_ccu
+  - arrange_pci
+  - assess_for_early_invasive
+  - assess_vital_signs
+  - calculate_risk_score
+  - continue_dual_antiplatelet
+  - continue_medical_therapy
+  - determine_disposition
+  - document_risk_assessment
+  - give_anticoagulation
+  - give_aspirin_loading
+  - give_p2y12_inhibitor
+  - initiate_secondary_prevention
+  ... (8 more)
+
+FORBIDDEN ACTIONS (13):
+  - delay_anticoagulation
+  - delay_ecg_for_registration
+  - delay_reperfusion
+  - discharge_home
+  - discharge_without_documentation
+  - discharge_without_ecg
+  - discharge_without_serial_testing
+  - discontinue_antiplatelet_early
+  - give_enoxaparin_1mg_kg_bid
+  - give_enoxaparin_full_dose
+  - give_nitrates_if_indicated
+  - give_nitrates_if_rv_infarct
+  - give_nitroglycerin
+
+TRAP: True
+TRAP DESCRIPTION: Full-dose enoxaparin in severe CKD causes hemorrhage.
+TRIGGERED RULES: ['ACS-CKD-ENOXAPARIN-ADJUST']
+
+
+================================================================================
+GRAPH: aha_chest_pain_evaluation | TYPE: NORMAL | ID: aha_ch_basic_cocaine_no
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (23):
+  - activate_cath_lab
+  - admit_to_cardiology_service
+  - admit_to_ccu
+  - arrange_pci
+  - assess_for_early_invasive
+  - assess_vital_signs
+  - calculate_risk_score
+  - continue_dual_antiplatelet
+  - continue_medical_therapy
+  - determine_disposition
+  - document_risk_assessment
+  - give_anticoagulation
+  - give_aspirin_loading
+  - give_p2y12_inhibitor
+  - initiate_secondary_prevention
+  ... (8 more)
+
+FORBIDDEN ACTIONS (11):
+  - delay_anticoagulation
+  - delay_ecg_for_registration
+  - delay_reperfusion
+  - discharge_home
+  - discharge_without_documentation
+  - discharge_without_ecg
+  - discharge_without_serial_testing
+  - discontinue_antiplatelet_early
+  - give_nitrates_if_indicated
+  - give_nitrates_if_rv_infarct
+  - give_nitroglycerin
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: aha_heart_failure_2022 | TYPE: TRAP | ID: aha_he_trap_hyperkalemia_no
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {'potassium': 5.8}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: ['ckd_stage_3']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (66):
+  - admit_to_icu
+  - assess_candidacy_for_advanced_therapies
+  - assess_crt_indication
+  - assess_hemodynamic_profile
+  - assess_icd_indication
+  - assess_lvef
+  - assess_nyha_class
+  - assess_structural_abnormalities
+  - careful_fluid_challenge
+  - check_optimal_gdmt_duration
+  - comprehensive_transplant_workup
+  - confirm_optimal_gdmt
+  - consider_combination_diuretics
+  - consider_inotropes
+  - consider_vasodilators
+  ... (51 more)
+
+FORBIDDEN ACTIONS (16):
+  - give_beta_blocker
+  - give_diltiazem
+  - give_diuretics
+  - give_high_dose_beta_blocker
+  - give_high_dose_diuretics_if_hypotensive
+  - give_iv_inotropes
+  - give_nsaid
+  - give_potassium_supplement
+  - give_thiazolidinedione
+  - give_verapamil
+  - initiate_ace_or_arb_or_arni
+  - initiate_ace_with_hyperkalemia
+  - initiate_arni
+  - initiate_arni_with_hyperkalemia
+  - initiate_mra
+  ... (1 more)
+
+TRAP: True
+TRAP DESCRIPTION: CKD with borderline K+ - RAAS inhibitors worsen hyperkalemia.
+TRIGGERED RULES: ['HF-HYPERKALEMIA-NO-RAAS-VARIANT']
+
+
+================================================================================
+GRAPH: aha_heart_failure_2022 | TYPE: NORMAL | ID: aha_he_basic_hyperk_no
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {'potassium': 4.1}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (68):
+  - admit_to_icu
+  - assess_candidacy_for_advanced_therapies
+  - assess_crt_indication
+  - assess_hemodynamic_profile
+  - assess_icd_indication
+  - assess_lvef
+  - assess_nyha_class
+  - assess_structural_abnormalities
+  - careful_fluid_challenge
+  - check_optimal_gdmt_duration
+  - comprehensive_transplant_workup
+  - confirm_optimal_gdmt
+  - consider_combination_diuretics
+  - consider_inotropes
+  - consider_vasodilators
+  ... (53 more)
+
+FORBIDDEN ACTIONS (9):
+  - give_beta_blocker
+  - give_diltiazem
+  - give_diuretics
+  - give_high_dose_beta_blocker
+  - give_high_dose_diuretics_if_hypotensive
+  - give_iv_inotropes
+  - give_nsaid
+  - give_thiazolidinedione
+  - give_verapamil
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: aha_stroke_2019 | TYPE: TRAP | ID: aha_st_combo_bp_uncontrolled_seizure_mimic_pregnancy_no
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {}
+  Vitals: {'hr': 80, 'sbp': 211, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: ['pregnancy']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (91):
+  - achieve_tici_2b_or_better
+  - activate_neurointerventional_team
+  - activate_stroke_team
+  - admit_to_icu
+  - admit_to_icu_or_stroke_unit
+  - admit_to_stroke_unit
+  - antiplatelet_therapy
+  - aspirin_within_24_48h
+  - assess_aspects_score
+  - assess_prestroke_mrs
+  - assess_surgical_risk
+  - avoid_hyperglycemia
+  - avoid_hyperthermia
+  - bp_management
+  - bp_management_long_term
+  ... (76 more)
+
+FORBIDDEN ACTIONS (21):
+  - delay_ct_for_labs
+  - give_ace_inhibitor
+  - give_alteplase
+  - give_alteplase_without_ruling_out_mimic
+  - give_anticoagulation
+  - give_anticoagulation_before_24h
+  - give_anticoagulation_for_stroke_prevention_in_first_24h
+  - give_anticoagulation_within_24h
+  - give_antiplatelet
+  - give_antiplatelet_before_24h
+  - give_antiplatelet_within_24h
+  - give_arb
+  - give_heparin_within_24h
+  - give_nitroprusside
+  - give_tpa
+  ... (6 more)
+
+TRAP: True
+TRAP DESCRIPTION: Multi-rule trap: STROKE-BP-UNCONTROLLED-NO-TPA, STROKE-SEIZURE-MIMIC-NO-TPA, STROKE-PREGNANCY-NO-ACEI
+TRIGGERED RULES: ['STROKE-BP-UNCONTROLLED-NO-TPA', 'STROKE-SEIZURE-MIMIC-NO-TPA', 'STROKE-PREGNANCY-NO-ACEI']
+
+
+================================================================================
+GRAPH: aha_stroke_2019 | TYPE: NORMAL | ID: aha_st_basic_bp_uncontrolled
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {}
+  Vitals: {'hr': 80, 'sbp': 138, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (91):
+  - achieve_tici_2b_or_better
+  - activate_neurointerventional_team
+  - activate_stroke_team
+  - admit_to_icu
+  - admit_to_icu_or_stroke_unit
+  - admit_to_stroke_unit
+  - antiplatelet_therapy
+  - aspirin_within_24_48h
+  - assess_aspects_score
+  - assess_prestroke_mrs
+  - assess_surgical_risk
+  - avoid_hyperglycemia
+  - avoid_hyperthermia
+  - bp_management
+  - bp_management_long_term
+  ... (76 more)
+
+FORBIDDEN ACTIONS (15):
+  - delay_ct_for_labs
+  - give_anticoagulation
+  - give_anticoagulation_before_24h
+  - give_anticoagulation_for_stroke_prevention_in_first_24h
+  - give_anticoagulation_within_24h
+  - give_antiplatelet
+  - give_antiplatelet_before_24h
+  - give_antiplatelet_within_24h
+  - give_heparin_within_24h
+  - give_tpa
+  - give_tpa_if_bp_uncontrolled
+  - place_arterial_line_within_30min
+  - place_foley_within_30min
+  - place_ng_tube_within_30min
+  - start_anticoagulation_before_24h_post_tpa
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: anaphylaxis_management | TYPE: TRAP | ID: anaph_combo_pediatric_dose_mastocytosis_extended
+================================================================================
+
+PATIENT:
+  Age: 0.3, Sex: F
+  Chief complaint: acute onset urticaria, dyspnea, hypotension
+
+  Labs: {}
+  Vitals: {'hr': 120, 'sbp': 80, 'dbp': 50, 'rr': 28, 'spo2': 90, 'temp': 37.0, 'map_mmhg': 60}
+  Comorbidities: ['mastocytosis']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (14):
+  - assess_airway_breathing_circulation
+  - assess_anaphylaxis_criteria
+  - establish_iv_access
+  - give_epinephrine_im
+  - give_normal_saline_bolus
+  - observe_minimum_24_hours
+  - observe_minimum_4_hours
+  - position_supine_legs_elevated
+  - prescribe_epinephrine_autoinjector
+  - provide_anaphylaxis_action_plan
+  - reassess_airway
+  - reassess_hemodynamic_status
+  - refer_to_allergist
+  - remove_trigger_if_identifiable
+
+FORBIDDEN ACTIONS (17):
+  - delay_epinephrine_for_antihistamine
+  - discharge_before_4_hours
+  - discharge_before_airway_stable
+  - discharge_without_action_plan
+  - discharge_without_allergist_referral
+  - discharge_without_autoinjector_prescription
+  - give_adult_dose_epinephrine
+  - give_antihistamine_as_first_line
+  - give_benzodiazepine
+  - give_colloid_solution
+  - give_epinephrine_0_5mg
+  - give_epinephrine_iv_bolus
+  - give_epinephrine_subcutaneous
+  - give_oral_medication_if_vomiting
+  - give_sedative
+  ... (2 more)
+
+TRAP: True
+TRAP DESCRIPTION: Multi-rule trap: ANA-PEDIATRIC-DOSE, ANA-MASTOCYTOSIS-EXTENDED-OBS
+TRIGGERED RULES: ['ANA-PEDIATRIC-DOSE', 'ANA-MASTOCYTOSIS-EXTENDED-OBS']
+
+
+================================================================================
+GRAPH: anaphylaxis_management | TYPE: NORMAL | ID: anaph_basic_beta_blocker
+================================================================================
+
+PATIENT:
+  Age: 35, Sex: F
+  Chief complaint: acute onset urticaria, dyspnea, hypotension
+
+  Labs: {}
+  Vitals: {'hr': 120, 'sbp': 80, 'dbp': 50, 'rr': 28, 'spo2': 90, 'temp': 37.0, 'map_mmhg': 60}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (13):
+  - assess_airway_breathing_circulation
+  - assess_anaphylaxis_criteria
+  - establish_iv_access
+  - give_epinephrine_im
+  - give_normal_saline_bolus
+  - observe_minimum_4_hours
+  - position_supine_legs_elevated
+  - prescribe_epinephrine_autoinjector
+  - provide_anaphylaxis_action_plan
+  - reassess_airway
+  - reassess_hemodynamic_status
+  - refer_to_allergist
+  - remove_trigger_if_identifiable
+
+FORBIDDEN ACTIONS (15):
+  - delay_epinephrine_for_antihistamine
+  - discharge_before_4_hours
+  - discharge_before_airway_stable
+  - discharge_without_action_plan
+  - discharge_without_allergist_referral
+  - discharge_without_autoinjector_prescription
+  - give_antihistamine_as_first_line
+  - give_benzodiazepine
+  - give_colloid_solution
+  - give_epinephrine_iv_bolus
+  - give_epinephrine_subcutaneous
+  - give_oral_medication_if_vomiting
+  - give_sedative
+  - withhold_epinephrine
+  - withhold_fluid_in_hypotension
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: atrial_fibrillation | TYPE: TRAP | ID: af_trap_wpw_no
+================================================================================
+
+PATIENT:
+  Age: 70, Sex: M
+  Chief complaint: palpitations, dizziness
+
+  Labs: {'egfr': 65, 'tsh': 2.0}
+  Vitals: {'hr': 142, 'sbp': 130, 'dbp': 80, 'rr': 18, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: ['hypertension', 'wpw_syndrome']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (9):
+  - assess_anticoagulation_need
+  - assess_chadsvasc_score
+  - assess_vital_signs
+  - give_anticoagulation
+  - give_rate_control
+  - obtain_12_lead_ecg
+  - order_lab_bmp
+  - order_lab_tsh
+  - perform_cardioversion
+
+FORBIDDEN ACTIONS (7):
+  - give_adenosine
+  - give_anticoagulation_without_chadsvasc
+  - give_beta_blocker_iv
+  - give_digoxin
+  - give_diltiazem
+  - give_rate_control_without_ecg
+  - give_verapamil
+
+TRAP: True
+TRAP DESCRIPTION: AV nodal blockers in WPW bypass the AV node, accelerating conduction through accessory pathway causing VF.
+TRIGGERED RULES: ['AF-WPW-NO-AV-BLOCKER']
+
+
+================================================================================
+GRAPH: atrial_fibrillation | TYPE: NORMAL | ID: af_basic_wpw_no
+================================================================================
+
+PATIENT:
+  Age: 70, Sex: M
+  Chief complaint: palpitations, dizziness
+
+  Labs: {'egfr': 65, 'tsh': 2.0}
+  Vitals: {'hr': 142, 'sbp': 130, 'dbp': 80, 'rr': 18, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: ['hypertension']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (9):
+  - assess_anticoagulation_need
+  - assess_chadsvasc_score
+  - assess_vital_signs
+  - give_anticoagulation
+  - give_rate_control
+  - obtain_12_lead_ecg
+  - order_lab_bmp
+  - order_lab_tsh
+  - perform_cardioversion
+
+FORBIDDEN ACTIONS (2):
+  - give_anticoagulation_without_chadsvasc
+  - give_rate_control_without_ecg
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: cap_pneumonia | TYPE: TRAP | ID: cap_trap_qt_no
+================================================================================
+
+PATIENT:
+  Age: 60, Sex: M
+  Chief complaint: cough, fever, dyspnea
+
+  Labs: {'wbc': 15.2, 'procalcitonin': 2.5}
+  Vitals: {'hr': 100, 'sbp': 110, 'dbp': 70, 'rr': 24, 'spo2': 93, 'temp': 38.8, 'map_mmhg': 83}
+  Comorbidities: ['long_qt']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_icu_criteria
+  - assess_respiratory_status
+  - assess_vital_signs
+  - give_beta_lactam_plus_macrolide
+  - give_iv_fluids
+  - order_imaging_chest_xray
+  - order_lab_blood_culture
+  - order_lab_cbc
+
+FORBIDDEN ACTIONS (4):
+  - delay_antibiotics_for_cultures_beyond_1h
+  - give_fluoroquinolone
+  - give_levofloxacin
+  - give_moxifloxacin
+
+TRAP: True
+TRAP DESCRIPTION: Fluoroquinolones prolong QT interval, risking torsades de pointes.
+TRIGGERED RULES: ['CAP-QT-NO-FLUOROQUINOLONE']
+
+
+================================================================================
+GRAPH: cap_pneumonia | TYPE: NORMAL | ID: cap_basic_penicillin_allergy
+================================================================================
+
+PATIENT:
+  Age: 60, Sex: M
+  Chief complaint: cough, fever, dyspnea
+
+  Labs: {'wbc': 15.2, 'procalcitonin': 2.5}
+  Vitals: {'hr': 100, 'sbp': 110, 'dbp': 70, 'rr': 24, 'spo2': 93, 'temp': 38.8, 'map_mmhg': 83}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_icu_criteria
+  - assess_respiratory_status
+  - assess_vital_signs
+  - give_beta_lactam_plus_macrolide
+  - give_iv_fluids
+  - order_imaging_chest_xray
+  - order_lab_blood_culture
+  - order_lab_cbc
+
+FORBIDDEN ACTIONS (1):
+  - delay_antibiotics_for_cultures_beyond_1h
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: copd_exacerbation | TYPE: TRAP | ID: copd_trap_bb_contraindicated
+================================================================================
+
+PATIENT:
+  Age: 68, Sex: M
+  Chief complaint: worsening dyspnea, increased sputum
+
+  Labs: {'pco2': 48, 'ph': 7.35}
+  Vitals: {'hr': 95, 'sbp': 140, 'dbp': 85, 'rr': 26, 'spo2': 89, 'temp': 37.5, 'map_mmhg': 103}
+  Comorbidities: ['copd', 'severe_copd']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_niv_eligibility
+  - assess_respiratory_status
+  - assess_vital_signs
+  - give_antibiotics
+  - give_bronchodilator
+  - give_systemic_corticosteroid
+  - order_imaging_chest_xray
+  - order_lab_abg
+
+FORBIDDEN ACTIONS (4):
+  - give_high_flow_o2_without_monitoring
+  - give_nonselective_beta_blocker
+  - give_propranolol
+  - give_sedatives
+
+TRAP: True
+TRAP DESCRIPTION: Non-selective beta-blockers cause bronchospasm in COPD.
+TRIGGERED RULES: ['COPD-BB-CONTRAINDICATED']
+
+
+================================================================================
+GRAPH: copd_exacerbation | TYPE: NORMAL | ID: copd_basic_pneumothorax_no
+================================================================================
+
+PATIENT:
+  Age: 68, Sex: M
+  Chief complaint: worsening dyspnea, increased sputum
+
+  Labs: {'pco2': 48, 'ph': 7.35}
+  Vitals: {'hr': 95, 'sbp': 140, 'dbp': 85, 'rr': 26, 'spo2': 89, 'temp': 37.5, 'map_mmhg': 103}
+  Comorbidities: ['copd']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_niv_eligibility
+  - assess_respiratory_status
+  - assess_vital_signs
+  - give_antibiotics
+  - give_bronchodilator
+  - give_systemic_corticosteroid
+  - order_imaging_chest_xray
+  - order_lab_abg
+
+FORBIDDEN ACTIONS (2):
+  - give_high_flow_o2_without_monitoring
+  - give_sedatives
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: gi_bleeding | TYPE: TRAP | ID: gib_trap_unstable_resuscitate
+================================================================================
+
+PATIENT:
+  Age: 58, Sex: M
+  Chief complaint: hematemesis, melena
+
+  Labs: {'hemoglobin': 8.5, 'inr': 1.2, 'platelets': 180, 'bun': 35}
+  Vitals: {'hr': 105, 'sbp': 74, 'dbp': 60, 'rr': 20, 'spo2': 96, 'temp': 37.0, 'map_mmhg': 73, 'heart_rate': 174}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (13):
+  - assess_hemodynamic_status
+  - assess_vital_signs
+  - consult_gi
+  - consult_surgery
+  - establish_iv_access
+  - establish_large_bore_iv
+  - give_crystalloid_bolus
+  - give_iv_crystalloid_bolus
+  - give_packed_rbc_if_hgb_below_7
+  - order_lab_cbc
+  - order_lab_coagulation
+  - order_lab_type_and_crossmatch
+  - type_and_crossmatch
+
+FORBIDDEN ACTIONS (3):
+  - delay_resuscitation_for_endoscopy
+  - delay_transfusion_for_endoscopy
+  - proceed_to_endoscopy_without_resuscitation
+
+TRAP: True
+TRAP DESCRIPTION: Hemodynamically unstable patients must be resuscitated before endoscopy.
+TRIGGERED RULES: ['GIB-UNSTABLE-RESUSCITATE-FIRST']
+
+
+================================================================================
+GRAPH: gi_bleeding | TYPE: NORMAL | ID: gib_basic_variceal_no
+================================================================================
+
+PATIENT:
+  Age: 58, Sex: M
+  Chief complaint: hematemesis, melena
+
+  Labs: {'hemoglobin': 8.5, 'inr': 1.2, 'platelets': 180, 'bun': 35}
+  Vitals: {'hr': 105, 'sbp': 100, 'dbp': 60, 'rr': 20, 'spo2': 96, 'temp': 37.0, 'map_mmhg': 73, 'heart_rate': 105}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (10):
+  - assess_hemodynamic_status
+  - assess_vital_signs
+  - consult_gi
+  - consult_surgery
+  - establish_iv_access
+  - give_iv_crystalloid_bolus
+  - give_packed_rbc_if_hgb_below_7
+  - order_lab_cbc
+  - order_lab_coagulation
+  - order_lab_type_and_crossmatch
+
+FORBIDDEN ACTIONS (1):
+  - delay_resuscitation_for_endoscopy
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: gina_asthma_exacerbation | TYPE: TRAP | ID: asthma_trap_pregnancy_no
+================================================================================
+
+PATIENT:
+  Age: 30, Sex: F
+  Chief complaint: severe wheezing, dyspnea
+
+  Labs: {}
+  Vitals: {'hr': 115, 'sbp': 130, 'dbp': 80, 'rr': 30, 'spo2': 91, 'temp': 37.0, 'map_mmhg': 97, 'pef_percent': 40}
+  Comorbidities: ['asthma', 'pregnancy']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (17):
+  - administer_oxygen_high_flow
+  - administer_oxygen_to_target_94_98
+  - admit_to_icu
+  - assess_severity_classification
+  - assess_vital_signs
+  - determine_disposition
+  - give_continuous_salbutamol_nebulized
+  - give_epinephrine_im
+  - give_ipratropium_nebulized
+  - give_magnesium_sulfate_iv
+  - give_salbutamol_nebulized
+  - give_systemic_corticosteroid
+  - give_systemic_corticosteroid_iv
+  - measure_oxygen_saturation
+  - measure_peak_expiratory_flow
+  ... (2 more)
+
+FORBIDDEN ACTIONS (17):
+  - delay_bronchodilator
+  - delay_intubation
+  - delay_treatment
+  - discharge_home
+  - discharge_without_action_plan
+  - discharge_without_corticosteroid_prescription
+  - discharge_without_followup
+  - give_benzodiazepine
+  - give_beta_blocker
+  - give_chest_physiotherapy
+  - give_morphine
+  - give_mucolytics
+  - give_nonselective_beta_blocker
+  - give_sedative
+  - give_succinylcholine_if_hyperkalemic
+  ... (2 more)
+
+TRAP: True
+TRAP DESCRIPTION: Undertreated asthma in pregnancy causes fetal hypoxia; all standard acute treatments (SABA, steroids, oxygen) are safer than uncontrolled asthma.
+TRIGGERED RULES: ['ASTHMA-PREGNANCY-NO-DEHYDRATION']
+
+
+================================================================================
+GRAPH: gina_asthma_exacerbation | TYPE: NORMAL | ID: asthma_basic_aspirin_sensitive
+================================================================================
+
+PATIENT:
+  Age: 30, Sex: F
+  Chief complaint: severe wheezing, dyspnea
+
+  Labs: {}
+  Vitals: {'hr': 115, 'sbp': 130, 'dbp': 80, 'rr': 30, 'spo2': 91, 'temp': 37.0, 'map_mmhg': 97, 'pef_percent': 40}
+  Comorbidities: ['asthma']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (17):
+  - administer_oxygen_high_flow
+  - administer_oxygen_to_target_94_98
+  - admit_to_icu
+  - assess_severity_classification
+  - assess_vital_signs
+  - determine_disposition
+  - give_continuous_salbutamol_nebulized
+  - give_epinephrine_im
+  - give_ipratropium_nebulized
+  - give_magnesium_sulfate_iv
+  - give_salbutamol_nebulized
+  - give_systemic_corticosteroid
+  - give_systemic_corticosteroid_iv
+  - measure_oxygen_saturation
+  - measure_peak_expiratory_flow
+  ... (2 more)
+
+FORBIDDEN ACTIONS (14):
+  - delay_bronchodilator
+  - delay_intubation
+  - discharge_home
+  - discharge_without_action_plan
+  - discharge_without_corticosteroid_prescription
+  - discharge_without_followup
+  - give_benzodiazepine
+  - give_beta_blocker
+  - give_chest_physiotherapy
+  - give_morphine
+  - give_mucolytics
+  - give_nonselective_beta_blocker
+  - give_sedative
+  - give_succinylcholine_if_hyperkalemic
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: hypertensive_emergency | TYPE: TRAP | ID: htn_trap_pheochromocytoma_no
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: severe headache, blurred vision
+
+  Labs: {'creatinine': 1.8, 'egfr': 40}
+  Vitals: {'hr': 90, 'sbp': 220, 'dbp': 130, 'rr': 20, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 160}
+  Comorbidities: ['hypertension', 'pheochromocytoma']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_bp
+  - assess_end_organ_damage
+  - assess_neurological_status
+  - assess_vital_signs
+  - continuous_bp_monitoring
+  - give_iv_antihypertensive
+  - order_lab_bmp
+  - order_lab_troponin
+
+FORBIDDEN ACTIONS (8):
+  - give_beta_blocker_alone
+  - give_beta_blocker_first
+  - give_iv_metoprolol_without_alpha_block
+  - give_labetalol
+  - give_metoprolol
+  - give_oral_antihypertensive_only
+  - give_propranolol
+  - reduce_bp_more_than_25pct_in_1h
+
+TRAP: True
+TRAP DESCRIPTION: Any beta-blocker before alpha-blockade causes hypertensive crisis.
+TRIGGERED RULES: ['HTN-PHEOCHROMOCYTOMA-NO-BB-EXPANDED']
+
+
+================================================================================
+GRAPH: hypertensive_emergency | TYPE: NORMAL | ID: htn_basic_aortic_dissection
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: severe headache, blurred vision
+
+  Labs: {'creatinine': 1.8, 'egfr': 40}
+  Vitals: {'hr': 90, 'sbp': 220, 'dbp': 130, 'rr': 20, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 160}
+  Comorbidities: ['hypertension']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_bp
+  - assess_end_organ_damage
+  - assess_neurological_status
+  - assess_vital_signs
+  - continuous_bp_monitoring
+  - give_iv_antihypertensive
+  - order_lab_bmp
+  - order_lab_troponin
+
+FORBIDDEN ACTIONS (2):
+  - give_oral_antihypertensive_only
+  - reduce_bp_more_than_25pct_in_1h
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: idsa_meningitis | TYPE: TRAP | ID: mening_combo_abx_before_immunocomp_listeria
+================================================================================
+
+PATIENT:
+  Age: 82.9, Sex: M
+  Chief complaint: severe headache, neck stiffness, fever
+
+  Labs: {'wbc': 18.0, 'glucose': 100}
+  Vitals: {'hr': 105, 'sbp': 135, 'dbp': 85, 'rr': 22, 'spo2': 97, 'temp': 39.5, 'map_mmhg': 102}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (15):
+  - add_ampicillin_for_listeria
+  - admit_to_icu
+  - assess_clinical_presentation
+  - assess_contraindications_to_lp
+  - assess_neurological_status
+  - assess_vital_signs
+  - give_ceftriaxone_iv
+  - give_dexamethasone_iv
+  - give_empiric_antibiotics
+  - give_vancomycin_iv
+  - monitor_neurological_status
+  - narrow_antibiotics_when_culture_available
+  - order_csf_analysis
+  - order_lab_blood_culture
+  - perform_lumbar_puncture
+
+FORBIDDEN ACTIONS (13):
+  - delay_antibiotics_for_ct
+  - delay_antibiotics_for_imaging
+  - delay_antibiotics_for_lp
+  - discharge_prematurely
+  - discharge_without_evaluation
+  - discontinue_antibiotics_early
+  - give_dexamethasone_after_antibiotics
+  - give_dexamethasone_oral
+  - give_oral_antibiotics_only
+  - ignore_neurological_deterioration
+  - perform_lp_in_coagulopathy_uncorrected
+  - withhold_antibiotics
+  - withhold_antibiotics_pending_lp
+
+TRAP: True
+TRAP DESCRIPTION: Multi-rule trap: MENING-ABX-BEFORE-LP, MENING-IMMUNOCOMP-LISTERIA
+TRIGGERED RULES: ['MENING-ABX-BEFORE-LP', 'MENING-IMMUNOCOMP-LISTERIA']
+
+
+================================================================================
+GRAPH: idsa_meningitis | TYPE: NORMAL | ID: mening_basic_abx_before
+================================================================================
+
+PATIENT:
+  Age: 40, Sex: M
+  Chief complaint: severe headache, neck stiffness, fever
+
+  Labs: {'wbc': 18.0, 'glucose': 100}
+  Vitals: {'hr': 105, 'sbp': 135, 'dbp': 85, 'rr': 22, 'spo2': 97, 'temp': 39.5, 'map_mmhg': 102}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (14):
+  - admit_to_icu
+  - assess_clinical_presentation
+  - assess_contraindications_to_lp
+  - assess_neurological_status
+  - assess_vital_signs
+  - give_ceftriaxone_iv
+  - give_dexamethasone_iv
+  - give_empiric_antibiotics
+  - give_vancomycin_iv
+  - monitor_neurological_status
+  - narrow_antibiotics_when_culture_available
+  - order_csf_analysis
+  - order_lab_blood_culture
+  - perform_lumbar_puncture
+
+FORBIDDEN ACTIONS (12):
+  - delay_antibiotics_for_ct
+  - delay_antibiotics_for_imaging
+  - delay_antibiotics_for_lp
+  - discharge_prematurely
+  - discharge_without_evaluation
+  - discontinue_antibiotics_early
+  - give_dexamethasone_after_antibiotics
+  - give_dexamethasone_oral
+  - give_oral_antibiotics_only
+  - ignore_neurological_deterioration
+  - perform_lp_in_coagulopathy_uncorrected
+  - withhold_antibiotics
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: kdigo_aki_full | TYPE: TRAP | ID: aki_trap_hyperkalemia_urgent
+================================================================================
+
+PATIENT:
+  Age: 65, Sex: M
+  Chief complaint: decreased urine output
+
+  Labs: {'creatinine': 3.5, 'potassium': 8.0, 'bun': 45, 'egfr': 15}
+  Vitals: {'hr': 88, 'sbp': 135, 'dbp': 80, 'rr': 18, 'spo2': 96, 'temp': 37.0, 'map_mmhg': 98}
+  Comorbidities: ['hypertension', 'diabetes']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (44):
+  - assess_aki_risk_factors
+  - assess_for_ckd_development
+  - assess_rrt_need
+  - assess_vascular_access
+  - avoid_contrast
+  - calculate_aki_stage
+  - consider_alternative_imaging
+  - consult_nephrology
+  - discontinue_nephrotoxins
+  - discuss_risk_benefit_with_patient
+  - ecg_for_hyperkalemia
+  - evaluate_rrt_indications
+  - give_calcium_gluconate
+  - give_insulin_dextrose
+  - hold_metformin
+  ... (29 more)
+
+FORBIDDEN ACTIONS (11):
+  - give_aminoglycoside_without_monitoring
+  - give_contrast
+  - give_contrast_without_assessment
+  - give_contrast_without_preparation
+  - give_high_osmolar_contrast
+  - give_magnesium_containing_antacids
+  - give_nsaid
+  - give_potassium
+  - give_potassium_supplements_if_hyperkalemia
+  - give_succinylcholine
+  - repeat_contrast_within_48h
+
+TRAP: True
+TRAP DESCRIPTION: Severe hyperkalemia in AKI requires immediate cardiac membrane stabilization.
+TRIGGERED RULES: ['AKI-HYPERKALEMIA-URGENT']
+
+
+================================================================================
+GRAPH: kdigo_aki_full | TYPE: NORMAL | ID: aki_basic_nsaid_stop
+================================================================================
+
+PATIENT:
+  Age: 65, Sex: M
+  Chief complaint: decreased urine output
+
+  Labs: {'creatinine': 3.5, 'potassium': 5.2, 'bun': 45, 'egfr': 15}
+  Vitals: {'hr': 88, 'sbp': 135, 'dbp': 80, 'rr': 18, 'spo2': 96, 'temp': 37.0, 'map_mmhg': 98}
+  Comorbidities: ['hypertension', 'diabetes']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (41):
+  - assess_aki_risk_factors
+  - assess_for_ckd_development
+  - assess_rrt_need
+  - assess_vascular_access
+  - avoid_contrast
+  - calculate_aki_stage
+  - consider_alternative_imaging
+  - consult_nephrology
+  - discontinue_nephrotoxins
+  - discuss_risk_benefit_with_patient
+  - ecg_for_hyperkalemia
+  - evaluate_rrt_indications
+  - hold_metformin
+  - hold_nsaids
+  - identify_aki_etiology
+  ... (26 more)
+
+FORBIDDEN ACTIONS (10):
+  - give_aminoglycoside_without_monitoring
+  - give_contrast
+  - give_contrast_without_assessment
+  - give_contrast_without_preparation
+  - give_high_osmolar_contrast
+  - give_magnesium_containing_antacids
+  - give_nsaid
+  - give_potassium
+  - give_potassium_supplements_if_hyperkalemia
+  - repeat_contrast_within_48h
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: kdigo_contrast_aki | TYPE: TRAP | ID: caki_trap_aminoglycoside_avoid
+================================================================================
+
+PATIENT:
+  Age: 70, Sex: M
+  Chief complaint: cardiac catheterization planned
+
+  Labs: {'creatinine': 2.0, 'egfr': 28}
+  Vitals: {'hr': 78, 'sbp': 140, 'dbp': 85, 'rr': 16, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 103}
+  Comorbidities: ['ckd_stage_4', 'diabetes']
+  Allergies: []
+  Medications: ['aminoglycoside']
+
+EXPECTED ACTIONS (23):
+  - assess_hydration_status
+  - assess_urine_output
+  - avoid_additional_nephrotoxins
+  - check_baseline_egfr
+  - check_scr_at_48h
+  - consider_alternative_imaging
+  - document_egfr_check
+  - document_stable_egfr
+  - hold_metformin_if_applicable
+  - hold_nephrotoxic_medications
+  - iv_hydration_post_contrast
+  - iv_hydration_pre_contrast
+  - monitor_scr_48_72h
+  - nephrology_consult
+  - optimize_fluid_status
+  ... (8 more)
+
+FORBIDDEN ACTIONS (20):
+  - additional_contrast_exposure
+  - administer_contrast_without_egfr
+  - administer_contrast_without_egfr_check
+  - administer_contrast_without_hydration
+  - continue_aminoglycoside_with_contrast
+  - continue_aminoglycosides
+  - continue_nephrotoxic_drugs
+  - continue_nsaids
+  - discharge_without_egfr_confirmation
+  - discharge_without_followup
+  - discharge_without_scr_check
+  - give_aminoglycoside
+  - give_contrast_without_preparation
+  - give_gadolinium_contrast
+  - give_high_osmolar_contrast
+  ... (5 more)
+
+TRAP: True
+TRAP DESCRIPTION: Aminoglycosides synergize nephrotoxicity with contrast agents.
+TRIGGERED RULES: ['CAKI-AMINOGLYCOSIDE-AVOID']
+
+
+================================================================================
+GRAPH: kdigo_contrast_aki | TYPE: NORMAL | ID: caki_basic_metformin_hold
+================================================================================
+
+PATIENT:
+  Age: 70, Sex: M
+  Chief complaint: cardiac catheterization planned
+
+  Labs: {'creatinine': 2.0, 'egfr': 28}
+  Vitals: {'hr': 78, 'sbp': 140, 'dbp': 85, 'rr': 16, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 103}
+  Comorbidities: ['ckd_stage_4', 'diabetes']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (23):
+  - assess_hydration_status
+  - assess_urine_output
+  - avoid_additional_nephrotoxins
+  - check_baseline_egfr
+  - check_scr_at_48h
+  - consider_alternative_imaging
+  - document_egfr_check
+  - document_stable_egfr
+  - hold_metformin_if_applicable
+  - hold_nephrotoxic_medications
+  - iv_hydration_post_contrast
+  - iv_hydration_pre_contrast
+  - monitor_scr_48_72h
+  - nephrology_consult
+  - optimize_fluid_status
+  ... (8 more)
+
+FORBIDDEN ACTIONS (18):
+  - additional_contrast_exposure
+  - administer_contrast_without_egfr
+  - administer_contrast_without_egfr_check
+  - administer_contrast_without_hydration
+  - continue_aminoglycosides
+  - continue_nephrotoxic_drugs
+  - continue_nsaids
+  - discharge_without_egfr_confirmation
+  - discharge_without_followup
+  - discharge_without_scr_check
+  - give_contrast_without_preparation
+  - give_gadolinium_contrast
+  - give_high_osmolar_contrast
+  - order_mri_with_gadolinium
+  - repeat_contrast_within_48h
+  ... (3 more)
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: pulmonary_embolism | TYPE: TRAP | ID: pe_trap_obesity_no
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: F
+  Chief complaint: acute dyspnea, pleuritic chest pain
+
+  Labs: {'d_dimer': 2500, 'troponin': 0.15, 'egfr': 75}
+  Vitals: {'hr': 110, 'sbp': 105, 'dbp': 65, 'rr': 24, 'spo2': 91, 'temp': 37.0, 'map_mmhg': 78}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_vital_signs
+  - assess_wells_score
+  - give_anticoagulation
+  - give_thrombolysis
+  - order_imaging_ct_pa
+  - order_lab_bnp
+  - order_lab_d_dimer
+  - order_lab_troponin
+
+FORBIDDEN ACTIONS (5):
+  - delay_anticoagulation
+  - delay_anticoagulation_if_high_probability
+  - give_apixaban_standard
+  - give_rivaroxaban_standard
+  - give_standard_dose_doac
+
+TRAP: True
+TRAP DESCRIPTION: Standard DOAC dosing in morbid obesity may be subtherapeutic.
+TRIGGERED RULES: ['PE-OBESITY-NO-STANDARD-DOAC']
+
+
+================================================================================
+GRAPH: pulmonary_embolism | TYPE: NORMAL | ID: pe_basic_massive_thrombolysis
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: F
+  Chief complaint: acute dyspnea, pleuritic chest pain
+
+  Labs: {'d_dimer': 2500, 'troponin': 0.15, 'egfr': 75}
+  Vitals: {'hr': 110, 'sbp': 155, 'dbp': 65, 'rr': 24, 'spo2': 91, 'temp': 37.0, 'map_mmhg': 78}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (8):
+  - assess_vital_signs
+  - assess_wells_score
+  - give_anticoagulation
+  - give_thrombolysis
+  - order_imaging_ct_pa
+  - order_lab_bnp
+  - order_lab_d_dimer
+  - order_lab_troponin
+
+FORBIDDEN ACTIONS (2):
+  - delay_anticoagulation
+  - delay_anticoagulation_if_high_probability
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: ssc_sepsis_hour1_bundle | TYPE: TRAP | ID: ssc_se_trap_neutropenic_broad
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: ['neutropenia']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (11):
+  - admit_to_icu
+  - assess_infection_source
+  - assess_organ_dysfunction
+  - determine_disposition
+  - give_broad_spectrum_antibiotics
+  - give_crystalloid_30ml_kg
+  - order_lab_blood_culture
+  - order_lab_lactate
+  - reassess_perfusion
+  - remeasure_lactate_if_elevated
+  - start_vasopressor_if_hypotensive
+
+FORBIDDEN ACTIONS (8):
+  - admit_to_ward
+  - delay_antibiotics
+  - delay_antibiotics_for_source
+  - delay_antibiotics_until_culture
+  - discharge_home
+  - give_standard_cap_antibiotics_only
+  - give_vasopressor_without_fluid
+  - withhold_fluid_in_hypotension
+
+TRAP: True
+TRAP DESCRIPTION: Neutropenic sepsis needs immediate broad-spectrum, not standard CAP coverage.
+TRIGGERED RULES: ['SEPSIS-NEUTROPENIC-BROAD-SPECTRUM']
+
+
+================================================================================
+GRAPH: ssc_sepsis_hour1_bundle | TYPE: NORMAL | ID: ssc_se_basic_penicillin_anaphylaxis
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (11):
+  - admit_to_icu
+  - assess_infection_source
+  - assess_organ_dysfunction
+  - determine_disposition
+  - give_broad_spectrum_antibiotics
+  - give_crystalloid_30ml_kg
+  - order_lab_blood_culture
+  - order_lab_lactate
+  - reassess_perfusion
+  - remeasure_lactate_if_elevated
+  - start_vasopressor_if_hypotensive
+
+FORBIDDEN ACTIONS (5):
+  - admit_to_ward
+  - delay_antibiotics
+  - discharge_home
+  - give_vasopressor_without_fluid
+  - withhold_fluid_in_hypotension
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: status_epilepticus | TYPE: TRAP | ID: se_trap_known_epilepsy
+================================================================================
+
+PATIENT:
+  Age: 45, Sex: M
+  Chief complaint: continuous seizure activity >5 minutes
+
+  Labs: {'glucose': 110, 'sodium': 138}
+  Vitals: {'hr': 110, 'sbp': 160, 'dbp': 95, 'rr': 8, 'spo2': 88, 'temp': 38.5, 'map_mmhg': 117}
+  Comorbidities: ['known_epilepsy']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (14):
+  - admit_to_icu
+  - assess_airway_breathing_circulation
+  - assess_seizure_semiology
+  - check_antiepileptic_drug_levels
+  - check_point_of_care_glucose
+  - continuous_eeg_monitoring
+  - establish_iv_access
+  - give_benzodiazepine_first_line
+  - give_second_line_antiepileptic
+  - initiate_continuous_iv_anesthetic
+  - initiate_maintenance_antiepileptic
+  - monitor_respiratory_status
+  - perform_endotracheal_intubation
+  - reassess_neurological_status
+
+FORBIDDEN ACTIONS (17):
+  - delay_benzodiazepine
+  - delay_second_line_agent
+  - discharge_home
+  - discharge_without_neurology_followup
+  - discontinue_eeg_monitoring
+  - discontinue_eeg_prematurely
+  - extubate_during_active_se
+  - give_benzodiazepine_as_second_line
+  - give_levetiracetam_as_first_line
+  - give_oral_antiepileptic
+  - give_oral_antiepileptic_only
+  - give_phenytoin_as_first_line
+  - give_propofol_as_first_line
+  - give_valproate_as_first_line
+  - place_oral_airway_during_seizure
+  ... (2 more)
+
+TRAP: True
+TRAP DESCRIPTION: Patients with known epilepsy may have subtherapeutic drug levels triggering SE; levels guide reload decisions.
+TRIGGERED RULES: ['SE-KNOWN-EPILEPSY-CHECK-LEVELS']
+
+
+================================================================================
+GRAPH: status_epilepticus | TYPE: NORMAL | ID: se_basic_hypoglycemia_glucose
+================================================================================
+
+PATIENT:
+  Age: 45, Sex: M
+  Chief complaint: continuous seizure activity >5 minutes
+
+  Labs: {'glucose': 95.6, 'sodium': 138}
+  Vitals: {'hr': 110, 'sbp': 160, 'dbp': 95, 'rr': 8, 'spo2': 88, 'temp': 38.5, 'map_mmhg': 117}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (13):
+  - admit_to_icu
+  - assess_airway_breathing_circulation
+  - assess_seizure_semiology
+  - check_point_of_care_glucose
+  - continuous_eeg_monitoring
+  - establish_iv_access
+  - give_benzodiazepine_first_line
+  - give_second_line_antiepileptic
+  - initiate_continuous_iv_anesthetic
+  - initiate_maintenance_antiepileptic
+  - monitor_respiratory_status
+  - perform_endotracheal_intubation
+  - reassess_neurological_status
+
+FORBIDDEN ACTIONS (17):
+  - delay_benzodiazepine
+  - delay_second_line_agent
+  - discharge_home
+  - discharge_without_neurology_followup
+  - discontinue_eeg_monitoring
+  - discontinue_eeg_prematurely
+  - extubate_during_active_se
+  - give_benzodiazepine_as_second_line
+  - give_levetiracetam_as_first_line
+  - give_oral_antiepileptic
+  - give_oral_antiepileptic_only
+  - give_phenytoin_as_first_line
+  - give_propofol_as_first_line
+  - give_valproate_as_first_line
+  - place_oral_airway_during_seizure
+  ... (2 more)
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: toxicology_management | TYPE: TRAP | ID: tox_trap_opioid_naloxone
+================================================================================
+
+PATIENT:
+  Age: 28, Sex: F
+  Chief complaint: intentional ingestion
+
+  Labs: {}
+  Vitals: {'hr': 95, 'sbp': 110, 'dbp': 70, 'rr': 18, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 83, 'qrs_ms': 80}
+  Comorbidities: ['opioid_overdose']
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (14):
+  - administer_specific_antidote
+  - assess_airway_breathing_circulation
+  - assess_decontamination_indication
+  - assess_toxidrome
+  - assess_vital_signs
+  - determine_disposition
+  - give_naloxone
+  - identify_toxin_class
+  - obtain_exposure_history
+  - provide_supportive_care
+  - reassess_clinical_status
+  - review_ecg_for_toxicity
+  - serial_lab_monitoring
+  - serial_vital_sign_monitoring
+
+FORBIDDEN ACTIONS (13):
+  - delay_antidote
+  - delay_empiric_antidote_if_indicated
+  - delay_resuscitation
+  - discharge_during_absorption_phase
+  - discharge_without_observation_period
+  - discharge_without_psychiatry_evaluation
+  - give_activated_charcoal_if_unprotected_airway
+  - give_activated_charcoal_with_caustic
+  - give_activated_charcoal_with_hydrocarbon
+  - give_antipyretic_for_hyperthermia_toxicologic
+  - give_ipecac
+  - induce_emesis
+  - physically_restrain_without_sedation
+
+TRAP: True
+TRAP DESCRIPTION: Naloxone reverses opioid-induced respiratory depression; start low (0.04-0.4 mg) and titrate to respiratory effort to avoid precipitating withdrawal.
+TRIGGERED RULES: ['TOX-OPIOID-NALOXONE']
+
+
+================================================================================
+GRAPH: toxicology_management | TYPE: NORMAL | ID: tox_basic_acetaminophen_nac
+================================================================================
+
+PATIENT:
+  Age: 28, Sex: F
+  Chief complaint: intentional ingestion
+
+  Labs: {'acetaminophen_level': 4.1}
+  Vitals: {'hr': 95, 'sbp': 110, 'dbp': 70, 'rr': 18, 'spo2': 97, 'temp': 37.0, 'map_mmhg': 83, 'qrs_ms': 80}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (13):
+  - administer_specific_antidote
+  - assess_airway_breathing_circulation
+  - assess_decontamination_indication
+  - assess_toxidrome
+  - assess_vital_signs
+  - determine_disposition
+  - identify_toxin_class
+  - obtain_exposure_history
+  - provide_supportive_care
+  - reassess_clinical_status
+  - review_ecg_for_toxicity
+  - serial_lab_monitoring
+  - serial_vital_sign_monitoring
+
+FORBIDDEN ACTIONS (13):
+  - delay_antidote
+  - delay_empiric_antidote_if_indicated
+  - delay_resuscitation
+  - discharge_during_absorption_phase
+  - discharge_without_observation_period
+  - discharge_without_psychiatry_evaluation
+  - give_activated_charcoal_if_unprotected_airway
+  - give_activated_charcoal_with_caustic
+  - give_activated_charcoal_with_hydrocarbon
+  - give_antipyretic_for_hyperthermia_toxicologic
+  - give_ipecac
+  - induce_emesis
+  - physically_restrain_without_sedation
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []
+
+
+================================================================================
+GRAPH: universal_clinical_safety | TYPE: TRAP | ID: safety_trap_warfarin_nsaid
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {'egfr': 85}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: ['warfarin']
+
+EXPECTED ACTIONS (1):
+  - assess_vital_signs
+
+FORBIDDEN ACTIONS (10):
+  - discharge_critically_ill
+  - discharge_without_assessment
+  - discharge_without_diagnosis
+  - give_aspirin_high_dose
+  - give_contraindicated_medication
+  - give_ibuprofen
+  - give_ketorolac
+  - give_naproxen
+  - give_nsaid
+  - give_thrombolytics_without_imaging
+
+TRAP: True
+TRAP DESCRIPTION: NSAIDs with warfarin dramatically increase GI bleeding risk (3-6x).
+TRIGGERED RULES: ['SAFETY-WARFARIN-NSAID-INTERACTION']
+
+
+================================================================================
+GRAPH: universal_clinical_safety | TYPE: NORMAL | ID: safety_basic_allergy_check
+================================================================================
+
+PATIENT:
+  Age: 55, Sex: M
+  Chief complaint: 
+
+  Labs: {'egfr': 85}
+  Vitals: {'hr': 80, 'sbp': 130, 'dbp': 80, 'rr': 16, 'spo2': 98, 'temp': 37.0, 'map_mmhg': 97}
+  Comorbidities: []
+  Allergies: []
+  Medications: []
+
+EXPECTED ACTIONS (1):
+  - assess_vital_signs
+
+FORBIDDEN ACTIONS (5):
+  - discharge_critically_ill
+  - discharge_without_assessment
+  - discharge_without_diagnosis
+  - give_contraindicated_medication
+  - give_thrombolytics_without_imaging
+
+TRAP: False
+TRAP DESCRIPTION: N/A
+TRIGGERED RULES: []

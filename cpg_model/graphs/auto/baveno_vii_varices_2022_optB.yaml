@@ -1,0 +1,170 @@
+graph_id: baveno_vii_varices_2022
+guideline_name: Baveno VII - Portal Hypertension and Varices
+version: '2024.1'
+metadata:
+  source: Baveno VII
+  doi: 10.1016/j.jhep.2021.11.017
+  recommendation_system: GRADE
+  description: Clinical workflow for the measurement of liver haemodynamics and hepatic vein pressure gradients (HVPG).
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Haemodynamic Assessment
+    description: Preparation and initial pressure measurements of the hepatic vein and IVC.
+    mandatory_actions:
+    - measure_free_hepatic_vein_pressure
+    - measure_ivc_pressure
+    allowed_actions:
+    - measure_free_hepatic_vein_pressure
+    - measure_ivc_pressure
+    - inject_contrast_to_rule_out_outflow_obstruction
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Baveno VII
+    source_section: Liver Haemodynamics
+    source_page: null
+    source_quote: Free hepatic vein pressure must be measured in the hepatic vein within 2-3 cm of its conﬂuence with the
+      inferior vena cava (IVC). IVC pressure should be measured as an internal control, at the level of the hepatic vein ostium.
+      If the free hepatic vein pressure is more than 2 mmHg above IVC pressures, the presence of a hepatic vein outﬂow obstruc-
+      tion should be ruled out by injecting a small amount of contrast medium.
+    next_nodes:
+    - whvp_measurement_setup
+    conditional_next: {}
+  whvp_measurement_setup:
+    node_id: whvp_measurement_setup
+    node_type: plan
+    name: WHVP Measurement Setup
+    description: Setting up the catheter and sedation for Wedged Hepatic Vein Pressure (WHVP) measurement.
+    mandatory_actions:
+    - use_end_hole_compliant_balloon_occlusion_catheter
+    - administer_low_dose_midazolam
+    allowed_actions:
+    - use_end_hole_compliant_balloon_occlusion_catheter
+    - administer_low_dose_midazolam
+    forbidden_actions:
+    - use_conventional_straight_catheter
+    - use_deep_sedation
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Baveno VII
+    source_section: Liver Haemodynamics
+    source_page: null
+    source_quote: The use of an end-hole, compliant balloon occlusion catheter reduces the random error of wedged hepatic
+      vein pressure (WHVP) measurements and is preferred over the use of a conventional straight catheter.
+    next_nodes:
+    - whvp_execution
+    conditional_next: {}
+  whvp_execution:
+    node_id: whvp_execution
+    node_type: action
+    name: WHVP Execution and Recording
+    description: Executing the occlusion and recording the pressure tracings.
+    mandatory_actions:
+    - inject_contrast_medium_to_confirm_balloon_position
+    - record_permanent_tracings_slow_speed
+    - record_whvp_in_triplicate
+    allowed_actions:
+    - inject_contrast_medium_to_confirm_balloon_position
+    - record_permanent_tracings_slow_speed
+    - record_whvp_in_triplicate
+    forbidden_actions:
+    - use_digital_on_screen_readings
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Baveno VII
+    source_section: Liver Haemodynamics
+    source_page: null
+    source_quote: Slow speed (up to 7.5 mm/s) permanent tracings of pres- sures, recorded either on paper or electronically,
+      are rec- ommended. Digital, on-screen, readings are much less accurate and should not be used.
+    next_nodes:
+    - hvpg_calculation
+    conditional_next: {}
+  hvpg_calculation:
+    node_id: hvpg_calculation
+    node_type: decision
+    name: HVPG Calculation and Interpretation
+    description: Calculating the gradient and determining if further diagnostic ruling is needed.
+    mandatory_actions:
+    - use_wedged_to_free_hvpg_as_standard
+    allowed_actions:
+    - use_wedged_to_free_hvpg_as_standard
+    - rule_out_psvd
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: Baveno VII
+    source_section: Liver Haemodynamics
+    source_page: null
+    source_quote: The wedged to free hepatic vein pressure gradient has su- perior clinical prognostic value than wedged to
+      right atrial pressure gradient and should be used as the standard ref- erence.
+    next_nodes:
+    - tips_monitoring
+    conditional_next:
+      state.hvpg_lt_10_with_ph_signs: psvd_evaluation
+  psvd_evaluation:
+    node_id: psvd_evaluation
+    node_type: action
+    name: PSVD Evaluation
+    description: Ruling out porto-sinusoidal vascular disorder in specific cases.
+    mandatory_actions:
+    - rule_out_psvd
+    allowed_actions:
+    - rule_out_psvd
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: B
+    source_guideline: Baveno VII
+    source_section: Liver Haemodynamics
+    source_page: null
+    source_quote: In patients with chronic liver disease and clinical signs of portal hypertension (gastro-oesophageal varices,
+      ascites, portosystemic collateral vessels) but with HVPG <10 mmHg, porto-sinusoidal vascular disorder (PSVD) must be
+      ruled out.
+    next_nodes:
+    - tips_monitoring
+    conditional_next: {}
+  tips_monitoring:
+    node_id: tips_monitoring
+    node_type: plan
+    name: TIPS Procedure Monitoring
+    description: Measuring PPG before and after TIPS insertion for efficacy.
+    mandatory_actions:
+    - measure_ppg_pre_tips
+    - measure_ppg_post_tips
+    allowed_actions:
+    - measure_ppg_pre_tips
+    - measure_ppg_post_tips
+    - measure_ppg_in_stable_non_sedated_patient
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Baveno VII
+    source_section: TIPS
+    source_page: null
+    source_quote: Portal pressure gradient (PPG) should be measured before and after transjugular intrahepatic portosystemic
+      shunt (TIPS) insertion.
+    next_nodes: []
+    conditional_next: {}
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 10
+  actionable_count: 10
+  validation_errors: 0
+  generated_at: '2026-04-29T17:02:57.171200+00:00'

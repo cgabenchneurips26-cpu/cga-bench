@@ -1,0 +1,211 @@
+{
+  "cpg": "ADA-2009-DKA-Management",
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "constraints": [
+    {
+      "type": "MUST",
+      "action": "assess_vital_signs",
+      "deadline_minutes": 5,
+      "before_action": null,
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "establish_iv_access",
+      "deadline_minutes": 10,
+      "before_action": null,
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "start_iv_fluid_ns",
+      "deadline_minutes": 15,
+      "before_action": "establish_iv_access",
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "order_lab_glucose",
+      "deadline_minutes": 15,
+      "before_action": null,
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "order_lab_bmp",
+      "deadline_minutes": 15,
+      "before_action": null,
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "order_lab_ketones",
+      "deadline_minutes": 30,
+      "before_action": null,
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "order_lab_abg",
+      "deadline_minutes": 30,
+      "before_action": null,
+      "source_section": "DKA Initial Assessment"
+    },
+    {
+      "type": "MUST",
+      "action": "classify_dka_severity",
+      "deadline_minutes": 45,
+      "before_action": "order_lab_abg",
+      "source_section": "DKA Severity Classification"
+    },
+    {
+      "type": "MUST",
+      "action": "classify_dka_severity",
+      "deadline_minutes": 45,
+      "before_action": "order_lab_bmp",
+      "source_section": "DKA Severity Classification"
+    },
+    {
+      "type": "MUST",
+      "action": "give_potassium_iv",
+      "deadline_minutes": 30,
+      "before_action": "order_lab_bmp",
+      "source_section": "Potassium Replacement Before Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "give_potassium_iv",
+      "deadline_minutes": 30,
+      "before_action": "establish_iv_access",
+      "source_section": "Potassium Replacement Before Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "recheck_potassium_in_1h",
+      "deadline_minutes": 90,
+      "before_action": "give_potassium_iv",
+      "source_section": "Potassium Replacement Before Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "start_insulin_infusion",
+      "deadline_minutes": 60,
+      "before_action": "order_lab_bmp",
+      "source_section": "Insulin Infusion Therapy"
+    },
+    {
+      "type": "MUST",
+      "action": "start_insulin_infusion",
+      "deadline_minutes": 60,
+      "before_action": "start_iv_fluid_ns",
+      "source_section": "Insulin Infusion Therapy"
+    },
+    {
+      "type": "MUST",
+      "action": "monitor_glucose_hourly",
+      "deadline_minutes": 60,
+      "before_action": null,
+      "source_section": "Insulin Infusion Therapy"
+    },
+    {
+      "type": "MUST",
+      "action": "monitor_potassium_q2h",
+      "deadline_minutes": 120,
+      "before_action": null,
+      "source_section": "Insulin Infusion Therapy"
+    },
+    {
+      "type": "MUST",
+      "action": "admit_to_icu",
+      "deadline_minutes": 30,
+      "before_action": "order_lab_abg",
+      "source_section": "Severe DKA Management"
+    },
+    {
+      "type": "MUST",
+      "action": "continuous_cardiac_monitoring",
+      "deadline_minutes": 30,
+      "before_action": null,
+      "source_section": "Severe DKA Management"
+    },
+    {
+      "type": "MUST",
+      "action": "place_arterial_line",
+      "deadline_minutes": 60,
+      "before_action": null,
+      "source_section": "Severe DKA Management"
+    },
+    {
+      "type": "MUST",
+      "action": "monitor_glucose_hourly",
+      "deadline_minutes": 60,
+      "before_action": null,
+      "source_section": "Ongoing Monitoring and Adjustment"
+    },
+    {
+      "type": "MUST",
+      "action": "monitor_bmp_q2_4h",
+      "deadline_minutes": 240,
+      "before_action": null,
+      "source_section": "Ongoing Monitoring and Adjustment"
+    },
+    {
+      "type": "MUST",
+      "action": "assess_anion_gap_closure",
+      "deadline_minutes": 240,
+      "before_action": null,
+      "source_section": "Ongoing Monitoring and Adjustment"
+    },
+    {
+      "type": "MUST",
+      "action": "verify_resolution_criteria",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Transition to Subcutaneous Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "start_subcutaneous_insulin",
+      "deadline_minutes": null,
+      "before_action": "verify_resolution_criteria",
+      "source_section": "Transition to Subcutaneous Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "overlap_iv_insulin_2h",
+      "deadline_minutes": null,
+      "before_action": "verify_resolution_criteria",
+      "source_section": "Transition to Subcutaneous Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "resume_oral_intake",
+      "deadline_minutes": null,
+      "before_action": "assess_anion_gap_closure",
+      "source_section": "Transition to Subcutaneous Insulin"
+    },
+    {
+      "type": "MUST",
+      "action": "ensure_stable_glucose_control",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Disposition Decision"
+    },
+    {
+      "type": "MUST",
+      "action": "ensure_patient_education",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Disposition Decision"
+    },
+    {
+      "type": "MUST",
+      "action": "arrange_followup",
+      "deadline_minutes": null,
+      "before_action": null,
+      "source_section": "Disposition Decision"
+    }
+  ],
+  "elapsed_s": 47.08,
+  "timestamp": "2026-04-26T09:12:37.125662+00:00"
+}

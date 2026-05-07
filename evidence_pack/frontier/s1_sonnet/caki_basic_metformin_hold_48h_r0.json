@@ -1,0 +1,418 @@
+{
+  "scenario_id": "caki_basic_metformin_hold_48h",
+  "run_idx": 0,
+  "success": true,
+  "error": null,
+  "compliance_score": 0.625,
+  "peak_risk": 0.036,
+  "aggregate_risk": 0.3024,
+  "total_violations": 9,
+  "sub_scores": {
+    "C1_path_selection": 0.9583333333333334,
+    "C2_mandatory_completion": 0.6521739130434783,
+    "C3_forbidden_avoidance": 1.0,
+    "C4_timing_compliance": 1.0,
+    "C5_sequence_integrity": 1.0
+  },
+  "violations_by_type": {
+    "deviation": 1,
+    "omission": 8
+  },
+  "actions_count": 24,
+  "actions": [
+    {
+      "action_id": "assess_hydration_status",
+      "timestamp_minutes": 0.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Mandatory action: Patient has CKD stage 4 and diabetes with planned cardiac catheterization. Hydration status assessment is critical to guide pre-procedure IV fluid prophylaxis to prevent contrast-induced nephropathy."
+    },
+    {
+      "action_id": "check_baseline_egfr",
+      "timestamp_minutes": 5.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Mandatory action: Baseline eGFR is essential to quantify renal function pre-contrast exposure. CKD stage 4 (eGFR 15-29) places this patient at very high risk for CIN; this result will guide risk stratification and prophylactic measures."
+    },
+    {
+      "action_id": "review_risk_factors",
+      "timestamp_minutes": 10.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "ct"
+      },
+      "justification": "Mandatory action: Systematic review of risk factors (CKD stage 4, diabetes, potential nephrotoxic medications, contrast volume) is required before cardiac catheterization to stratify CIN risk and determine appropriate preventive strategies."
+    },
+    {
+      "action_id": "assess_vital_signs",
+      "timestamp_minutes": 15.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient with CKD stage 4 and diabetes is at high risk for contrast-induced nephropathy (CIN) prior to cardiac catheterization. Confirming current hemodynamic stability is essential before proceeding with contrast exposure."
+    },
+    {
+      "action_id": "check_current_medications",
+      "timestamp_minutes": 20.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Review current medications to identify nephrotoxins (NSAIDs, metformin, ACE inhibitors, aminoglycosides) that should be held prior to contrast administration in this high-risk CKD/diabetes patient."
+    },
+    {
+      "action_id": "calculate_contrast_volume_limit",
+      "timestamp_minutes": 25.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Calculate the maximum safe contrast volume limit based on eGFR to minimize contrast-induced nephropathy risk in this CKD stage 4 diabetic patient undergoing cardiac catheterization."
+    },
+    {
+      "action_id": "consider_alternative_imaging",
+      "timestamp_minutes": 30.0,
+      "type": "order_imaging",
+      "args": {
+        "imaging_type": "unknown"
+      },
+      "justification": "Patient has CKD stage 4 and diabetes, placing them at high risk for contrast-induced nephropathy. Evaluating whether alternative imaging (e.g., CO2 angiography, MRI) can be used instead of iodinated contrast is a critical pre-procedural step."
+    },
+    {
+      "action_id": "consult_nephrology",
+      "timestamp_minutes": 35.0,
+      "type": "consult",
+      "args": {},
+      "justification": "CKD stage 4 with planned cardiac catheterization warrants nephrology input to optimize renal protection strategy, assess risk, and guide peri-procedural management."
+    },
+    {
+      "action_id": "avoid_additional_nephrotoxins",
+      "timestamp_minutes": 40.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Prior to contrast exposure, all nephrotoxic agents (NSAIDs, metformin, ACE inhibitors/ARBs) should be identified and held to minimize additive renal injury risk in this high-risk patient."
+    },
+    {
+      "action_id": "document_egfr_check",
+      "timestamp_minutes": 45.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Patient has CKD stage 4 with planned cardiac catheterization \u2014 documenting baseline eGFR is essential for contrast-induced nephropathy (CIN) risk stratification prior to procedure."
+    },
+    {
+      "action_id": "discontinue_nephrotoxic_agents",
+      "timestamp_minutes": 50.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient with CKD stage 4 and diabetes is at high risk for contrast-induced AKI; discontinuing nephrotoxic agents (e.g., NSAIDs, metformin) before catheterization reduces renal injury risk per CIN prevention guidelines."
+    },
+    {
+      "action_id": "assess_urine_output",
+      "timestamp_minutes": 55.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Baseline urine output assessment in a CKD stage 4 patient prior to contrast exposure helps establish renal functional reserve and guides pre-procedural hydration strategy."
+    },
+    {
+      "action_id": "hold_metformin_if_applicable",
+      "timestamp_minutes": 60.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has CKD stage 4 and diabetes. Metformin should be held prior to contrast administration for cardiac catheterization due to risk of lactic acidosis in the setting of contrast-induced nephropathy."
+    },
+    {
+      "action_id": "give_crystalloid_fluid",
+      "timestamp_minutes": 65.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "crystalloid",
+        "dose": "standard"
+      },
+      "justification": "IV hydration with isotonic crystalloid (e.g., normal saline or sodium bicarbonate) is the primary prevention strategy for contrast-induced nephropathy in high-risk patients with CKD stage 4 and diabetes undergoing cardiac catheterization."
+    },
+    {
+      "action_id": "adjust_medication_doses",
+      "timestamp_minutes": 70.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient with CKD stage 4 may require dose adjustments for renally-cleared medications used during and after cardiac catheterization (e.g., anticoagulants, contrast premedication)."
+    },
+    {
+      "action_id": "hold_nephrotoxic_medications",
+      "timestamp_minutes": 75.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has CKD stage 4 and diabetes with planned contrast exposure \u2014 holding nephrotoxic medications reduces risk of contrast-induced nephropathy (CIN). This is distinct from the already-completed 'discontinue_nephrotoxic_agents' step and reinforces ongoing medication review pre-procedure."
+    },
+    {
+      "action_id": "hold_metformin_if_g3b",
+      "timestamp_minutes": 80.0,
+      "type": "give_medication",
+      "args": {
+        "medication_code": "unknown",
+        "dose": "standard"
+      },
+      "justification": "Patient has diabetes and CKD stage 4 (likely GFR <45, G3b or worse). Metformin should be held peri-contrast to prevent lactic acidosis risk in setting of potential AKI from contrast exposure."
+    },
+    {
+      "action_id": "iv_hydration_post_contrast",
+      "timestamp_minutes": 85.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Pre-planned IV hydration post-contrast is a cornerstone of CIN prevention per nephrology/cardiology guidelines for high-risk patients (CKD + diabetes). Establishing the plan before the procedure ensures timely administration after contrast."
+    },
+    {
+      "action_id": "iv_hydration_pre_contrast",
+      "timestamp_minutes": 90.0,
+      "type": "reassess",
+      "args": {},
+      "justification": "Patient has CKD stage 4 and diabetes, placing them at high risk for contrast-induced nephropathy. Pre-procedural IV hydration (isotonic saline) is a key evidence-based intervention to reduce CI-AKI risk before cardiac catheterization, and has not yet been completed."
+    },
+    {
+      "action_id": "monitor_urine_output",
+      "timestamp_minutes": 95.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Ongoing urine output monitoring is essential in this high-risk CKD/diabetes patient undergoing contrast exposure to detect early signs of acute kidney injury and guide fluid management."
+    },
+    {
+      "action_id": "monitor_scr_48_72h",
+      "timestamp_minutes": 100.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Post-contrast serum creatinine monitoring at 48-72 hours is guideline-recommended to detect contrast-induced AKI in high-risk patients (CKD stage 4, diabetes)."
+    },
+    {
+      "action_id": "check_scr_at_48h",
+      "timestamp_minutes": 105.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Patient with CKD stage 4 and diabetes undergoing cardiac catheterization is at high risk for contrast-induced nephropathy. Checking serum creatinine at 48 hours post-contrast is standard protocol to detect AKI early."
+    },
+    {
+      "action_id": "check_scr_at_72h",
+      "timestamp_minutes": 110.0,
+      "type": "order_lab",
+      "args": {
+        "test_code": "unknown"
+      },
+      "justification": "Serial creatinine monitoring at 72 hours is recommended in high-risk patients (CKD stage 4, diabetes) to confirm or rule out contrast-induced nephropathy, as peak creatinine rise may occur up to 72 hours post-contrast."
+    },
+    {
+      "action_id": "nephrology_consult",
+      "timestamp_minutes": 115.0,
+      "type": "consult",
+      "args": {},
+      "justification": "Patient has CKD stage 4 with diabetes undergoing contrast exposure. Nephrology consultation is warranted for co-management, guidance on renal protection strategies, and planning if AKI develops."
+    }
+  ],
+  "violation_events": [
+    {
+      "violation_id": "bd4c3b72-27ce-438f-be58-85573c69b5cf",
+      "violation_type": "deviation",
+      "timestamp_minutes": 45.0,
+      "action_involved": "document_estimated_glomerular_filtration_rate_check",
+      "expected_action": null,
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 0.8,
+      "description": "Action outside allowed set without justification: document_estimated_glomerular_filtration_rate_check",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "5cdf28f0-f191-47d6-a5d5-0fa071bef48b",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "document_stable_egfr",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: document_stable_egfr",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "28d63725-8909-4bf6-9c6e-fa43ae150629",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "optimize_fluid_status",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: optimize_fluid_status",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "e626b18f-a2e2-47f2-8524-d434a700496d",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "prehydrate_iv_ns",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: prehydrate_iv_ns",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "1be37742-b60c-4a8a-8623-e1391688366b",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "provide_discharge_instructions",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: provide_discharge_instructions",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "95e62cd9-45d6-4bd1-9225-3f9228443fdd",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "schedule_followup",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: schedule_followup",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "4b6d9d40-0a28-4256-b534-8a9c0e9dcbbc",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "serial_scr_monitoring",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: serial_scr_monitoring",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "a9b1ec8d-6a82-41ba-b237-8d0dcd26ff37",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "standard_contrast_administration",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: standard_contrast_administration",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    },
+    {
+      "violation_id": "3115c623-ae50-4740-93cb-7dcbef1f0e18",
+      "violation_type": "omission",
+      "timestamp_minutes": 120.0,
+      "action_involved": null,
+      "expected_action": "use_minimum_contrast_volume",
+      "expected_deadline": null,
+      "actual_time": null,
+      "state_at_violation": "patient_caki_basic_metformin_hold_48h",
+      "node_at_violation": "risk_assessment",
+      "harm_severity": "moderate",
+      "guideline_class": null,
+      "preventability": 1.0,
+      "description": "Mandatory action not performed: use_minimum_contrast_volume",
+      "guideline_reference": "CA-AKI Risk Assessment"
+    }
+  ],
+  "expected_actions": [
+    "assess_hydration_status",
+    "assess_urine_output",
+    "avoid_additional_nephrotoxins",
+    "check_baseline_egfr",
+    "check_scr_at_48h",
+    "consider_alternative_imaging",
+    "document_egfr_check",
+    "document_stable_egfr",
+    "hold_metformin_if_applicable",
+    "hold_nephrotoxic_medications",
+    "iv_hydration_post_contrast",
+    "iv_hydration_pre_contrast",
+    "monitor_scr_48_72h",
+    "nephrology_consult",
+    "optimize_fluid_status",
+    "prehydrate_iv_ns",
+    "provide_discharge_instructions",
+    "review_risk_factors",
+    "schedule_followup",
+    "serial_scr_monitoring",
+    "standard_contrast_administration",
+    "use_lowest_contrast_volume",
+    "use_minimum_contrast_volume"
+  ],
+  "forbidden_actions": [
+    "additional_contrast_exposure",
+    "administer_contrast_without_egfr",
+    "administer_contrast_without_egfr_check",
+    "continue_nephrotoxic_drugs",
+    "discharge_without_egfr_confirmation",
+    "discharge_without_followup",
+    "discharge_without_scr_check",
+    "skip_risk_assessment",
+    "use_high_osmolar_contrast"
+  ],
+  "total_duration_minutes": 120.0,
+  "termination_reason": "timeout",
+  "total_llm_calls": 8,
+  "total_tokens": 23245,
+  "elapsed_seconds": 171.95
+}

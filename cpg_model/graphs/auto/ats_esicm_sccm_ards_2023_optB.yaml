@@ -1,0 +1,169 @@
+graph_id: ats_esicm_sccm_ards_2023
+guideline_name: ESICM 2023 ARDS
+version: '2024.1'
+metadata:
+  source: ESICM
+  doi: 10.1007/s00134-023-07050-7
+  recommendation_system: GRADE
+  description: Clinical management of Acute Hypoxemic Respiratory Failure (AHRF) and ARDS, focusing on non-invasive oxygen
+    therapy and lung-protective ventilation.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Respiratory Assessment
+    description: Determine if the patient is mechanically ventilated and the etiology of AHRF.
+    mandatory_actions:
+    - assess_ventilation_status
+    allowed_actions:
+    - assess_ventilation_status
+    - identify_ahrf_etiology
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESICM 2023 ARDS
+    source_section: Oxygen Therapy
+    source_page: "732"
+    source_quote: We recommend that non-mechanically ventilated patients with AHRF not due to cardiogenic pulmonary edema
+      or acute exacerbation of COPD receive HFNO as compared to conventional oxygen therapy to reduce the risk of intubation
+    next_nodes: []
+    conditional_next:
+      state.mechanically_ventilated: mechanical_ventilation_bundle
+      state.non_ventilated_covid: covid_non_invasive_bundle
+      state.non_ventilated_general: general_non_invasive_bundle
+  general_non_invasive_bundle:
+    node_id: general_non_invasive_bundle
+    node_type: plan
+    name: Non-Invasive Oxygen Therapy (General)
+    description: Management of non-mechanically ventilated AHRF patients (excluding COPD/Cardiogenic edema).
+    mandatory_actions:
+    - administer_high_flow_nasal_oxygen
+    allowed_actions:
+    - administer_high_flow_nasal_oxygen
+    forbidden_actions:
+    - conventional_oxygen_therapy
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESICM 2023 ARDS
+    source_section: Oxygen Therapy
+    source_page: "732"
+    source_quote: We recommend that non-mechanically ventilated patients with AHRF not due to cardiogenic pulmonary edema
+      or acute exacerbation of COPD receive HFNO as compared to conventional oxygen therapy to reduce the risk of intubation
+    next_nodes:
+    - monitoring_respiratory_status
+    conditional_next: {}
+  covid_non_invasive_bundle:
+    node_id: covid_non_invasive_bundle
+    node_type: plan
+    name: Non-Invasive Oxygen Therapy (COVID-19)
+    description: Management of AHRF specifically due to COVID-19.
+    mandatory_actions:
+    - administer_cpap
+    allowed_actions:
+    - administer_cpap
+    - administer_cpap_niv
+    forbidden_actions:
+    - conventional_oxygen_therapy
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIb
+    evidence_level: A
+    source_guideline: ESICM 2023 ARDS
+    source_section: Oxygen Therapy
+    source_page: "733"
+    source_quote: We suggest that CPAP/NIV can be considered instead of HFNO for the treatment of AHRF due to COVID-19 to
+      reduce the risk of intubation (weak recommendation, high level of evidence)
+    next_nodes:
+    - monitoring_respiratory_status
+    conditional_next: {}
+  mechanical_ventilation_bundle:
+    node_id: mechanical_ventilation_bundle
+    node_type: plan
+    name: Lung Protective Ventilation Bundle
+    description: Implementation of low tidal volume and pressure limits for ARDS patients.
+    mandatory_actions:
+    - calculate_pbw
+    - set_low_tidal_volume_ventilation
+    - maintain_plateau_pressure_below_30_cmh2o
+    allowed_actions:
+    - calculate_pbw
+    - adjust_tidal_volume_by_pbw
+    - set_low_tidal_volume_ventilation
+    - limit_tidal_volume_4_8_ml_kg_pbw
+    - maintain_plateau_pressure_below_30_cmh2o
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: ESICM 2023 ARDS
+    source_section: Mechanical Ventilation
+    source_page: "737"
+    source_quote: We recommend the use of low tidal volume ventilation strategies (i.e., 4–8 ml/kg PBW), compared to larger
+      tidal volumes (traditionally used to normalize blood gases), to reduce mortality in patients with ARDS not due to COVID-19.
+    next_nodes:
+    - monitoring_respiratory_status
+    conditional_next: {}
+  monitoring_respiratory_status:
+    node_id: monitoring_respiratory_status
+    node_type: action
+    name: Respiratory Monitoring
+    description: Continuous monitoring of oxygenation and ventilation parameters.
+    mandatory_actions:
+    - monitor_oxygen_saturation
+    - monitor_plateau_pressure
+    allowed_actions:
+    - monitor_oxygen_saturation
+    - monitor_plateau_pressure
+    - assess_intubation_need
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: ESICM 2023 ARDS
+    source_section: Clinical Application
+    source_page: "737"
+    source_quote: At present, the current approach to support patients with ARDS includes limiting Vt to 4–8 mL/kg PBW and
+      maintaining plateau airway pressure (Pplat) < 30 cmH2O.
+    next_nodes:
+    - disposition_assessment
+    conditional_next: {}
+  disposition_assessment:
+    node_id: disposition_assessment
+    node_type: decision
+    name: Disposition Assessment
+    description: Evaluate if current therapy is sufficient or if escalation (intubation) is required.
+    mandatory_actions:
+    - evaluate_clinical_response
+    allowed_actions:
+    - evaluate_clinical_response
+    - escalate_to_mechanical_ventilation
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ESICM 2023 ARDS
+    source_section: Oxygen Therapy
+    source_page: "732"
+    source_quote: We recommend that non-mechanically ventilated patients with AHRF not due to cardiogenic pulmonary edema
+      or acute exacerbation of COPD receive HFNO as compared to conventional oxygen therapy to reduce the risk of intubation
+    next_nodes: []
+    conditional_next:
+      state.treatment_failure: mechanical_ventilation_bundle
+      state.treatment_success: maintenance_care
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 6
+  actionable_count: 6
+  validation_errors: 0
+  generated_at: '2026-04-29T16:54:30.878901+00:00'

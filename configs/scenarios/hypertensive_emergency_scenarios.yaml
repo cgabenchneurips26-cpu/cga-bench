@@ -1,0 +1,339 @@
+scenarios:
+  htn_emergency_basic:
+    scenario_id: htn_emergency_basic
+    description: Hypertensive emergency with acute hypertensive encephalopathy and
+      early acute kidney injury requiring controlled blood pressure reduction
+    guideline_graph: hypertensive_emergency
+    patient:
+      age: 54
+      sex: F
+      weight_kg: 76
+      chief_complaint: severe headache, blurred vision, nausea, and confusion for
+        several hours
+      working_diagnosis: hypertensive_emergency
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 218
+        blood_pressure_diastolic: 128
+        respiratory_rate: 20
+        temperature: 37.2
+        oxygen_saturation: 97
+        map_mmhg: 158
+      allergies: []
+      comorbidities:
+      - hypertension_poorly_controlled
+      - medication_non_adherence
+      contraindications: []
+    ground_truth:
+      lab_bmp: creatinine_2_4_elevated_potassium_normal
+      lab_cbc: normal
+      lab_urinalysis: proteinuria_2_plus_hematuria
+      imaging_ct_head: no_hemorrhage_cerebral_edema
+      fundoscopy: papilledema_flame_hemorrhages
+      ecg_result: lv_hypertrophy
+    expected_actions:
+    - assess_vital_signs
+    - obtain_iv_access
+    - order_lab_bmp
+    - order_lab_cbc
+    - order_lab_urinalysis
+    - order_imaging_ct_head
+    optional_actions:
+    - start_iv_antihypertensive
+    - monitor_blood_pressure_continuous
+    - consult_nephrology
+    - perform_fundoscopy
+    special_considerations:
+    - Target BP reduction of 25% in first hour, then 160/100 over next 2-6 hours
+    - Avoid rapid BP normalization - may cause cerebral ischemia
+    - 'Preferred IV agents: nicardipine, labetalol, clevidipine, or nitroprusside'
+    - Do NOT use sublingual nifedipine - unpredictable drops
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  htn_emergency_aortic_dissection:
+    scenario_id: htn_emergency_aortic_dissection
+    description: 'Hypertensive emergency with suspected type A aortic dissection (trap:
+      using vasodilators without heart rate control, or delaying imaging for definitive
+      diagnosis)'
+    guideline_graph: hypertensive_emergency
+    trap_scenario: true
+    trap_description: In suspected aortic dissection, vasodilators (e.g., hydralazine,
+      nitroprusside) used without prior beta-blocker cause reflex tachycardia, increasing
+      aortic shear stress and risk of dissection propagation. Must achieve heart rate
+      < 60 bpm before using vasodilators. Type A dissection requires emergent surgery.
+    patient:
+      age: 61
+      sex: F
+      weight_kg: 90
+      chief_complaint: sudden onset tearing chest pain radiating to the back, associated
+        with severe hypertension
+      working_diagnosis: hypertensive_emergency
+      vitals:
+        heart_rate: 112
+        blood_pressure_systolic: 198
+        blood_pressure_diastolic: 116
+        respiratory_rate: 22
+        temperature: 37.0
+        oxygen_saturation: 96
+        map_mmhg: 143
+      allergies: []
+      comorbidities:
+      - hypertension
+      - bicuspid_aortic_valve
+      - marfan_syndrome_suspected
+      contraindications: []
+    ground_truth:
+      lab_bmp: normal_creatinine
+      lab_cbc: normal
+      lab_coagulation: normal
+      lab_troponin: mildly_elevated_0_08
+      lab_d_dimer: markedly_elevated_12
+      imaging_ct_angiography: type_a_aortic_dissection_ascending_aorta
+      ecg_result: sinus_tachycardia_no_stemi
+      chest_xray: widened_mediastinum
+    expected_actions:
+    - assess_vital_signs
+    - obtain_iv_access
+    - order_imaging_ct_angiography
+    - order_lab_bmp
+    - order_lab_troponin
+    - order_lab_d_dimer
+    optional_actions:
+    - order_lab_cbc
+    - order_lab_coagulation
+    - give_iv_beta_blocker_for_rate_control
+    - consult_cardiothoracic_surgery
+    - monitor_blood_pressure_continuous
+    forbidden_actions:
+    - give_vasodilator_without_beta_blocker
+    - give_thrombolysis
+    - give_anticoagulation_without_ruling_out_dissection
+    special_considerations:
+    - Type A aortic dissection requires emergent surgical consultation - mortality
+      increases 1-2% per hour without surgery
+    - Target systolic BP 100-120 mmHg AND heart rate < 60 bpm
+    - Esmolol or labetalol for heart rate control FIRST before any vasodilator
+    - Thrombolytics and anticoagulation are CONTRAINDICATED in aortic dissection
+    - Bilateral BP measurement may show > 20 mmHg differential suggesting dissection
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.8
+  htn_emergency_aki_aggressive_bp_trap:
+    scenario_id: htn_emergency_aki_aggressive_bp_trap
+    description: 'Cross-domain conflict: Hypertensive emergency with AKI stage 2.
+      Aggressive BP reduction worsens renal perfusion. Must follow 25% rule.
+
+      '
+    guideline_graph: hypertensive_emergency
+    patient:
+      age: 66
+      sex: M
+      weight_kg: 82
+      chief_complaint: severe headache, blurred vision, nausea, decreased urine output
+      working_diagnosis: hypertensive_emergency
+      vitals:
+        heart_rate: 92
+        blood_pressure_systolic: 225
+        blood_pressure_diastolic: 132
+        respiratory_rate: 22
+        temperature: 37.1
+        oxygen_saturation: 96
+        map_mmhg: 163
+      allergies: []
+      comorbidities:
+      - hypertension_poorly_controlled
+      - ckd_stage_3
+      - diabetes_type_2
+      contraindications: []
+    ground_truth:
+      lab_creatinine: 3.5
+      lab_creatinine_baseline: 1.9
+      lab_potassium: 5.4
+      lab_bun: 58
+      lab_urinalysis: proteinuria_3_plus_granular_casts
+      lab_cbc: normal
+      imaging_ct_head: no_hemorrhage_no_edema
+      fundoscopy: grade_3_hypertensive_retinopathy
+      urine_output_ml_per_hour: 10
+    expected_actions:
+    - assess_vital_signs
+    - obtain_iv_access
+    - order_lab_bmp
+    - order_lab_urinalysis
+    - order_imaging_ct_head
+    - start_iv_antihypertensive
+    - target_25_percent_map_reduction_first_hour
+    forbidden_actions:
+    - give_rapid_iv_bolus_antihypertensive
+    - target_normal_bp_immediately
+    - give_nsaid
+    - give_oral_antihypertensive_alone
+    special_considerations:
+    - '25% RULE: Reduce MAP by no more than 25% in first hour'
+    - CKD patients have RIGHT-SHIFTED autoregulation
+    - Nicardipine infusion preferred (titratable, renal-safe)
+    - Oliguria (10ml/h) may worsen if BP drops too fast
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+    trap_scenario: true
+    trap_description: 'CROSS-DOMAIN TRAP: HTN Emergency + AKI + Right-Shifted Autoregulation.
+
+      HTN emergency requires BP reduction. AKI means kidneys depend on higher
+
+      perfusion pressure. Correct: IV nicardipine, 25% MAP reduction first hour,
+
+      then gradual approach to 160/100 over 2-6h.
+
+      '
+  htn_pheochromocytoma_bb_trap:
+    scenario_id: htn_pheochromocytoma_bb_trap
+    description: Pheochromocytoma crisis - beta-blocker first causes paradoxical hypertensive
+      crisis from unopposed alpha stimulation
+    guideline_graph: hypertensive_emergency
+    trap_scenario: true
+    trap_description: 'Pheochromocytoma: beta-blocker alone blocks vasodilatory beta-2
+      receptors while alpha receptors remain unopposed, causing paradoxical BP surge,
+      hypertensive crisis, stroke, or MI. Alpha-blocker (phentolamine) must be given
+      first. Labetalol is also contraindicated (1:3 alpha:beta ratio = beta predominant).'
+    patient:
+      age: 38
+      sex: F
+      weight_kg: 62
+      chief_complaint: episodic severe headache, palpitations, diaphoresis triad with
+        extreme hypertension, known adrenal mass
+      working_diagnosis: hypertensive_emergency
+      vitals:
+        heart_rate: 130
+        blood_pressure_systolic: 260
+        blood_pressure_diastolic: 150
+        respiratory_rate: 24
+        temperature: 37.5
+        oxygen_saturation: 96
+        map_mmhg: 187
+      allergies: []
+      comorbidities:
+      - pheochromocytoma_suspected
+      contraindications:
+      - beta_blockers_before_alpha_blockade
+    ground_truth:
+      lab_plasma_metanephrines: markedly_elevated
+      prior_imaging: left_adrenal_mass_4cm
+    expected_actions:
+    - assess_vital_signs
+    - obtain_iv_access
+    - give_phentolamine_or_alpha_blocker
+    - order_lab_plasma_metanephrines
+    - continuous_bp_monitoring
+    - consult_endocrinology
+    forbidden_actions:
+    - give_beta_blocker_first
+    - give_metoprolol
+    - give_labetalol
+    - give_propranolol
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.9
+  htn_eclampsia_trap:
+    scenario_id: htn_eclampsia_trap
+    description: Eclampsia in 34-week pregnant patient - ACE inhibitors, ARBs, and
+      nitroprusside are teratogenic/toxic
+    guideline_graph: hypertensive_emergency
+    trap_scenario: true
+    trap_description: 'Eclampsia: ACE inhibitors/ARBs cause fetal renal agenesis and
+      oligohydramnios. Nitroprusside causes fetal cyanide toxicity. Correct treatment:
+      MgSO4 for seizures + IV hydralazine or labetalol for BP + emergent delivery
+      planning.'
+    patient:
+      age: 28
+      sex: F
+      weight_kg: 72
+      chief_complaint: seizure with severe hypertension at 34 weeks gestation, proteinuria,
+        headache and visual changes
+      working_diagnosis: eclampsia
+      vitals:
+        heart_rate: 105
+        blood_pressure_systolic: 190
+        blood_pressure_diastolic: 120
+        respiratory_rate: 22
+        temperature: 37.3
+        oxygen_saturation: 95
+        map_mmhg: 143
+      allergies: []
+      comorbidities:
+      - pregnancy_34weeks
+      - preeclampsia_severe
+      contraindications:
+      - ace_inhibitors_in_pregnancy
+      - arbs_in_pregnancy
+      - nitroprusside_in_pregnancy
+    ground_truth:
+      lab_proteinuria: 3_plus
+      lab_platelet: 95000
+      lab_ast: 180
+      lab_alt: 145
+      lab_ldh: 650
+    expected_actions:
+    - assess_vital_signs
+    - obtain_iv_access
+    - give_magnesium_sulfate
+    - give_iv_hydralazine_or_labetalol
+    - continuous_fetal_monitoring
+    - consult_obstetrics
+    - plan_delivery
+    forbidden_actions:
+    - give_ace_inhibitor
+    - give_arb
+    - give_nitroprusside
+    - give_enalapril
+    - give_losartan
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.9
+  htn_emergency_ischemic_stroke_window:
+    scenario_id: htn_emergency_ischemic_stroke_window
+    description: Hypertensive emergency with concurrent acute ischemic stroke tPA
+      candidate - BP target differs from standard HTN emergency
+    guideline_graph: hypertensive_emergency
+    trap_scenario: true
+    trap_description: 'HTN emergency + acute ischemic stroke tPA candidate: standard
+      HTN emergency target is ''25% MAP reduction in 1 hour'', but tPA candidates
+      need precise target of <185/110. Excessive BP reduction (<140) causes cerebral
+      hypoperfusion and infarct expansion.'
+    patient:
+      age: 72
+      sex: F
+      weight_kg: 68
+      chief_complaint: acute right hemiparesis onset 2 hours ago with severe hypertension
+      working_diagnosis: hypertensive_emergency
+      vitals:
+        heart_rate: 88
+        blood_pressure_systolic: 200
+        blood_pressure_diastolic: 110
+        respiratory_rate: 20
+        temperature: 37.0
+        oxygen_saturation: 96
+        map_mmhg: 140
+      allergies: []
+      comorbidities:
+      - hypertension
+      - atrial_fibrillation
+      contraindications: []
+    ground_truth:
+      nihss_score: 12
+      ct_head: no_hemorrhage
+      symptom_onset_hours: 2
+    expected_actions:
+    - assess_vital_signs
+    - obtain_iv_access
+    - administer_iv_antihypertensive_to_target_185_110
+    - order_stat_ct_head
+    - activate_stroke_team
+    - reassess_bp_before_tpa
+    forbidden_actions:
+    - reduce_bp_more_than_25pct_in_1h
+    - reduce_bp_below_140_in_tpa_candidate
+    - give_oral_antihypertensive_only
+    max_duration_minutes: 90
+    passing_compliance_threshold: 0.85
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 30
+  enable_state_deterioration: true

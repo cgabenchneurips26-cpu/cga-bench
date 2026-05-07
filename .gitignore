@@ -1,0 +1,99 @@
+reports/junit.xml
+.hypothesis/
+.omc/
+
+# Archived snapshots (704 MB of historical results / logs / dev byproducts;
+# kept on disk for forensic recovery, not for source control).
+_archive/
+
+# Large data directories
+results_old_rag_backup/
+data_release/
+
+# LaTeX build artifacts
+paper/*.aux
+paper/*.out
+paper/*.log
+paper/*.synctex.gz
+paper/*.bbl
+paper/*.blg
+paper/*.toc
+paper/figures/*.bak_*
+
+# Anonymization tooling outputs (regenerable; contain full repo copy).
+anonymous_repo/
+
+# Local validator / audit logs
+evidence_pack/croissant_validator.log
+
+# Clinician validation: browser-bundle build artefacts (regenerable from source)
+cga_bench/clinician_validation/dist/
+clinician_validation/dist/
+site/
+data/source_pdfs/*.pdf
+
+# MIMIC-IV credentialed data (PHI). Full v3.1 owner-side mount; aggregates only
+# under evidence_pack/mimic_iv/ are tracked. See docs/impl/mimic_datset_exp.md.
+data/mimic_iv_local/
+
+# CAV v0.5 build artifacts (regenerable from scripts/cav/)
+cav_v0_5/
+
+# Path D Day 1 deliverables (regenerable from scripts/sgsc/rescore_v6_with_cav.py)
+reports/path_d_day1/
+
+# MIMIC-IV credentialed raw download (PHI). Re-fetch via PhysioNet credentialing.
+physionet.org/
+
+# API keys / secrets (use secrets/frontier_api_keys.env.example as template
+# from the out-of-tree backup). Pattern catches both the directory and the
+# external-backup symlink that the host creates.
+/secrets
+/secrets/
+
+# Paper-pack tarballs (regenerable build artifacts).
+v73_paper_*.tar.gz
+
+# SGSC intermediate / reproduction runs (not paper-referenced).
+sgsc_output/v7_repro_run*/
+sgsc_output/v7_e3abc_*/
+sgsc_output/v7_e3a_pilot/
+sgsc_output/v7_multishot/
+sgsc_output/v7_2_quality_smoke/
+sgsc_output/v7_2_smoke_asco_tls/
+sgsc_output/v7_3_smoke_expansion/
+
+# Backup tarballs and run-once artifacts at workspace root.
+*.tar.gz
+
+# Clinician validation: rater responses (PII risk + large; backed up out-of-tree).
+clinician_validation/submissions/
+clinician_validation/result/
+clinician_validation/_archive/
+clinician_validation/rater_registry.json
+clinician_validation/rater_registry.json.bak_*
+clinician_validation/reports/
+
+# Date-prefixed session/audit reports under docs/clinician_validation/
+# tend to embed rater identifiers; the user_guide + screenshots stay tracked.
+docs/clinician_validation/26*.md
+docs/clinician_validation/2025*.md
+docs/clinician_validation/2026*.md
+
+# Evidence-pack heavy log directory (regenerable from runners).
+evidence_pack/expansion_v7_track1_logs/
+
+# Claude Code runtime locks.
+.claude/scheduled_tasks.lock
+
+# Anonymized double-blind copy bundle (regenerable from
+# scripts/prepare_anonymous_repo.py; ~200 MB build artifact).
+anonymous_repo.zip
+
+# Regenerable probe-corpus cache (~485 MB pickle, rebuilt by
+# scripts/experiments/probe_cga_s_sensitivity.py on first invocation).
+evidence_pack/analysis/_probe_corpus_cache.pkl
+
+# Per-session Claude Code memory scratchpad (auto-created at session
+# start; not source material).
+MEMORY.md

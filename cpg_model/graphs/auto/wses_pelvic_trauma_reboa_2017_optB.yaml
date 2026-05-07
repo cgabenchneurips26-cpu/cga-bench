@@ -1,0 +1,203 @@
+graph_id: wses_pelvic_trauma_reboa_2017
+guideline_name: WSES 2017 Pelvic Trauma REBOA
+version: '2024.1'
+metadata:
+  source: World Society of Emergency Surgery
+  doi: 10.1186/s13017-017-0117-6
+  recommendation_system: GRADE
+  description: Management of pelvic trauma focusing on hemodynamic stability, REBOA, pelvic packing, and angiography.
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Initial Hemodynamic Assessment
+    description: Assess hemodynamic stability of the pelvic trauma patient.
+    mandatory_actions:
+    - perform_perineal_digital_examination
+    allowed_actions:
+    - perform_perineal_digital_examination
+    - perform_rectal_digital_examination
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Pelvic Trauma REBOA
+    source_section: Initial Assessment
+    source_page: null
+    source_quote: Perineal and a rectal digital examination are mandatory in case of high suspicious of rectal injuries
+    source_recommendation_ids:
+    - rec_4
+    next_nodes: []
+    conditional_next:
+      state.unstable: critical_intervention_bundle
+      state.stable: stable_diagnostic_bundle
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  critical_intervention_bundle:
+    node_id: critical_intervention_bundle
+    node_type: plan
+    name: Critical Hemorrhage Control
+    description: Immediate interventions for hemodynamically unstable patients.
+    mandatory_actions:
+    - perform_preperitoneal_pelvic_packing
+    allowed_actions:
+    - perform_preperitoneal_pelvic_packing
+    - perform_reboa_zone_iii
+    - establish_femoral_arterial_access
+    - perform_pelvic_stabilization
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Pelvic Trauma REBOA
+    source_section: Hemorrhage Control
+    source_page: null
+    source_quote: Direct preperitoneal pelvic packing represents an effective surgical measure of early haemorrhage control
+      in hypotensive patients with bleeding pelvic
+    source_recommendation_ids:
+    - rec_14
+    - rec_11
+    - rec_12
+    next_nodes:
+    - vascular_intervention
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  stable_diagnostic_bundle:
+    node_id: stable_diagnostic_bundle
+    node_type: plan
+    name: Stable Patient Diagnostics
+    description: Diagnostic workup for hemodynamically stable patients.
+    mandatory_actions:
+    - perform_multiphasic_ct_scan_with_iv_contrast
+    allowed_actions:
+    - perform_multiphasic_ct_scan_with_iv_contrast
+    - perform_retrograde_urethrogram
+    - perform_urethrocystogram
+    - perform_contrast_ct_scan
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES 2017 Pelvic Trauma REBOA
+    source_section: Diagnostics
+    source_page: null
+    source_quote: Patients with pelvic trauma associated to hemodynamic normality or stability should undergo further diagnostic
+      workup with multi phasic CT-scan with i
+    source_recommendation_ids:
+    - rec_1
+    - rec_3
+    next_nodes:
+    - vascular_intervention
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  vascular_intervention:
+    node_id: vascular_intervention
+    node_type: action
+    name: Angiography and Embolization
+    description: Targeted arterial control based on CT findings or persistent instability.
+    mandatory_actions:
+    - perform_pelvic_angiography
+    allowed_actions:
+    - perform_pelvic_angiography
+    - perform_pelvic_angioembolization
+    - perform_pelvic_angiography_angioembolization
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: A
+    source_guideline: WSES 2017 Pelvic Trauma REBOA
+    source_section: Angiography
+    source_page: null
+    source_quote: After pelvic stabilization, initiation of aggressive hemostatic resuscitation and exclusion of extra-pelvic
+      sources of blood loss, patients with pelvi
+    source_recommendation_ids:
+    - rec_21
+    - rec_22
+    - rec_24
+    next_nodes:
+    - post_intervention_monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  post_intervention_monitoring:
+    node_id: post_intervention_monitoring
+    node_type: decision
+    name: Post-Intervention Assessment
+    description: Evaluate for persistent bleeding or need for definitive fixation.
+    mandatory_actions:
+    - perform_repeat_pelvic_angiography
+    allowed_actions:
+    - perform_repeat_pelvic_angiography
+    - perform_repeat_pelvic_angioembolization
+    forbidden_actions:
+    - perform_definitive_pelvic_fracture_fixation
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: A
+    source_guideline: WSES 2017 Pelvic Trauma REBOA
+    source_section: Follow-up
+    source_page: null
+    source_quote: Definitive pelvic fracture fixation should be postponed until after day 4 post injury in physiologically
+      deranged politrauma patients
+    source_recommendation_ids:
+    - rec_23
+    - rec_30
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+  disposition:
+    node_id: disposition
+    node_type: plan
+    name: Final Disposition
+    description: Transition to definitive orthopedic care after physiological stabilization.
+    mandatory_actions:
+    - apply_external_pelvic_fixation
+    allowed_actions:
+    - apply_external_pelvic_fixation
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: IIa
+    evidence_level: A
+    source_guideline: WSES 2017 Pelvic Trauma REBOA
+    source_section: Stabilization
+    source_page: null
+    source_quote: External pelvic fixation is a required adjunct to preperitoneal pelvic packing to provide a stable counterpressure
+      for effective packing
+    source_recommendation_ids:
+    - rec_18
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: VERIFIED
+      method: exact_substring
+      score: 1.0
+_generation_pipeline:
+  method: B
+  version: v1
+  endpoint: http://localhost:8013/v1
+  model: google/gemma-4-31b-it
+  triaged_count: 24
+  actionable_count: 22
+  validation_errors: 0
+  generated_at: '2026-04-30T05:43:11.547665+00:00'

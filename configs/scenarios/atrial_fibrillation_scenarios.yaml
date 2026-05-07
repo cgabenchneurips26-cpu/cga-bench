@@ -1,0 +1,287 @@
+scenarios:
+  af_new_onset_basic:
+    scenario_id: af_new_onset_basic
+    description: New onset atrial fibrillation with rapid ventricular response requiring
+      rate control
+    guideline_graph: atrial_fibrillation
+    patient:
+      age: 62
+      sex: F
+      weight_kg: 82
+      chief_complaint: palpitations, shortness of breath, chest discomfort for 6 hours
+      working_diagnosis: atrial_fibrillation
+      vitals:
+        heart_rate: 138
+        blood_pressure_systolic: 142
+        blood_pressure_diastolic: 88
+        respiratory_rate: 20
+        temperature: 37.1
+        oxygen_saturation: 95
+        map_mmhg: 106
+      allergies: []
+      comorbidities:
+      - hypertension
+      - type_2_diabetes
+      contraindications: []
+    ground_truth:
+      lab_tsh: normal
+      lab_bmp: normal_electrolytes
+      lab_cbc: normal
+      lab_troponin: negative
+      imaging_echocardiogram: normal_lv_function
+      ecg_result: atrial_fibrillation_rvr
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - order_lab_tsh
+    - order_lab_bmp
+    - assess_chadsvasc_score
+    optional_actions:
+    - order_lab_cbc
+    - order_lab_troponin
+    - order_imaging_echocardiogram
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  af_anticoagulation_decision:
+    scenario_id: af_anticoagulation_decision
+    description: 'Paroxysmal AF with high stroke risk requiring anticoagulation decision
+      (CHA2DS2-VASc trap: missing systematic risk scoring before anticoagulation)'
+    guideline_graph: atrial_fibrillation
+    trap_scenario: true
+    trap_description: Clinicians may start anticoagulation without formally calculating
+      CHA2DS2-VASc score, or may underestimate score and withhold indicated anticoagulation
+    patient:
+      age: 74
+      sex: F
+      weight_kg: 68
+      chief_complaint: palpitations and mild dyspnea, intermittent episodes over 2
+        weeks
+      working_diagnosis: atrial_fibrillation
+      vitals:
+        heart_rate: 96
+        blood_pressure_systolic: 158
+        blood_pressure_diastolic: 94
+        respiratory_rate: 18
+        temperature: 36.9
+        oxygen_saturation: 97
+        map_mmhg: 115
+      allergies: []
+      comorbidities:
+      - hypertension
+      - type_2_diabetes
+      - heart_failure_hfref
+      - prior_stroke_tia
+      contraindications: []
+    ground_truth:
+      chadsvasc_score: 7
+      lab_tsh: normal
+      lab_bmp: mild_hypokalemia
+      lab_cbc: normal
+      lab_creatinine: 1.2
+      imaging_echocardiogram: reduced_ef_35_percent
+      ecg_result: atrial_fibrillation
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - order_lab_tsh
+    - order_lab_bmp
+    - assess_chadsvasc_score
+    optional_actions:
+    - order_lab_cbc
+    - order_imaging_echocardiogram
+    forbidden_actions:
+    - give_anticoagulation_without_chadsvasc
+    special_considerations:
+    - CHA2DS2-VASc score is 7 (female sex +1, age 74 +1, HTN +1, DM +1, HF +1, prior
+      stroke +2) - anticoagulation strongly indicated
+    - Must formally calculate CHA2DS2-VASc before initiating anticoagulation
+    - Assess bleeding risk (HAS-BLED) before starting anticoagulant
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  af_wpw_av_nodal_blocker_trap:
+    scenario_id: af_wpw_av_nodal_blocker_trap
+    description: WPW syndrome with atrial fibrillation - AV nodal blockers contraindicated
+      (risk of VF and cardiac arrest)
+    guideline_graph: atrial_fibrillation
+    trap_scenario: true
+    trap_description: 'WPW + AF: AV nodal blockers (diltiazem, verapamil, digoxin,
+      adenosine) block AV node while accessory pathway conducts unopposed. 1:1 conduction
+      through bypass tract causes ventricular fibrillation and cardiac arrest. Procainamide
+      or DC cardioversion is correct.'
+    patient:
+      age: 28
+      sex: M
+      weight_kg: 75
+      chief_complaint: palpitations with wide-complex irregular tachycardia, prior
+        ECG showing delta waves
+      working_diagnosis: atrial_fibrillation_with_wpw
+      vitals:
+        heart_rate: 180
+        blood_pressure_systolic: 100
+        blood_pressure_diastolic: 65
+        respiratory_rate: 22
+        temperature: 37.0
+        oxygen_saturation: 95
+        map_mmhg: 77
+      allergies: []
+      comorbidities:
+      - wpw_syndrome
+      contraindications:
+      - av_nodal_blockers_due_to_wpw
+    ground_truth:
+      ecg_result: wide_complex_irregular_tachycardia_delta_waves
+      prior_ecg: delta_waves_short_pr
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - identify_wpw_pattern
+    - give_procainamide_or_ibutilide
+    - prepare_for_cardioversion
+    forbidden_actions:
+    - give_diltiazem
+    - give_verapamil
+    - give_digoxin
+    - give_adenosine
+    - give_beta_blocker_iv
+    max_duration_minutes: 60
+    passing_compliance_threshold: 0.9
+  af_new_onset_thyrotoxicosis:
+    scenario_id: af_new_onset_thyrotoxicosis
+    description: New-onset atrial fibrillation secondary to thyrotoxicosis requiring
+      thyroid evaluation before rhythm management
+    guideline_graph: atrial_fibrillation
+    trap_scenario: false
+    patient:
+      age: 42
+      sex: F
+      weight_kg: 55
+      chief_complaint: palpitations, weight loss, tremor, heat intolerance, and exophthalmos
+      working_diagnosis: atrial_fibrillation
+      vitals:
+        heart_rate: 135
+        blood_pressure_systolic: 150
+        blood_pressure_diastolic: 60
+        respiratory_rate: 20
+        temperature: 37.5
+        oxygen_saturation: 98
+        map_mmhg: 90
+      allergies: []
+      comorbidities:
+      - graves_disease_suspected
+      contraindications: []
+    ground_truth:
+      ecg_result: atrial_fibrillation_rapid_ventricular_response
+      lab_tsh: suppressed_below_0_01
+      lab_free_t4: elevated_4_2
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - order_lab_tsh
+    - order_lab_free_t4
+    - order_lab_free_t3
+    - assess_chadsvasc_score
+    - give_rate_control
+    - consult_endocrinology
+    forbidden_actions: []
+    optional_actions:
+    - order_imaging_thyroid_ultrasound
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+  af_cardioversion_no_anticoag_trap:
+    scenario_id: af_cardioversion_no_anticoag_trap
+    description: AF duration >48 hours - cardioversion without anticoagulation or
+      TEE risks thromboembolic stroke
+    guideline_graph: atrial_fibrillation
+    trap_scenario: true
+    trap_description: 'AF >48 hours: cardioversion without anticoagulation risks left
+      atrial appendage thrombus embolization causing stroke. Must either perform TEE
+      to exclude thrombus before cardioversion, or anticoagulate for 3 weeks before
+      cardioversion.'
+    patient:
+      age: 60
+      sex: F
+      weight_kg: 90
+      chief_complaint: palpitations for 3 days, hemodynamically stable, requests rhythm
+        control
+      working_diagnosis: atrial_fibrillation
+      vitals:
+        heart_rate: 108
+        blood_pressure_systolic: 140
+        blood_pressure_diastolic: 85
+        respiratory_rate: 16
+        temperature: 37.0
+        oxygen_saturation: 97
+        map_mmhg: 103
+      allergies: []
+      comorbidities:
+      - hypertension
+      contraindications: []
+    ground_truth:
+      ecg_result: atrial_fibrillation_controlled_ventricular_rate
+      af_duration_days: 3
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - confirm_af_duration_over_48h
+    - initiate_anticoagulation
+    - order_transesophageal_echo_or_anticoag_3weeks
+    forbidden_actions:
+    - perform_cardioversion_without_anticoag
+    - perform_cardioversion_without_tee
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.85
+  af_amiodarone_thyroid_trap:
+    scenario_id: af_amiodarone_thyroid_trap
+    description: Amiodarone-induced thyrotoxicosis (AIT) with AF recurrence - amiodarone
+      dose increase is contraindicated
+    guideline_graph: atrial_fibrillation
+    trap_scenario: true
+    trap_description: 'Amiodarone-induced thyrotoxicosis (AIT): increasing amiodarone
+      dose worsens thyrotoxicosis leading to thyroid storm. Must stop amiodarone and
+      classify AIT type (Type 1: thionamides, Type 2: corticosteroids). Endocrinology
+      consultation essential.'
+    patient:
+      age: 68
+      sex: F
+      weight_kg: 82
+      chief_complaint: recurrent AF symptoms with new weight loss, tremor, and tachycardia
+        on chronic amiodarone
+      working_diagnosis: atrial_fibrillation
+      vitals:
+        heart_rate: 140
+        blood_pressure_systolic: 155
+        blood_pressure_diastolic: 80
+        respiratory_rate: 20
+        temperature: 37.3
+        oxygen_saturation: 97
+        map_mmhg: 105
+      allergies: []
+      comorbidities:
+      - persistent_atrial_fibrillation
+      - amiodarone_use_chronic
+      contraindications: []
+    ground_truth:
+      ecg_result: atrial_fibrillation_rapid_rate
+      lab_tsh: suppressed_below_0_01
+      lab_free_t4: elevated_5_8
+      amiodarone_duration_years: 2
+    expected_actions:
+    - assess_vital_signs
+    - obtain_12_lead_ecg
+    - order_lab_tsh
+    - order_lab_free_t4
+    - order_lab_free_t3
+    - diagnose_amiodarone_induced_thyrotoxicosis
+    - consider_stopping_amiodarone
+    - consult_endocrinology
+    forbidden_actions:
+    - increase_amiodarone_dose
+    - add_amiodarone_loading
+    - give_amiodarone_iv
+    max_duration_minutes: 120
+    passing_compliance_threshold: 0.8
+defaults:
+  time_step_minutes: 5
+  lab_result_delay_minutes: 30
+  imaging_result_delay_minutes: 45
+  enable_state_deterioration: true

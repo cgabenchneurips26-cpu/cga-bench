@@ -1,0 +1,229 @@
+graph_id: erc_drowning_2021
+guideline_name: ERC 2021 Guidelines on Drowning Resuscitation
+version: '2021.1'
+metadata:
+  source: 'European Resuscitation Council Guidelines 2021: Special Circumstances — Drowning'
+  doi: 10.1016/j.resuscitation.2021.02.016
+  journal: Resuscitation
+  recommendation_system: GRADE/ILCOR
+  description: Evidence-based guideline for drowning resuscitation emphasizing ventilation-first CPR, hypothermia management,
+    and avoidance of gastric drainage maneuvers
+  key_evidence: Ventilation-first approach improves survival in drowning vs compression-only CPR. Hypothermic drowning victims
+    have survived with good neurological outcomes after >60 min submersion (Tipton & Golden, 2011).
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_rescue_assessment
+nodes:
+  initial_rescue_assessment:
+    node_id: initial_rescue_assessment
+    node_type: decision
+    name: Scene Safety & Initial Assessment
+    description: Ensure rescuer safety, remove victim from water, assess consciousness and breathing. Begin rescue breaths
+      in water if trained.
+    precondition: null
+    mandatory_actions:
+    - ensure_scene_safety
+    - assess_consciousness
+    - assess_breathing
+    allowed_actions:
+    - remove_from_water
+    - assess_consciousness
+    - ensure_scene_safety
+    - log_submersion_duration
+    - assess_breathing
+    - call_emergency_services
+    forbidden_actions: []
+    deadlines:
+      ensure_scene_safety: 1
+      assess_consciousness: 2
+      assess_breathing: 2
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC 2021 Drowning Resuscitation Guidelines
+    source_section: 'Section 4: Drowning — Initial Management'
+    source_page: null
+    source_quote: Remove the victim from the water as quickly as possible. Open the airway and check for normal breathing.
+    next_nodes: []
+    conditional_next:
+      state.has_pulse == False: cpr_ventilation_priority
+      state.has_pulse == True and state.breathing == False: rescue_breathing
+      state.has_pulse == True and state.breathing == True: post_rescue_care
+  rescue_breathing:
+    node_id: rescue_breathing
+    node_type: action
+    name: Rescue Breathing (Ventilation Priority)
+    description: Drowning is an asphyxial arrest — ventilation takes priority. Give 5 initial rescue breaths, then reassess.
+    precondition: null
+    mandatory_actions:
+    - give_5_initial_rescue_breaths
+    - open_airway_head_tilt_chin_lift
+    allowed_actions:
+    - open_airway_head_tilt_chin_lift
+    - apply_supplemental_oxygen
+    - suction_airway_if_debris
+    - apply_jaw_thrust_if_cspine
+    - give_5_initial_rescue_breaths
+    forbidden_actions:
+    - perform_abdominal_thrusts_to_expel_water
+    - attempt_heimlich_for_water_removal
+    deadlines:
+      give_5_initial_rescue_breaths: 3
+      open_airway_head_tilt_chin_lift: 2
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC 2021 Drowning Resuscitation Guidelines
+    source_section: 'Section 4.2: Initial Ventilation'
+    source_page: null
+    source_quote: Begin with 5 rescue breaths as hypoxia is the primary cause of cardiac arrest in drowning. Do NOT attempt
+      to drain water from the lungs — abdominal thrusts are ineffective and delay resuscitation.
+    next_nodes:
+    - cpr_ventilation_priority
+    conditional_next: {}
+  cpr_ventilation_priority:
+    node_id: cpr_ventilation_priority
+    node_type: action
+    name: CPR with Ventilation-First Approach
+    description: Begin CPR with 30:2 ratio. In drowning, ventilation is critical — provide high-quality ventilations. Attach
+      AED when available.
+    precondition: null
+    mandatory_actions:
+    - begin_cpr_30_2
+    - provide_high_quality_ventilations
+    - attach_aed_when_available
+    allowed_actions:
+    - perform_advanced_airway_management
+    - apply_supplemental_oxygen
+    - attach_aed_when_available
+    - begin_cpr_30_2
+    - provide_high_quality_ventilations
+    - give_epinephrine_1mg_iv
+    - establish_iv_io_access
+    forbidden_actions:
+    - compression_only_cpr
+    deadlines:
+      begin_cpr_30_2: 5
+      provide_high_quality_ventilations: 5
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC 2021 Drowning Resuscitation Guidelines
+    source_section: 'Section 4.3: CPR in Drowning'
+    source_page: null
+    source_quote: In drowning, ventilation is as important as compressions — compression-only CPR is NOT appropriate. Use
+      standard 30:2 ratio. VF/pVT occurs in <10% of drowning arrests.
+    next_nodes:
+    - hypothermia_management
+    conditional_next: {}
+    conditional_rules:
+    - rule_id: DROWNING-SHOCKABLE
+      condition: state.aed_rhythm == 'shockable'
+      effect:
+        type: REQUIRED
+        actions:
+        - deliver_defibrillation
+        deadline_minutes: 2
+      severity: CRITICAL
+      description: Shockable rhythm in drowning is uncommon but should be defibrillated per standard ALS protocol
+      evidence: Class I, Level B
+  hypothermia_management:
+    node_id: hypothermia_management
+    node_type: plan
+    name: Hypothermia Assessment & Treatment
+    description: Measure core temperature, initiate rewarming. Hypothermic drowning victims may have better neurological outcomes
+      — continue resuscitation until rewarmed to 32 deg C.
+    precondition: null
+    mandatory_actions:
+    - measure_core_temperature
+    - initiate_active_rewarming
+    allowed_actions:
+    - avoid_rough_handling_if_hypothermic
+    - give_warm_iv_fluids
+    - initiate_active_rewarming
+    - consider_ecmo_rewarming
+    - apply_warm_blankets
+    - remove_wet_clothing
+    - measure_core_temperature
+    forbidden_actions:
+    - terminate_resuscitation_if_hypothermic
+    deadlines:
+      measure_core_temperature: 15
+      initiate_active_rewarming: 30
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: ERC 2021 Drowning Resuscitation Guidelines
+    source_section: 'Section 4.4: Hypothermia in Drowning'
+    source_page: null
+    source_quote: Hypothermia may be neuroprotective. Do not declare death until the patient is rewarmed to at least 32 deg
+      C or rewarming efforts have failed. Consider ECLS/ECMO for refractory hypothermic arrest.
+    next_nodes:
+    - post_rescue_care
+    conditional_next: {}
+  post_rescue_care:
+    node_id: post_rescue_care
+    node_type: plan
+    name: Post-Rescue Hospital Care
+    description: Oxygenation, monitor for delayed pulmonary edema, avoid gastric distension, neuroprognostication.
+    precondition: null
+    mandatory_actions:
+    - provide_supplemental_oxygen
+    - monitor_for_pulmonary_edema
+    allowed_actions:
+    - decompress_stomach_if_distended
+    - assess_neurological_status
+    - order_imaging_chest_xray
+    - consider_intubation_if_hypoxic
+    - provide_supplemental_oxygen
+    - monitor_for_pulmonary_edema
+    - order_lab_abg
+    - continuous_cardiac_monitoring
+    - order_lab_bmp
+    forbidden_actions:
+    - prophylactic_antibiotics_routine
+    - prophylactic_corticosteroids
+    deadlines:
+      provide_supplemental_oxygen: 10
+      monitor_for_pulmonary_edema: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC 2021 Drowning Resuscitation Guidelines
+    source_section: 'Section 4.5: In-Hospital Management'
+    source_page: null
+    source_quote: All submersion victims with any respiratory symptoms should be observed for at least 6-8 hours for delayed
+      pulmonary edema. Prophylactic antibiotics and corticosteroids are NOT recommended.
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Neuroprognostication
+    description: Assess neurological outcome, determine ICU vs ward admission, plan follow-up for pulmonary complications.
+    precondition: null
+    mandatory_actions:
+    - assess_neurological_outcome
+    allowed_actions:
+    - admit_icu_if_intubated
+    - observe_6_to_8_hours
+    - social_work_referral
+    - arrange_followup
+    - assess_neurological_outcome
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: ERC 2021 Drowning Resuscitation Guidelines
+    source_section: 'Section 4.6: Outcome & Follow-Up'
+    source_page: null
+    source_quote: Neuroprognostication should follow standard post-cardiac-arrest protocols. Observe asymptomatic patients
+      for minimum 6 hours.
+    next_nodes: []
+    conditional_next: {}

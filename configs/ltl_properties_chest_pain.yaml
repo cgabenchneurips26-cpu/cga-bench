@@ -1,0 +1,120 @@
+# LTL/MTL Safety Properties for AHA 2021 Chest Pain Guidelines
+# Used by PostScoringPipeline for formal temporal verification
+#
+# Property types (LTL - unbounded):
+#   response:        G(trigger → F response)
+#   absence:         G(¬ forbidden)
+#   precedence:      ¬response U prerequisite (or never response)
+#   existence:       F(required)
+#   not_succession:  G(a → G(¬b))
+#
+# Property types (MTL - time-bounded):
+#   response_within:           G(trigger → F[0,max] response)
+#   existence_within:          F[0,max](required)
+#   absence_after:             G(trigger → G[0,window](¬forbidden))
+#   bounded_response_chain:    G(a → F[0,ab_max](b ∧ F[0,bc_max](c)))
+
+properties:
+  # === Safety: RV Infarct Trap ===
+  - name: "no_nitrates_after_rv_diagnosis"
+    type: "not_succession"
+    a: "DIAGNOSE_RV_INFARCT"
+    b: "GIVE_NITRATES"
+    category: "safety"
+
+  - name: "no_nitrates_after_rv_ecg"
+    type: "not_succession"
+    a: "ORDER_ECG_V4R"
+    b: "GIVE_NITRATES"
+    category: "safety"
+
+  # === Safety: Anticoagulation ===
+  - name: "assess_bleeding_before_anticoagulation"
+    type: "precedence"
+    prerequisite: "ASSESS_BLEEDING_RISK"
+    action: "GIVE_HEPARIN"
+    category: "safety"
+
+  # === Liveness: Essential Assessments ===
+  - name: "existence_ecg"
+    type: "existence"
+    required: "ORDER_ECG"
+    category: "liveness"
+
+  - name: "existence_troponin"
+    type: "existence"
+    required: "ORDER_TROPONIN"
+    category: "liveness"
+
+  - name: "existence_aspirin"
+    type: "existence"
+    required: "GIVE_ASPIRIN"
+    category: "liveness"
+
+  # === Response: STEMI ===
+  - name: "stemi_to_cath_lab"
+    type: "response"
+    trigger: "DIAGNOSE_STEMI"
+    response: "ACTIVATE_CATH_LAB"
+    category: "timing"
+
+  - name: "ecg_before_reperfusion"
+    type: "precedence"
+    prerequisite: "ORDER_ECG"
+    action: "ACTIVATE_CATH_LAB"
+    category: "safety"
+
+  # === Sequence: Assessment Before Treatment ===
+  - name: "vitals_before_medication"
+    type: "precedence"
+    prerequisite: "ASSESS_VITALS"
+    action: "GIVE_MEDICATION"
+    category: "safety"
+
+  - name: "ecg_before_nitrates"
+    type: "precedence"
+    prerequisite: "ORDER_ECG"
+    action: "GIVE_NITRATES"
+    category: "safety"
+
+  # === MTL: Time-Bounded Clinical Requirements ===
+
+  # AHA: ECG within 10 minutes of arrival
+  - name: "ecg_within_10min"
+    type: "existence_within"
+    required: "ORDER_ECG"
+    max_minutes: 10
+    category: "timing"
+
+  # AHA: Door-to-balloon time < 90 minutes for STEMI
+  - name: "stemi_to_cath_within_90min"
+    type: "response_within"
+    trigger: "DIAGNOSE_STEMI"
+    response: "ACTIVATE_CATH_LAB"
+    max_minutes: 90
+    category: "timing"
+
+  # AHA: Aspirin within 24 minutes (median first-medical-contact)
+  - name: "aspirin_within_30min"
+    type: "existence_within"
+    required: "GIVE_ASPIRIN"
+    max_minutes: 30
+    category: "timing"
+
+  # No nitrates for 60 minutes after RV diagnosis confirmed
+  - name: "no_nitrates_60min_after_rv"
+    type: "absence_after"
+    trigger: "DIAGNOSE_RV_INFARCT"
+    forbidden: "GIVE_NITRATES"
+    window_minutes: 60
+    category: "safety"
+
+  # AHA: STEMI → Anticoagulation within 30min → PCI within 90min
+  - name: "stemi_anticoag_pci_chain"
+    type: "bounded_response_chain"
+    a: "DIAGNOSE_STEMI"
+    b: "GIVE_HEPARIN"
+    c: "ACTIVATE_CATH_LAB"
+    ab_max_minutes: 30
+    bc_max_minutes: 60
+    category: "timing"

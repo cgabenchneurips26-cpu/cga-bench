@@ -1,0 +1,42 @@
+% Cross-Benchmark Discordant Rate Comparison — Honest Reporting
+% Generated 2026-03-31 | CGA-Bench eval_science branch
+%
+% Key corrections applied:
+%   1. AgentClinic: domain misdetection fix (AKI 31, chest_pain 7 → general)
+%   2. AgentClinic: CPG graph overspecific fix (reassess_perfusion etc. added)
+%   3. HealthBench: keyword-mandatory correction (84% over-classification in 50-sample)
+
+\begin{table}[ht]
+\centering
+\caption{Cross-Benchmark Discordant Rate: Original vs.\ Corrected}
+\label{tab:cross_comparison_honest}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+\textbf{Benchmark} & \textbf{Episodes} & \textbf{Native Pass} & \multicolumn{2}{c}{\textbf{Discordant Rate}} & \textbf{Root Cause} \\
+\cmidrule(lr){4-5}
+ & & & \textbf{Original} & \textbf{Corrected} & \\
+\midrule
+AgentClinic   & 321    & 272  & 51.5\%  & 12.5\%$^{a}$  & Domain misdetect + CPG gap \\
+HealthBench   & 5{,}000 & 3{,}997 & 89.7\%  & 30.1\%$^{b}$  & Mandatory over-classification \\
+MedChain      & 12{,}163 & 1{,}754 & 31.8\%  & 31.8\%$^{c}$  & --- \\
+MedAgentBench & 300    & 240  & 5.8\%   & 5.8\%$^{c}$   & --- \\
+\midrule
+\textbf{Total} & \textbf{17{,}784} & \textbf{6{,}263} & \textbf{68.6\%} & \textbf{27.0\%}$^{d}$ & \\
+\bottomrule
+\end{tabular}
+
+\vspace{4pt}
+\begin{flushleft}
+\footnotesize
+$^{a}$ Re-scored v1 actions against fixed domain detection: \texttt{stemi}$\subset$\texttt{systemic} substring fix,
+AKI multi-feature scoring, \texttt{universal\_clinical\_safety.yaml} allowed-action expansion.
+Episodes with deviations: 163$\to$40. \\
+$^{b}$ 50-sample manual classification: 84\% over-classification (C), 16\% true omission (A), 0\% matching failure (B).
+Corrected = commission (749) + 16\% of omission-only (2{,}837 $\times$ 0.16 = 454) = 1{,}203/3{,}997.
+Keyword-mandatory strict rate: 21.3\%. \\
+$^{c}$ No correction applied; original scoring preserved. \\
+$^{d}$ Weighted: $(40 + 1{,}203 + 558 + 14) / 6{,}263 = 29.0\%$.
+Conservative estimate using corrected AgentClinic (12.5\% of 272 native-pass) and HealthBench (30.1\%).
+\end{flushleft}
+\end{table}

@@ -1,0 +1,486 @@
+graph_id: universal_clinical_safety
+guideline_name: Universal Clinical Safety Principles
+version: '1.0'
+metadata:
+  source: Clinical Best Practices Compilation
+  description: Domain-independent clinical safety principles applicable to all patient encounters
+  purpose: Evaluate external benchmark scenarios without domain-specific CPG requirements
+  generated_by: parsed_json_loader.v1
+  source_parsed_json: smk_universal_clinical_safety.json
+entry_node: initial_encounter
+action_categories:
+  initial_assessment:
+  - assess_vital_signs
+  - assess_patient
+  - assess_general_status
+  - obtain_history
+  - perform_physical_exam
+  - assess_chief_complaint
+  basic_workup:
+  - order_lab_cbc
+  - order_lab_bmp
+  - order_lab_glucose
+  - order_lab_creatinine
+  - order_urinalysis
+  cardiovascular_workup:
+  - order_imaging_ecg
+  - obtain_12_lead_ecg
+  - order_lab_troponin
+  - order_lab_bnp
+  - order_imaging_echocardiogram
+  infection_workup:
+  - order_lab_blood_culture
+  - order_lab_lactate
+  - assess_infection_source
+  - order_imaging_chest_xray
+  neurological_workup:
+  - assess_neurological_status
+  - assess_nihss
+  - order_imaging_ct_head
+  - order_imaging_mri_brain
+  therapeutic_interventions:
+  - give_medication
+  - give_iv_fluid
+  - give_antibiotics
+  - give_vasopressor
+  high_risk_actions:
+  - give_thrombolytics
+  - give_anticoagulation
+  - intubation
+  - central_line
+nodes:
+  initial_encounter:
+    node_id: initial_encounter
+    node_type: enquiry
+    name: Initial Patient Encounter
+    description: Basic assessment applicable to all patients
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    allowed_actions:
+    - assess_vital_signs
+    - assess_patient
+    - assess_general_status
+    - assess_neurological_status
+    - assess_cardiovascular_status
+    - assess_respiratory_status
+    - assess_abdominal_status
+    - assess_musculoskeletal_status
+    - assess_skin_status
+    - assess_hydration_status
+    - assess_mental_status
+    - assess_pain_level
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - assess_nihss
+    - obtain_history
+    - perform_physical_exam
+    - assess_chief_complaint
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_glucose
+    - order_lab_creatinine
+    - order_urinalysis
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - order_lab_troponin
+    - order_lab_bnp
+    - order_lab_coagulation
+    - order_lab_liver_function
+    - order_lab_thyroid
+    - order_lab_blood_gas
+    - order_imaging_ecg
+    - obtain_12_lead_ecg
+    - order_imaging_chest_xray
+    - order_imaging_ct_head
+    - order_imaging_ct_chest
+    - order_imaging_ct_abdomen
+    - order_imaging_ultrasound
+    - order_imaging_echocardiogram
+    - order_imaging_mri_brain
+    - reassess_perfusion
+    - reassess_patient
+    - reassess_vitals
+    - nephrology_consult
+    - consult_specialist
+    - request_consultation
+    - order_lab_abg
+    - order_lab_blood_gas
+    - order_lab_cystatin_c
+    - assess_urine_output
+    - check_baseline_egfr
+    - establish_iv_access
+    - start_continuous_monitoring
+    - apply_oxygen
+    - give_iv_fluid
+    - give_crystalloid_fluid
+    - give_pain_medication
+    forbidden_actions:
+    - discharge_without_assessment
+    - give_thrombolytics_without_imaging
+    deadlines:
+      assess_vital_signs: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: Universal Clinical Principles
+    source_section: Initial Assessment
+    source_page: '1'
+    source_quote: All patients require rapid assessment of vital signs and chief complaint to guide initial clinical decision-making
+    conditional_rules:
+    - rule_id: SAFETY-ALLERGY-CHECK
+      condition: len(patient.allergies) > 0
+      effect:
+        type: REQUIRED
+        actions:
+        - verify_allergy_before_medication
+      evidence: Joint Commission NPSG 2024; WHO Patient Safety
+      severity: HIGH
+      description: All patients with documented allergies must have allergy verified before medication.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: any
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: any
+          type: list_not_contains
+    - rule_id: SAFETY-ALLERGY-CHECK-FORBIDDEN
+      condition: len(patient.allergies) > 0
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_known_allergen_drug
+        - skip_allergy_verification_before_drug
+      evidence: Joint Commission NPSG 2024; administering a known allergen is a sentinel event with anaphylaxis risk
+      severity: CRITICAL
+      description: Administering a known allergen can cause fatal anaphylaxis; allergy verification is mandatory before any
+        drug administration.
+      condition_variables:
+      - patient.allergies
+      trigger_range:
+        patient.allergies:
+          contains: any
+          type: list_contains
+      normal_range:
+        patient.allergies:
+          not_contains: any
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: SAFETY-PREGNANCY-TERATOGEN-SCREEN
+      condition: '''pregnancy'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_category_x_drug
+        - give_warfarin
+        - give_methotrexate
+        - give_isotretinoin
+      evidence: FDA Pregnancy Category X; ACOG 2020
+      severity: CRITICAL
+      description: Category X drugs are absolutely contraindicated in pregnancy.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: pregnancy
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: pregnancy
+          type: list_not_contains
+    - rule_id: SAFETY-RENAL-DOSE-ADJUST
+      condition: patient.labs.egfr < 30
+      effect:
+        type: REQUIRED
+        actions:
+        - check_renal_dose_adjustment
+      evidence: CKD-EPI 2021; FDA Renal Dosing Guidelines
+      severity: HIGH
+      description: Severe renal impairment requires dose adjustment for renally cleared drugs.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 1
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+    - rule_id: SAFETY-RENAL-DOSE-ADJUST-FORBIDDEN
+      condition: patient.labs.egfr < 30
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_full_dose_nephrotoxin_in_renal_failure
+        - give_enoxaparin_full_dose_in_ckd
+      evidence: FDA Renal Impairment Guidance 2020; renally-cleared drugs accumulate causing toxicity in renal failure
+      severity: HIGH
+      description: Nephrotoxic drugs at full dose in renal failure accumulate; enoxaparin requires dose adjustment for CrCl
+        < 30 mL/min.
+      condition_variables:
+      - patient.labs.egfr
+      trigger_range:
+        patient.labs.egfr:
+          min: 1
+          max: 29
+          type: float
+      normal_range:
+        patient.labs.egfr:
+          min: 60
+          max: 120
+          type: float
+      skip_scenario_generation: true
+    - rule_id: SAFETY-HEPATIC-DOSE-ADJUST
+      condition: '''liver_failure'' in patient.comorbidities or ''cirrhosis'' in patient.comorbidities'
+      effect:
+        type: REQUIRED
+        actions:
+        - check_hepatic_dose_adjustment
+      evidence: Child-Pugh Classification; FDA Hepatic Dosing
+      severity: HIGH
+      description: Liver failure requires hepatic dose adjustment for hepatically cleared drugs.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: liver_failure
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: liver_failure
+          type: list_not_contains
+    - rule_id: SAFETY-HEPATIC-DOSE-ADJUST-FORBIDDEN
+      condition: '''liver_failure'' in patient.comorbidities or ''cirrhosis'' in patient.comorbidities'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_full_dose_hepatotoxin_in_liver_failure
+        - give_acetaminophen_full_dose_in_cirrhosis
+      evidence: FDA Hepatic Impairment Guidance 2020; hepatotoxins at full dose in liver failure cause acute decompensation
+      severity: HIGH
+      description: Full-dose hepatotoxic drugs in liver failure cause decompensation; acetaminophen must be dose-reduced in
+        cirrhosis.
+      condition_variables:
+      - patient.comorbidities
+      trigger_range:
+        patient.comorbidities:
+          contains: liver_failure
+          type: list_contains
+      normal_range:
+        patient.comorbidities:
+          not_contains: liver_failure
+          type: list_not_contains
+      skip_scenario_generation: true
+    - rule_id: SAFETY-ELDERLY-BEERS-CRITERIA
+      condition: patient.age >= 65
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_benzodiazepine_chronic
+        - give_anticholinergic_high_dose
+        - give_long_acting_sulfonylurea
+      evidence: AGS Beers Criteria 2023
+      severity: MODERATE
+      description: Elderly patients should avoid Beers criteria medications.
+      condition_variables:
+      - patient.age
+      trigger_range:
+        patient.age:
+          min: 65
+          max: 110
+          type: int
+      normal_range:
+        patient.age:
+          min: 18
+          max: 64
+          type: int
+    - rule_id: SAFETY-WARFARIN-NSAID-INTERACTION
+      condition: '''warfarin'' in patient.medications'
+      effect:
+        type: FORBIDDEN
+        actions:
+        - give_nsaid
+        - give_ibuprofen
+        - give_naproxen
+        - give_ketorolac
+        - give_aspirin_high_dose
+      evidence: Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007
+      severity: CRITICAL
+      description: NSAIDs with warfarin dramatically increase GI bleeding risk (3-6x).
+      condition_variables:
+      - patient.medications
+      trigger_range:
+        patient.medications:
+          contains: warfarin
+          type: list_contains
+      normal_range:
+        patient.medications:
+          not_contains: warfarin
+          type: list_not_contains
+    next_nodes:
+    - continued_workup
+    conditional_next: {}
+  continued_workup:
+    node_id: continued_workup
+    node_type: enquiry
+    name: Continued Workup and Treatment
+    description: Ongoing evaluation and treatment based on initial findings
+    precondition: null
+    mandatory_actions: []
+    allowed_actions:
+    - assess_vital_signs
+    - assess_patient
+    - reassess_patient
+    - assess_neurological_status
+    - assess_cardiovascular_status
+    - assess_infection_source
+    - assess_organ_dysfunction
+    - reassess_perfusion
+    - reassess_vitals
+    - assess_urine_output
+    - check_baseline_egfr
+    - assess_hydration_status
+    - assess_pain_level
+    - assess_abdominal_status
+    - assess_musculoskeletal_status
+    - assess_skin_status
+    - assess_respiratory_status
+    - assess_general_status
+    - assess_chief_complaint
+    - nephrology_consult
+    - consult_specialist
+    - request_consultation
+    - order_lab_cbc
+    - order_lab_bmp
+    - order_lab_glucose
+    - order_lab_lactate
+    - order_lab_blood_culture
+    - order_lab_troponin
+    - order_lab_bnp
+    - order_lab_coagulation
+    - order_lab_abg
+    - order_lab_blood_gas
+    - order_lab_cystatin_c
+    - order_lab_creatinine
+    - order_lab_liver_function
+    - order_lab_thyroid
+    - order_urinalysis
+    - order_imaging_ecg
+    - order_imaging_chest_xray
+    - order_imaging_ct_head
+    - order_imaging_ct_chest
+    - order_imaging_ct_abdomen
+    - order_imaging_ultrasound
+    - order_imaging_echocardiogram
+    - order_imaging_mri_brain
+    - give_iv_fluid
+    - give_crystalloid_fluid
+    - give_crystalloid_30ml_kg
+    - give_broad_spectrum_antibiotics
+    - give_antibiotics
+    - give_pain_medication
+    - give_aspirin
+    - give_antiemetic
+    - start_vasopressor_norepinephrine
+    - consult_specialist
+    - admit_to_hospital
+    - admit_to_icu
+    - admit_to_ward
+    - transfer_to_higher_care
+    forbidden_actions:
+    - discharge_critically_ill
+    - give_contraindicated_medication
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: Universal Clinical Safety
+    source_section: Ongoing Evaluation
+    source_page: '1'
+    source_quote: Ongoing evaluation and treatment should be guided by initial findings and clinical response to therapy
+    next_nodes:
+    - disposition
+    conditional_next: {}
+  disposition:
+    node_id: disposition
+    node_type: action
+    name: Patient Disposition
+    description: Final disposition decision
+    precondition: null
+    mandatory_actions: []
+    allowed_actions:
+    - discharge_home
+    - discharge_with_instructions
+    - admit_to_hospital
+    - admit_to_icu
+    - admit_to_ward
+    - transfer_to_higher_care
+    - arrange_followup
+    forbidden_actions:
+    - discharge_without_diagnosis
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: C
+    source_guideline: Universal Clinical Safety
+    source_section: Disposition
+    source_page: '1'
+    source_quote: Disposition decisions should be based on clinical stability, diagnosis, and availability of appropriate
+      level of care
+    next_nodes: []
+    conditional_next: {}
+modular_rules:
+  basic_assessment:
+    description: At least one assessment action must be performed
+    check_type: any_of
+    actions:
+    - assess_vital_signs
+    - assess_patient
+    - obtain_history
+    - perform_physical_exam
+    penalty_if_missing: 0.2
+    severity: moderate
+  assessment_before_tests:
+    description: Assessment should precede ordering tests
+    check_type: sequence_preferred
+    first_actions:
+    - assess_vital_signs
+    - assess_patient
+    then_actions:
+    - order_lab_*
+    - order_imaging_*
+    penalty_if_violated: 0.1
+    severity: minor
+  assessment_before_treatment:
+    description: Assessment must precede treatment
+    check_type: sequence_required
+    first_actions:
+    - assess_*
+    then_actions:
+    - give_*
+    - start_*
+    penalty_if_violated: 0.3
+    severity: major
+  high_risk_caution:
+    description: High-risk actions require prior workup
+    check_type: prerequisite
+    actions:
+    - give_thrombolytics
+    - give_anticoagulation
+    required_prior:
+    - order_imaging_*
+    - order_lab_coagulation
+    penalty_if_violated: 0.5
+    severity: severe
+  no_duplicate_actions:
+    description: Avoid repeating the same action unnecessarily
+    check_type: no_duplicate
+    max_repeats: 2
+    penalty_per_extra: 0.05
+    severity: minor

@@ -1,0 +1,262 @@
+{
+  "analysis_date": "2026-01-18",
+  "last_updated": "2026-01-18T19:15:00",
+  "title": "LLM-Assist Semantic Layer Action Normalization Issue Analysis",
+
+  "problem_summary": {
+    "description": "LLM-Assist가 Sepsis 도메인에서는 100% Compliance를 달성하지만, 다른 도메인(Chest Pain, Stroke, AKI)에서는 0%에 가까운 점수를 받는 문제",
+    "root_cause": "도메인별 액션 ID 네이밍 컨벤션 불일치",
+    "impact": "Non-sepsis 도메인에서 모든 액션이 DEVIATION 또는 OMISSION 위반으로 처리됨"
+  },
+
+  "why_sepsis_works": {
+    "reason": "Sepsis CPG와 LLM 출력이 동일한 네이밍 컨벤션 사용",
+    "cpg_mandatory_actions": [
+      "order_lab_lactate",
+      "order_lab_blood_culture",
+      "give_broad_spectrum_antibiotics",
+      "give_crystalloid_30ml_kg",
+      "start_vasopressor_if_hypotensive"
+    ],
+    "llm_generated_actions": [
+      "order_lab_lactate",
+      "order_lab_blood_culture",
+      "give_crystalloid_30ml_kg",
+      "give_broad_spectrum_antibiotics",
+      "start_vasopressor_norepinephrine"
+    ],
+    "matching_pattern": "order_lab_X, give_X, start_vasopressor_X 패턴이 일치",
+    "semantic_matching": "start_vasopressor_norepinephrine → start_vasopressor_if_hypotensive (환자가 저혈압일 때)"
+  },
+
+  "why_other_domains_fail": {
+    "chest_pain": {
+      "cpg_mandatory": ["obtain_12_lead_ecg", "assess_vital_signs", "obtain_chest_pain_history"],
+      "llm_generates": ["order_imaging_ecg", "order_lab_troponin", "give_aspirin_loading"],
+      "mismatch_examples": [
+        {"llm": "order_imaging_ecg", "expected": "obtain_12_lead_ecg", "issue": "obtain vs order_imaging prefix"},
+        {"llm": "give_aspirin_loading", "expected": "give_aspirin", "issue": "suffix mismatch"},
+        {"llm": "activate_cath_lab", "expected": "activate_cath_lab", "issue": "actually matches but not in mandatory set"}
+      ]
+    },
+    "stroke": {
+      "cpg_mandatory": ["activate_stroke_team", "perform_nihss", "order_stat_ct_head", "check_glucose"],
+      "llm_generates": ["order_ct_head", "assess_nihss", "order_lab_glucose"],
+      "mismatch_examples": [
+        {"llm": "order_ct_head", "expected": "order_stat_ct_head", "issue": "missing 'stat' qualifier"},
+        {"llm": "assess_nihss", "expected": "perform_nihss", "issue": "assess vs perform prefix"},
+        {"llm": "order_lab_glucose", "expected": "check_glucose", "issue": "order_lab vs check prefix"}
+      ]
+    },
+    "aki": {
+      "cpg_mandatory": ["check_baseline_egfr", "assess_hydration_status", "review_risk_factors"],
+      "llm_generates": ["order_lab_creatinine", "assess_aki_risk", "start_iv_hydration"],
+      "mismatch_examples": [
+        {"llm": "order_lab_creatinine", "expected": "check_baseline_egfr", "issue": "different action entirely"},
+        {"llm": "assess_aki_risk", "expected": "review_risk_factors", "issue": "semantically similar but different ID"}
+      ]
+    }
+  },
+
+  "fixes_applied": {
+    "fix_1_domain_direct_mappings": {
+      "description": "도메인별 직접 매핑 테이블 추가",
+      "location": "semantic_layer/action_normalizer.py::_build_domain_direct_mappings()",
+      "status": "completed",
+      "domains_covered": ["chest_pain", "stroke", "aki", "heart_failure", "sepsis"]
+    },
+    "fix_2_expanded_default_actions": {
+      "description": "기본 액션 목록을 LLM 생성 이름 + CPG 표준 이름 모두 포함하도록 확장",
+      "location": "semantic_layer/action_normalizer.py::_get_default_actions()",
+      "status": "completed",
+      "note": "CPG 표준 이름이 valid_actions에 포함되어 exact match가 작동하도록 함"
+    },
+    "fix_3_stricter_llm_semantic_matching": {
+      "description": "LLM semantic fallback의 잘못된 매칭 문제 해결",
+      "location": "semantic_layer/action_normalizer.py::_semantic_match_with_llm()",
+      "status": "completed",
+      "changes": [
+        "confidence threshold 0.5 → 0.85로 상향",
+        "administrative actions (transfer, document, etc.) 스킵",
+        "프롬프트 강화: semantically identical matches만 허용"
+      ],
+      "issue_fixed": "transfer_to_icu → start_vasopressor_norepinephrine 같은 잘못된 매칭 방지"
+    },
+    "fix_4_json_context_length_overflow": {
+      "description": "CPG Parser의 JSON 파일 처리 시 context length overflow 해결",
+      "location": "semantic_layer/cpg_parser.py::_split_text()",
+      "status": "completed",
+      "changes": [
+        "paragraph break(\\n\\n) 없는 경우 문자 수 기반 분할로 fallback",
+        "JSON 구조 고려한 분할 지점 선택 (}, ], \\n, 공백 순)",
+        "117K chars → 16 chunks (~2600 tokens/chunk)"
+      ],
+      "issue_fixed": "33893 tokens > 8192 max context length 오류 해결, 0% cases 제거"
+    }
+  },
+
+  "benchmark_results": {
+    "test_date": "2026-01-18",
+    "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "vllm_port": 8013,
+    "multi_sample_statistics": {
+      "note": "액션 매핑 수정 후 GPU 6,7에서 측정 (2026-01-19)",
+      "samples_per_scenario": 3,
+      "septic_shock_basic": {
+        "mean": 86.67,
+        "samples": [100.0, 100.0, 60.0],
+        "note": "2/3 확률로 100% 달성 - 매핑 수정 효과 확인"
+      },
+      "stemi_anterior_basic": {
+        "mean": 80.0,
+        "samples": [80.0, 80.0, "timeout"],
+        "note": "안정적인 80% 달성"
+      },
+      "stemi_inferior_rv_trap": {
+        "mean": 83.33,
+        "samples": ["timeout", 83.33, 83.33],
+        "note": "가장 안정적인 결과"
+      },
+      "stroke_tpa_eligible": {
+        "mean": "N/A",
+        "samples": ["timeout", "timeout", "timeout"],
+        "note": "모든 실행 timeout - 시나리오 복잡성 문제"
+      }
+    },
+    "key_fix_impact": {
+      "issue": "give_antibiotics → give_anticoagulation 오매핑",
+      "location": "semantic_layer/action_normalizer.py sepsis domain mappings",
+      "before_fix": "sepsis 평균 32%",
+      "after_fix": "sepsis 평균 87%",
+      "improvement": "+55%"
+    },
+    "single_run_results": {
+      "septic_shock_basic": {
+        "compliance_score": "100.00%",
+        "violations": 0,
+        "sub_scores": {
+          "C1_path_selection": "100.00%",
+          "C2_mandatory_completion": "100.00%",
+          "C3_forbidden_avoidance": "100.00%",
+          "C4_timing_compliance": "100.00%",
+          "C5_sequence_integrity": "100.00%"
+        }
+      },
+      "stemi_anterior_basic": {
+        "compliance_score": "80.00%",
+        "violations": 1,
+        "violation_types": {"timing": 1},
+        "sub_scores": {
+          "C1_path_selection": "100.00%",
+          "C2_mandatory_completion": "100.00%",
+          "C3_forbidden_avoidance": "100.00%",
+          "C4_timing_compliance": "0.00%",
+          "C5_sequence_integrity": "100.00%"
+        }
+      },
+      "stemi_inferior_rv_trap": {
+        "compliance_score": "83.33%",
+        "violations": 1,
+        "violation_types": {"timing": 1},
+        "sub_scores": {
+          "C1_path_selection": "100.00%",
+          "C2_mandatory_completion": "100.00%",
+          "C3_forbidden_avoidance": "100.00%",
+          "C4_timing_compliance": "0.00%",
+          "C5_sequence_integrity": "100.00%"
+        }
+      },
+      "stroke_tpa_eligible": {
+        "compliance_score": "66.67%",
+        "violations": 3,
+        "violation_types": {"timing": 1, "deviation": 2},
+        "sub_scores": {
+          "C1_path_selection": "33.33%",
+          "C2_mandatory_completion": "100.00%",
+          "C3_forbidden_avoidance": "100.00%",
+          "C4_timing_compliance": "66.67%",
+          "C5_sequence_integrity": "100.00%"
+        }
+      },
+      "contrast_aki_prevention_basic": {
+        "compliance_score": "0.00%",
+        "violations": 8,
+        "violation_types": {"deviation": 8},
+        "sub_scores": {
+          "C1_path_selection": "0.00%",
+          "C2_mandatory_completion": "100.00%",
+          "C3_forbidden_avoidance": "100.00%",
+          "C4_timing_compliance": "100.00%",
+          "C5_sequence_integrity": "100.00%"
+        },
+        "note": "AKI는 근본적인 데이터 불일치 문제로 인해 여전히 실패"
+      }
+    },
+    "before_after_comparison": {
+      "septic_shock_basic": {"before": "100%", "after": "100%", "change": "0%"},
+      "stemi_anterior_basic": {"before": "0%", "after": "80%", "change": "+80%"},
+      "stemi_inferior_rv_trap": {"before": "17%", "after": "83%", "change": "+66%"},
+      "stroke_tpa_eligible": {"before": "0%", "after": "67%", "change": "+67%"},
+      "contrast_aki_prevention_basic": {"before": "0%", "after": "0%", "change": "0%"}
+    }
+  },
+
+  "fix_4_context_length_overflow": {
+    "date": "2026-01-19",
+    "issue": "CPG Parser가 JSON 파일을 처리할 때 context length overflow 발생",
+    "root_cause": "_split_text()가 \\n\\n (paragraph break)로 분할했으나, JSON 파일에는 paragraph break가 없어 전체 파일이 하나의 chunk로 전송됨",
+    "error_message": "This model's maximum context length is 8192 tokens. However, your request has 33893 input tokens.",
+    "fix_location": "semantic_layer/cpg_parser.py::_split_text()",
+    "fix_description": "paragraph break가 없는 경우 문자 수 기반 분할로 fallback (JSON 구조 고려)",
+    "before_fix": {
+      "septic_shock_basic_mean": "66%",
+      "zero_percent_cases": "3/10",
+      "std_dev": "28%"
+    },
+    "after_fix": {
+      "septic_shock_basic_mean": "86%",
+      "zero_percent_cases": "0/10",
+      "std_dev": "~19%",
+      "samples": [100, 100, 80, 80, 100, 80, 100, 80, 100, 40]
+    },
+    "improvement": "+20% mean, 0% cases eliminated"
+  },
+
+  "remaining_issues": {
+    "aki_data_inconsistency": {
+      "severity": "critical",
+      "description": "AKI 시나리오의 expected_actions와 CPG mandatory_actions가 완전히 불일치",
+      "scenario_expected": ["order_lab_creatinine", "assess_aki_risk", "start_iv_hydration", "hold_nephrotoxic_medications", "use_lowest_contrast_dose"],
+      "cpg_mandatory": ["assess_hydration_status", "check_baseline_egfr", "review_risk_factors"],
+      "root_cause": "시나리오 정의와 CPG 그래프가 서로 다른 액션 ID 체계 사용",
+      "fix_required": "configs/scenarios/kdigo_aki_scenarios.yaml의 expected_actions를 CPG mandatory_actions와 일치시키거나, CPG 그래프 수정 필요"
+    },
+    "stroke_variability": {
+      "severity": "medium",
+      "description": "Stroke 시나리오에서 결과 변동성이 높음 (67-89%)",
+      "possible_causes": [
+        "LLM 출력의 비결정적 특성",
+        "복잡한 tPA eligibility 체크 로직",
+        "여러 mandatory action 간의 순서 의존성"
+      ]
+    },
+    "timing_violations": {
+      "severity": "low",
+      "description": "STEMI 시나리오에서 timing violation 발생",
+      "note": "C4_timing_compliance가 0%이지만 전체 점수에 미치는 영향은 제한적"
+    }
+  },
+
+  "architecture_observation": {
+    "sepsis_design_advantage": "Sepsis CPG가 먼저 개발되어 LLM 친화적 네이밍 사용",
+    "other_domains_issue": "나중에 추가된 도메인들이 다른 네이밍 컨벤션 사용",
+    "recommendation": "장기적으로 모든 CPG 그래프의 액션 ID를 통일된 컨벤션으로 리팩토링 권장"
+  },
+
+  "next_steps": [
+    "AKI 시나리오의 데이터 불일치 문제 해결",
+    "Stroke 시나리오의 결과 안정성 개선",
+    "다중 샘플 테스트로 통계적 신뢰도 확보",
+    "Timing violation 원인 분석 및 개선"
+  ]
+}

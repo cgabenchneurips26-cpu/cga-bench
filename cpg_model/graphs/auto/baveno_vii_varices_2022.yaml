@@ -1,0 +1,278 @@
+graph_id: baveno_vii_varices_2022
+guideline_name: 'Baveno VII Consensus on Portal Hypertension: Variceal Hemorrhage 2022'
+version: '2022.1'
+metadata:
+  source: Baveno VII Consensus Workshop on Portal Hypertension 2022
+  doi: 10.1016/j.jhep.2022.10.003
+  journal: Journal of Hepatology
+  recommendation_system: GRADE
+  description: Evidence-based consensus on variceal hemorrhage management including vasoactive therapy, endoscopic band ligation,
+    TIPS, and secondary prophylaxis
+  key_evidence: Restrictive transfusion (Hb 7-8) reduces mortality vs liberal (Villanueva et al., NEJM 2013). Preemptive TIPS
+    reduces treatment failure and mortality in high-risk patients (Garcia-Pagan et al., NEJM 2010). Ceftriaxone superior to
+    norfloxacin for SBP prophylaxis.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_resuscitation
+nodes:
+  initial_resuscitation:
+    node_id: initial_resuscitation
+    node_type: decision
+    name: Initial Resuscitation & Stabilization
+    description: Airway protection, volume resuscitation (restrictive), target Hb 7-8 g/dL, assess hemodynamic stability
+    precondition: null
+    mandatory_actions:
+    - assess_airway_and_hemodynamics
+    - establish_large_bore_iv_access
+    - order_lab_cbc_coag_type_screen
+    allowed_actions:
+    - assess_airway_and_hemodynamics
+    - establish_large_bore_iv_access
+    - order_lab_bmp
+    - order_lab_liver_function
+    - intubate_for_airway_protection
+    - order_lab_cbc_coag_type_screen
+    - give_crystalloid_resuscitation_restrictive
+    - place_nasogastric_tube
+    - order_lab_lactate
+    - transfuse_prbc_target_hb_7_to_8
+    forbidden_actions: []
+    deadlines:
+      assess_airway_and_hemodynamics: 5
+      establish_large_bore_iv_access: 10
+      order_lab_cbc_coag_type_screen: 15
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: Initial Resuscitation
+    source_page: null
+    source_quote: Restrictive transfusion strategy (target Hb 7-8 g/dL) is recommended. Over-transfusion increases portal
+      pressure and rebleeding risk. Airway protection before endoscopy if massive hemorrhage or encephalopathy
+    next_nodes:
+    - pharmacologic_therapy
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.222
+  pharmacologic_therapy:
+    node_id: pharmacologic_therapy
+    node_type: plan
+    name: Vasoactive Drug + Antibiotic Prophylaxis
+    description: Start octreotide/terlipressin BEFORE endoscopy, IV ceftriaxone for SBP prophylaxis
+    precondition: null
+    mandatory_actions:
+    - give_vasoactive_octreotide_or_terlipressin
+    - give_ceftriaxone_1g_iv_prophylaxis
+    allowed_actions:
+    - give_ppi_iv_if_uncertain_source
+    - correct_coagulopathy_if_inr_above_2_5
+    - order_lab_cbc_q6h
+    - monitor_hemodynamics
+    - give_vasoactive_octreotide_or_terlipressin
+    - give_ceftriaxone_1g_iv_prophylaxis
+    forbidden_actions:
+    - give_norfloxacin_in_high_risk
+    - delay_vasoactive_for_endoscopy
+    deadlines:
+      give_vasoactive_octreotide_or_terlipressin: 30
+      give_ceftriaxone_1g_iv_prophylaxis: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: 'Recommendation 1-2: Pharmacologic Therapy'
+    source_page: null
+    source_quote: Vasoactive drugs (terlipressin or octreotide) should be started as soon as variceal hemorrhage is suspected,
+      BEFORE endoscopy. Short-term antibiotic prophylaxis (ceftriaxone 1g/day IV) is recommended for all cirrhotic patients
+      with GI bleeding
+    next_nodes:
+    - emergent_endoscopy
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.364
+  emergent_endoscopy:
+    node_id: emergent_endoscopy
+    node_type: plan
+    name: Emergent EGD Within 12 Hours
+    description: Upper endoscopy with band ligation (preferred) or sclerotherapy within 12h of presentation
+    precondition: null
+    mandatory_actions:
+    - perform_egd_within_12h
+    - perform_band_ligation_if_esophageal
+    allowed_actions:
+    - place_sengstaken_blakemore_if_uncontrolled
+    - consult_gi
+    - perform_cyanoanonymous-orgate_if_gastric
+    - perform_band_ligation_if_esophageal
+    - continue_vasoactive_therapy
+    - perform_egd_within_12h
+    forbidden_actions:
+    - delay_endoscopy_beyond_12h
+    - perform_sclerotherapy_over_banding
+    deadlines:
+      perform_egd_within_12h: 720
+      perform_band_ligation_if_esophageal: 720
+    required_prior_actions:
+      perform_band_ligation_if_esophageal:
+      - perform_egd_within_12h
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: 'Recommendation 3: Endoscopic Therapy'
+    source_page: null
+    source_quote: EGD should be performed within 12h of presentation. Endoscopic band ligation (EBL) is preferred over sclerotherapy
+      for esophageal varices. Cyanoanonymous-orgate injection for gastric varices
+    next_nodes:
+    - post_endoscopy_assessment
+    conditional_next: {}
+    _quote_verification:
+      status: UNGROUNDED
+      score: 0.235
+  post_endoscopy_assessment:
+    node_id: post_endoscopy_assessment
+    node_type: decision
+    name: Post-Endoscopy Assessment & Rebleeding Risk
+    description: Assess for rebleeding risk, TIPS candidacy (Child-Pugh B with active bleeding or C ≤13)
+    precondition: null
+    mandatory_actions:
+    - assess_rebleeding_risk
+    - continue_vasoactive_3_to_5_days
+    allowed_actions:
+    - perform_preemptive_tips_if_high_risk
+    - assess_tips_candidacy
+    - assess_rebleeding_risk
+    - continue_vasoactive_3_to_5_days
+    - order_lab_cbc_q8h
+    - initiate_lactulose_for_encephalopathy
+    - monitor_hemodynamics
+    forbidden_actions: []
+    deadlines:
+      assess_rebleeding_risk: 120
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: 'Recommendation 4: Post-Endoscopy & TIPS'
+    source_page: null
+    source_quote: "(D.1) (New)\nResearch agenda\n\x02 Determine the role of vasoactive drugs and antibiotics in\nChild-Pugh\
+      \ A patients. \x02 Identify an optimal shorter time frame limit for vasoactive\ndrug therapy? \x02 Deﬁne active bleeding\
+      \ at endoscopy, and assess its subjectivity\nand prognostic value."
+    next_nodes:
+    - monitoring
+    conditional_next:
+      state.rebleeding == True: rescue_tips
+      state.rebleeding == False: monitoring
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.526
+  rescue_tips:
+    node_id: rescue_tips
+    node_type: plan
+    name: Rescue TIPS for Rebleeding
+    description: TIPS placement for rebleeding despite endoscopic + pharmacologic therapy
+    precondition: state.rebleeding == True
+    mandatory_actions:
+    - perform_tips_procedure
+    - continue_hemodynamic_support
+    allowed_actions:
+    - consult_interventional_radiology
+    - transfuse_as_needed
+    - place_sengstaken_blakemore_bridge_to_tips
+    - continue_hemodynamic_support
+    - perform_tips_procedure
+    forbidden_actions: []
+    deadlines:
+      perform_tips_procedure: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: 'Recommendation 5: Rescue TIPS'
+    source_page: null
+    source_quote: 'In refractory variceal bleeding, balloon tamponade or self-
+
+      expandable metal stents (SEMS) should be used as a
+
+      bridge therapy to a more deﬁnite treatment such as PTFE-
+
+      covered TIPS.'
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.706
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Monitoring & Secondary Prophylaxis Planning
+    description: Serial hemodynamics, Hb trending, NSBB initiation for secondary prophylaxis
+    precondition: null
+    mandatory_actions:
+    - monitor_hemodynamics_serial
+    - assess_for_secondary_prophylaxis
+    allowed_actions:
+    - schedule_repeat_egd_for_banding
+    - initiate_nsbb_carvedilol_or_propranolol
+    - monitor_hemodynamics_serial
+    - assess_for_secondary_prophylaxis
+    - order_lab_cbc
+    - monitor_renal_function
+    forbidden_actions: []
+    deadlines:
+      monitor_hemodynamics_serial: 360
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: Secondary Prophylaxis
+    source_page: null
+    source_quote: "\x02 Assess the beneﬁt of carvedilol over traditional NSBBs in sec-\nondary prophylaxis of variceal haemorrhage.\
+      \ TIPS and further decompensation\n\x02 Assess the beneﬁt of TIPS for secondary prophylaxis in patients\nwith NSBB intolerance/non-response\
+      \ and ascites that do not\nmeet the strict criteria for recur"
+    next_nodes:
+    - disposition
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.462
+  disposition:
+    node_id: disposition
+    node_type: decision
+    name: Disposition & Long-term Management
+    description: Discharge planning, NSBB + EBL program, assess for liver transplant if decompensated
+    precondition: null
+    mandatory_actions:
+    - assess_discharge_readiness
+    allowed_actions:
+    - initiate_nsbb_secondary_prophylaxis
+    - provide_alcohol_cessation_counseling
+    - schedule_egd_surveillance
+    - refer_transplant_evaluation
+    - assess_discharge_readiness
+    forbidden_actions: []
+    deadlines: {}
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: Baveno VII Consensus on Portal Hypertension 2022
+    source_section: Disposition
+    source_page: null
+    source_quote: "\x02 Determine the impact of NSBB discontinuation on the natural\nhistory of decompensated cirrhosis. \x02\
+      \ Assess the beneﬁt of carvedilol over traditional NSBBs in sec-\nondary prophylaxis of variceal haemorrhage. TIPS and\
+      \ further decompensation\n\x02 Assess the beneﬁt of TIPS for secondary prophylaxis in pati"
+    next_nodes: []
+    conditional_next: {}
+    _quote_verification:
+      status: GROUNDED
+      method: keyword_overlap
+      score: 0.6

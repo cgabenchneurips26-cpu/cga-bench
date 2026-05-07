@@ -1,0 +1,130 @@
+graph_id: nsclc_molecular_testing_2023
+guideline_name: NSCLC Molecular Testing Guideline 2023 (CAP/IASLC/AMP)
+version: '2023.1'
+metadata:
+  source: NSCLC Molecular Testing Guideline 2023 (CAP/IASLC/AMP)
+  doi: 10.5858/arpa.2023-0180-CP
+  journal: Archives of Pathology & Laboratory Medicine
+  recommendation_system: CAP/IASLC/AMP
+  description: Molecular testing in advanced NSCLC.
+  key_evidence: Driver mutation-targeted therapy improves survival vs chemotherapy.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Diagnostic Workup of Advanced NSCLC
+    description: Confirm NSCLC diagnosis, pathology subtyping, staging.
+    precondition: null
+    mandatory_actions:
+    - perform_tissue_biopsy_nsclc
+    - perform_histologic_subtyping
+    - order_imaging_ct_chest_abdomen_pelvis
+    allowed_actions:
+    - perform_histologic_subtyping
+    - order_imaging_ct_chest_abdomen_pelvis
+    - perform_tissue_biopsy_nsclc
+    - order_imaging_mri_brain_if_stage_iii_or_iv
+    - order_lab_cbc
+    - order_lab_lft
+    - assess_performance_status
+    - order_imaging_pet_ct
+    forbidden_actions: []
+    deadlines:
+      perform_tissue_biopsy_nsclc: 10080
+      perform_histologic_subtyping: 10080
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: NSCLC Molecular Testing Guideline 2023 (CAP/IASLC/AMP)
+    source_section: Pathologic Diagnosis
+    source_page: null
+    source_quote: All advanced-stage non-squamous NSCLC tumors should undergo broad molecular profiling.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: plan
+    name: Comprehensive Molecular Profiling and Therapy Plan
+    description: Test EGFR, ALK, ROS1, BRAF, KRAS, MET, RET, NTRK, HER2, PD-L1; plan therapy.
+    precondition: null
+    mandatory_actions:
+    - order_molecular_egfr
+    - order_molecular_alk
+    - order_molecular_ros1
+    - order_molecular_braf
+    - order_molecular_pdl1
+    - plan_targeted_or_immunotherapy_therapy
+    allowed_actions:
+    - order_molecular_egfr
+    - order_molecular_kras_g12c
+    - order_molecular_braf
+    - order_molecular_pdl1
+    - initiate_immunotherapy_if_high_pdl1
+    - order_molecular_ntrk_fusion
+    - initiate_targeted_therapy_if_driver_mutation
+    - order_molecular_her2
+    - order_molecular_ret_fusion
+    - order_molecular_met_exon14
+    - consult_multidisciplinary_tumor_board
+    - order_comprehensive_ngs_panel
+    - plan_targeted_or_immunotherapy_therapy
+    - order_molecular_ros1
+    - order_molecular_alk
+    forbidden_actions:
+    - initiate_chemotherapy_without_biomarker_testing_in_non_squamous
+    - initiate_anti_egfr_without_egfr_testing
+    deadlines:
+      order_molecular_egfr: 14400
+      order_molecular_alk: 14400
+      plan_targeted_or_immunotherapy_therapy: 20160
+    required_prior_actions:
+      plan_targeted_or_immunotherapy_therapy:
+      - order_molecular_egfr
+      - order_molecular_alk
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: NSCLC Molecular Testing Guideline 2023 (CAP/IASLC/AMP)
+    source_section: Molecular Testing Recommendations
+    source_page: null
+    source_quote: Results of molecular testing should be available within 10 working days to guide first-line therapy.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Response Monitoring and Resistance Testing
+    description: Serial imaging, resistance biomarker testing at progression.
+    precondition: null
+    mandatory_actions:
+    - schedule_imaging_response_assessment
+    - reassess_symptoms
+    allowed_actions:
+    - order_liquid_biopsy_at_progression
+    - order_repeat_tissue_biopsy_at_progression
+    - order_molecular_t790m_if_egfr_progression
+    - reassess_symptoms
+    - plan_next_line_therapy
+    - schedule_imaging_response_assessment
+    - consult_multidisciplinary_tumor_board
+    forbidden_actions: []
+    deadlines:
+      schedule_imaging_response_assessment: 86400
+      reassess_symptoms: 20160
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: NSCLC Molecular Testing Guideline 2023 (CAP/IASLC/AMP)
+    source_section: Response Assessment
+    source_page: null
+    source_quote: At progression on targeted therapy, repeat molecular testing should be performed.
+    next_nodes: []
+    conditional_next: {}

@@ -1,0 +1,125 @@
+graph_id: wses_acute_appendicitis_2020
+guideline_name: WSES Jerusalem Acute Appendicitis Guidelines 2020
+version: '2020.1'
+metadata:
+  source: WSES Jerusalem Acute Appendicitis Guidelines 2020
+  doi: 10.1186/s13017-020-00306-3
+  journal: World Journal of Emergency Surgery
+  recommendation_system: WSES
+  description: Acute appendicitis diagnosis and management.
+  key_evidence: Laparoscopic appendectomy reduces wound infection vs open.
+  target_population:
+    age_group: adult
+    max_age: 120
+    min_age: 18
+    sex: any
+    special_conditions: []
+entry_node: initial_assessment
+nodes:
+  initial_assessment:
+    node_id: initial_assessment
+    node_type: decision
+    name: Appendicitis Diagnosis and Risk Score
+    description: Clinical evaluation + Alvarado/AIR score + imaging if uncertain.
+    precondition: null
+    mandatory_actions:
+    - assess_vital_signs
+    - perform_abdominal_exam
+    - order_lab_cbc
+    - order_lab_crp
+    - calculate_alvarado_or_air_score
+    allowed_actions:
+    - order_imaging_ct_abdomen_pelvis_if_equivocal
+    - order_lab_bmp
+    - order_lab_urinalysis
+    - order_lab_cbc
+    - order_imaging_abdominal_ultrasound
+    - calculate_alvarado_or_air_score
+    - order_lab_crp
+    - perform_abdominal_exam
+    - order_lab_hcg_if_female_of_childbearing_age
+    - assess_vital_signs
+    forbidden_actions: []
+    deadlines:
+      assess_vital_signs: 15
+      order_lab_cbc: 30
+      calculate_alvarado_or_air_score: 60
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: B
+    source_guideline: WSES Jerusalem Acute Appendicitis Guidelines 2020
+    source_section: Diagnosis
+    source_page: null
+    source_quote: Clinical scores combined with imaging improve diagnostic accuracy in suspected appendicitis.
+    next_nodes:
+    - primary_treatment
+    conditional_next: {}
+  primary_treatment:
+    node_id: primary_treatment
+    node_type: action
+    name: Antibiotics and Appendectomy Planning
+    description: Preoperative antibiotics; laparoscopic appendectomy preferred; consider NOM for uncomplicated.
+    precondition: null
+    mandatory_actions:
+    - give_iv_antibiotics_empiric
+    - consult_surgery
+    - plan_appendectomy
+    allowed_actions:
+    - give_antiemetic
+    - give_iv_antibiotics_empiric
+    - plan_appendectomy
+    - consult_surgery
+    - give_analgesic
+    - plan_laparoscopic_appendectomy
+    - consider_non_operative_management_if_uncomplicated
+    - give_iv_fluids_resuscitation
+    - nothing_by_mouth
+    forbidden_actions:
+    - delay_surgery_in_perforated_appendicitis
+    - give_oral_antibiotics_only_in_complicated_appendicitis
+    deadlines:
+      give_iv_antibiotics_empiric: 60
+      consult_surgery: 120
+      plan_appendectomy: 480
+    required_prior_actions:
+      plan_appendectomy:
+      - consult_surgery
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WSES Jerusalem Acute Appendicitis Guidelines 2020
+    source_section: Treatment
+    source_page: null
+    source_quote: Laparoscopic appendectomy is recommended as the preferred surgical approach.
+    next_nodes:
+    - monitoring
+    conditional_next: {}
+  monitoring:
+    node_id: monitoring
+    node_type: enquiry
+    name: Postoperative Recovery Monitoring
+    description: Monitor for surgical site infection, ileus, discharge planning.
+    precondition: null
+    mandatory_actions:
+    - reassess_vital_signs
+    - monitor_for_surgical_site_infection
+    allowed_actions:
+    - order_lab_cbc_repeat
+    - monitor_for_surgical_site_infection
+    - discontinue_antibiotics_if_uncomplicated
+    - advance_diet_as_tolerated
+    - reassess_vital_signs
+    - plan_discharge_education
+    - order_lab_crp_repeat
+    forbidden_actions: []
+    deadlines:
+      reassess_vital_signs: 60
+      monitor_for_surgical_site_infection: 1440
+    required_prior_actions: {}
+    recommendation_class: I
+    evidence_level: A
+    source_guideline: WSES Jerusalem Acute Appendicitis Guidelines 2020
+    source_section: Postoperative Care
+    source_page: null
+    source_quote: Postoperative antibiotics are not required in uncomplicated appendicitis following appendectomy.
+    next_nodes: []
+    conditional_next: {}

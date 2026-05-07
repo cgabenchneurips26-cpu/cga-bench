@@ -1,0 +1,4556 @@
+aabb_transfusion:
+  guideline_name: AABB 2024 RBC Transfusion Guidelines
+  total_nodes: 4
+  total_unconditional_forbidden: 8
+  total_sequence_rules: 1
+  total_conditional_rules: 7
+  rules_by_severity:
+    CRITICAL: 4
+    HIGH: 3
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 5
+    REQUIRED: 2
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: TRANS-CARDIAC-LIBERAL-THRESHOLD
+    node_id: restrictive_threshold
+    condition: '''acute_coronary_syndrome'' in patient.comorbidities or ''symptomatic_cad'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - apply_liberal_threshold_hb_8
+    - transfuse_if_hb_below_8
+    evidence: AABB 2024; MINT Trial, NEJM 2023
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TRANS-CARDIAC-LIBERAL-THRESHOLD-FORBIDDEN
+    node_id: restrictive_threshold
+    condition: '''acute_coronary_syndrome'' in patient.comorbidities or ''symptomatic_cad'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - use_liberal_transfusion_threshold_cardiac
+    - transfuse_for_hb_above_8_in_cardiac
+    evidence: AABB 2024; TRICC trial; restrictive threshold (Hb < 8) is preferred in cardiac patients to reduce TACO/fluid
+      overload
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TRANS-STABLE-NO-TRANSFUSE-ABOVE-7
+    node_id: restrictive_threshold
+    condition: patient.labs.get('hemoglobin', 99) >= 7 and 'hemodynamically_stable' in patient.get('presentation', {})
+    effect_type: FORBIDDEN
+    actions:
+    - transfuse_prbc
+    - order_transfusion
+    evidence: AABB 2024; TRICC Trial, Hebert 1999 NEJM
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.hemoglobin
+    - patient.presentation
+  - rule_id: TRANS-TXA-WITHIN-3H
+    node_id: massive_transfusion
+    condition: patient.presentation.get('time_since_injury_hours', 0) > 3
+    effect_type: FORBIDDEN
+    actions:
+    - give_tranexamic_acid
+    evidence: CRASH-2 Trial, Lancet 2010 - TXA >3h increases mortality
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.time_since_injury_hours
+  - rule_id: TRANS-JEHOVAH-NO-BLOOD
+    node_id: massive_transfusion
+    condition: '''jehovah_witness'' in patient.get(''preferences'', []) or ''refuses_blood_products'' in patient.get(''preferences'',
+      [])'
+    effect_type: FORBIDDEN
+    actions:
+    - give_prbc
+    - give_ffp
+    - give_platelets
+    - give_whole_blood
+    evidence: Patient autonomy; AABB ethical guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.preferences
+  - rule_id: TRANS-ANAPHYLAXIS-EPI
+    node_id: transfusion_reaction
+    condition: '''anaphylactic_transfusion_reaction'' in patient.get(''presentation'', {})'
+    effect_type: REQUIRED
+    actions:
+    - give_epinephrine_im
+    - stop_transfusion_immediately
+    evidence: AABB 2024 Transfusion Reaction Management
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: TRANS-ANAPHYLAXIS-EPI-FORBIDDEN
+    node_id: transfusion_reaction
+    condition: '''anaphylactic_transfusion_reaction'' in patient.get(''presentation'', {})'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_transfusion_during_anaphylaxis
+    - give_only_antihistamine_for_transfusion_anaphylaxis
+    evidence: AABB 2024; transfusion anaphylaxis requires immediate stop and epinephrine; antihistamines alone are insufficient
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+aba_burn_resuscitation:
+  guideline_name: ABA 2024 Burn Resuscitation Guidelines
+  total_nodes: 6
+  total_unconditional_forbidden: 8
+  total_sequence_rules: 6
+  total_conditional_rules: 7
+  rules_by_severity:
+    CRITICAL: 4
+    HIGH: 3
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 4
+    REQUIRED: 3
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: BURN-PEDIATRIC-DEXTROSE
+    node_id: fluid_resuscitation
+    condition: patient.age < 5
+    effect_type: REQUIRED
+    actions:
+    - add_dextrose_to_iv
+    - monitor_glucose_q4h
+    evidence: ABA 2024; ISBI Pediatric Burns Chapter
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: BURN-PEDIATRIC-DEXTROSE-FORBIDDEN
+    node_id: fluid_resuscitation
+    condition: patient.age < 5
+    effect_type: FORBIDDEN
+    actions:
+    - withhold_glucose_monitoring_pediatric_burn
+    - give_dextrose_free_fluid_only_pediatric_burn
+    evidence: ABA Burn Guidelines 2023; pediatric patients have limited glycogen reserves; hypoglycemia causes seizures and
+      brain injury
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: BURN-OVERRESUS-LIMIT
+    node_id: fluid_resuscitation
+    condition: patient.presentation.get('tbsa_percent', 0) > 40
+    effect_type: FORBIDDEN
+    actions:
+    - exceed_6ml_kg_tbsa_in_24h
+    evidence: ABA 2024; Saffle JR, J Burn Care Res 2007 - fluid creep
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.tbsa_percent
+  - rule_id: BURN-CYANIDE-HYDROXOCOBALAMIN
+    node_id: inhalation_injury
+    condition: '''enclosed_space_fire'' in patient.get(''history'', [])'
+    effect_type: REQUIRED
+    actions:
+    - give_hydroxocobalamin
+    - order_cyanide_level
+    evidence: ABA 2024; Baud FJ, NEJM 1991
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.history
+  - rule_id: BURN-CYANIDE-HYDROXOCOBALAMIN-FORBIDDEN
+    node_id: inhalation_injury
+    condition: '''enclosed_space_fire'' in patient.get(''history'', [])'
+    effect_type: FORBIDDEN
+    actions:
+    - give_sodium_nitrite_in_cyanide_burn
+    - delay_cyanide_antidote_for_level
+    evidence: ABA Burn Guidelines 2023; sodium nitrite induces methemoglobinemia compounding carbon monoxide poisoning in
+      burn patients
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.history
+  - rule_id: BURN-CHEST-ESCHAR-VENTILATION
+    node_id: escharotomy
+    condition: '''circumferential_chest_burn'' in patient.get(''exam_findings'', [])'
+    effect_type: REQUIRED
+    actions:
+    - perform_chest_escharotomy
+    - monitor_ventilation_pressures
+    evidence: ABA 2024; ISBI 2024 Escharotomy Chapter
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.exam_findings
+  - rule_id: BURN-CHEST-ESCHAR-VENTILATION-FORBIDDEN
+    node_id: escharotomy
+    condition: '''circumferential_chest_burn'' in patient.get(''exam_findings'', [])'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_escharotomy_for_imaging
+    - increase_ventilator_pressure_without_escharotomy
+    evidence: ABA Burn Guidelines 2023; circumferential chest eschar causes restrictive ventilatory failure requiring emergent
+      release
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.exam_findings
+acls_cardiac_arrest:
+  guideline_name: AHA ACLS Cardiac Arrest Management
+  total_nodes: 6
+  total_unconditional_forbidden: 12
+  total_sequence_rules: 5
+  total_conditional_rules: 24
+  rules_by_severity:
+    CRITICAL: 12
+    HIGH: 12
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 17
+    REQUIRED: 6
+    BEFORE: 1
+    WITHIN: 0
+  rules:
+  - rule_id: ACLS-SHOCKABLE-NO-ATROPINE
+    node_id: shockable_pathway
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_atropine_for_cardiac_arrest
+    evidence: AHA ACLS 2025 Section 5.1; AHA removed atropine from ACLS algorithm in 2010
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-SHOCKABLE-NO-CALCIUM-WITHOUT-INDICATION
+    node_id: shockable_pathway
+    condition: patient.labs.get('potassium', 4.0) <= 6.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_calcium_without_indication
+    evidence: AHA ACLS 2025 Section 6.2; calcium indicated only for hyperkalemia or calcium channel blocker toxicity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: ACLS-SHOCKABLE-NO-BICARB-ROUTINE
+    node_id: shockable_pathway
+    condition: patient.labs.get('ph', 7.35) > 7.1
+    effect_type: FORBIDDEN
+    actions:
+    - give_sodium_bicarbonate_routine
+    evidence: AHA ACLS 2025 Section 6.2; bicarbonate only for severe acidosis (pH <7.1) or hyperkalemia
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.ph
+  - rule_id: ACLS-SHOCKABLE-DEFIB-FIRST
+    node_id: shockable_pathway
+    condition: '''vf'' in patient.cardiac_rhythm or ''pvt'' in patient.cardiac_rhythm'
+    effect_type: BEFORE
+    actions:
+    - deliver_defibrillation
+    - give_epinephrine_1mg_iv
+    evidence: AHA 2025 Section 5.1; Kudenchuk PJ, NEJM 2016
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-SHOCKABLE-DEFIB-FIRST-FORBIDDEN
+    node_id: shockable_pathway
+    condition: '''vf'' in patient.cardiac_rhythm or ''pvt'' in patient.cardiac_rhythm'
+    effect_type: FORBIDDEN
+    actions:
+    - give_amiodarone_before_first_shock
+    - delay_defibrillation_for_intubation
+    evidence: AHA ACLS 2020; defibrillation is the definitive treatment for VF/pVT; each minute delay reduces survival by
+      7-10%
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-HYPERKALEMIA-CALCIUM
+    node_id: shockable_pathway
+    condition: patient.labs.potassium > 6.5
+    effect_type: REQUIRED
+    actions:
+    - give_calcium_chloride
+    - give_sodium_bicarbonate
+    - give_insulin_dextrose
+    evidence: 'AHA 2025 Section 6.2: Reversible Causes; Montague BT, Resuscitation 2008'
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: ACLS-HYPERKALEMIA-CALCIUM-FORBIDDEN
+    node_id: shockable_pathway
+    condition: patient.labs.potassium > 6.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_succinylcholine_in_hyperkalemic_arrest
+    - delay_calcium_in_hyperkalemic_arrest
+    evidence: AHA ACLS 2020; succinylcholine releases K+ from muscle; calcium delay prolongs cardiac toxicity window
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: ACLS-HYPOTHERMIA-NO-DRUGS
+    node_id: shockable_pathway
+    condition: patient.vitals.temperature < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_epinephrine_1mg_iv
+    - give_amiodarone_300mg
+    - give_lidocaine_alternative
+    evidence: 'AHA 2025 Section 6.4: Hypothermic Arrest; Brown DJA, NEJM 2012'
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.temperature
+  - rule_id: ACLS-TENSION-PNEUMO-DECOMPRESS
+    node_id: shockable_pathway
+    condition: '''tension_pneumothorax'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - needle_decompression
+    evidence: 'AHA 2025 Section 6.2: Hs and Ts; Roberts DJ, Injury 2014'
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-TENSION-PNEUMO-DECOMPRESS-FORBIDDEN
+    node_id: shockable_pathway
+    condition: '''tension_pneumothorax'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_needle_decompression_for_xray_in_arrest
+    - give_only_epinephrine_in_tension_pneumo_arrest
+    evidence: AHA ACLS 2020; tension pneumothorax in arrest requires immediate needle decompression; medications alone cannot
+      resolve obstruction
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-SHOCKABLE-NO-BICARB-ADDITIONAL
+    node_id: shockable_pathway
+    condition: '''shockable_rhythm'' in patient.comorbidities or ''vfib'' in patient.comorbidities or ''vtach'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_routine_bicarbonate_in_shockable_arrest
+    - delay_defibrillation_for_bicarbonate_push
+    evidence: AHA ACLS 2020; routine sodium bicarbonate is not recommended in shockable arrest; it delays defibrillation and
+      worsens intracellular acidosis
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-NONSHOCKABLE-NO-BICARB-ADDITIONAL
+    node_id: shockable_pathway
+    condition: '''nonshockable_rhythm'' in patient.comorbidities or ''pea'' in patient.comorbidities or ''asystole'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_routine_bicarbonate_in_nonshockable_arrest
+    - substitute_bicarbonate_for_epinephrine_in_pea
+    evidence: AHA ACLS 2020; routine bicarbonate not indicated in PEA/asystole
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-NONSHOCKABLE-NO-ATROPINE
+    node_id: non_shockable_pathway
+    condition: '''asystole'' in patient.cardiac_rhythm or ''pea'' in patient.cardiac_rhythm'
+    effect_type: FORBIDDEN
+    actions:
+    - give_atropine_for_asystole
+    evidence: AHA ACLS 2025 Section 5.2; atropine removed from asystole/PEA algorithm in 2010
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-NONSHOCKABLE-NO-DEFIB-ASYSTOLE
+    node_id: non_shockable_pathway
+    condition: '''asystole'' in patient.cardiac_rhythm'
+    effect_type: FORBIDDEN
+    actions:
+    - deliver_defibrillation_asystole
+    evidence: AHA ACLS 2025 Section 5.2; defibrillation has no role in asystole
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-NONSHOCKABLE-NO-AMIODARONE-ASYSTOLE
+    node_id: non_shockable_pathway
+    condition: '''asystole'' in patient.cardiac_rhythm or ''pea'' in patient.cardiac_rhythm'
+    effect_type: FORBIDDEN
+    actions:
+    - give_amiodarone_for_asystole
+    evidence: AHA ACLS 2025 Section 5.2; amiodarone is an antiarrhythmic for refractory VF/pVT only
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-NONSHOCKABLE-NO-BICARB-ROUTINE
+    node_id: non_shockable_pathway
+    condition: patient.labs.get('ph', 7.35) > 7.1
+    effect_type: FORBIDDEN
+    actions:
+    - give_sodium_bicarbonate_routine
+    evidence: AHA ACLS 2025 Section 6.2; bicarbonate only for severe acidosis (pH <7.1) or hyperkalemia
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.ph
+  - rule_id: ACLS-NONSHOCKABLE-EPI-IMMEDIATE
+    node_id: non_shockable_pathway
+    condition: '''asystole'' in patient.cardiac_rhythm or ''pea'' in patient.cardiac_rhythm'
+    effect_type: REQUIRED
+    actions:
+    - give_epinephrine_1mg_iv_immediately
+    evidence: AHA 2025 Section 5.2; Perkins GD, NEJM 2018 (PARAMEDIC2)
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.cardiac_rhythm
+  - rule_id: ACLS-TAMPONADE-PERICARDIOCENTESIS
+    node_id: non_shockable_pathway
+    condition: '''cardiac_tamponade'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - pericardiocentesis
+    evidence: 'AHA 2025 Section 6.2: Hs and Ts; Budhram GR, Acad Emerg Med 2019'
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-TAMPONADE-PERICARDIOCENTESIS-FORBIDDEN
+    node_id: non_shockable_pathway
+    condition: '''cardiac_tamponade'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_pericardiocentesis_for_imaging_in_arrest
+    - give_vasopressors_only_in_tamponade_arrest
+    evidence: AHA ACLS 2020; cardiac tamponade in arrest requires immediate pericardiocentesis; vasopressors alone cannot
+      overcome obstruction
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-OPIOID-NALOXONE
+    node_id: non_shockable_pathway
+    condition: '''opioid_suspected'' in patient.comorbidities or ''opioid_overdose'' in patient.history'
+    effect_type: REQUIRED
+    actions:
+    - give_naloxone
+    evidence: 'AHA 2025 Section 6.5: Opioid-Related Arrest; Panchal AR, Circulation 2020'
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-OPIOID-NALOXONE-FORBIDDEN
+    node_id: non_shockable_pathway
+    condition: '''opioid_suspected'' in patient.comorbidities or ''opioid_overdose'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_additional_opioid_during_arrest
+    - give_long_acting_sedative_during_arrest
+    evidence: AHA ACLS 2020; additional CNS depressants worsen arrest prognosis
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-PREGNANCY-PERIMORTEM-CSECTION
+    node_id: non_shockable_pathway
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - prepare_perimortem_cesarean
+    - perform_left_uterine_displacement
+    evidence: 'AHA 2025 Section 6.6: Cardiac Arrest in Pregnancy; Jeejeebhoy FM, Circulation 2015'
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-PREGNANCY-PERIMORTEM-FORBIDDEN
+    node_id: non_shockable_pathway
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_perimortem_csection_beyond_4min
+    - place_pregnant_arrest_patient_supine
+    evidence: AHA ACLS 2020; perimortem C-section within 4 min of arrest; aortocaval compression reduces CPR efficacy
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACLS-POST-NO-EARLY-NEUROPROG
+    node_id: post_cardiac_arrest_care
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - neuroprognosticate_before_72h
+    evidence: AHA ACLS 2025 Section 7; Sandroni C, Intensive Care Med 2014
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.time_since_rosc
+acog_obstetric_hemorrhage:
+  guideline_name: ACOG 2024 Postpartum Hemorrhage Guidelines
+  total_nodes: 4
+  total_unconditional_forbidden: 2
+  total_sequence_rules: 0
+  total_conditional_rules: 4
+  rules_by_severity:
+    CRITICAL: 3
+    HIGH: 1
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 3
+    REQUIRED: 1
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: OB-ASTHMA-NO-CARBOPROST
+    node_id: uterotonic_therapy
+    condition: '''asthma'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_carboprost
+    - give_hemabate
+    evidence: ACOG 2024; Carboprost package insert - bronchospasm contraindication
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: OB-HYPERTENSION-NO-METHYLERGONOVINE
+    node_id: uterotonic_therapy
+    condition: '''hypertension'' in patient.comorbidities or ''preeclampsia'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_methylergonovine
+    - give_methergine
+    evidence: ACOG 2024; Methylergonovine package insert - hypertension contraindication
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: OB-ASTHMA-AND-HTN-MISOPROSTOL-ONLY
+    node_id: uterotonic_therapy
+    condition: '''asthma'' in patient.comorbidities and ''hypertension'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_misoprostol
+    evidence: ACOG 2024 - when carboprost AND methylergonovine both contraindicated
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: OB-TXA-WITHIN-3H-DELIVERY
+    node_id: massive_transfusion_ob
+    condition: patient.presentation.get('hours_since_delivery', 0) > 3
+    effect_type: FORBIDDEN
+    actions:
+    - give_tranexamic_acid
+    evidence: WOMAN Trial, Lancet 2017 - TXA benefit only within 3h of delivery
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.hours_since_delivery
+ada_dka_management:
+  guideline_name: ADA Diabetic Ketoacidosis Management
+  total_nodes: 8
+  total_unconditional_forbidden: 19
+  total_sequence_rules: 12
+  total_conditional_rules: 17
+  rules_by_severity:
+    CRITICAL: 8
+    HIGH: 9
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 14
+    REQUIRED: 3
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: DKA-EUGLY-SGLT2-DEXTROSE
+    node_id: initial_assessment
+    condition: '''sglt2_inhibitor'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - add_dextrose_to_iv
+    - stop_sglt2_inhibitor
+    evidence: ADA 2024, Section 16.2; FDA Safety Communication 2015
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: DKA-EUGLY-SGLT2-DEXTROSE-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''sglt2_inhibitor'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_sglt2_inhibitor_in_dka
+    - withhold_dextrose_in_euglycemic_dka
+    evidence: ADA DKA Guidelines 2024; SGLT2i causes euglycemic DKA; withholding dextrose delays anion gap closure
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: DKA-EUGLY-NO-DISCHARGE-NORMAL-GLU
+    node_id: initial_assessment
+    condition: '''sglt2_inhibitor'' in patient.medications and patient.labs.glucose < 250'
+    effect_type: FORBIDDEN
+    actions:
+    - discharge_based_on_normal_glucose
+    evidence: ADA 2024; Peters AL et al, J Clin Endocrinol Metab 2015
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+    - patient.labs.glucose
+  - rule_id: DKA-METFORMIN-STOP
+    node_id: initial_assessment
+    condition: '''metformin'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - stop_metformin
+    evidence: ADA 2024; DeFronzo RA et al, Metformin-associated lactic acidosis
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: DKA-METFORMIN-STOP-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''metformin'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_metformin_in_dka
+    - restart_metformin_before_dka_resolved
+    evidence: ADA DKA Guidelines 2024; FDA Label; metformin in metabolic acidosis causes fatal lactic acidosis
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: DKA-PREGNANCY-MONITORING
+    node_id: initial_assessment
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - continuous_fetal_monitoring
+    - consult_obstetrics
+    evidence: ADA 2024; ACOG Practice Bulletin 2018
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: DKA-PREGNANCY-NO-TERATOGEN
+    node_id: initial_assessment
+    condition: '''pregnancy'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor
+    - give_oral_hypoglycemic
+    - give_statin
+    - discharge_without_fetal_assessment
+    evidence: ADA 2024; ACOG 2018
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: DKA-CKD-CAUTIOUS
+    node_id: initial_assessment
+    condition: '''ckd'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - aggressive_fluid_bolus
+    - give_nsaid
+    - give_potassium_iv
+    - give_potassium_replacement
+    evidence: ADA 2024; KDIGO AKI 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: DKA-ALCOHOLIC-KETOACIDOSIS
+    node_id: initial_assessment
+    condition: '''chronic_alcohol_use'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_glucose_without_thiamine
+    - give_insulin_for_normal_glucose
+    evidence: ADA 2024; McGuire LC, Emerg Med Clin 2006
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: DKA-STEMI-OVERLAP
+    node_id: initial_assessment
+    condition: '''smoking_history'' in patient.comorbidities and ''hyperlipidemia'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_cath_lab_for_dka_resolution
+    - give_bicarbonate_without_indication
+    evidence: ADA 2024; AHA/ACC 2013
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: DKA-INSULIN-BEFORE-K-CHECK
+    node_id: initial_assessment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - start_insulin_before_k_check
+    evidence: ADA 2024, Section 16.2
+    severity: CRITICAL
+    has_trigger_range: false
+    has_normal_range: false
+    condition_variables: []
+  - rule_id: DKA-HYPOK-INSULIN-GATE
+    node_id: potassium_replacement_first
+    condition: patient.labs.potassium < 3.3
+    effect_type: FORBIDDEN
+    actions:
+    - start_insulin_infusion
+    - give_insulin_bolus
+    evidence: ADA 2024, Section 16.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: DKA-HYPERK-NO-K-REPLACE
+    node_id: potassium_replacement_first
+    condition: patient.labs.potassium > 5.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_potassium_iv
+    - give_potassium_replacement
+    evidence: ADA 2024, Section 16.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: DKA-HYPOK-INSULIN-GATE-UNIQUE-FORBIDDEN
+    node_id: potassium_replacement_first
+    condition: patient.labs.potassium < 3.3
+    effect_type: FORBIDDEN
+    actions:
+    - start_insulin_drip_without_potassium_correction
+    - give_insulin_bolus_in_severe_hypokalemia
+    evidence: ADA DKA 2024 Section 16.2; insulin drives K+ intracellularly; K+ < 3.3 requires correction BEFORE insulin initiation
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: DKA-PEDIATRIC-NO-RAPID-FLUID
+    node_id: severe_dka_pathway
+    condition: patient.age < 18
+    effect_type: FORBIDDEN
+    actions:
+    - give_rapid_fluid_bolus
+    - give_bolus_over_20ml_kg_h
+    evidence: ISPAD 2022, Chapter 11; Glaser 2001 NEJM
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: DKA-PEDIATRIC-NO-BICARB
+    node_id: severe_dka_pathway
+    condition: patient.age < 18
+    effect_type: FORBIDDEN
+    actions:
+    - give_bicarbonate
+    evidence: ISPAD 2022, Chapter 11
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: DKA-PEDIATRIC-HYPOTONIC-FLUID
+    node_id: severe_dka_pathway
+    condition: patient.age < 18
+    effect_type: FORBIDDEN
+    actions:
+    - give_hypotonic_fluid_early
+    evidence: ISPAD 2022; Glaser NS, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+aha_chest_pain_evaluation:
+  guideline_name: AHA Chest Pain Evaluation
+  total_nodes: 11
+  total_unconditional_forbidden: 13
+  total_sequence_rules: 10
+  total_conditional_rules: 10
+  rules_by_severity:
+    CRITICAL: 6
+    HIGH: 4
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 10
+    REQUIRED: 0
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: ACS-COCAINE-NO-BB
+    node_id: stemi_pathway
+    condition: '''cocaine_use'' in patient.comorbidities or ''cocaine'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_beta_blocker
+    - give_metoprolol
+    - give_atenolol
+    - give_propranolol
+    evidence: AHA/ACC 2014 NSTEMI Guidelines, Section 5.3.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACS-LATE-NO-FIBRINOLYTIC
+    node_id: stemi_pathway
+    condition: patient.presentation.symptom_onset_hours > 12
+    effect_type: FORBIDDEN
+    actions:
+    - give_fibrinolytic
+    - give_tenecteplase
+    - give_alteplase
+    evidence: ESC 2023 ACS Guidelines; FTT Collaborative, Lancet 1994
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.symptom_onset_hours
+  - rule_id: ACS-DISSECTION-NO-ANTICOAG
+    node_id: stemi_pathway
+    condition: '''aortic_dissection_suspected'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_heparin
+    - give_antiplatelet
+    - give_aspirin
+    - give_thrombolytic
+    - give_anticoagulation
+    evidence: AHA/ACC 2022 Aortic Disease Guidelines, Section 7.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACS-RV-INFARCT-NO-NITRATE
+    node_id: stemi_pathway
+    condition: '''rv_infarct'' in patient.comorbidities or ''inferior_stemi'' in patient.ecg_findings'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nitroglycerin
+    - give_nitrates
+    - give_morphine
+    evidence: AHA/ACC 2013 STEMI Guidelines, Section 5.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACS-ACTIVE-BLEED-NO-ANTICOAG
+    node_id: stemi_pathway
+    condition: '''active_hemorrhage'' in patient.contraindications or ''active_upper_gi_bleed'' in patient.comorbidities or
+      ''active_lower_gi_bleed'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_thrombolysis
+    - give_full_dose_heparin_with_active_bleed
+    - give_dual_antiplatelet_without_gi_protection
+    - delay_pci_for_endoscopy
+    evidence: AHA/ACC 2013 STEMI Guidelines, Section 4.4 Bleeding Risk
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.contraindications
+  - rule_id: ACS-ICH-NO-ANTICOAG
+    node_id: stemi_pathway
+    condition: '''active_intracranial_hemorrhage'' in patient.contraindications or ''hemorrhagic_stroke'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_heparin_bolus
+    - give_full_dose_anticoagulation
+    - give_dual_antiplatelet
+    - give_thrombolysis
+    evidence: AHA/ACC 2013 STEMI Guidelines, Section 4.3 Absolute Contraindications
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.contraindications
+  - rule_id: ACS-SILENT-MI-NO-DISCHARGE
+    node_id: stemi_pathway
+    condition: '''diabetic_neuropathy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - discharge_with_vague_complaints
+    evidence: AHA/ACC 2014; Zellweger MJ, Eur Heart J 2004
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ACS-CKD-ENOXAPARIN-ADJUST
+    node_id: nste_acs_pathway
+    condition: patient.labs.egfr < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_enoxaparin_full_dose
+    - give_enoxaparin_1mg_kg_bid
+    evidence: AHA/ACC 2014; Spinler SA, Pharmacotherapy 2003
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: ACS-ASPIRIN-ALLERGY-NO-ASPIRIN
+    node_id: nste_acs_pathway
+    condition: '''aspirin'' in patient.allergies'
+    effect_type: FORBIDDEN
+    actions:
+    - give_aspirin
+    - give_nsaid
+    evidence: AHA/ACC 2014 NSTEMI Guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: ACS-TICAGRELOR-CABG-WASHOUT
+    node_id: nste_acs_pathway
+    condition: '''ticagrelor_recent'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - proceed_to_cabg_within_5_days
+    evidence: ACC/AHA 2016 Dual Antiplatelet Therapy; PLATO Trial
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+aha_heart_failure_2022:
+  guideline_name: AHA/ACC/HFSA Heart Failure Guideline
+  total_nodes: 24
+  total_unconditional_forbidden: 9
+  total_sequence_rules: 0
+  total_conditional_rules: 9
+  rules_by_severity:
+    CRITICAL: 3
+    HIGH: 6
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 8
+    REQUIRED: 1
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: HF-HYPERK-NO-RAAS
+    node_id: hfref_gdmt
+    condition: patient.labs.potassium > 5.5
+    effect_type: FORBIDDEN
+    actions:
+    - initiate_arni
+    - initiate_ace_or_arb_or_arni
+    - initiate_mra
+    - give_potassium_supplement
+    evidence: AHA/ACC 2022 HF Guidelines, Section 7.3.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: HF-NSAID-FORBIDDEN
+    node_id: hfref_gdmt
+    condition: '''nsaid_use'' in patient.medications or ''ibuprofen'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - discontinue_nsaid
+    - give_acetaminophen_alternative
+    evidence: AHA/ACC 2022 HF Guidelines, Class III (Harm)
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: HF-HYPERKALEMIA-NO-RAAS-VARIANT
+    node_id: hfref_gdmt
+    condition: '''ckd_stage_3'' in patient.comorbidities and patient.labs.potassium > 5.0'
+    effect_type: FORBIDDEN
+    actions:
+    - initiate_ace_with_hyperkalemia
+    - initiate_arni_with_hyperkalemia
+    - initiate_mra_with_hyperkalemia
+    - give_potassium_supplement
+    evidence: AHA/ACC 2022 HF Guidelines, Section 7.3.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.labs.potassium
+  - rule_id: HF-NSAID-SPECIFIC-DRUGS
+    node_id: hfref_gdmt
+    condition: '''nsaid_use'' in patient.medications or ''ibuprofen'' in patient.medications or ''naproxen'' in patient.medications
+      or ''celecoxib'' in patient.medications or ''osteoarthritis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_nsaid
+    - give_ibuprofen
+    - give_naproxen
+    - give_celecoxib
+    evidence: AHA/ACC 2022 HF Guidelines, Class III (Harm)
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+    - patient.comorbidities
+  - rule_id: HF-OVERDIURESIS-VARIANT
+    node_id: hfref_gdmt
+    condition: '''hfpef'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_high_dose_diuretics
+    - increase_furosemide
+    - add_metolazone
+    evidence: AHA/ACC 2022 HF Guidelines, Section 10.2
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HF-OVERDIURESIS-HYPOVOLEMIA-SPECIFIC
+    node_id: hfref_gdmt
+    condition: patient.labs.get('creatinine', 1.0) > 2.0 or patient.vitals.get('sbp', 120) < 90
+    effect_type: FORBIDDEN
+    actions:
+    - escalate_diuresis_in_cardiorenal_syndrome
+    - give_aggressive_diuresis_in_hypotensive_hf
+    evidence: AHA HF 2022; over-diuresis in cardiorenal syndrome worsens renal function and causes hemodynamic collapse
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.creatinine
+    - patient.vitals.sbp
+  - rule_id: HF-BRADYCARDIA-NO-BB-INCREASE
+    node_id: adhf_management
+    condition: patient.vitals.heart_rate < 50 or 'av_block' in patient.comorbidities
+    effect_type: FORBIDDEN
+    actions:
+    - increase_beta_blocker
+    - add_digoxin
+    - add_ivabradine
+    evidence: AHA/ACC 2022 HF Guidelines, Section 7.3.1
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.heart_rate
+    - patient.comorbidities
+  - rule_id: HF-ACUTE-PULMONARY-EDEMA-NO-BB
+    node_id: adhf_management
+    condition: patient.vitals.spo2 < 90 and 'bilateral_crackles' in patient.exam_findings
+    effect_type: FORBIDDEN
+    actions:
+    - give_high_dose_beta_blocker
+    - give_iv_metoprolol_in_acute_failure
+    evidence: AHA/ACC 2022 HF Guidelines, Section 10.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+    - patient.exam_findings
+  - rule_id: HF-OVERDIURESIS-STOP
+    node_id: adhf_management
+    condition: patient.labs.bun_cr_ratio > 20 and patient.vitals.sbp_orthostatic_drop > 20
+    effect_type: FORBIDDEN
+    actions:
+    - give_high_dose_diuretics
+    - increase_furosemide
+    - add_metolazone
+    evidence: AHA/ACC 2022 HF Guidelines, Section 10.2; Testani JM, JACC 2011
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.bun_cr_ratio
+    - patient.vitals.sbp_orthostatic_drop
+aha_stroke_2019:
+  guideline_name: AHA/ASA Acute Ischemic Stroke Guideline
+  total_nodes: 25
+  total_unconditional_forbidden: 15
+  total_sequence_rules: 0
+  total_conditional_rules: 7
+  rules_by_severity:
+    CRITICAL: 4
+    HIGH: 3
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 7
+    REQUIRED: 0
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: STROKE-BP-UNCONTROLLED-NO-TPA
+    node_id: tpa_eligibility_assessment
+    condition: patient.vitals.sbp > 185 or patient.vitals.dbp > 110
+    effect_type: FORBIDDEN
+    actions:
+    - give_alteplase
+    - give_tpa
+    evidence: AHA/ASA 2019 Acute Ischemic Stroke Guidelines, Section 3.5
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+    - patient.vitals.dbp
+  - rule_id: STROKE-SEIZURE-MIMIC-NO-TPA
+    node_id: tpa_eligibility_assessment
+    condition: '''seizure_at_onset'' in patient.history or ''todds_paralysis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_alteplase_without_ruling_out_mimic
+    - give_tpa_for_todds_paralysis
+    evidence: AHA/ASA 2019, Section 3.4 Stroke Mimics
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.history
+  - rule_id: STROKE-POSTERIOR-NO-DISCHARGE-LOW-NIHSS
+    node_id: tpa_eligibility_assessment
+    condition: '''posterior_circulation'' in patient.presentation or ''vertebrobasilar'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - discharge_with_low_nihss
+    - withhold_treatment_based_on_low_nihss
+    evidence: AHA/ASA 2019, Section 3.6 Posterior Circulation Stroke
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: STROKE-TPA-HEPARIN-TIMING
+    node_id: tpa_eligibility_assessment
+    condition: '''tpa_given'' in patient.history or ''alteplase_given'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_heparin_within_24h_of_tpa
+    - start_doac_immediately
+    evidence: AHA/ASA 2019, Section 3.5; NINDS tPA Protocol
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.history
+  - rule_id: STROKE-EXTENDED-WINDOW-NO-TPA
+    node_id: tpa_eligibility_assessment
+    condition: patient.presentation.symptom_onset_hours > 4.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_alteplase
+    evidence: AHA/ASA 2019, Section 3.3
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.symptom_onset_hours
+  - rule_id: STROKE-WARFARIN-PCC-PREFERRED
+    node_id: hemorrhagic_stroke_management
+    condition: '''warfarin'' in patient.medications and ''intracerebral_hemorrhage'' in patient.imaging'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ffp_as_sole_reversal
+    - delay_reversal_for_inr_result
+    evidence: AHA/ASA 2022 ICH Guidelines, Section 5.2; Steiner T, Stroke 2016
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+    - patient.imaging
+  - rule_id: STROKE-PREGNANCY-NO-ACEI
+    node_id: stroke_secondary_prevention
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor
+    - give_arb
+    - give_nitroprusside
+    evidence: ACOG 2020; AHA/ASA 2019 Secondary Prevention
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+anaphylaxis_management:
+  guideline_name: WAO/EAACI Anaphylaxis Management
+  total_nodes: 5
+  total_unconditional_forbidden: 19
+  total_sequence_rules: 4
+  total_conditional_rules: 13
+  rules_by_severity:
+    CRITICAL: 3
+    HIGH: 10
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 8
+    REQUIRED: 5
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: ANA-BETA-BLOCKER-GLUCAGON
+    node_id: epinephrine_administration
+    condition: '''beta_blocker'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - give_glucagon
+    evidence: WAO 2024 Section 4.3; EAACI 2024 Section 5.2
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: ANA-BETA-BLOCKER-GLUCAGON-FORBIDDEN
+    node_id: epinephrine_administration
+    condition: '''beta_blocker'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - give_additional_beta_blocker_in_anaphylaxis
+    - withhold_glucagon_despite_epi_resistance
+    evidence: WAO 2024 Section 4.3; EAACI 2024 Section 5.2; beta-blocker patients are epinephrine-resistant
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: ANA-PREGNANCY-LEFT-LATERAL
+    node_id: epinephrine_administration
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - position_left_lateral_decubitus
+    evidence: WAO 2024 Section 6.1; EAACI 2024 Special Populations
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ANA-PREGNANCY-LEFT-LATERAL-FORBIDDEN
+    node_id: epinephrine_administration
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - position_supine_flat_in_pregnancy
+    - give_methylergonovine_in_anaphylaxis
+    evidence: WAO 2024 Section 6.1; supine positioning in pregnant patients causes aortocaval compression reducing cardiac
+      output by 30%
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ANA-ACE-INHIBITOR-ANGIOEDEMA
+    node_id: epinephrine_administration
+    condition: '''ace_inhibitor'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor_again
+    - resume_ace_inhibitor
+    evidence: EAACI 2024 Section 5.4; Brown SGA, JACI 2004
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: ANA-ASTHMA-SALBUTAMOL
+    node_id: epinephrine_administration
+    condition: '''asthma'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_salbutamol_nebulized
+    evidence: WAO 2024 Section 4.5; EAACI 2024 Section 5.3
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ANA-ASTHMA-SALBUTAMOL-FORBIDDEN
+    node_id: epinephrine_administration
+    condition: '''asthma'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_beta_blocker_in_asthma_anaphylaxis
+    - give_nsaid_in_aspirin_sensitive_asthma
+    evidence: WAO 2024 Section 4.5; beta-blockers exacerbate bronchospasm; NSAIDs trigger aspirin-exacerbated respiratory
+      disease
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ANA-PEDIATRIC-DOSE
+    node_id: epinephrine_administration
+    condition: patient.age < 12
+    effect_type: FORBIDDEN
+    actions:
+    - give_adult_dose_epinephrine
+    - give_epinephrine_0_5mg
+    evidence: WAO 2024 Table 3; EAACI 2024 Pediatric Dosing
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: ANA-MASTOCYTOSIS-EXTENDED-OBS
+    node_id: fluid_resuscitation
+    condition: '''mastocytosis'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - observe_minimum_24_hours
+    evidence: WAO 2024 Section 6.3; Brockow K, JACI 2008
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ANA-MASTOCYTOSIS-EXTENDED-OBS-FORBIDDEN
+    node_id: fluid_resuscitation
+    condition: '''mastocytosis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - discharge_before_24h_in_mastocytosis
+    - give_nsaid_in_mastocytosis
+    evidence: WAO 2024 Section 6.3; Brockow K, JACI 2008; mastocytosis patients have 30% biphasic reaction rate
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ANA-LATEX-ALLERGY-NO-LATEX
+    node_id: fluid_resuscitation
+    condition: '''latex'' in patient.allergies'
+    effect_type: FORBIDDEN
+    actions:
+    - use_latex_gloves_or_equipment
+    - use_latex_containing_iv_tubing
+    evidence: WAO 2024 Section 3.1; EAACI 2024 Allergen Avoidance
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: ANA-BIPHASIC-HIGH-RISK
+    node_id: monitoring_and_disposition
+    condition: '''severe_initial_reaction'' in patient.presentation'
+    effect_type: REQUIRED
+    actions:
+    - observe_minimum_8_hours
+    evidence: WAO 2024 Section 5.2; Grunau BE, Ann Emerg Med 2015
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: ANA-BIPHASIC-HIGH-RISK-FORBIDDEN
+    node_id: monitoring_and_disposition
+    condition: '''severe_initial_reaction'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - discharge_before_8h_severe_anaphylaxis
+    - discontinue_monitoring_prematurely
+    evidence: WAO 2024 Section 5.2; Grunau BE, Ann Emerg Med 2015; 10-20% biphasic rate in severe initial reactions
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+apa_agitation_management:
+  guideline_name: APA 2024 Agitation Management Guidelines
+  total_nodes: 4
+  total_unconditional_forbidden: 5
+  total_sequence_rules: 1
+  total_conditional_rules: 8
+  rules_by_severity:
+    CRITICAL: 8
+    HIGH: 0
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 6
+    REQUIRED: 2
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: PSYCH-ETOH-NO-BENZO-MONOTHERAPY
+    node_id: pharmacologic_intervention
+    condition: '''alcohol_intoxication'' in patient.get(''presentation'', {})'
+    effect_type: FORBIDDEN
+    actions:
+    - give_benzodiazepine_high_dose
+    - give_lorazepam_4mg
+    - give_midazolam_10mg
+    evidence: BETA Project 2012; Nobay F, Ann Emerg Med 2004
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: PSYCH-QTC-NO-HALOPERIDOL
+    node_id: pharmacologic_intervention
+    condition: patient.labs.get('qtc_ms', 0) > 500 or 'prolonged_qtc' in patient.comorbidities
+    effect_type: FORBIDDEN
+    actions:
+    - give_haloperidol
+    - give_droperidol
+    evidence: FDA Black Box Warning - haloperidol QT prolongation; APA 2024
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.qtc_ms
+    - patient.comorbidities
+  - rule_id: PSYCH-PARKINSON-NO-TYPICAL-ANTIPSYCHOTIC
+    node_id: pharmacologic_intervention
+    condition: '''parkinson_disease'' in patient.comorbidities or ''lewy_body_dementia'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_haloperidol
+    - give_droperidol
+    - give_chlorpromazine
+    evidence: APA 2024; McKeith IG, Neurology 2005 - neuroleptic sensitivity in LBD
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: PSYCH-OLANZAPINE-NO-BENZO-COMBO
+    node_id: pharmacologic_intervention
+    condition: '''olanzapine_im_given'' in patient.get(''treatment_received'', [])'
+    effect_type: FORBIDDEN
+    actions:
+    - give_lorazepam_im
+    - give_benzodiazepine_im
+    evidence: Olanzapine IM package insert; FDA warning - respiratory depression with IM benzo combo
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.treatment_received
+  - rule_id: PSYCH-NMS-DANTROLENE
+    node_id: nms_serotonin_syndrome
+    condition: '''neuroleptic_malignant_syndrome'' in patient.get(''presentation'', {})'
+    effect_type: REQUIRED
+    actions:
+    - give_dantrolene
+    - stop_all_antipsychotics
+    evidence: APA 2024 NMS Guidelines; Strawn JR, CNS Drugs 2007
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: PSYCH-NMS-DANTROLENE-FORBIDDEN
+    node_id: nms_serotonin_syndrome
+    condition: '''neuroleptic_malignant_syndrome'' in patient.get(''presentation'', {})'
+    effect_type: FORBIDDEN
+    actions:
+    - give_antipsychotic_in_nms
+    - give_haloperidol_in_nms
+    evidence: APA Practice Guidelines; NMS is caused by antipsychotic dopamine blockade; readministering antipsychotics is
+      fatal
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: PSYCH-SEROTONIN-CYPROHEPTADINE
+    node_id: nms_serotonin_syndrome
+    condition: '''serotonin_syndrome'' in patient.get(''presentation'', {})'
+    effect_type: REQUIRED
+    actions:
+    - give_cyproheptadine
+    - stop_serotonergic_agents
+    evidence: Boyer EW, NEJM 2005; APA 2024
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: PSYCH-SEROTONIN-CYPROHEPTADINE-FORBIDDEN
+    node_id: nms_serotonin_syndrome
+    condition: '''serotonin_syndrome'' in patient.get(''presentation'', {})'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ssri_in_serotonin_syndrome
+    - give_tramadol_in_serotonin_syndrome
+    evidence: APA Practice Guidelines; Boyer EW, NEJM 2005; serotonergic agents compound serotonin syndrome
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+atrial_fibrillation:
+  guideline_name: AHA/ACC/HRS 2023 Atrial Fibrillation
+  total_nodes: 3
+  total_unconditional_forbidden: 1
+  total_sequence_rules: 1
+  total_conditional_rules: 7
+  rules_by_severity:
+    CRITICAL: 3
+    HIGH: 4
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 7
+    REQUIRED: 0
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: AF-WPW-NO-AV-BLOCKER
+    node_id: initial_assessment
+    condition: '''wpw_syndrome'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_diltiazem
+    - give_verapamil
+    - give_digoxin
+    - give_adenosine
+    - give_beta_blocker_iv
+    evidence: AHA/ACC/HRS 2023 AF Guidelines, Section 7.3.4.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AF-SEVERE-CKD-NO-DOAC
+    node_id: initial_assessment
+    condition: patient.labs.egfr < 15
+    effect_type: FORBIDDEN
+    actions:
+    - give_rivaroxaban
+    - give_apixaban
+    - give_edoxaban
+    - give_dabigatran
+    evidence: AHA/ACC/HRS 2023 AF Guidelines, Section 5.1.3
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: AF-MECHANICAL-VALVE-NO-DOAC
+    node_id: initial_assessment
+    condition: '''mechanical_heart_valve'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_dabigatran
+    - give_rivaroxaban
+    - give_apixaban
+    - give_edoxaban
+    evidence: AHA/ACC/HRS 2023 AF Guidelines; RE-ALIGN Trial
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AF-ANTICOAG-REQUIRES-CHADSVASC
+    node_id: initial_assessment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_anticoagulation_without_chadsvasc
+    evidence: AHA/ACC/HRS 2023 AF Guidelines, Section 5.1
+    severity: HIGH
+    has_trigger_range: false
+    has_normal_range: false
+    condition_variables: []
+  - rule_id: AF-AMIODARONE-THYROID-VARIANT
+    node_id: initial_assessment
+    condition: '''graves_disease_suspected'' in patient.comorbidities or ''thyrotoxicosis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_amiodarone_without_thyroid_evaluation
+    - give_amiodarone_iv
+    - add_amiodarone_loading
+    - increase_amiodarone_dose
+    evidence: AHA/ACC/HRS 2023; Bogazzi F, Thyroid 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AF-CARDIOVERSION-ANTICOAG-GATE
+    node_id: unstable_af
+    condition: patient.presentation.af_duration_hours > 48
+    effect_type: FORBIDDEN
+    actions:
+    - perform_cardioversion_without_anticoag
+    - perform_cardioversion_without_tee
+    evidence: AHA/ACC/HRS 2023 AF Guidelines, Section 6.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.af_duration_hours
+  - rule_id: AF-AMIODARONE-THYROID-CHECK
+    node_id: stable_af_rate_control
+    condition: '''amiodarone_use_chronic'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - increase_amiodarone_dose
+    - add_amiodarone_loading
+    - give_amiodarone_iv
+    evidence: AHA/ACC/HRS 2023 AF Guidelines; Bogazzi F, Thyroid 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+cap_pneumonia:
+  guideline_name: IDSA/ATS Community-Acquired Pneumonia 2019
+  total_nodes: 3
+  total_unconditional_forbidden: 1
+  total_sequence_rules: 2
+  total_conditional_rules: 13
+  rules_by_severity:
+    CRITICAL: 2
+    HIGH: 10
+    MODERATE: 1
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 8
+    REQUIRED: 5
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: CAP-PENICILLIN-ALLERGY-ALT
+    node_id: initial_assessment
+    condition: '''penicillin_anaphylaxis'' in patient.allergies'
+    effect_type: FORBIDDEN
+    actions:
+    - give_amoxicillin
+    - give_ampicillin
+    - give_piperacillin
+    evidence: ATS/IDSA CAP 2019, Section 4.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: CAP-QT-NO-FLUOROQUINOLONE
+    node_id: initial_assessment
+    condition: '''long_qt'' in patient.comorbidities or ''qt_prolongation'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_levofloxacin
+    - give_moxifloxacin
+    - give_fluoroquinolone
+    evidence: ATS/IDSA CAP 2019; FDA Black Box Warning
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-SEVERE-ICU-DUAL-THERAPY
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or 'mechanical_ventilation' in patient.procedures
+    effect_type: REQUIRED
+    actions:
+    - give_beta_lactam_plus_macrolide
+    - give_beta_lactam_plus_fluoroquinolone
+    evidence: ATS/IDSA CAP 2019, Section 5.1
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+  - rule_id: CAP-MRSA-RISK-COVERAGE
+    node_id: initial_assessment
+    condition: '''mrsa_risk'' in patient.comorbidities or ''prior_mrsa'' in patient.history'
+    effect_type: REQUIRED
+    actions:
+    - add_vancomycin
+    - add_linezolid
+    evidence: ATS/IDSA CAP 2019, Section 5.3
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-MRSA-RISK-COVERAGE-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''mrsa_risk'' in patient.comorbidities or ''prior_mrsa'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_standard_empiric_without_mrsa_in_risk
+    - omit_vancomycin_or_linezolid_in_mrsa_risk
+    evidence: ATS/IDSA CAP 2019; MRSA CAP has 30-40% mortality without appropriate coverage
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-PSEUDOMONAS-RISK-COVERAGE
+    node_id: initial_assessment
+    condition: '''structural_lung_disease'' in patient.comorbidities or ''recent_hospitalization'' in patient.history'
+    effect_type: REQUIRED
+    actions:
+    - give_antipseudomonal_beta_lactam
+    evidence: ATS/IDSA CAP 2019, Section 5.2
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-PSEUDOMONAS-RISK-COVERAGE-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''structural_lung_disease'' in patient.comorbidities or ''recent_hospitalization'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_non_antipseudomonal_in_risk
+    - give_single_agent_for_pseudomonas_risk
+    evidence: ATS/IDSA CAP 2019; Pseudomonas CAP requires antipseudomonal agents; standard empiric monotherapy is inadequate
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-IMMUNOCOMPROMISED-BROAD
+    node_id: initial_assessment
+    condition: '''hiv'' in patient.comorbidities or ''transplant_recipient'' in patient.comorbidities or ''immunosuppression''
+      in patient.comorbidities or ''chemotherapy_recent'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_standard_cap_antibiotics_only
+    - delay_empiric_coverage
+    evidence: ATS/IDSA CAP 2019, Section 6; IDSA Immunocompromised Host 2013
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-ASPIRATION-ANAEROBE
+    node_id: initial_assessment
+    condition: '''aspiration_risk'' in patient.comorbidities or ''dysphagia'' in patient.comorbidities or ''alcoholism'' in
+      patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - add_anaerobic_coverage
+    evidence: ATS/IDSA CAP 2019, Section 5.4
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-ASPIRATION-ANAEROBE-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''aspiration_risk'' in patient.comorbidities or ''dysphagia'' in patient.comorbidities or ''alcoholism'' in
+      patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_azithromycin_only_for_aspiration
+    - omit_anaerobic_coverage_in_aspiration
+    evidence: ATS/IDSA CAP 2019; aspiration pneumonia involves polymicrobial anaerobes requiring specific coverage
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAP-COVID-STEROID-TIMING
+    node_id: initial_assessment
+    condition: '''covid_pneumonia'' in patient.comorbidities and ''supplemental_oxygen'' in patient.procedures'
+    effect_type: FORBIDDEN
+    actions:
+    - give_steroid_without_oxygen_requirement
+    - give_high_dose_steroid_early
+    evidence: RECOVERY Trial; WHO COVID-19 Therapeutics 2022
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.procedures
+  - rule_id: CAP-SEVERE-ICU-ADMISSION
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or patient.vitals.respiratory_rate > 30
+    effect_type: REQUIRED
+    actions:
+    - admit_to_icu
+    - give_iv_antibiotics_immediately
+    evidence: ATS/IDSA CAP 2019, Section 5.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+    - patient.vitals.respiratory_rate
+  - rule_id: CAP-SEVERE-ICU-ADMISSION-FORBIDDEN
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or patient.vitals.respiratory_rate > 30
+    effect_type: FORBIDDEN
+    actions:
+    - treat_on_ward_if_severe_cap
+    - delay_icu_transfer_in_severe_cap
+    evidence: ATS/IDSA CAP 2019; severe CAP (PaO2/FiO2 < 250, multilobar, septic shock) requires ICU-level care
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+    - patient.vitals.respiratory_rate
+copd_exacerbation:
+  guideline_name: GOLD 2024 COPD Exacerbation Management
+  total_nodes: 2
+  total_unconditional_forbidden: 2
+  total_sequence_rules: 0
+  total_conditional_rules: 8
+  rules_by_severity:
+    CRITICAL: 1
+    HIGH: 6
+    MODERATE: 1
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 8
+    REQUIRED: 0
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: COPD-PNEUMOTHORAX-NO-NIV
+    node_id: initial_assessment
+    condition: '''pneumothorax'' in patient.comorbidities or ''pneumothorax'' in patient.imaging'
+    effect_type: FORBIDDEN
+    actions:
+    - initiate_niv
+    - initiate_bipap
+    - initiate_cpap
+    evidence: GOLD COPD 2024, Section 5.3
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: COPD-CO2-NARCOSIS-NO-HIGH-O2
+    node_id: initial_assessment
+    condition: patient.labs.pco2 > 60
+    effect_type: FORBIDDEN
+    actions:
+    - give_high_flow_oxygen_100pct
+    - give_high_fio2
+    evidence: GOLD COPD 2024; Austin MA, BMJ 2010
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.pco2
+  - rule_id: COPD-FACIAL-TRAUMA-NO-NIV
+    node_id: initial_assessment
+    condition: '''facial_trauma'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - initiate_niv
+    - initiate_bipap
+    evidence: GOLD COPD 2024; BTS NIV Guidelines
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: COPD-BB-CONTRAINDICATED
+    node_id: initial_assessment
+    condition: '''severe_copd'' in patient.comorbidities or ''asthma_overlap'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nonselective_beta_blocker
+    - give_propranolol
+    evidence: GOLD COPD 2024; Salpeter SR, Cochrane 2005
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: COPD-THEOPHYLLINE-CAUTION
+    node_id: initial_assessment
+    condition: '''theophylline'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - add_macrolide_without_theophylline_check
+    - give_ciprofloxacin
+    evidence: GOLD COPD 2024; Drug interaction databases
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: COPD-COR-PULMONALE-FLUID-RESTRICT
+    node_id: initial_assessment
+    condition: '''cor_pulmonale'' in patient.comorbidities or ''right_heart_failure'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_aggressive_iv_fluids
+    - give_large_volume_fluid
+    evidence: GOLD COPD 2024; AHA HF Guidelines 2022
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: COPD-CHF-OVERLAP-NO-BB-INCREASE
+    node_id: initial_assessment
+    condition: '''heart_failure'' in patient.comorbidities or ''chf'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - increase_beta_blocker
+    - give_high_dose_beta_blocker
+    evidence: GOLD COPD 2024; Bhatt SP, NEJM 2023
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: COPD-AKI-STEROID-CAUTION
+    node_id: initial_assessment
+    condition: '''aki'' in patient.comorbidities or ''ckd_stage_4'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_high_dose_methylprednisolone
+    - give_nsaid
+    evidence: GOLD COPD 2024; KDIGO AKI 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+gi_bleeding:
+  guideline_name: ACG 2021 GI Bleeding Management
+  total_nodes: 2
+  total_unconditional_forbidden: 1
+  total_sequence_rules: 0
+  total_conditional_rules: 10
+  rules_by_severity:
+    CRITICAL: 4
+    HIGH: 6
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 6
+    REQUIRED: 4
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: GIB-VARICEAL-NO-NSAID
+    node_id: initial_assessment
+    condition: '''variceal_bleed'' in patient.presentation or ''cirrhosis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nsaid
+    - give_aspirin
+    - give_anticoagulation
+    evidence: ACG GI Bleeding 2023; Baveno VII 2022
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: GIB-HEMODYNAMIC-INSTABILITY-RESUSCITATE
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or patient.vitals.heart_rate > 120
+    effect_type: REQUIRED
+    actions:
+    - establish_large_bore_iv
+    - give_crystalloid_bolus
+    - type_and_crossmatch
+    evidence: ACG GI Bleeding 2023, Section 3.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+    - patient.vitals.heart_rate
+  - rule_id: GIB-HEMODYNAMIC-INSTABILITY-RESUSCITATE-FORBIDDEN
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or patient.vitals.heart_rate > 120
+    effect_type: FORBIDDEN
+    actions:
+    - delay_resuscitation_for_endoscopy_in_gi_bleed
+    - give_oral_fluids_only_in_gi_hemorrhagic_shock
+    evidence: ACG GI Bleeding 2023; hemodynamic resuscitation takes priority over endoscopy in unstable patients
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+    - patient.vitals.heart_rate
+  - rule_id: GIB-ANTICOAG-REVERSAL
+    node_id: initial_assessment
+    condition: '''warfarin'' in patient.medications and patient.labs.inr > 2.5'
+    effect_type: REQUIRED
+    actions:
+    - give_pcc
+    - give_vitamin_k
+    evidence: ACG GI Bleeding 2023; AGA 2020
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+    - patient.labs.inr
+  - rule_id: GIB-VARICEAL-OCTREOTIDE
+    node_id: initial_assessment
+    condition: '''variceal_bleed'' in patient.presentation'
+    effect_type: REQUIRED
+    actions:
+    - give_octreotide
+    - give_prophylactic_antibiotics
+    evidence: Baveno VII 2022; ACG GI Bleeding 2023
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: GIB-PLATELET-TRANSFUSE
+    node_id: initial_assessment
+    condition: patient.labs.platelets < 50
+    effect_type: REQUIRED
+    actions:
+    - transfuse_platelets
+    evidence: ACG GI Bleeding 2023
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.platelets
+  - rule_id: GIB-PLATELET-TRANSFUSE-FORBIDDEN
+    node_id: initial_assessment
+    condition: patient.labs.platelets < 50
+    effect_type: FORBIDDEN
+    actions:
+    - delay_platelet_transfusion_in_active_bleed
+    - give_aspirin_in_severe_thrombocytopenia
+    evidence: ACG GI Bleeding 2023; platelet count < 50k with active bleeding requires transfusion; antiplatelet agents worsen
+      bleeding
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.platelets
+  - rule_id: GIB-MECHANICAL-VALVE-ANTICOAG
+    node_id: initial_assessment
+    condition: '''mechanical_heart_valve'' in patient.comorbidities and ''warfarin'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - stop_anticoagulation_indefinitely
+    - withhold_anticoagulation_without_bridge
+    evidence: ACG GI Bleeding 2023; AHA/ACC Valve 2020
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.medications
+  - rule_id: GIB-NSAID-PPI-FAILURE
+    node_id: initial_assessment
+    condition: '''nsaid_use'' in patient.medications and ''ppi_failure'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_nsaid
+    - give_nsaid
+    - restart_nsaid_without_ppi
+    evidence: ACG GI Bleeding 2023; Lanza FL, Am J Gastroenterol 2009
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+    - patient.history
+  - rule_id: GIB-UNSTABLE-RESUSCITATE-FIRST
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 and patient.vitals.heart_rate > 120
+    effect_type: FORBIDDEN
+    actions:
+    - proceed_to_endoscopy_without_resuscitation
+    - delay_transfusion_for_endoscopy
+    evidence: ACG GI Bleeding 2023, Section 3.1
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+    - patient.vitals.heart_rate
+gina_asthma_exacerbation:
+  guideline_name: GINA Asthma Exacerbation Management
+  total_nodes: 5
+  total_unconditional_forbidden: 24
+  total_sequence_rules: 0
+  total_conditional_rules: 24
+  rules_by_severity:
+    CRITICAL: 3
+    HIGH: 18
+    MODERATE: 3
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 19
+    REQUIRED: 5
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: ASTHMA-INITIAL-NO-MUCOLYTICS
+    node_id: initial_assessment
+    condition: patient.vitals.get('spo2', 100) < 92
+    effect_type: FORBIDDEN
+    actions:
+    - give_mucolytics
+    evidence: GINA 2024 Section 4.3; mucolytics may worsen bronchospasm in acute exacerbations
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-INITIAL-NO-MUCOLYTICS-SPECIFIC
+    node_id: initial_assessment
+    condition: patient.vitals.get('spo2', 100) < 92
+    effect_type: FORBIDDEN
+    actions:
+    - give_mucolytics_in_hypoxic_asthma
+    - give_acetylcysteine_nebulized_in_acute_asthma
+    evidence: GINA 2024 Section 4.3; mucolytics worsen bronchospasm in acute exacerbation especially with hypoxia
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-MILD-NO-PHYSIO-SPECIFIC
+    node_id: initial_assessment
+    condition: '''mild_exacerbation'' in patient.comorbidities or patient.vitals.get(''spo2'', 100) >= 92'
+    effect_type: FORBIDDEN
+    actions:
+    - give_chest_physiotherapy_in_acute_asthma
+    - perform_percussion_drainage_in_bronchospasm
+    evidence: GINA 2024 Section 4.3; chest physiotherapy increases oxygen demand and may worsen bronchospasm in acute asthma
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-SEVERE-NO-ROUTINE-ABX-SPECIFIC
+    node_id: initial_assessment
+    condition: '''severe_exacerbation'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_routine_antibiotics_in_viral_asthma
+    - give_empiric_azithromycin_without_infection_evidence
+    evidence: GINA 2024 Section 4.3; antibiotics not indicated for asthma exacerbation without bacterial infection evidence
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-NO-THEOPHYLLINE-IN-ACUTE-SPECIFIC
+    node_id: initial_assessment
+    condition: '''acute_exacerbation'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_iv_theophylline_in_acute_asthma
+    - give_aminophylline_in_acute_exacerbation
+    evidence: GINA 2024 Section 4.3; theophylline/aminophylline not recommended in acute asthma due to narrow therapeutic
+      index and toxicity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-MILD-NO-MUCOLYTICS
+    node_id: mild_moderate_treatment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_mucolytics
+    evidence: GINA 2024 Section 4.3; mucolytics not recommended in acute asthma exacerbations
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-MILD-NO-CHEST-PHYSIO
+    node_id: mild_moderate_treatment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_chest_physiotherapy
+    evidence: GINA 2024 Section 4.3; chest physiotherapy not recommended in acute asthma
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-ASPIRIN-SENSITIVE-NO-NSAID
+    node_id: mild_moderate_treatment
+    condition: '''aspirin_sensitive_asthma'' in patient.comorbidities or ''nsaid_sensitivity'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nsaid
+    - give_aspirin
+    - give_ibuprofen
+    - give_ketorolac
+    evidence: GINA 2024 Section 2.4; Stevenson DD, JACI 2003
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-STEROID-DEPENDENT-STRESS-DOSE
+    node_id: mild_moderate_treatment
+    condition: '''chronic_steroid_use'' in patient.medications or ''oral_corticosteroid_dependent'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_stress_dose_steroids
+    evidence: GINA 2024 Section 3.5; Chrousos GP, NEJM 1995
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: ASTHMA-STEROID-DEPENDENT-STRESS-DOSE-FORBIDDEN
+    node_id: mild_moderate_treatment
+    condition: '''chronic_steroid_use'' in patient.medications or ''oral_corticosteroid_dependent'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - withhold_stress_dose_steroid_in_dependent
+    - abruptly_stop_chronic_steroid_in_exacerbation
+    evidence: GINA 2024; steroid-dependent patients have adrenal suppression; abrupt withdrawal causes adrenal crisis
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: ASTHMA-SEVERE-NO-MUCOLYTICS
+    node_id: severe_treatment
+    condition: patient.vitals.get('spo2', 100) < 92
+    effect_type: FORBIDDEN
+    actions:
+    - give_mucolytics
+    evidence: GINA 2024 Section 4.3; mucolytics contraindicated in severe asthma with hypoxia
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-SEVERE-NO-CHEST-PHYSIO
+    node_id: severe_treatment
+    condition: patient.vitals.get('spo2', 100) < 92
+    effect_type: FORBIDDEN
+    actions:
+    - give_chest_physiotherapy
+    evidence: GINA 2024 Section 4.3; chest physiotherapy contraindicated in severe asthma
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-SEVERE-NO-THEOPHYLLINE
+    node_id: severe_treatment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_theophylline_in_acute
+    evidence: GINA 2024 Section 4.3; theophylline not recommended in acute asthma due to toxicity risk
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-SEVERE-NO-ANTIBIOTICS-ROUTINE
+    node_id: severe_treatment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_antibiotics_routine
+    evidence: GINA 2024 Section 4.3; antibiotics not routinely indicated for asthma exacerbations
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-SEVERE-MGSO4
+    node_id: severe_treatment
+    condition: patient.vitals.pef_percent < 25 or patient.vitals.spo2 < 92
+    effect_type: REQUIRED
+    actions:
+    - give_magnesium_sulfate_iv
+    evidence: GINA 2024 Section 4.3; Kew KM, Cochrane 2014
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.pef_percent
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-SEVERE-MGSO4-FORBIDDEN
+    node_id: severe_treatment
+    condition: patient.vitals.pef_percent < 25 or patient.vitals.spo2 < 92
+    effect_type: FORBIDDEN
+    actions:
+    - discharge_severe_exacerbation_without_mgso4
+    - give_only_bronchodilator_in_life_threatening
+    evidence: GINA 2024; severe/life-threatening exacerbation requires IV MgSO4 as adjunctive bronchodilator
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.pef_percent
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-PNEUMOTHORAX-NO-POSITIVE-PRESSURE
+    node_id: severe_treatment
+    condition: '''pneumothorax'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_niv
+    - give_bipap
+    - give_cpap
+    - give_positive_pressure_ventilation
+    evidence: GINA 2024 Section 4.3; BTS 2015 Spontaneous Pneumothorax Guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-CONCURRENT-INFECTION-ABX
+    node_id: severe_treatment
+    condition: '''concurrent_pneumonia'' in patient.comorbidities or ''concurrent_bacterial_infection'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_antibiotics
+    evidence: GINA 2024 Section 4.3; NICE NG80 2017
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-CONCURRENT-INFECTION-ABX-FORBIDDEN
+    node_id: severe_treatment
+    condition: '''concurrent_pneumonia'' in patient.comorbidities or ''concurrent_bacterial_infection'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_fluoroquinolone_without_clear_indication
+    - withhold_antibiotics_in_confirmed_pneumonia
+    evidence: GINA 2024; routine antibiotics for asthma exacerbation are not recommended unless clear bacterial infection
+      is present
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-NEARFATAL-NO-MUCOLYTICS
+    node_id: near_fatal_treatment
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_mucolytics
+    evidence: GINA 2024 Section 4.3; mucolytics contraindicated in near-fatal asthma
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-NEARFATAL-NO-SUCCINYLCHOLINE-HYPERKALEMIC
+    node_id: near_fatal_treatment
+    condition: '''intubation_needed'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_succinylcholine_if_hyperkalemic
+    - use_rapid_sequence_with_histamine_releasers
+    evidence: GINA 2024 Section 4.3; succinylcholine may worsen hyperkalemia; histamine releasers worsen bronchospasm
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-NEAR-FATAL-EPINEPHRINE
+    node_id: near_fatal_treatment
+    condition: state.severity_classification == 'near_fatal' or patient.vitals.spo2 < 85
+    effect_type: REQUIRED
+    actions:
+    - give_epinephrine_im
+    evidence: GINA 2024 Section 4.3; BTS/SIGN 2019 Asthma Guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.spo2
+  - rule_id: ASTHMA-INTUBATED-KETAMINE-PREFERRED
+    node_id: near_fatal_treatment
+    condition: '''intubation_needed'' in patient.comorbidities or state.severity_classification == ''near_fatal'''
+    effect_type: REQUIRED
+    actions:
+    - give_ketamine_for_induction
+    evidence: GINA 2024 Section 4.3; Goyal S, Indian J Crit Care Med 2014
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: ASTHMA-PREGNANCY-NO-DEHYDRATION
+    node_id: near_fatal_treatment
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - withhold_treatment
+    - delay_treatment
+    - restrict_fluid
+    evidence: GINA 2024 Section 5.6; Murphy VE, Respirology 2015
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+hypertensive_emergency:
+  guideline_name: AHA/ACC 2017 Hypertension - Emergency Management
+  total_nodes: 2
+  total_unconditional_forbidden: 2
+  total_sequence_rules: 0
+  total_conditional_rules: 10
+  rules_by_severity:
+    CRITICAL: 8
+    HIGH: 2
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 8
+    REQUIRED: 1
+    BEFORE: 1
+    WITHIN: 0
+  rules:
+  - rule_id: HTN-AORTIC-DISSECTION-BB-FIRST
+    node_id: initial_assessment
+    condition: '''aortic_dissection'' in patient.comorbidities'
+    effect_type: BEFORE
+    actions:
+    - give_iv_beta_blocker
+    - give_vasodilator
+    evidence: AHA 2017 Hypertensive Crisis; ESC Aortic Disease 2014
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-ECLAMPSIA-MAGNESIUM
+    node_id: initial_assessment
+    condition: '''eclampsia'' in patient.comorbidities or ''preeclampsia_severe'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_magnesium_sulfate
+    - give_iv_labetalol_or_hydralazine
+    evidence: ACOG 2020; AHA 2017 Hypertensive Crisis
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-ECLAMPSIA-MAGNESIUM-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''eclampsia'' in patient.comorbidities or ''preeclampsia_severe'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor_in_eclampsia
+    - give_nitroprusside_in_eclampsia
+    evidence: ACOG 2020; ACE inhibitors are teratogenic; nitroprusside causes fetal cyanide toxicity
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-ECLAMPSIA-NO-ACEI
+    node_id: initial_assessment
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor
+    - give_arb
+    - give_nitroprusside
+    - give_enalaprilat
+    evidence: ACOG 2020; FDA Pregnancy Category X
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-PHEOCHROMOCYTOMA-NO-BB-ALONE
+    node_id: initial_assessment
+    condition: '''pheochromocytoma'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_beta_blocker_alone
+    - give_iv_metoprolol_without_alpha_block
+    evidence: Endocrine Society 2014; AHA 2017
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-ACS-NO-RAPID-DROP
+    node_id: initial_assessment
+    condition: '''acute_coronary_syndrome'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - drop_bp_below_120_systolic
+    - give_aggressive_bp_lowering
+    evidence: AHA 2017; ESC ACS Guidelines
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-ECLAMPSIA-NO-ACEI-EXPANDED
+    node_id: initial_assessment
+    condition: '''pregnancy'' in str(patient.comorbidities) or ''preeclampsia'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor
+    - give_arb
+    - give_nitroprusside
+    - give_enalaprilat
+    - give_enalapril
+    - give_losartan
+    evidence: ACOG 2020; FDA Pregnancy Category X
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-PHEOCHROMOCYTOMA-NO-BB-EXPANDED
+    node_id: initial_assessment
+    condition: '''pheochromocytoma'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_beta_blocker_first
+    - give_beta_blocker_alone
+    - give_labetalol
+    - give_metoprolol
+    - give_propranolol
+    - give_iv_metoprolol_without_alpha_block
+    evidence: Endocrine Society 2014; AHA 2017
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-AORTIC-DISSECTION-NO-THROMBOLYSIS
+    node_id: initial_assessment
+    condition: '''aortic_dissection'' in str(patient.comorbidities) or ''marfan'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_thrombolysis
+    - give_anticoagulation_without_ruling_out_dissection
+    - give_vasodilator_without_beta_blocker
+    evidence: AHA 2017; ESC Aortic Disease 2014
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: HTN-AKI-NO-AGGRESSIVE-BP
+    node_id: initial_assessment
+    condition: '''ckd'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nsaid
+    - target_normal_bp_immediately
+    - give_rapid_iv_bolus_antihypertensive
+    - give_oral_antihypertensive_alone
+    - reduce_bp_below_140_in_tpa_candidate
+    evidence: AHA 2017; JNC 8
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+idsa_meningitis:
+  guideline_name: IDSA Bacterial Meningitis Management
+  total_nodes: 5
+  total_unconditional_forbidden: 6
+  total_sequence_rules: 2
+  total_conditional_rules: 20
+  rules_by_severity:
+    CRITICAL: 12
+    HIGH: 8
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 15
+    REQUIRED: 4
+    BEFORE: 1
+    WITHIN: 0
+  rules:
+  - rule_id: MENING-INITIAL-NO-DELAY-ABX-FOR-LP
+    node_id: initial_assessment
+    condition: patient.presentation.get('delay_to_lp_minutes', 0) > 30
+    effect_type: FORBIDDEN
+    actions:
+    - delay_antibiotics_for_lp
+    evidence: IDSA 2024 Section 2; Proulx N, QJM 2005
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.delay_to_lp_minutes
+  - rule_id: MENING-INITIAL-NO-DELAY-ABX-FOR-CT
+    node_id: initial_assessment
+    condition: '''focal_neuro_deficit'' in patient.comorbidities or ''papilledema'' in patient.exam_findings'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_antibiotics_for_ct
+    evidence: IDSA 2024 Section 2; Hasbun R, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.exam_findings
+  - rule_id: MENING-EMPIRIC-NO-DELAY-FOR-LP
+    node_id: empiric_antibiotics
+    condition: patient.presentation.get('delay_to_lp_minutes', 0) > 30
+    effect_type: FORBIDDEN
+    actions:
+    - delay_antibiotics_for_lp
+    evidence: IDSA 2024 Section 3; Proulx N, QJM 2005
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.delay_to_lp_minutes
+  - rule_id: MENING-EMPIRIC-NO-DELAY-FOR-CT
+    node_id: empiric_antibiotics
+    condition: '''focal_neuro_deficit'' in patient.comorbidities or ''papilledema'' in patient.exam_findings'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_antibiotics_for_ct
+    - delay_antibiotics_for_imaging
+    evidence: IDSA 2024 Section 3; Hasbun R, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.exam_findings
+  - rule_id: MENING-EMPIRIC-NO-ORAL-ONLY
+    node_id: empiric_antibiotics
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_oral_antibiotics_only
+    evidence: IDSA 2024 Section 3; IV antibiotics required for CNS penetration
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: MENING-ABX-BEFORE-LP
+    node_id: empiric_antibiotics
+    condition: patient.presentation.delay_to_lp_minutes > 30
+    effect_type: FORBIDDEN
+    actions:
+    - delay_antibiotics_for_lp
+    - withhold_antibiotics_pending_lp
+    evidence: IDSA 2024 Section 3.1; Proulx N, QJM 2005
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation.delay_to_lp_minutes
+  - rule_id: MENING-IMMUNOCOMP-LISTERIA
+    node_id: empiric_antibiotics
+    condition: patient.age > 50 or 'immunocompromised' in patient.comorbidities or 'pregnancy' in patient.comorbidities or
+      'alcoholism' in patient.comorbidities
+    effect_type: REQUIRED
+    actions:
+    - add_ampicillin_for_listeria
+    evidence: IDSA 2024 Table 3; Brouwer MC, NEJM 2006
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+    - patient.comorbidities
+  - rule_id: MENING-IMMUNOCOMP-LISTERIA-FORBIDDEN
+    node_id: empiric_antibiotics
+    condition: patient.age > 50 or 'immunocompromised' in patient.comorbidities or 'pregnancy' in patient.comorbidities or
+      'alcoholism' in patient.comorbidities
+    effect_type: FORBIDDEN
+    actions:
+    - omit_ampicillin_in_immunocompromised_meningitis
+    - give_ceftriaxone_only_in_immunocompromised
+    evidence: IDSA Meningitis 2004; Listeria requires ampicillin; cephalosporins have no Listeria activity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+    - patient.comorbidities
+  - rule_id: MENING-PENICILLIN-ALLERGY
+    node_id: empiric_antibiotics
+    condition: '''penicillin_anaphylaxis'' in patient.allergies or ''penicillin_severe_allergy'' in patient.allergies'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ampicillin_iv
+    - give_ampicillin
+    - give_penicillin
+    - give_amoxicillin
+    evidence: IDSA 2024 Table 4; Tunkel AR, CID 2004
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: MENING-NEONATE-COVERAGE
+    node_id: empiric_antibiotics
+    condition: patient.age < 1
+    effect_type: REQUIRED
+    actions:
+    - add_ampicillin_and_aminoglycoside
+    - give_ampicillin_iv
+    - give_gentamicin_iv
+    evidence: IDSA 2024 Table 3; AAP Red Book 2024
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: MENING-NEONATE-COVERAGE-FORBIDDEN
+    node_id: empiric_antibiotics
+    condition: patient.age < 1
+    effect_type: FORBIDDEN
+    actions:
+    - give_adult_empiric_for_neonatal_meningitis
+    - omit_ampicillin_in_neonatal_meningitis
+    evidence: IDSA Meningitis 2004; neonatal meningitis requires ampicillin + gentamicin/cefotaxime for GBS and Listeria coverage
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: MENING-HSV-ENCEPHALITIS
+    node_id: empiric_antibiotics
+    condition: '''hsv_suspected'' in patient.comorbidities or ''encephalitis_features'' in patient.presentation'
+    effect_type: REQUIRED
+    actions:
+    - give_acyclovir_iv
+    evidence: IDSA 2024 Section 3.4; Whitley RJ, NEJM 1986
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: MENING-HSV-ENCEPHALITIS-FORBIDDEN
+    node_id: empiric_antibiotics
+    condition: '''hsv_suspected'' in patient.comorbidities or ''encephalitis_features'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - omit_acyclovir_if_hsv_suspected
+    - give_antibiotics_only_without_acyclovir_in_encephalitis
+    evidence: IDSA Meningitis 2004; Whitley RJ, NEJM 1986; untreated HSV encephalitis has 70% mortality
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: MENING-DEXA-NO-AFTER-ABX
+    node_id: adjunctive_therapy
+    condition: '''suspected_pneumococcal'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - give_dexamethasone_after_antibiotics
+    evidence: IDSA 2024 Section 4; de Gans J, NEJM 2002
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: MENING-DEXA-NO-ORAL
+    node_id: adjunctive_therapy
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_dexamethasone_oral
+    evidence: IDSA 2024 Section 4; IV route required for meningitis dosing
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: MENING-DEXA-BEFORE-ABX
+    node_id: adjunctive_therapy
+    condition: '''suspected_pneumococcal'' in patient.presentation or ''gram_positive_diplococci'' in patient.labs'
+    effect_type: BEFORE
+    actions:
+    - give_dexamethasone_iv
+    - give_empiric_antibiotics
+    evidence: IDSA 2024 Section 4.1; de Gans J, NEJM 2002
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: MENING-DEXAMETHASONE-TIMING
+    node_id: adjunctive_therapy
+    condition: '''bacterial_meningitis'' in patient.presentation'
+    effect_type: REQUIRED
+    actions:
+    - give_dexamethasone_iv
+    evidence: IDSA 2024 Section 4.1; van de Beek D, Lancet Neurol 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: MENING-DEXAMETHASONE-TIMING-FORBIDDEN
+    node_id: adjunctive_therapy
+    condition: '''bacterial_meningitis'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - give_dexamethasone_after_antibiotics_in_meningitis
+    - delay_dexamethasone_for_culture_in_meningitis
+    evidence: IDSA Meningitis 2004; de Gans J, NEJM 2002; dexamethasone must be given before or with first antibiotic dose
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: MENING-LP-NO-WITHOUT-CT-CONTRAINDICATED
+    node_id: lp_and_diagnosis
+    condition: '''focal_neuro_deficit'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - perform_lp_without_ct_when_contraindicated
+    evidence: IDSA 2024 Section 5; Hasbun R, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: MENING-INCREASED-ICP-NO-LP
+    node_id: lp_and_diagnosis
+    condition: '''papilledema'' in patient.presentation or ''focal_neuro_deficit'' in patient.presentation or ''gcs_less_than_12''
+      in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - perform_lp_without_ct
+    - perform_lumbar_puncture_immediate
+    evidence: IDSA 2024 Section 5.2; Hasbun R, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+kdigo_aki_full:
+  guideline_name: KDIGO AKI 2012 Full
+  total_nodes: 13
+  total_unconditional_forbidden: 5
+  total_sequence_rules: 0
+  total_conditional_rules: 24
+  rules_by_severity:
+    CRITICAL: 9
+    HIGH: 15
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 18
+    REQUIRED: 6
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: AKI-NSAID-STOP
+    node_id: initial_assessment
+    condition: '''nsaid'' in patient.medications or ''ibuprofen'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - discontinue_nsaid
+    - discontinue_nephrotoxins
+    evidence: KDIGO AKI 2012, Section 3.1.1
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: AKI-NSAID-STOP-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''nsaid'' in patient.medications or ''ibuprofen'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nsaid_in_aki
+    - give_cox2_inhibitor_in_aki
+    evidence: KDIGO AKI 2012, Section 3.1.1; NSAIDs/COX-2 inhibitors cause afferent arteriole vasoconstriction worsening AKI
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: AKI-ACEI-HOLD
+    node_id: initial_assessment
+    condition: '''ace_inhibitor'' in patient.medications or ''arb'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - hold_ace_inhibitor
+    - hold_arb
+    evidence: KDIGO AKI 2012, Section 3.1.2
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: AKI-ACEI-HOLD-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''ace_inhibitor'' in patient.medications or ''arb'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ace_inhibitor_in_aki
+    - give_arb_in_aki
+    - start_new_raas_inhibitor_in_aki
+    evidence: KDIGO AKI 2012, Section 3.1.2; RAAS inhibitors reduce efferent arteriole tone lowering GFR further in AKI
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: AKI-HYPERKALEMIA-URGENT
+    node_id: initial_assessment
+    condition: patient.labs.potassium > 6.0
+    effect_type: REQUIRED
+    actions:
+    - give_calcium_gluconate
+    - give_insulin_dextrose
+    - order_ecg_stat
+    evidence: KDIGO AKI 2012; AHA Hyperkalemia Guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-HYPERKALEMIA-URGENT-FORBIDDEN
+    node_id: initial_assessment
+    condition: patient.labs.potassium > 6.0
+    effect_type: FORBIDDEN
+    actions:
+    - give_potassium_in_hyperkalemic_aki
+    - give_succinylcholine_in_hyperkalemic_aki
+    - give_spironolactone_in_hyperkalemic_aki
+    evidence: KDIGO AKI 2012; AHA Hyperkalemia Guidelines; potassium-sparing agents and exogenous K+ are contraindicated in
+      K+ > 6.0
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-METFORMIN-HOLD
+    node_id: initial_assessment
+    condition: '''metformin'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - hold_metformin
+    evidence: KDIGO AKI 2012; FDA Label
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: AKI-METFORMIN-HOLD-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''metformin'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_metformin_in_aki
+    - give_metformin_in_renal_failure
+    evidence: KDIGO AKI 2012; FDA Black Box Warning; metformin accumulation in AKI causes fatal lactic acidosis (mortality
+      30-50%)
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: AKI-RHABDO-BICARB-FLUID
+    node_id: initial_assessment
+    condition: '''rhabdomyolysis'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_aggressive_iv_fluid
+    - give_sodium_bicarbonate_drip
+    evidence: KDIGO AKI 2012; Bosch X, NEJM 2009
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AKI-HEPATORENAL-ALBUMIN
+    node_id: initial_assessment
+    condition: '''hepatorenal_syndrome'' in patient.comorbidities or (''cirrhosis'' in patient.comorbidities and ''aki'' in
+      str(patient.comorbidities))'
+    effect_type: REQUIRED
+    actions:
+    - give_albumin_infusion
+    - consult_hepatology
+    evidence: KDIGO AKI 2012; EASL Hepatorenal 2018
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AKI-HEPATORENAL-ALBUMIN-FORBIDDEN
+    node_id: initial_assessment
+    condition: '''hepatorenal_syndrome'' in patient.comorbidities or (''cirrhosis'' in patient.comorbidities and ''aki'' in
+      str(patient.comorbidities))'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nsaid_in_hepatorenal
+    - give_aminoglycoside_in_hepatorenal
+    evidence: KDIGO AKI 2012; EASL Hepatorenal 2018; nephrotoxins compound renal injury in hepatorenal syndrome
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AKI-RHABDO-NO-LR
+    node_id: initial_assessment
+    condition: '''rhabdomyolysis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_lactated_ringer
+    - give_potassium_containing_fluid
+    evidence: KDIGO AKI 2012; Bosch X, NEJM 2009
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: AKI-HYPERKALEMIA-NO-ACE-MRA
+    node_id: initial_assessment
+    condition: patient.labs.potassium > 5.5 and ('ace_inhibitor' in patient.medications or 'mra' in patient.medications)
+    effect_type: FORBIDDEN
+    actions:
+    - continue_ace_inhibitor
+    - continue_mra
+    - give_potassium_supplement
+    evidence: KDIGO AKI 2012; AHA Hyperkalemia Guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+    - patient.medications
+  - rule_id: AKI-HYPERKALEMIA-NO-SUCCINYLCHOLINE
+    node_id: initial_assessment
+    condition: patient.labs.potassium > 5.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_succinylcholine
+    evidence: KDIGO AKI 2012; ASA Anesthesia Guidelines
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-STAGE1-AMINOGLYCOSIDE-SPECIFIC
+    node_id: initial_assessment
+    condition: patient.labs.get('creatinine', 0.8) > 1.2
+    effect_type: FORBIDDEN
+    actions:
+    - give_aminoglycoside_without_tdm_in_stage1_aki
+    - give_gentamicin_empiric_without_renal_dosing
+    evidence: KDIGO AKI 2012 Section 3.1; aminoglycosides without TDM in AKI compound nephrotoxicity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.creatinine
+  - rule_id: AKI-STAGE2-CONTRAST-SPECIFIC
+    node_id: initial_assessment
+    condition: patient.labs.get('egfr', 90) < 45
+    effect_type: FORBIDDEN
+    actions:
+    - give_iodinated_contrast_without_prep_in_aki_stage2
+    - order_ct_with_contrast_without_nephrology_consult_in_aki
+    evidence: KDIGO AKI 2012 Section 3.2; contrast in AKI Stage 2 without preparation causes further renal injury
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: AKI-STAGE2-K-SUPPLEMENT-SPECIFIC
+    node_id: initial_assessment
+    condition: patient.labs.get('potassium', 4.0) > 5.0
+    effect_type: FORBIDDEN
+    actions:
+    - give_potassium_supplement_in_hyperkalemic_aki_stage2
+    - give_oral_potassium_in_aki_with_elevated_k
+    evidence: KDIGO AKI 2012 Section 3.2; potassium supplementation with K+ > 5.0 in AKI is dangerous
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-HYPERKALEMIA-NO-SUCCINYLCHOLINE-SPECIFIC
+    node_id: initial_assessment
+    condition: patient.labs.get('potassium', 4.0) > 5.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_succinylcholine_for_rsi_in_hyperkalemic_aki
+    - use_depolarizing_agent_in_aki_hyperkalemia
+    evidence: KDIGO AKI 2012; ASA Guidelines; succinylcholine releases 0.5-1.0 mEq/L K+ from muscle in hyperkalemia
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-STAGE1-NO-AMINOGLYCOSIDE-UNMONITORED
+    node_id: aki_stage_1_management
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_aminoglycoside_without_monitoring
+    evidence: KDIGO AKI 2012 Section 3.1; aminoglycosides are nephrotoxic and require TDM in AKI
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.creatinine
+  - rule_id: AKI-STAGE2-NO-CONTRAST-UNPREPPED
+    node_id: aki_stage_2_management
+    condition: patient.labs.get('egfr', 90) < 45
+    effect_type: FORBIDDEN
+    actions:
+    - give_contrast_without_preparation
+    evidence: KDIGO AKI 2012 Section 3.2; contrast without preparation in AKI worsens renal injury
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: AKI-STAGE2-NO-POTASSIUM-IF-HYPERKALEMIA
+    node_id: aki_stage_2_management
+    condition: patient.labs.get('potassium', 4.0) > 5.0
+    effect_type: FORBIDDEN
+    actions:
+    - give_potassium_supplements_if_hyperkalemia
+    evidence: KDIGO AKI 2012 Section 3.2; potassium supplementation in hyperkalemia causes fatal arrhythmia
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-STAGE3-NO-CONTRAST
+    node_id: aki_stage_3_management
+    condition: patient.labs.get('creatinine', 1.0) > 4.0
+    effect_type: FORBIDDEN
+    actions:
+    - give_contrast
+    evidence: KDIGO AKI 2012 Section 3.3; contrast is nephrotoxic in severe AKI
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.creatinine
+  - rule_id: AKI-STAGE3-NO-POTASSIUM
+    node_id: aki_stage_3_management
+    condition: patient.labs.get('potassium', 4.0) > 5.5
+    effect_type: FORBIDDEN
+    actions:
+    - give_potassium
+    evidence: KDIGO AKI 2012 Section 3.3; potassium supplementation in hyperkalemic severe AKI is lethal
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.potassium
+  - rule_id: AKI-STAGE3-NO-MAGNESIUM-ANTACIDS
+    node_id: aki_stage_3_management
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_magnesium_containing_antacids
+    evidence: KDIGO AKI 2012 Section 3.3; magnesium accumulates in severe AKI causing toxicity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.creatinine
+kdigo_contrast_aki:
+  guideline_name: KDIGO Contrast-Associated AKI Prevention
+  total_nodes: 7
+  total_unconditional_forbidden: 10
+  total_sequence_rules: 7
+  total_conditional_rules: 19
+  rules_by_severity:
+    CRITICAL: 2
+    HIGH: 16
+    MODERATE: 1
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 15
+    REQUIRED: 4
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: CAKI-METFORMIN-HOLD-48H
+    node_id: risk_assessment
+    condition: '''metformin'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - hold_metformin_before_contrast
+    - hold_metformin_48h_post
+    evidence: KDIGO Contrast AKI; ACR Manual on Contrast Media 2024
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-METFORMIN-HOLD-48H-FORBIDDEN
+    node_id: risk_assessment
+    condition: '''metformin'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_metformin_during_contrast_study
+    - restart_metformin_before_48h_post_contrast
+    evidence: KDIGO Contrast AKI 2012; ACR Contrast Manual 2023; metformin with contrast-induced AKI causes lactic acidosis
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-HIGH-RISK-PREHYDRATE
+    node_id: risk_assessment
+    condition: patient.labs.egfr < 30
+    effect_type: REQUIRED
+    actions:
+    - prehydrate_iv_ns
+    - use_lowest_contrast_volume
+    evidence: KDIGO Contrast AKI; Mehran R, JACC 2004
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-HIGH-RISK-PREHYDRATE-FORBIDDEN
+    node_id: risk_assessment
+    condition: patient.labs.egfr < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_contrast_without_prehydration_high_risk
+    - use_high_osmolar_contrast_in_high_risk
+    evidence: KDIGO Contrast AKI 2012; high-osmolar contrast increases nephrotoxicity risk 2-3x; prehydration reduces risk
+      by 40%
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-GADOLINIUM-NO-IN-CKD
+    node_id: risk_assessment
+    condition: patient.labs.egfr < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_gadolinium_contrast
+    - order_mri_with_gadolinium
+    evidence: ACR Manual on Contrast Media 2024; FDA NSF Warning
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-DIALYSIS-NO-DELAY
+    node_id: risk_assessment
+    condition: '''hemodialysis'' in patient.comorbidities and ''contrast_given'' in patient.history'
+    effect_type: REQUIRED
+    actions:
+    - schedule_dialysis_post_contrast
+    evidence: KDIGO Contrast AKI 2012
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.history
+  - rule_id: CAKI-NSAID-AVOID
+    node_id: risk_assessment
+    condition: '''nsaid'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_nsaid_with_contrast
+    evidence: KDIGO Contrast AKI 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-CKD-PREP-REQUIRED
+    node_id: risk_assessment
+    condition: '''ckd_stage_3'' in patient.comorbidities or ''ckd_stage_4'' in patient.comorbidities or ''ckd'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_contrast_without_preparation
+    - skip_prehydration
+    - give_high_osmolar_contrast
+    evidence: KDIGO Contrast AKI 2024; ACR Manual on Contrast Media
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: CAKI-AMINOGLYCOSIDE-AVOID
+    node_id: risk_assessment
+    condition: '''aminoglycoside'' in patient.medications or ''gentamicin'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_aminoglycoside_with_contrast
+    - give_aminoglycoside
+    evidence: KDIGO Contrast AKI 2012; Lopez-Novoa JM, Kidney Int 2011
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-SPECIFIC-NEPHROTOXIN-HOLD
+    node_id: risk_assessment
+    condition: '''vancomycin'' in patient.medications or ''amphotericin'' in patient.medications or ''cyclosporine'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - hold_nephrotoxin_before_contrast
+    - monitor_drug_levels
+    evidence: KDIGO Contrast AKI 2012; ACR Manual on Contrast Media 2024
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-SPECIFIC-NEPHROTOXIN-HOLD-FORBIDDEN
+    node_id: risk_assessment
+    condition: '''vancomycin'' in patient.medications or ''amphotericin'' in patient.medications or ''cyclosporine'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_nephrotoxin_during_contrast_exposure
+    - give_nsaid_periprocedural_with_contrast
+    evidence: KDIGO Contrast AKI 2012; concurrent nephrotoxins with contrast create additive renal injury
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-GADOLINIUM-GFR30-SPECIFIC
+    node_id: risk_assessment
+    condition: patient.labs.get('egfr', 90) < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_gadolinium_in_severe_ckd_for_mri
+    - order_mri_gadolinium_without_nephrology_approval_in_ckd
+    evidence: KDIGO Contrast AKI 2012; ACR 2023; gadolinium in eGFR < 30 causes nephrogenic systemic fibrosis (NSF)
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-CKD-PREP-SPECIFIC
+    node_id: risk_assessment
+    condition: patient.labs.get('egfr', 90) < 45 and ('ckd' in patient.comorbidities or 'diabetes' in patient.comorbidities)
+    effect_type: FORBIDDEN
+    actions:
+    - give_contrast_without_isotonic_prehydration_in_ckd
+    - use_high_volume_contrast_in_ckd_diabetes
+    evidence: KDIGO Contrast AKI 2012; CKD + diabetes doubles contrast nephropathy risk; mandatory low-volume iso-osmolar
+      + prehydration
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+    - patient.comorbidities
+  - rule_id: CAKI-HIGH-NO-CONTRAST-WITHOUT-HYDRATION
+    node_id: high_risk_pathway
+    condition: patient.labs.get('egfr', 90) < 60
+    effect_type: FORBIDDEN
+    actions:
+    - administer_contrast_without_hydration
+    evidence: KDIGO 2024 CKD Section 4.3.2; pre-hydration mandatory in eGFR <60
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-HIGH-NO-REPEAT-CONTRAST
+    node_id: high_risk_pathway
+    condition: patient.labs.get('egfr', 90) < 60
+    effect_type: FORBIDDEN
+    actions:
+    - repeat_contrast_within_48h
+    evidence: KDIGO 2024 CKD Section 4.3.2; repeated contrast within 48h multiplies AKI risk
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-HIGH-NO-NSAIDS
+    node_id: high_risk_pathway
+    condition: '''nsaid'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_nsaids
+    evidence: KDIGO 2024 CKD; NSAIDs synergize with contrast nephrotoxicity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-HIGH-NO-AMINOGLYCOSIDES
+    node_id: high_risk_pathway
+    condition: '''aminoglycoside'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - continue_aminoglycosides
+    evidence: KDIGO 2024 CKD; aminoglycosides synergize with contrast nephrotoxicity
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+  - rule_id: CAKI-MOD-NO-CONTRAST-WITHOUT-HYDRATION
+    node_id: moderate_risk_pathway
+    condition: patient.labs.get('egfr', 90) < 60
+    effect_type: FORBIDDEN
+    actions:
+    - administer_contrast_without_hydration
+    evidence: KDIGO 2024 CKD Section 4.3.2; hydration required in CKD G3
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: CAKI-MOD-NO-REPEAT-CONTRAST
+    node_id: moderate_risk_pathway
+    condition: patient.labs.get('egfr', 90) < 60
+    effect_type: FORBIDDEN
+    actions:
+    - repeat_contrast_within_48h
+    evidence: KDIGO 2024 CKD Section 4.3.2; repeated contrast in CKD G3 multiplies AKI risk
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+pals_pediatric_emergency:
+  guideline_name: AHA PALS 2025 Pediatric Emergency Guidelines
+  total_nodes: 4
+  total_unconditional_forbidden: 5
+  total_sequence_rules: 4
+  total_conditional_rules: 5
+  rules_by_severity:
+    CRITICAL: 2
+    HIGH: 3
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 4
+    REQUIRED: 1
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: PEDS-DKA-SLOW-FLUID
+    node_id: pediatric_fluid_resuscitation
+    condition: '''dka'' in patient.get(''presentation'', {})'
+    effect_type: FORBIDDEN
+    actions:
+    - give_rapid_fluid_bolus
+    - give_bolus_greater_than_10ml_kg
+    evidence: ISPAD 2022; AHA PALS 2025 - cerebral edema risk in pediatric DKA
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: PEDS-CARDIAC-LIMIT-FLUID
+    node_id: pediatric_fluid_resuscitation
+    condition: '''congenital_heart_disease'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_ns_bolus_20ml_kg
+    - give_rapid_fluid_bolus
+    evidence: AHA PALS 2025; Pediatric Cardiology Guidelines
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: PEDS-FEBRILE-SEIZURE-NO-AED
+    node_id: pediatric_seizure
+    condition: '''simple_febrile_seizure'' in patient.get(''presentation'', {}) and patient.age >= 1'
+    effect_type: FORBIDDEN
+    actions:
+    - give_antiepileptic_medication
+    - start_levetiracetam
+    - start_phenytoin
+    evidence: AAP 2011 Febrile Seizure Practice Parameter (reaffirmed 2023)
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+    - patient.age
+  - rule_id: PEDS-NEONATE-SEIZURE-PHENOBARB
+    node_id: pediatric_seizure
+    condition: patient.age < 1
+    effect_type: REQUIRED
+    actions:
+    - give_phenobarbital_first_line
+    evidence: AHA PALS 2025; Neonatal seizure management - phenobarbital preferred over levetiracetam
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: PEDS-NEONATE-SEIZURE-PHENOBARB-FORBIDDEN
+    node_id: pediatric_seizure
+    condition: patient.age < 1
+    effect_type: FORBIDDEN
+    actions:
+    - give_adult_dose_anticonvulsant_in_neonate
+    - give_diazepam_iv_in_neonate
+    evidence: AHA PALS 2020; neonates require phenobarbital as first-line; IV diazepam contains benzyl alcohol toxic to neonates
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+pulmonary_embolism:
+  guideline_name: ESC 2019 Pulmonary Embolism
+  total_nodes: 3
+  total_unconditional_forbidden: 2
+  total_sequence_rules: 0
+  total_conditional_rules: 10
+  rules_by_severity:
+    CRITICAL: 5
+    HIGH: 5
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 9
+    REQUIRED: 1
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: PE-MASSIVE-THROMBOLYSIS
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation
+    effect_type: REQUIRED
+    actions:
+    - give_thrombolytic
+    - give_alteplase_pe
+    evidence: ESC PE 2019, Section 6.2
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+  - rule_id: PE-MASSIVE-THROMBOLYSIS-FORBIDDEN
+    node_id: initial_assessment
+    condition: patient.vitals.sbp < 90 or 'hemodynamic_instability' in patient.presentation
+    effect_type: FORBIDDEN
+    actions:
+    - give_anticoagulation_only_in_massive_pe
+    - delay_thrombolysis_in_massive_pe
+    evidence: ESC PE 2019; massive PE with hemodynamic collapse requires thrombolysis; anticoagulation alone has 25-65% mortality
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.vitals.sbp
+  - rule_id: PE-HIT-NO-HEPARIN
+    node_id: initial_assessment
+    condition: '''heparin_induced_thrombocytopenia'' in patient.comorbidities or ''hit'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_heparin
+    - give_enoxaparin
+    - give_ufh
+    evidence: ESC PE 2019; ASH HIT Guidelines 2018
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: PE-OBESITY-NO-STANDARD-DOAC
+    node_id: initial_assessment
+    condition: patient.weight_kg > 120
+    effect_type: FORBIDDEN
+    actions:
+    - give_standard_dose_doac
+    - give_rivaroxaban_standard
+    evidence: ISTH 2021; Martin KA, J Thromb Haemost 2021
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.weight_kg
+  - rule_id: PE-PREGNANCY-NO-WARFARIN
+    node_id: initial_assessment
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_warfarin
+    - give_doac
+    evidence: ESC PE 2019; ACOG Practice Bulletin
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: PE-RENAL-ENOXAPARIN-ADJUST
+    node_id: initial_assessment
+    condition: patient.labs.egfr < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_enoxaparin_full_dose
+    evidence: ESC PE 2019; Lim W, CHEST 2006
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: PE-ACTIVE-BLEED-NO-THROMBOLYSIS
+    node_id: initial_assessment
+    condition: '''active_bleeding'' in patient.contraindications or ''active_hemorrhage'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_thrombolysis
+    - give_alteplase_pe
+    - give_full_dose_anticoagulation
+    evidence: ESC PE 2019, Section 6.2 Absolute Contraindications
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.contraindications
+  - rule_id: PE-PREGNANCY-IMAGING
+    node_id: initial_assessment
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - order_ct_pa_without_considering_vq
+    - give_warfarin
+    - give_doac
+    evidence: ESC PE 2019; ACOG Practice Bulletin 2018
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: PE-MORBID-OBESITY-DOAC-CAUTION
+    node_id: initial_assessment
+    condition: patient.weight_kg > 150
+    effect_type: FORBIDDEN
+    actions:
+    - give_standard_dose_doac
+    - give_apixaban_standard
+    - give_rivaroxaban_standard
+    evidence: ISTH 2021; Martin KA, J Thromb Haemost 2021
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.weight_kg
+  - rule_id: PE-RECENT-SURGERY-NO-THROMBOLYSIS
+    node_id: initial_assessment
+    condition: '''recent_surgery_3_weeks'' in patient.history or ''recent_major_surgery'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_thrombolysis
+    - give_alteplase_pe
+    evidence: ESC PE 2019, Section 6.2 Relative Contraindications
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.history
+ssc_sepsis_hour1_bundle:
+  guideline_name: Surviving Sepsis Campaign Hour-1 Bundle
+  total_nodes: 7
+  total_unconditional_forbidden: 10
+  total_sequence_rules: 4
+  total_conditional_rules: 11
+  rules_by_severity:
+    CRITICAL: 2
+    HIGH: 8
+    MODERATE: 1
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 10
+    REQUIRED: 1
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: SEPSIS-PENICILLIN-ANAPHYLAXIS-NO-CEPH
+    node_id: septic_shock_bundle
+    condition: '''penicillin_anaphylaxis'' in patient.allergies'
+    effect_type: FORBIDDEN
+    actions:
+    - give_cephalosporin
+    - give_ceftriaxone
+    - give_cefepime
+    - give_piperacillin_tazobactam
+    evidence: SSC 2021; IDSA Cross-Reactivity Guidance
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: SEPSIS-HF-CAUTIOUS-FLUID
+    node_id: septic_shock_bundle
+    condition: '''heart_failure'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_aggressive_fluid_bolus
+    - give_crystalloid_60ml_kg
+    evidence: SSC 2021; Maitland et al, FEAST Trial 2011
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SEPSIS-CIRRHOSIS-NO-LACTATED-RINGER
+    node_id: septic_shock_bundle
+    condition: '''cirrhosis'' in patient.comorbidities or ''liver_failure'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_lactated_ringer_in_liver_failure
+    evidence: SSC 2021; Myburgh JA, Finfer S, SAFE Study Investigators
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SEPSIS-ADRENAL-INSUFFICIENCY-STEROIDS
+    node_id: septic_shock_bundle
+    condition: '''adrenal_insufficiency'' in patient.comorbidities or ''chronic_steroid_use'' in patient.medications'
+    effect_type: REQUIRED
+    actions:
+    - give_stress_dose_steroids
+    evidence: 'SSC 2021, Section: Corticosteroids'
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.medications
+  - rule_id: SEPSIS-ADRENAL-INSUFFICIENCY-STEROIDS-FORBIDDEN
+    node_id: septic_shock_bundle
+    condition: '''adrenal_insufficiency'' in patient.comorbidities or ''chronic_steroid_use'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - withhold_steroids_in_refractory_shock
+    - give_high_dose_dexamethasone_in_septic_shock
+    evidence: SSC 2021; stress-dose hydrocortisone (200mg/day) for refractory shock; high-dose dex increases infection/mortality
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.medications
+  - rule_id: SEPSIS-ESRD-NO-FLUID-BOLUS
+    node_id: septic_shock_bundle
+    condition: '''esrd'' in patient.comorbidities or ''hemodialysis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_crystalloid_30ml_kg
+    - give_large_volume_fluid
+    evidence: SSC 2021; Silversides JA, Intensive Care Med 2017
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SEPSIS-NEUTROPENIC-BROAD-SPECTRUM
+    node_id: septic_shock_bundle
+    condition: '''acute_myeloid_leukemia'' in patient.comorbidities or ''chemotherapy_recent'' in patient.comorbidities or
+      ''neutropenia'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_standard_cap_antibiotics_only
+    - delay_antibiotics_for_source
+    - delay_antibiotics_until_culture
+    evidence: IDSA Febrile Neutropenia 2010; SSC 2021
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SEPSIS-ELDERLY-AFEBRILE-NO-DISMISS
+    node_id: septic_shock_bundle
+    condition: patient.age > 70 and 'dementia' in str(patient.comorbidities)
+    effect_type: FORBIDDEN
+    actions:
+    - attribute_ams_to_dementia
+    - delay_antibiotics_due_to_no_fever
+    - discharge_without_sepsis_workup
+    evidence: SSC 2021; Nasa P, Crit Care 2012
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+    - patient.comorbidities
+  - rule_id: SEPSIS-HF-NO-AGGRESSIVE-FLUID-VARIANT
+    node_id: septic_shock_bundle
+    condition: '''heart_failure_hfref'' in patient.comorbidities or ''hfref'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_aggressive_fluid_30ml_kg
+    - give_full_crystalloid_30ml_kg_without_assessment
+    evidence: SSC 2021; Boyd JH, Chest 2011
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SEPSIS-CKD-NO-NEPHROTOXINS
+    node_id: septic_shock_bundle
+    condition: '''ckd_stage_3'' in patient.comorbidities or ''ckd_stage_4'' in patient.comorbidities or ''ckd'' in str(patient.comorbidities)'
+    effect_type: FORBIDDEN
+    actions:
+    - give_aminoglycoside_high_dose
+    - give_aminoglycoside_without_adjustment
+    - give_nsaid
+    - give_contrast_without_precaution
+    - order_ct_with_contrast_without_renal_assessment
+    evidence: KDIGO AKI 2012; SSC 2021
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SEPSIS-VANCOMYCIN-RED-MAN
+    node_id: septic_shock_bundle
+    condition: '''vancomycin_red_man_syndrome'' in patient.allergies'
+    effect_type: FORBIDDEN
+    actions:
+    - give_vancomycin_without_premedication
+    evidence: Red Man Syndrome; Sivagnanam S, Crit Care 2003
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+status_epilepticus:
+  guideline_name: AES Status Epilepticus Management
+  total_nodes: 5
+  total_unconditional_forbidden: 19
+  total_sequence_rules: 6
+  total_conditional_rules: 11
+  rules_by_severity:
+    CRITICAL: 6
+    HIGH: 4
+    MODERATE: 1
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 8
+    REQUIRED: 2
+    BEFORE: 1
+    WITHIN: 0
+  rules:
+  - rule_id: SE-HYPOGLYCEMIA-GLUCOSE-FIRST
+    node_id: initial_stabilization
+    condition: patient.labs.glucose < 60
+    effect_type: BEFORE
+    actions:
+    - give_dextrose_50_percent
+    - give_benzodiazepine
+    evidence: AES 2024 Section 2.2; Alldredge BK, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.glucose
+  - rule_id: SE-HYPOGLYCEMIA-GLUCOSE-FIRST-FORBIDDEN
+    node_id: initial_stabilization
+    condition: patient.labs.glucose < 60
+    effect_type: FORBIDDEN
+    actions:
+    - give_antiepileptic_before_glucose_correction
+    - delay_glucose_correction_for_eeg
+    evidence: NCS Status Epilepticus 2012; hypoglycemic seizures resolve with glucose correction, not antiepileptics
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.glucose
+  - rule_id: SE-KNOWN-EPILEPSY-CHECK-LEVELS
+    node_id: initial_stabilization
+    condition: '''known_epilepsy'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - check_antiepileptic_drug_levels
+    evidence: AES 2024 Section 2.3; Trinka E, Epilepsia 2015
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-KNOWN-EPILEPSY-CHECK-LEVELS-FORBIDDEN
+    node_id: initial_stabilization
+    condition: '''known_epilepsy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - add_new_aed_without_checking_levels
+    - give_loading_dose_without_level_check
+    evidence: NCS Status Epilepticus 2012; subtherapeutic levels require optimization before adding new agents
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-ALCOHOL-WITHDRAWAL-BENZO
+    node_id: first_line_therapy
+    condition: '''alcohol_withdrawal'' in patient.comorbidities or ''alcohol_withdrawal'' in patient.history'
+    effect_type: REQUIRED
+    actions:
+    - give_benzodiazepine_high_dose
+    evidence: AES 2024 Section 3.3; Schuckit MA, NEJM 2014
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-ALCOHOL-WITHDRAWAL-BENZO-FORBIDDEN
+    node_id: first_line_therapy
+    condition: '''alcohol_withdrawal'' in patient.comorbidities or ''alcohol_withdrawal'' in patient.history'
+    effect_type: FORBIDDEN
+    actions:
+    - give_phenytoin_in_alcohol_withdrawal_seizure
+    - give_haloperidol_in_withdrawal_seizure
+    evidence: NCS Status Epilepticus 2012; phenytoin is ineffective for alcohol withdrawal seizures; haloperidol lowers seizure
+      threshold
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-PREGNANCY-NO-VALPROATE
+    node_id: second_line_therapy
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_valproate
+    - give_valproate_40mg_kg
+    - give_valproic_acid
+    evidence: AES 2024 Section 4.3; FDA Black Box Warning; Meador KJ, NEJM 2009
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-HEPATIC-NO-VALPROATE
+    node_id: second_line_therapy
+    condition: '''liver_disease'' in patient.comorbidities or ''hepatic_failure'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_valproate
+    - give_valproate_40mg_kg
+    - give_valproic_acid
+    evidence: AES 2024 Section 4.3; FDA Black Box Warning
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-ELDERLY-DOSE-REDUCE
+    node_id: second_line_therapy
+    condition: patient.age > 65
+    effect_type: FORBIDDEN
+    actions:
+    - give_full_dose_phenytoin
+    - give_fosphenytoin_20mg_pe_kg
+    evidence: AES 2024 Section 4.4; Treiman DM, NEJM 1998
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: SE-CARDIAC-HISTORY-NO-PHENYTOIN
+    node_id: second_line_therapy
+    condition: '''cardiac_arrhythmia'' in patient.comorbidities or ''heart_block'' in patient.comorbidities or ''long_qt''
+      in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_phenytoin
+    - give_fosphenytoin_20mg_pe_kg
+    evidence: AES 2024 Section 4.5; Cranford RE, Neurology 1979
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SE-PORPHYRIA-NO-PHENYTOIN
+    node_id: second_line_therapy
+    condition: '''porphyria'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_phenytoin
+    - give_fosphenytoin_20mg_pe_kg
+    - give_valproate
+    - give_valproate_40mg_kg
+    - give_phenobarbital_15mg_kg
+    evidence: AES 2024 Section 4.6; Anderson KE, Ann Intern Med 2005
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+toxicology_management:
+  guideline_name: AACT/ACMT Toxicology Management
+  total_nodes: 6
+  total_unconditional_forbidden: 9
+  total_sequence_rules: 0
+  total_conditional_rules: 25
+  rules_by_severity:
+    CRITICAL: 14
+    HIGH: 11
+    MODERATE: 0
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 17
+    REQUIRED: 8
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: TOX-IDENT-NO-DELAY-ANTIDOTE
+    node_id: toxin_identification
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_empiric_antidote_if_indicated
+    evidence: AACT/ACMT 2024 Section 2; empiric antidote should not be withheld pending identification
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-NO-FORCED-DIURESIS-SPECIFIC
+    node_id: toxin_identification
+    condition: '''poisoning'' in patient.comorbidities or ''overdose'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_forced_diuresis_in_poisoning
+    - give_mannitol_for_toxin_clearance
+    evidence: AACT/ACMT 2024 Section 5; forced diuresis is ineffective and causes pulmonary edema and electrolyte derangement
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-ANTIDOTE-NO-DELAY
+    node_id: antidote_administration
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_antidote
+    evidence: AACT/ACMT 2024 Section 3; antidote delay increases morbidity and mortality
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-CHARCOAL-AFTER-ENDOSCOPY
+    node_id: antidote_administration
+    condition: 'True'
+    effect_type: FORBIDDEN
+    actions:
+    - give_charcoal_after_endoscopy
+    evidence: AACT/ACMT 2024 Section 4; charcoal after endoscopy impairs visualization
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-ACETAMINOPHEN-NAC
+    node_id: antidote_administration
+    condition: '''acetaminophen_overdose'' in patient.comorbidities or patient.labs.acetaminophen_level > 150'
+    effect_type: REQUIRED
+    actions:
+    - give_n_acetylcysteine
+    evidence: AACT/ACMT 2024 Section 3.1; Smilkstein MJ, NEJM 1988
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.labs.acetaminophen_level
+  - rule_id: TOX-ACETAMINOPHEN-NAC-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''acetaminophen_overdose'' in patient.comorbidities or patient.labs.acetaminophen_level > 150'
+    effect_type: FORBIDDEN
+    actions:
+    - give_hepatotoxic_drug_in_apap_overdose
+    - delay_nac_for_level_confirmation
+    evidence: AACT/ACMT 2024 Section 3.1; NAC must not be delayed waiting for acetaminophen level; additional hepatotoxins
+      compound liver injury
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.labs.acetaminophen_level
+  - rule_id: TOX-BENZO-NO-FLUMAZENIL-CHRONIC
+    node_id: antidote_administration
+    condition: '''chronic_benzo_use'' in patient.medications and ''benzodiazepine_overdose'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_flumazenil
+    evidence: AACT/ACMT 2024 Section 3.2; Haverkos GP, Clin Pharm 1994
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications
+    - patient.comorbidities
+  - rule_id: TOX-OPIOID-NALOXONE
+    node_id: antidote_administration
+    condition: '''opioid_overdose'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_naloxone
+    evidence: AACT/ACMT 2024 Section 3.3; Boyer EW, NEJM 2012
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-OPIOID-NALOXONE-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''opioid_overdose'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_additional_opioid_in_overdose
+    - give_long_acting_sedative_in_opioid_od
+    evidence: AACT/ACMT 2024 Section 3.3; Boyer EW, NEJM 2012; additional CNS depressants worsen respiratory depression
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-TCA-NO-PHYSOSTIGMINE
+    node_id: antidote_administration
+    condition: '''tca_overdose'' in patient.comorbidities or ''tricyclic_overdose'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_physostigmine
+    evidence: AACT/ACMT 2024 Section 3.4; Pentel P, Ann Emerg Med 1980
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-TCA-BICARB
+    node_id: antidote_administration
+    condition: '''tca_overdose'' in patient.comorbidities and patient.labs.qrs_duration > 100'
+    effect_type: REQUIRED
+    actions:
+    - give_sodium_bicarbonate
+    evidence: AACT/ACMT 2024 Section 3.4; Liebelt EL, J Toxicol Clin Toxicol 1995
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.labs.qrs_duration
+  - rule_id: TOX-METHANOL-FOMEPIZOLE
+    node_id: antidote_administration
+    condition: '''methanol_ingestion'' in patient.comorbidities or ''ethylene_glycol_ingestion'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_fomepizole
+    evidence: AACT/ACMT 2024 Section 3.5; Brent J, NEJM 2001
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-METHANOL-FOMEPIZOLE-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''methanol_ingestion'' in patient.comorbidities or ''ethylene_glycol_ingestion'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - delay_fomepizole_for_osmolar_gap
+    - give_ethanol_concurrently_with_fomepizole
+    evidence: AACT/ACMT 2024 Section 3.5; Brent J, NEJM 2001; fomepizole delay allows toxic metabolite accumulation
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-DIGOXIN-FAB
+    node_id: antidote_administration
+    condition: '''digoxin_toxicity'' in patient.comorbidities or patient.labs.digoxin_level > 2.0'
+    effect_type: REQUIRED
+    actions:
+    - give_digoxin_fab_fragments
+    evidence: AACT/ACMT 2024 Section 3.6; Antman EM, Circulation 1990
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.labs.digoxin_level
+  - rule_id: TOX-DIGOXIN-FAB-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''digoxin_toxicity'' in patient.comorbidities or patient.labs.digoxin_level > 2.0'
+    effect_type: FORBIDDEN
+    actions:
+    - give_calcium_in_digoxin_toxicity
+    - cardiovert_without_digoxin_fab
+    evidence: AACT/ACMT 2024 Section 3.6; Antman EM, Circulation 1990; calcium + digoxin causes 'stone heart' (irreversible
+      contracture)
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+    - patient.labs.digoxin_level
+  - rule_id: TOX-ORGANOPHOSPHATE-ATROPINE
+    node_id: antidote_administration
+    condition: '''organophosphate_poisoning'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_atropine
+    - give_pralidoxime
+    evidence: AACT/ACMT 2024 Section 3.7; Eddleston M, Lancet 2008
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-ORGANOPHOSPHATE-ATROPINE-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''organophosphate_poisoning'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_succinylcholine_in_op_poisoning
+    - give_morphine_in_cholinergic_crisis
+    evidence: AACT/ACMT 2024 Section 3.7; Eddleston M, Lancet 2008; OP inhibits pseudocholinesterase causing prolonged paralysis
+      from succinylcholine
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-BETA-BLOCKER-GLUCAGON
+    node_id: antidote_administration
+    condition: '''beta_blocker_overdose'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_glucagon_high_dose
+    evidence: AACT/ACMT 2024 Section 3.8; Love JN, J Toxicol Clin Toxicol 2000
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-BETA-BLOCKER-GLUCAGON-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''beta_blocker_overdose'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_additional_beta_blocker
+    - give_verapamil_in_beta_blocker_od
+    evidence: AACT/ACMT 2024 Section 3.8; Love JN, J Toxicol Clin Toxicol 2000; additional negative chronotropes cause refractory
+      bradycardia
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-CALCIUM-CHANNEL-BLOCKER-INSULIN
+    node_id: antidote_administration
+    condition: '''ccb_overdose'' in patient.comorbidities or ''calcium_channel_blocker_overdose'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - give_high_dose_insulin_euglycemia
+    - give_calcium_chloride
+    evidence: AACT/ACMT 2024 Section 3.9; Engebretsen KM, Clin Toxicol 2011
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-CALCIUM-CHANNEL-BLOCKER-INSULIN-FORBIDDEN
+    node_id: antidote_administration
+    condition: '''ccb_overdose'' in patient.comorbidities or ''calcium_channel_blocker_overdose'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_additional_ccb
+    - give_beta_blocker_in_ccb_overdose
+    evidence: AACT/ACMT 2024 Section 3.9; Engebretsen KM, Clin Toxicol 2011; combined negative inotropy is lethal
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-CAUSTIC-NO-CHARCOAL
+    node_id: decontamination
+    condition: '''caustic_ingestion'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - give_activated_charcoal_with_caustic
+    - give_activated_charcoal
+    evidence: AACT Position Statement; Hojer J, Clin Toxicol 2013
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: TOX-HYDROCARBON-NO-CHARCOAL
+    node_id: decontamination
+    condition: '''hydrocarbon_ingestion'' in patient.presentation'
+    effect_type: FORBIDDEN
+    actions:
+    - give_activated_charcoal_with_hydrocarbon
+    - give_activated_charcoal
+    evidence: AACT Position Statement; Isbister GK, Med J Aust 2004
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.presentation
+  - rule_id: TOX-OBSTRUCTION-NO-WBI
+    node_id: decontamination
+    condition: '''bowel_obstruction'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_whole_bowel_irrigation_with_obstruction
+    evidence: AACT Position Statement on WBI 2004
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: TOX-NO-FORCED-DIURESIS
+    node_id: supportive_care
+    condition: '''rhabdomyolysis'' not in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_forced_diuresis
+    evidence: AACT Guidelines; Shannon MW, Clin Toxicol 2007
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+universal_clinical_safety:
+  guideline_name: Universal Clinical Safety Principles
+  total_nodes: 3
+  total_unconditional_forbidden: 5
+  total_sequence_rules: 0
+  total_conditional_rules: 9
+  rules_by_severity:
+    CRITICAL: 3
+    HIGH: 5
+    MODERATE: 1
+    LOW: 0
+  rules_by_type:
+    FORBIDDEN: 6
+    REQUIRED: 3
+    BEFORE: 0
+    WITHIN: 0
+  rules:
+  - rule_id: SAFETY-ALLERGY-CHECK
+    node_id: initial_encounter
+    condition: len(patient.allergies) > 0
+    effect_type: REQUIRED
+    actions:
+    - verify_allergy_before_medication
+    evidence: Joint Commission NPSG 2024; WHO Patient Safety
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: SAFETY-ALLERGY-CHECK-FORBIDDEN
+    node_id: initial_encounter
+    condition: len(patient.allergies) > 0
+    effect_type: FORBIDDEN
+    actions:
+    - give_known_allergen_drug
+    - skip_allergy_verification_before_drug
+    evidence: Joint Commission NPSG 2024; administering a known allergen is a sentinel event with anaphylaxis risk
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.allergies
+  - rule_id: SAFETY-PREGNANCY-TERATOGEN-SCREEN
+    node_id: initial_encounter
+    condition: '''pregnancy'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_category_x_drug
+    - give_warfarin
+    - give_methotrexate
+    - give_isotretinoin
+    evidence: FDA Pregnancy Category X; ACOG 2020
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SAFETY-RENAL-DOSE-ADJUST
+    node_id: initial_encounter
+    condition: patient.labs.egfr < 30
+    effect_type: REQUIRED
+    actions:
+    - check_renal_dose_adjustment
+    evidence: CKD-EPI 2021; FDA Renal Dosing Guidelines
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: SAFETY-RENAL-DOSE-ADJUST-FORBIDDEN
+    node_id: initial_encounter
+    condition: patient.labs.egfr < 30
+    effect_type: FORBIDDEN
+    actions:
+    - give_full_dose_nephrotoxin_in_renal_failure
+    - give_enoxaparin_full_dose_in_ckd
+    evidence: FDA Renal Impairment Guidance 2020; renally-cleared drugs accumulate causing toxicity in renal failure
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.labs.egfr
+  - rule_id: SAFETY-HEPATIC-DOSE-ADJUST
+    node_id: initial_encounter
+    condition: '''liver_failure'' in patient.comorbidities or ''cirrhosis'' in patient.comorbidities'
+    effect_type: REQUIRED
+    actions:
+    - check_hepatic_dose_adjustment
+    evidence: Child-Pugh Classification; FDA Hepatic Dosing
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SAFETY-HEPATIC-DOSE-ADJUST-FORBIDDEN
+    node_id: initial_encounter
+    condition: '''liver_failure'' in patient.comorbidities or ''cirrhosis'' in patient.comorbidities'
+    effect_type: FORBIDDEN
+    actions:
+    - give_full_dose_hepatotoxin_in_liver_failure
+    - give_acetaminophen_full_dose_in_cirrhosis
+    evidence: FDA Hepatic Impairment Guidance 2020; hepatotoxins at full dose in liver failure cause acute decompensation
+    severity: HIGH
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.comorbidities
+  - rule_id: SAFETY-ELDERLY-BEERS-CRITERIA
+    node_id: initial_encounter
+    condition: patient.age >= 65
+    effect_type: FORBIDDEN
+    actions:
+    - give_benzodiazepine_chronic
+    - give_anticholinergic_high_dose
+    - give_long_acting_sulfonylurea
+    evidence: AGS Beers Criteria 2023
+    severity: MODERATE
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.age
+  - rule_id: SAFETY-WARFARIN-NSAID-INTERACTION
+    node_id: initial_encounter
+    condition: '''warfarin'' in patient.medications'
+    effect_type: FORBIDDEN
+    actions:
+    - give_nsaid
+    - give_ibuprofen
+    - give_naproxen
+    - give_ketorolac
+    - give_aspirin_high_dose
+    evidence: Joint Commission NPSG 2024; Delaney JA, Arch Intern Med 2007
+    severity: CRITICAL
+    has_trigger_range: true
+    has_normal_range: true
+    condition_variables:
+    - patient.medications

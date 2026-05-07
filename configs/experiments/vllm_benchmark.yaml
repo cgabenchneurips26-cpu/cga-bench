@@ -1,0 +1,36 @@
+# vLLM-only Benchmark Experiment
+# Uses local Qwen3-4B-Instruct-2507 model
+
+experiment:
+  experiment_id: "vllm_benchmark_v1"
+  description: |
+    Benchmark using local vLLM server with Qwen3-4B-Instruct-2507.
+    Tests RAG agent and Oracle baseline on sepsis scenarios.
+
+# Scenarios to evaluate
+scenarios:
+  - "septic_shock_basic"
+  - "septic_shock_penicillin_allergy"
+  - "stemi_anterior_basic"
+  - "stemi_inferior_rv_trap"
+
+# Agents to evaluate
+agents:
+  - agent_id: "rag_vllm"
+    config_path: "configs/agents/rag_vllm.yaml"
+
+  - agent_id: "oracle"
+    config_path: "configs/agents/oracle.yaml"
+
+# Budget constraints
+budget:
+  enforce_budget_matching: false
+  budget_limit_tokens: 100000
+  budget_limit_tool_calls: 100
+
+# Experiment settings
+settings:
+  num_runs_per_scenario: 1
+  save_logs: true
+  save_scores: true
+  output_dir: "results/vllm_benchmark"
